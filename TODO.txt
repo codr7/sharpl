@@ -1,6 +1,8 @@
 * add methods
 * add call op
 * add macros
+* add readers
+* add repl
 
 fib
 
