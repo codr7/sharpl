@@ -1,1 +1,8 @@
+* add methods
+* add call op
+* add macros
+
 fib
+
+(^ fib-rec [n]
+  (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
