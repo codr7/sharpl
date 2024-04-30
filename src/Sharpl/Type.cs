@@ -2,6 +2,8 @@ namespace Sharpl;
 
 using System.Text;
 
+using EmitArgs = LinkedList<Form>;
+
 using S = ArrayStack<Value>;
 
 public class AnyType
@@ -19,6 +21,10 @@ public class AnyType
     public virtual void Dump(Value value, StringBuilder result)
     {
         result.Append(value.Data.ToString());
+    }
+
+    public virtual void EmitCall(Loc loc, VM vm, Lib lib, Value target, EmitArgs args) {
+        throw new EvalError(loc, "Call not supported");
     }
 
     public virtual bool Equals(Value left, Value right) {

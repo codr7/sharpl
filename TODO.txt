@@ -1,5 +1,6 @@
 * add specialized EmitArgs type
 ** use LinkedList for items
+** replaces type aliases
 * add Op.ToString()
 ** emit lisp
 * add Literal form

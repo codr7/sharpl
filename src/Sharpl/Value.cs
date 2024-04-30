@@ -2,6 +2,7 @@ namespace Sharpl;
 
 using System.Text;
 
+using EmitArgs = LinkedList<Form>;
 using S = ArrayStack<Value>;
 
 public readonly record struct Value(AnyType Type, dynamic Data)
@@ -20,6 +21,10 @@ public readonly record struct Value(AnyType Type, dynamic Data)
     public void Dump(StringBuilder result)
     {
         Type.Dump(this, result);
+    }
+
+    public void EmitCall(Loc loc, VM vm, Lib lib, EmitArgs args) {
+        Type.EmitCall(loc, vm, lib, this, args);
     }
 
     public bool Equals(Value other)

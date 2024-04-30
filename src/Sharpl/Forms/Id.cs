@@ -17,4 +17,14 @@ public class Id : Form
             throw new EmitError(Loc, $"Unknown id: {Name}");
         }
     }
+
+    public override void EmitCall(VM vm, Lib lib, EmitArgs args) {
+        Emit(args, vm, lib);
+
+        if (lib[Name] is Value v) {
+            v.EmitCall(Loc, vm, lib, args);
+        } else {
+            throw new EmitError(Loc, $"Unknown id: {Name}");
+        }
+    }
 }

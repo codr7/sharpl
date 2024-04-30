@@ -1,9 +1,9 @@
 namespace Sharpl;
 
+using System.Text;
+
 using PC = int;
 using S = ArrayStack<Value>;
-
-using System.Text;
 
 public class VM
 {
@@ -45,21 +45,30 @@ public class VM
 
             switch (op.Type)
             {
-                case Op.T.CallIndirect:
+                case Op.T.CallIndirect: {
                     var target = stack.Pop();
                     var callOp = (Ops.CallIndirect)op.Data;
                     var recursive = !calls.Empty && calls.Peek().Target.Equals(target);
                     PC++;
                     target.Call(callOp.Loc, this, stack, callOp.Arity, recursive);
-                break;
-                case Op.T.Push:
+                    break;
+                }
+                case Op.T.CallPrim: {
+                    var callOp = (Ops.CallPrim)op.Data;
+                    PC++;
+                    callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, false);
+                    break;
+                }
+                case Op.T.Push: {
                     var pushOp = (Ops.Push)op.Data;
                     stack.Push(pushOp.Value);
                     PC++;
                     break;
-                case Op.T.Stop:
+                }
+                case Op.T.Stop: {
                     PC++;
                     return;
+                }
             }
         }
     }

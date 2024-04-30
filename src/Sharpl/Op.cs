@@ -5,6 +5,7 @@ public readonly struct Op
     public enum T
     {
         CallIndirect,
+        CallPrim,
         Push,
         Stop
     };
