@@ -1,4 +1,6 @@
-public class Stack<T>
+namespace Sharpl;
+
+public class ArrayStack<T>
 {
     private readonly int cap;
     private T[] items;
@@ -8,7 +10,7 @@ public class Stack<T>
 
     public int Len { get { return len; } }
 
-    public Stack(int cap)
+    public ArrayStack(int cap)
     {
         this.cap = cap;
         items = new T[cap];

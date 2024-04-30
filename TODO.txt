@@ -1,5 +1,4 @@
-* bind core/user in user lib
-* commit libs
+* add Lib print support
 
 * add repl
 

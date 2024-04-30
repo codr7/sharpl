@@ -1,36 +1,46 @@
-namespace Sharpl {
-    public class Lib {
-        private Dictionary<string, Value> bindings = new Dictionary<string, Value>();
+namespace Sharpl;
 
-        public Lib(string name, Lib? parentLib) {
-            Name = name;
-            ParentLib = parentLib;
-        }
+public class Lib
+{
+    private Dictionary<string, Value> bindings = new Dictionary<string, Value>();
 
-        public Value? this[string id] {
-            get => Find(id);
-            set {
-                if (value == null){
-                    Unbind(id);
-                } else {
-                    Bind(id, (Value)value);
-                }
+    public Lib(string name, Lib? parentLib)
+    {
+        Name = name;
+        ParentLib = parentLib;
+    }
+
+    public Value? this[string id]
+    {
+        get => Find(id);
+        set
+        {
+            if (value == null)
+            {
+                Unbind(id);
+            }
+            else
+            {
+                Bind(id, (Value)value);
             }
         }
-        
-        public void Bind(string id, Value value) {
-            bindings[id] = value;
-        }
+    }
 
-        public Value? Find(string id) {
-            return bindings.ContainsKey(id) ? bindings[id] : ParentLib?.Find(id);
-        }
+    public void Bind(string id, Value value)
+    {
+        bindings[id] = value;
+    }
 
-        public string Name { get; }
-        public Lib? ParentLib { get; }
+    public Value? Find(string id)
+    {
+        return bindings.ContainsKey(id) ? bindings[id] : ParentLib?.Find(id);
+    }
 
-        public bool Unbind(string id) {
-            return bindings.Remove(id);
-        }
+    public string Name { get; }
+    public Lib? ParentLib { get; }
+
+    public bool Unbind(string id)
+    {
+        return bindings.Remove(id);
     }
 }
