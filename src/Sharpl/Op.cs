@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
 
 namespace Sharpl {
-    public readonly struct Operation {
+    public readonly struct Op {
         public enum T {
             Push,
             Stop
@@ -10,7 +10,7 @@ namespace Sharpl {
         public readonly dynamic Data;
         public T Type { get; }
 
-        public Operation(T type, dynamic data) {
+        public Op(T type, dynamic data) {
             this.Type = type;
             this.Data = data;
         }

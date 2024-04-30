@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Sharpl
 {
@@ -7,16 +8,18 @@ namespace Sharpl
 
     public class VM
     {
-        private Stack<Operation> code = new Stack<Operation>(1024);
+        public readonly Libs.Core CoreLib = new Libs.Core();
+        public readonly Lib UserLib = new Lib("user", null);
+ 
+        private Stack<Op> code = new Stack<Op>(1024);
         private PC pc;
 
-        public PC PC
-        {
-            get { return pc; }
-            set { pc = value; }
+        public VM() {
+            UserLib.Bind("core", Value.Make(CoreLib.Lib, CoreLib));
+            UserLib.Bind("user", Value.Make(CoreLib.Lib, UserLib));
         }
 
-        public PC Emit(Operation op)
+        public PC Emit(Op op)
         {
             var result = code.Len;
             code.Push(op);
@@ -33,16 +36,21 @@ namespace Sharpl
 
                 switch (op.Type)
                 {
-                    case Operation.T.Push:
-                        var pushOp = (Operations.Push)op.Data;
+                    case Op.T.Push:
+                        var pushOp = (Ops.Push)op.Data;
                         stack.Push(pushOp.Value);
                         pc++;
                         break;
-                    case Operation.T.Stop:
+                    case Op.T.Stop:
                         pc++;
                         return;
                 }
             }
+        }
+        public PC PC
+        {
+            get { return pc; }
+            set { pc = value; }
         }
     };
 }

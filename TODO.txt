@@ -1,8 +1,16 @@
+* bind core/user in user lib
+* commit libs
+
+* add repl
+
+* add forms
+* add readers
 * add methods
 * add call op
+* add stack type
 * add macros
-* add readers
-* add repl
+* add int reader
+* add stack reader
 
 fib
 
