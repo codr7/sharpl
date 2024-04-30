@@ -1,9 +1,9 @@
 namespace Sharpl;
 
-using System.Text;
-
 using PC = int;
-using Stack = ArrayStack<Value>;
+using S = ArrayStack<Value>;
+
+using System.Text;
 
 public class VM
 {
@@ -15,6 +15,7 @@ public class VM
     public PC PC = 0;
 
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
+    private ArrayStack<Call> calls = new ArrayStack<Call>(32);
 
     public VM()
     {
@@ -34,7 +35,7 @@ public class VM
         get { return code.Len; }
     }
 
-    public void Eval(PC startPC, Stack stack)
+    public void Eval(PC startPC, S stack)
     {
         PC = startPC;
 
@@ -44,6 +45,13 @@ public class VM
 
             switch (op.Type)
             {
+                case Op.T.CallIndirect:
+                    var target = stack.Pop();
+                    var callOp = (Ops.CallIndirect)op.Data;
+                    var recursive = !calls.Empty && calls.Peek().Target.Equals(target);
+                    PC++;
+                    target.Call(callOp.Loc, this, stack, callOp.Arity, recursive);
+                break;
                 case Op.T.Push:
                     var pushOp = (Ops.Push)op.Data;
                     stack.Push(pushOp.Value);
@@ -60,11 +68,11 @@ public class VM
     {
         Console.Write($"Sharpl v{VERSION} - may the src be with you\n\n");
         var buffer = new StringBuilder();
-        var stack = new Stack(32);
+        var stack = new S(32);
 
         while (true)
         {
-            Console.Write("> ");
+            Console.Write("  ");
             var line = Console.In.ReadLine();
 
             if (line is null)

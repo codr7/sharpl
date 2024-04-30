@@ -1,14 +1,16 @@
-* add Loc
-* add forms
-** add id form
+* add specialized EmitArgs type
+** use LinkedList for items
+* add Op.ToString()
+** emit lisp
+* add Literal form
 * add readers
 ** add id reader
+** add int reader
 * add methods
 * add call op
 * add stack type
-* add macros
-* add int reader
 * add stack reader
+* add macros
 
 fib
 

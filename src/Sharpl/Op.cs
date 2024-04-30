@@ -4,6 +4,7 @@ public readonly struct Op
 {
     public enum T
     {
+        CallIndirect,
         Push,
         Stop
     };
