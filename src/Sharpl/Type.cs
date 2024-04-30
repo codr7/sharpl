@@ -6,8 +6,9 @@ public class AnyType
 {
     public string Name { get; }
 
-    public virtual void Dump(Value value, StringBuilder result) {
-        result.Append(value.ToString());
+    public virtual void Dump(Value value, StringBuilder result)
+    {
+        result.Append(value.Data.ToString());
     }
 
     public virtual void Say(Value value, StringBuilder result) {

@@ -8,12 +8,14 @@ public class Core : Lib
     public static readonly LibType Lib = new LibType("Lib");
     public static readonly MetaType Meta = new MetaType("Meta");
     public static readonly NilType Nil = new NilType("Nil");
+    public static readonly StringType Nil = new StringType("String");
 
     public Core() : base("core", null)
     {
         BindType(Int);
         BindType(Lib);
         BindType(Meta);
+        BindType(String);
     }
 
     public void BindType(AnyType t)

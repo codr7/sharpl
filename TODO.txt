@@ -1,7 +1,8 @@
-* add repl
-
+* add Loc
 * add forms
+** add id form
 * add readers
+** add id reader
 * add methods
 * add call op
 * add stack type

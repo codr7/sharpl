@@ -10,3 +10,4 @@ vm.Emit(Ops.Stop.Make());
 var stack = new ArrayStack<Value>(32);
 vm.Eval(0, stack);
 Debug.Assert(stack.Peek() == v);
+vm.REPL();
