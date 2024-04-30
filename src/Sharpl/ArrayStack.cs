@@ -24,6 +24,8 @@ public class ArrayStack<T>
         len -= n;
     }
 
+    public bool Empty { get { return len == 0; } }
+
     public T Get(int i)
     {
         return items[i];
@@ -46,22 +48,27 @@ public class ArrayStack<T>
         len++;
     }
 
-    public override string ToString() {
-        if (items is null) {
+    public override string ToString()
+    {
+        if (items is null)
+        {
             return "";
         }
 
         var res = new StringBuilder();
         res.Append('[');
 
-        for(var i = 0; i < len; i++) {
-            if (i > 0) {
+        for (var i = 0; i < len; i++)
+        {
+            if (i > 0)
+            {
                 res.Append(' ');
             }
 
             var v = items[i];
 
-            if (v is not null) {
+            if (v is not null)
+            {
                 res.Append(v.ToString());
             }
         }

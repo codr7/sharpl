@@ -9,6 +9,8 @@ public readonly record struct Value(AnyType Type, dynamic Data)
         return new Value(type, data);
     }
 
+    public static readonly Value Nil = Value.Make(Libs.Core.Nil, false);
+
     public void Dump(StringBuilder result) {
         Type.Dump(this, result);
     }
