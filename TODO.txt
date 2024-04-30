@@ -1,19 +1,19 @@
+* add S type with specialized Push
 * add specialized EmitArgs type
 ** use LinkedList for items
 ** replaces type aliases
+* add id reader
+* add decr macro
+** add macros
 * add Op.ToString()
 ** emit lisp
 * add Literal form
-* add readers
-** add id reader
-** add int reader
-* add methods
-* add call op
-* add stack type
-* add stack reader
-* add macros
+* add int reader
 
 fib
 
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
+
+* add stack type
+** add stack reader
