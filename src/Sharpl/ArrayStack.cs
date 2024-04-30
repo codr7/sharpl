@@ -1,9 +1,12 @@
+using System.Diagnostics;
+using System.Text;
+
 namespace Sharpl;
 
 public class ArrayStack<T>
 {
     private readonly int cap;
-    private T[] items;
+    private readonly T[] items;
     private int len = 0;
 
     public T this[int i] => Get(i);
@@ -41,5 +44,29 @@ public class ArrayStack<T>
     {
         items[len] = it;
         len++;
+    }
+
+    public override string ToString() {
+        if (items is null) {
+            return "";
+        }
+
+        var res = new StringBuilder();
+        res.Append('[');
+
+        for(var i = 0; i < len; i++) {
+            if (i > 0) {
+                res.Append(' ');
+            }
+
+            var v = items[i];
+
+            if (v is not null) {
+                res.Append(v.ToString());
+            }
+        }
+
+        res.Append(']');
+        return res.ToString();
     }
 }

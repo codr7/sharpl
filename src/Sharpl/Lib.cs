@@ -39,6 +39,10 @@ public class Lib
     public string Name { get; }
     public Lib? ParentLib { get; }
 
+    public override string ToString() {
+        return $"(Lib {Name})";
+    }
+
     public bool Unbind(string id)
     {
         return bindings.Remove(id);

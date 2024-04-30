@@ -1,5 +1,3 @@
-* add Lib print support
-
 * add repl
 
 * add forms
