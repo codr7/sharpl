@@ -13,8 +13,9 @@ public class VM
 
     public PC PC = 0;
 
-    private ArrayStack<Op> code = new ArrayStack<Op>(1024);
     private ArrayStack<Call> calls = new ArrayStack<Call>(32);
+    private ArrayStack<Op> code = new ArrayStack<Op>(1024);
+    private List<Label> labels = new List<Label>();    
 
     public VM()
     {
@@ -27,6 +28,12 @@ public class VM
         var result = code.Len;
         code.Push(op);
         return result;
+    }
+
+    public Label Label(PC pc = -1) {
+        var l = new Label(pc);
+        labels.Append(l);
+        return l;
     }
 
     public PC EmitPC
@@ -56,6 +63,11 @@ public class VM
                     var callOp = (Ops.CallPrim)op.Data;
                     PC++;
                     callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, false);
+                    break;
+                }
+                case Op.T.Goto: {
+                    var gotoOp = (Ops.Goto)op.Data;
+                    PC = gotoOp.Target.PC;
                     break;
                 }
                 case Op.T.Push: {
