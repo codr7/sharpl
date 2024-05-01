@@ -51,7 +51,7 @@ public class Core : Lib
                 else
                 {
                     arity--;
-                    
+
                     while (arity > 0)
                     {
                         res -= stack.Pop().Cast(loc, Core.Int);
@@ -74,19 +74,6 @@ public class Core : Lib
             }
 
             Console.WriteLine(res.ToString());
-        });
-
-        BindMethod("string", [], (loc, target, vm, stack, arity, recursive) =>
-        {
-            var res = new StringBuilder();
-
-            while (arity > 0)
-            {
-                stack.Pop().Say(res);
-                arity--;
-            }
-
-            stack.Push(Core.String, res.ToString());
         });
     }
 

@@ -1,3 +1,7 @@
+* add Label/Goto ops
+** use reference for label
+** add Sharpl.Label type with pc
+** track labels in VM
 * add CallDirect op
 ** eval like indirect with target
 ** override Method EmitCall like Prim
