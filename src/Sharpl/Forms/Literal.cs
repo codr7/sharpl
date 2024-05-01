@@ -18,4 +18,8 @@ public class Literal : Form
     {
         Value.EmitCall(Loc, vm, lib, args);
     }
+
+    public override string ToString() {
+        return Value.ToString();
+    }
 }

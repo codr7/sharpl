@@ -1,5 +1,8 @@
-* add whitespace reader
-* test repl
+* handle errors in repl
+* import core into user
+
+Int
+
 * add dec macro
 ** add macros
 * add call form

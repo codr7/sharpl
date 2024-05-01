@@ -4,7 +4,7 @@ using System.Text;
 
 public struct Id: Reader {
     public static readonly Id Instance = new Id();
-    
+
     public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms) {
         var formLoc = loc;
         var buffer = new StringBuilder();
@@ -23,7 +23,8 @@ public struct Id: Reader {
             }
 
             source.Read();
-            buffer.Append(c);
+            buffer.Append(cc);
+            loc.Column++;
         }
 
         if (buffer.Length == 0) {

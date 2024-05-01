@@ -1,5 +1,7 @@
 namespace Sharpl;
 
+using System.Text;
+
 public abstract class Form
 {
     public readonly Loc Loc;
@@ -48,7 +50,26 @@ public abstract class Form
 
         public void Push(Form form)
         {
-            items.Append(form);
+            items.AddLast(form);
+        }
+
+        public override string ToString()
+        {
+            var res = new StringBuilder();
+            var i = 0;
+
+            foreach (var f in items)
+            {
+                if (i > 0)
+                {
+                    res.Append(' ');
+                }
+
+                res.Append(f.ToString());
+                i++;
+            }
+
+            return res.ToString();
         }
     }
 }

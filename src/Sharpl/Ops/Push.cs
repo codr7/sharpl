@@ -6,4 +6,8 @@ public readonly record struct Push(Value Value)
     {
         return new Op(Op.T.Push, new Push(value));
     }
+
+    public override string ToString() {
+        return $"(push {Value})";
+    }
 }

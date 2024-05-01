@@ -32,4 +32,8 @@ public class Id : Form
             throw new EmitError(Loc, $"Unknown id: {Name}");
         }
     }
+
+    public override string ToString() {
+        return Name;
+    }     
 }

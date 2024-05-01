@@ -18,4 +18,8 @@ public readonly struct Op
         this.Type = type;
         this.Data = data;
     }
+
+    public override string ToString() {
+        return (Data is null) ? $"({Type})" : Data.ToString(); 
+    }
 }
