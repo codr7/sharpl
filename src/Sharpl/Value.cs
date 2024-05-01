@@ -15,6 +15,14 @@ public readonly record struct Value(AnyType Type, object Data)
         Type.Call(loc, vm, stack, this, arity, recursive);
     }
 
+    public T Cast<T>(Loc loc, Type<T> type) {
+        if (Type != type) {
+            throw new EvalError(loc, $"Type mismatch: {Type}/{type}");
+        }
+
+        return (T)Data;
+    }
+
     public void Dump(StringBuilder result)
     {
         Type.Dump(this, result);
