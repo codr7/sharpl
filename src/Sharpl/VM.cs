@@ -51,12 +51,26 @@ public class VM
 
             switch (op.Type)
             {
+                case Op.T.CallDirect: {
+                    var callOp = (Ops.CallDirect)op.Data;
+                    var recursive = !calls.Empty && calls.Peek().Target.Equals(callOp.Target);
+                    PC++;
+                    callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, recursive);
+                    break;
+                }
                 case Op.T.CallIndirect: {
                     var target = stack.Pop();
                     var callOp = (Ops.CallIndirect)op.Data;
                     var recursive = !calls.Empty && calls.Peek().Target.Equals(target);
                     PC++;
                     target.Call(callOp.Loc, this, stack, callOp.Arity, recursive);
+                    break;
+                }
+                case Op.T.CallMethod: {
+                    var callOp = (Ops.CallMethod)op.Data;
+                    PC++;
+                    var recursive = !calls.Empty && calls.Peek().Target.Equals(callOp.Target);
+                    callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, recursive);
                     break;
                 }
                 case Op.T.CallPrim: {

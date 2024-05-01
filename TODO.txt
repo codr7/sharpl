@@ -1,6 +1,3 @@
-* add CallDirect op
-** eval like indirect with target
-** override Method EmitCall like Prim
 * add id reader
 * add dec macro
 ** add macros
