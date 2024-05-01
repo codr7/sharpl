@@ -31,6 +31,9 @@ public readonly record struct Value(AnyType Type, object Data)
     public void EmitCall(Loc loc, VM vm, Lib lib, EmitArgs args) {
         Type.EmitCall(loc, vm, lib, this, args);
     }
+    public void EmitId(Loc loc, VM vm, Lib lib, EmitArgs args) {
+        Type.EmitId(loc, vm, lib, this, args);
+    }
 
     public bool Equals(Value other)
     {

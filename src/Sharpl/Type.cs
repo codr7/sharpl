@@ -23,6 +23,10 @@ public class AnyType
         throw new EvalError(loc, "Call not supported");
     }
 
+    public virtual void EmitId(Loc loc, VM vm, Lib lib, Value value, EmitArgs args) {
+           vm.Emit(Ops.Push.Make(value));   
+    }
+
     public virtual bool Equals(Value left, Value right) {
         return left.Data == right.Data;
     }

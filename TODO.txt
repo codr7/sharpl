@@ -1,10 +1,12 @@
+* add CallDirect op
+** eval like indirect with target
+** override Method EmitCall like Prim
 * add id reader
-* add decr macro
+* add dec macro
 ** add macros
 * add call form
 * add call reader
-* add literal form
-* add int reader
+* add Int reader
 
 * add op ToString()
 ** emit lisp
