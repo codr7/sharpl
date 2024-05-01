@@ -7,7 +7,7 @@ var Int = new Type<int>("Int");
 var v = Value.Make(Int, 42);
 vm.Emit(Ops.Push.Make(v));
 vm.Emit(Ops.Stop.Make());
-var stack = new ArrayStack<Value>(32);
+var stack = new S(32);
 vm.Eval(0, stack);
 Debug.Assert(stack.Peek() == v);
 vm.REPL();

@@ -3,11 +3,10 @@ namespace Sharpl;
 using System.Text;
 
 using EmitArgs = LinkedList<Form>;
-using S = ArrayStack<Value>;
 
-public readonly record struct Value(AnyType Type, dynamic Data)
+public readonly record struct Value(AnyType Type, object Data)
 {
-    public static Value Make<T>(Type<T> type, dynamic data)
+    public static Value Make<T>(Type<T> type, T data) where T: notnull
     {
         return new Value(type, data);
     }

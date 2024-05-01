@@ -3,7 +3,6 @@ namespace Sharpl;
 using System.Text;
 
 using PC = int;
-using S = ArrayStack<Value>;
 
 public class VM
 {

@@ -1,7 +1,5 @@
 namespace Sharpl;
 
-using S = ArrayStack<Value>;
-
 public readonly struct Method {
     public delegate void BodyType(Loc loc, Method target, VM vm, S stack, int arity, bool recursive);
 

@@ -4,8 +4,6 @@ using System.Text;
 
 using EmitArgs = LinkedList<Form>;
 
-using S = ArrayStack<Value>;
-
 public class AnyType
 {
     public string Name { get; }

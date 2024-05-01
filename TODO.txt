@@ -1,4 +1,3 @@
-* add S type with specialized Push
 * add specialized EmitArgs type
 ** use LinkedList for items
 ** replaces type aliases

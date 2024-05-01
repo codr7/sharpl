@@ -10,10 +10,10 @@ public readonly struct Op
         Stop
     };
 
-    public readonly dynamic Data;
+    public readonly object Data;
     public T Type { get; }
 
-    public Op(T type, dynamic data)
+    public Op(T type, object data)
     {
         this.Type = type;
         this.Data = data;
