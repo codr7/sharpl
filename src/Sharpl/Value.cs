@@ -23,6 +23,10 @@ public readonly record struct Value(AnyType Type, object Data)
         return (T)Data;
     }
 
+    public Value Copy() {
+        return Type.Copy(this);
+    }
+
     public void Dump(StringBuilder result)
     {
         Type.Dump(this, result);

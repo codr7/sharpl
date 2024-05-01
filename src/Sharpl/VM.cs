@@ -72,7 +72,7 @@ public class VM
                 }
                 case Op.T.Push: {
                     var pushOp = (Ops.Push)op.Data;
-                    stack.Push(pushOp.Value);
+                    stack.Push(pushOp.Value.Copy());
                     PC++;
                     break;
                 }

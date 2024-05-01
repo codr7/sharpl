@@ -14,6 +14,10 @@ public class AnyType
         stack.Push(target);
     }
 
+    public virtual Value Copy(Value value) {
+        return value;
+    }
+
     public virtual void Dump(Value value, StringBuilder result)
     {
         result.Append(value.Data.ToString());
