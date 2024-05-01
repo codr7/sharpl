@@ -32,16 +32,16 @@ public class VM
         return result;
     }
 
+    public PC EmitPC
+    {
+        get { return code.Len; }
+    }
+
     public Label Label(PC pc = -1)
     {
         var l = new Label(pc);
         labels.Append(l);
         return l;
-    }
-
-    public PC EmitPC
-    {
-        get { return code.Len; }
     }
 
     public void Eval(PC startPC, S stack)

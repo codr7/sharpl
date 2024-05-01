@@ -42,6 +42,7 @@ public abstract class Form
         {
             if (items.First?.Value is Form f)
             {
+                items.RemoveFirst();
                 return f;
             }
 
