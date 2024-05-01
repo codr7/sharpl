@@ -23,11 +23,11 @@ public class AnyType
         result.Append(value.Data.ToString());
     }
 
-    public virtual void EmitCall(Loc loc, VM vm, Lib lib, Value target, EmitArgs args) {
+    public virtual void EmitCall(Loc loc, VM vm, Lib lib, Value target, Form.Queue args) {
         throw new EvalError(loc, "Call not supported");
     }
 
-    public virtual void EmitId(Loc loc, VM vm, Lib lib, Value value, EmitArgs args) {
+    public virtual void EmitId(Loc loc, VM vm, Lib lib, Value value, Form.Queue args) {
            vm.Emit(Ops.Push.Make(value));   
     }
 

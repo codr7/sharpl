@@ -9,7 +9,7 @@ public class Id : Form
         Name = name;
     }
 
-    public override void Emit(VM vm, Lib lib, EmitArgs args)
+    public override void Emit(VM vm, Lib lib, Form.Queue args)
     {
         if (lib[Name] is Value v)
         {
@@ -21,7 +21,7 @@ public class Id : Form
         }
     }
 
-    public override void EmitCall(VM vm, Lib lib, EmitArgs args)
+    public override void EmitCall(VM vm, Lib lib, Form.Queue args)
     {
         if (lib[Name] is Value v)
         {

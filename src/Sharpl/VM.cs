@@ -15,7 +15,9 @@ public class VM
 
     private ArrayStack<Call> calls = new ArrayStack<Call>(32);
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
-    private List<Label> labels = new List<Label>();    
+    private List<Label> labels = new List<Label>();   
+
+    private Reader[] readers = [Readers.Id.Instance]; 
 
     public VM()
     {
@@ -96,6 +98,22 @@ public class VM
                 }
             }
         }
+    }
+
+    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms) {
+        foreach (var r in readers) {
+            if (r.Read(source, this, ref loc, forms)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Form? ReadForm(TextReader source, ref Loc loc) {
+        var forms = new Form.Queue();
+        ReadForm(source, ref loc, forms);
+        return forms.Pop();
     }
 
     public void REPL()

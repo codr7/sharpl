@@ -1,4 +1,5 @@
-* add id reader
+* add whitespace reader
+* test repl
 * add dec macro
 ** add macros
 * add call form
