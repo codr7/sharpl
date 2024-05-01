@@ -111,7 +111,7 @@ public class VM
     }
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
-    {        
+    {
         foreach (var r in readers)
         {
             if (r.Read(source, this, ref loc, forms))
@@ -162,11 +162,20 @@ public class VM
             {
                 var startPC = EmitPC;
                 var loc = new Loc("repl");
-                ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, UserLib);
-                buffer.Clear();
-                Emit(Ops.Stop.Make());
-                Eval(startPC, stack);
-                Console.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
+
+                try
+                {
+                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, UserLib);
+                    buffer.Clear();
+                    Emit(Ops.Stop.Make());
+                    Eval(startPC, stack);
+                    Console.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
                 Console.WriteLine("");
             }
 

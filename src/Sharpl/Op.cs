@@ -10,16 +10,20 @@ public readonly struct Op
         Stop
     };
 
-    public readonly object Data;
+    public readonly dynamic Data;
     public T Type { get; }
 
-    public Op(T type, object data)
+    public Op(T type, dynamic data)
     {
         this.Type = type;
         this.Data = data;
     }
 
     public override string ToString() {
-        return (Data is null) ? $"({Type})" : Data.ToString(); 
+        if (Data is null) {
+            return $"({Type})"; 
+            
+        }
+        return Data.ToString(); 
     }
 }

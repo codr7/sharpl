@@ -1,3 +1,7 @@
+* fix error
+
+core
+
 * handle errors in repl
 * import core into user
 
@@ -8,9 +12,7 @@ Int
 * add call form
 * add call reader
 * add Int reader
-
-* add op ToString()
-** emit lisp
+* add Bit type
 
 fib
 
