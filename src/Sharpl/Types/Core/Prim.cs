@@ -6,7 +6,7 @@ public class PrimType : MethodType
 
     public override void EmitCall(Loc loc, VM vm, Lib lib, Value target, Form.Queue args)
     {
-        Form.Emit(args, vm, lib);
+        args.Emit(vm, lib);
         vm.Emit(Ops.CallPrim.Make(loc, target.Cast<Method>(), args.Count));
     }
 }
