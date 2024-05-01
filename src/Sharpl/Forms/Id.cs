@@ -1,7 +1,5 @@
 namespace Sharpl.Forms;
 
-using EmitArgs = LinkedList<Form>;
-
 public class Id : Form
 {
     public readonly string Name;

@@ -2,8 +2,6 @@ namespace Sharpl;
 
 using System.Text;
 
-using EmitArgs = LinkedList<Form>;
-
 public readonly record struct Value(AnyType Type, object Data)
 {
     public static Value Make<T>(Type<T> type, T data) where T: notnull

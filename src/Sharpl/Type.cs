@@ -2,8 +2,6 @@ namespace Sharpl;
 
 using System.Text;
 
-using EmitArgs = LinkedList<Form>;
-
 public class AnyType
 {
     public string Name { get; }

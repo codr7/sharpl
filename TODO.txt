@@ -1,6 +1,3 @@
-* add specialized EmitArgs type
-** use LinkedList for items
-** replaces type aliases
 * add id reader
 * add decr macro
 ** add macros

@@ -1,7 +1,5 @@
 namespace Sharpl.Types.Core;
 
-using EmitArgs = LinkedList<Form>;
-
 public class PrimType : MethodType
 {
     public PrimType(string name) : base(name) { }
