@@ -1,11 +1,9 @@
-* import core into user
-
-Int
+* add call form
+** claes
+* add call reader
 
 * add dec macro
 ** add macros
-* add call form
-* add call reader
 * add Int reader
 * add Bit type
 

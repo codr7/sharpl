@@ -36,6 +36,12 @@ public class Lib
         return bindings.ContainsKey(id) ? bindings[id] : ParentLib?.Find(id);
     }
 
+    public void Import(Lib source) {
+        foreach (var (id, v) in source.bindings) {
+            Bind(id, v);
+        }
+    }
+
     public string Name { get; }
     public Lib? ParentLib { get; }
 

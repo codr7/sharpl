@@ -3,6 +3,7 @@ using Sharpl;
 using Ops = Sharpl.Ops;
 
 var vm = new VM();
+vm.UserLib.Import(vm.CoreLib);
 var Int = new Type<int>("Int");
 var v = Value.Make(Int, 42);
 vm.Emit(Ops.Push.Make(v));
