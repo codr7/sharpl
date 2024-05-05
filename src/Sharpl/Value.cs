@@ -11,7 +11,7 @@ public readonly record struct Value(AnyType Type, object Data)
 
     public static readonly Value Nil = Value.Make(Libs.Core.Nil, false);
 
-    public void Call(Loc loc, VM vm, S stack, int arity, bool recursive)
+    public void Call(Loc loc, VM vm, Stack stack, int arity, bool recursive)
     {
         Type.Call(loc, vm, stack, this, arity, recursive);
     }

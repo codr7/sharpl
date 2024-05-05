@@ -1,7 +1,7 @@
 namespace Sharpl;
 
 public readonly struct Method {
-    public delegate void BodyType(Loc loc, Method target, VM vm, S stack, int arity, bool recursive);
+    public delegate void BodyType(Loc loc, Method target, VM vm, Stack stack, int arity, bool recursive);
 
     public readonly string[] Args;
     public readonly BodyType Body;
@@ -17,7 +17,7 @@ public readonly struct Method {
         return $"(Method {Name} {Args})";
     }
 
-    public void Call(Loc loc, VM vm, S stack, int arity, bool recursive) {
+    public void Call(Loc loc, VM vm, Stack stack, int arity, bool recursive) {
         Body(loc, this, vm, stack, arity, recursive);
     }
 }

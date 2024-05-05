@@ -48,7 +48,7 @@ public class VM
         return l;
     }
 
-    public void Eval(PC startPC, S stack)
+    public void Eval(PC startPC, Stack stack)
     {
         PC = startPC;
 
@@ -150,7 +150,7 @@ public class VM
     {
         Console.Write($"Sharpl v{VERSION} - may the src be with you\n\n");
         var buffer = new StringBuilder();
-        var stack = new S(32);
+        var stack = new Stack(32);
 
         while (true)
         {

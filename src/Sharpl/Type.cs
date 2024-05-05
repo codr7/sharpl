@@ -6,7 +6,7 @@ public class AnyType
 {
     public string Name { get; }
 
-    public virtual void Call(Loc loc, VM vm, S stack, Value target, int arity, bool recursive) {
+    public virtual void Call(Loc loc, VM vm, Stack stack, Value target, int arity, bool recursive) {
         if (arity != 0) {
             throw new EvalError(loc, "Wrong number of arguments");
         }

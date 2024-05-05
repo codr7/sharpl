@@ -8,5 +8,16 @@ fib
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
 
+* implement repl
+
 * add stack type
 ** add stack reader
+
+* add rgb method
+** return ansi escapes to set color
+
+* add io lib with read-key method
+** default echo arg T
+** call Console.ReadKey(!echo)
+
+* add read-line method
