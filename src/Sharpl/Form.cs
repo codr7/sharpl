@@ -24,6 +24,14 @@ public abstract class Form
     {
         private LinkedList<Form> items = new LinkedList<Form>();
 
+        public Queue(): this([]) {}
+        
+        public Queue(Form[] items) {
+            foreach (var it in items) {
+                Push(it);
+            }
+        }
+
         public int Count { get { return items.Count; } }
 
 
@@ -35,6 +43,22 @@ public abstract class Form
                 {
                     v.Emit(vm, lib, this);
                 }
+            }
+        }
+
+        public Form[] Items
+        {
+            get
+            {
+                var res = new Form[items.Count];
+                var i = 0;
+
+                foreach (var f in items) {
+                    res[i] = f;
+                    i++;
+                }
+
+                return res;
             }
         }
 

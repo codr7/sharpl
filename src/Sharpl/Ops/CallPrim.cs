@@ -6,4 +6,8 @@ public readonly record struct CallPrim(Loc Loc, Method Target, int Arity)
     {
         return new Op(Op.T.CallPrim, new CallPrim(loc, Target, arity));
     }
+
+    public override string ToString() {
+        return $"(call-prim {Target} {Arity})";
+    }
 }

@@ -17,7 +17,11 @@ public class VM
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
     private List<Label> labels = new List<Label>();
 
-    private Reader[] readers = [Readers.WhiteSpace.Instance, Readers.Id.Instance];
+    private Reader[] readers = [
+        Readers.WhiteSpace.Instance,
+        Readers.Call.Instance,
+        Readers.Id.Instance
+    ];
 
     public VM()
     {

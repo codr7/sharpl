@@ -6,4 +6,8 @@ public readonly record struct CallIndirect(Loc Loc, int Arity)
     {
         return new Op(Op.T.CallIndirect, new CallIndirect(loc, arity));
     }
+
+    public override string ToString() {
+        return $"(call-indirect {Arity})";
+    }    
 }

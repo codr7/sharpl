@@ -6,4 +6,8 @@ public readonly record struct Goto(Label Target)
     {
         return new Op(Op.T.Goto, new Goto(target));
     }
+
+    public override string ToString() {
+        return $"(goto {Target})";
+    }
 }

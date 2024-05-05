@@ -1,11 +1,7 @@
-* add call form
-** claes
-* add call reader
-
+* add Bit type
+* add Int reader
 * add dec macro
 ** add macros
-* add Int reader
-* add Bit type
 
 fib
 

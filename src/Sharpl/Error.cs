@@ -9,3 +9,8 @@ public class EvalError : Exception
 {
     public EvalError(Loc loc, string message) : base($"{loc} {message}") { }
 }
+
+public class ReadError : Exception
+{
+    public ReadError(Loc loc, string message) : base($"{loc} {message}") { }
+}

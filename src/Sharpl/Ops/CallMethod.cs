@@ -6,4 +6,8 @@ public readonly record struct CallMethod(Loc Loc, Method Target, int Arity)
     {
         return new Op(Op.T.CallMethod, new CallMethod(loc, Target, arity));
     }
+
+    public override string ToString() {
+        return $"(call-method {Target} {Arity})";
+    }    
 }
