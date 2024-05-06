@@ -76,6 +76,13 @@ public readonly record struct Value(AnyType Type, object Data)
         Type.Say(this, result);
     }
 
+    public string Say()
+    {
+        var result = new StringBuilder();
+        Say(result);
+        return result.ToString();
+    }
+
     public override string ToString()
     {
         var res = new StringBuilder();

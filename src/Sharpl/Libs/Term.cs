@@ -7,7 +7,7 @@ using System.Text;
 public class Term : Lib
 {
     public static readonly KeyType Key = new KeyType("Int");
- 
+
     public Term() : base("term", null)
     {
         BindType(Key);
@@ -17,7 +17,7 @@ public class Term : Lib
             var res = new StringBuilder();
             res.Append((char)27);
             var c = stack.Pop().Cast(loc, Core.Color);
-            res.Append($"[48;2;{c.R};{c.G};{c.B}m");            
+            res.Append($"[48;2;{c.R};{c.G};{c.B}m");
             stack.Push(Core.String, res.ToString());
         });
 
@@ -26,24 +26,51 @@ public class Term : Lib
             var res = new StringBuilder();
             res.Append((char)27);
             var c = stack.Pop().Cast(loc, Core.Color);
-            res.Append($"[38;2;{c.R};{c.G};{c.B}m");            
+            res.Append($"[38;2;{c.R};{c.G};{c.B}m");
             stack.Push(Core.String, res.ToString());
         });
 
-        BindMethod("read-key", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("read-key", ["echo"], (loc, target, vm, stack, arity, recursive) =>
         {
-            stack.Push(Key, Console.ReadKey(true));
+            Value? echo = (arity == 0) ? null : stack.Pop();
+            var k = Console.ReadKey(true);
+
+            if (echo is Value v)
+            {
+                if ((v.Type != Core.Bit) || v.Cast(Core.Bit))
+                {
+                    Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say());
+                }
+            }
+
+            stack.Push(Key, k);
         });
 
-        BindMethod("read-line", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("read-line", ["echo"], (loc, target, vm, stack, arity, recursive) =>
         {
-            var res = Console.ReadLine();
+            Value? echo = (arity == 0) ? null : stack.Pop();
+            var res = new StringBuilder();
 
-            if (res is null) {
-                stack.Push(Core.Nil, false);
-            } else {
-                stack.Push(Core.String, res);
+            while (true)
+            {
+                var k = Console.ReadKey(true);
+                
+                if (k.Key == ConsoleKey.Enter) {
+                    break;
+                }
+
+                if (echo is Value v)
+                {
+                    if ((v.Type != Core.Bit) || v.Cast(Core.Bit))
+                    {
+                        Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say());
+                    }
+                }
+
+                res.Append(k.KeyChar);
             }
+
+            stack.Push(Core.String, res.ToString());
         });
 
         BindMethod("say", [], (loc, target, vm, stack, arity, recursive) =>

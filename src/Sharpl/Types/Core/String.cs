@@ -17,4 +17,9 @@ public class StringType : Type<string>
         result.Append(value.Data);
         result.Append('"');
     }
+
+    public override void Say(Value value, StringBuilder result)
+    {
+        result.Append(value.Data);
+    }
 }

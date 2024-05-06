@@ -32,8 +32,9 @@ public class AnyType
     }
 
     public virtual void EmitCall(Loc loc, VM vm, Lib lib, Value target, Form.Queue args) {
+        var arity = args.Count;
         args.Emit(vm, lib);
-        vm.Emit(Ops.CallDirect.Make(loc, target, args.Count));
+        vm.Emit(Ops.CallDirect.Make(loc, target, arity));
     }
 
     public virtual void EmitId(Loc loc, VM vm, Lib lib, Value value, Form.Queue args) {
