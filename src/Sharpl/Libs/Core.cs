@@ -2,11 +2,10 @@ namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
 
-using System.Text;
-
 public class Core : Lib
 {
     public static readonly BitType Bit = new BitType("Bit");
+    public static readonly ColorType Color = new ColorType("Color");
     public static readonly IntType Int = new IntType("Int");
     public static readonly LibType Lib = new LibType("Lib");
     public static readonly MetaType Meta = new MetaType("Meta");
@@ -17,6 +16,7 @@ public class Core : Lib
 
     public Core() : base("core", null)
     {
+        BindType(Color);
         BindType(Bit);
         BindType(Int);
         BindType(Lib);
@@ -68,5 +68,25 @@ public class Core : Lib
 
             stack.Push(Core.Int, res);
         });
+
+        BindMethod("rgba", ["r", "g", "b", "a"], (loc, target, vm, stack, arity, recursive) =>
+        {
+            int a = stack.Pop().Cast(Core.Int);
+            int b = stack.Pop().Cast(Core.Int);
+            int g = stack.Pop().Cast(Core.Int);
+            int r = stack.Pop().Cast(Core.Int);
+
+
+            stack.Push(Core.Color, System.Drawing.Color.FromArgb(a, r, g, b));
+        });   
+
+        BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity, recursive) =>
+        {
+            int b = stack.Pop().Cast(Core.Int);
+            int g = stack.Pop().Cast(Core.Int);
+            int r = stack.Pop().Cast(Core.Int);
+
+            stack.Push(Core.Color, System.Drawing.Color.FromArgb(255, r, g, b));
+        });     
     }
 }

@@ -12,25 +12,21 @@ public class Term : Lib
     {
         BindType(Key);
 
-        BindMethod("b-rgb", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity, recursive) =>
         {
             var res = new StringBuilder();
             res.Append((char)27);
-            var b = stack.Pop().Cast(loc, Core.Int);
-            var g = stack.Pop().Cast(loc, Core.Int);
-            var r = stack.Pop().Cast(loc, Core.Int);
-            res.Append($"[48;2;{r};{g};{b}m");            
+            var c = stack.Pop().Cast(loc, Core.Color);
+            res.Append($"[48;2;{c.R};{c.G};{c.B}m");            
             stack.Push(Core.String, res.ToString());
         });
 
-        BindMethod("f-rgb", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity, recursive) =>
         {
             var res = new StringBuilder();
             res.Append((char)27);
-            var b = stack.Pop().Cast(loc, Core.Int);
-            var g = stack.Pop().Cast(loc, Core.Int);
-            var r = stack.Pop().Cast(loc, Core.Int);
-            res.Append($"[38;2;{r};{g};{b}m");            
+            var c = stack.Pop().Cast(loc, Core.Color);
+            res.Append($"[38;2;{c.R};{c.G};{c.B}m");            
             stack.Push(Core.String, res.ToString());
         });
 

@@ -13,10 +13,6 @@ fib
 
 * add echo flag to read-key
 
-* add Color type
-** add rgb method to create
-** change f/b-rgb to take Color arg
-
 * add Pair type/reader
 
 * add stack type
