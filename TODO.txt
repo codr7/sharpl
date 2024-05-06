@@ -13,6 +13,10 @@ fib
 * add let macro
 ** add frames
 
+* add ^-macro
+
+* add tail calls
+
 * add Pair type/reader
 
 * add stack type
