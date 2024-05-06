@@ -9,6 +9,7 @@ public class VM
     public static readonly int VERSION = 1;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
+    public readonly Libs.String StringLib = new Libs.String();
     public readonly Libs.Term TermLib = new Libs.Term();
     public readonly Lib UserLib = new Lib("user", null);
 
@@ -30,9 +31,10 @@ public class VM
 
     public VM()
     {
-        UserLib.Bind("core", Value.Make(Libs.Core.Lib, CoreLib));
-        UserLib.Bind("term", Value.Make(Libs.Core.Lib, TermLib));
-        UserLib.Bind("user", Value.Make(Libs.Core.Lib, UserLib));
+        UserLib.BindLib(CoreLib);
+        UserLib.BindLib(StringLib);
+        UserLib.BindLib(TermLib);
+        UserLib.BindLib(UserLib);
     }
 
     public PC Emit(Op op)

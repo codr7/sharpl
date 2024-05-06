@@ -1,11 +1,18 @@
 * add dec macro
-** add macros
 
 fib
 
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
- 
+
+---
+
+* add if macro
+** add macros
+
+* add let macro
+** add frames
+
 * add Pair type/reader
 
 * add stack type

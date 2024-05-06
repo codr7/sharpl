@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 
 namespace Sharpl;
@@ -46,6 +45,10 @@ public class ArrayStack<T>
     {
         items[len] = it;
         len++;
+    }
+
+    public void Reverse(int n) {
+        Array.Reverse(items, Len - n, n);
     }
 
     public override string ToString()

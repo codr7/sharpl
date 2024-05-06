@@ -33,6 +33,10 @@ public class Lib
         bindings[id] = value;
     }
 
+    public void BindLib(Lib lib) {
+            Bind(lib.Name, Value.Make(Core.Lib, lib));
+    }
+    
     public Method BindMethod(string name, string[] args, Method.BodyType body)
     {
         var m = new Method(name, args, body);

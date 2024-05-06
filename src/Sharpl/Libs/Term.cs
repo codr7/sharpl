@@ -54,8 +54,9 @@ public class Term : Lib
             while (true)
             {
                 var k = Console.ReadKey(true);
-                
-                if (k.Key == ConsoleKey.Enter) {
+
+                if (k.Key == ConsoleKey.Enter)
+                {
                     break;
                 }
 
@@ -75,6 +76,7 @@ public class Term : Lib
 
         BindMethod("say", [], (loc, target, vm, stack, arity, recursive) =>
         {
+            stack.Reverse(arity);
             var res = new StringBuilder();
 
             while (arity > 0)

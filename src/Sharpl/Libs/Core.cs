@@ -32,7 +32,7 @@ public class Core : Lib
         BindMethod("+", [], (loc, target, vm, stack, arity, recursive) =>
         {
             var res = 0;
-
+            
             while (arity > 0)
             {
                 res += stack.Pop().Cast(loc, Core.Int);
