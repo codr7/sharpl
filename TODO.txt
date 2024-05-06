@@ -1,5 +1,4 @@
 * add Bit type
-* add Int reader
 * add dec macro
 ** add macros
 
@@ -10,15 +9,12 @@ fib
 
 * add support for lib names
 
-(term/read-line)
+(term/f-rgb)
 
 * add echo flag to read-key
 
 * add stack type
 ** add stack reader
-
-* add rgb method
-** return ansi escapes to set color
 
 * add read-line method
 

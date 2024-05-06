@@ -20,7 +20,10 @@ public class VM
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
+
         Readers.Call.Instance,
+        Readers.Int.Instance,
+        
         Readers.Id.Instance
     ];
 
