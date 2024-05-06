@@ -31,6 +31,7 @@ public class VM
     public VM()
     {
         UserLib.Bind("core", Value.Make(Libs.Core.Lib, CoreLib));
+        UserLib.Bind("term", Value.Make(Libs.Core.Lib, TermLib));
         UserLib.Bind("user", Value.Make(Libs.Core.Lib, UserLib));
     }
 

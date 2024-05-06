@@ -6,11 +6,6 @@ fib
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
 
-* add support for lib names in ids
-** claes
-
-(term/f-rgb)
-
 * add echo flag to read-key
 
 * add Pair type/reader

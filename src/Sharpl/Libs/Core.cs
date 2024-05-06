@@ -78,7 +78,7 @@ public class Core : Lib
 
 
             stack.Push(Core.Color, System.Drawing.Color.FromArgb(a, r, g, b));
-        });   
+        });
 
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity, recursive) =>
         {
@@ -87,6 +87,6 @@ public class Core : Lib
             int r = stack.Pop().Cast(Core.Int);
 
             stack.Push(Core.Color, System.Drawing.Color.FromArgb(255, r, g, b));
-        });     
+        });
     }
 }
