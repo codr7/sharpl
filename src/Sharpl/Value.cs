@@ -4,19 +4,31 @@ using System.Text;
 
 public readonly record struct Value(AnyType Type, object Data)
 {
+    public static explicit operator bool(Value v) {
+        return v.Type.Bool(v);
+    }
+
     public static Value Make<T>(Type<T> type, T data) where T : notnull
     {
         return new Value(type, data);
     }
 
+    public static readonly Value F = Value.Make(Libs.Core.Bit, false);
     public static readonly Value Nil = Value.Make(Libs.Core.Nil, false);
+    public static readonly Value T = Value.Make(Libs.Core.Bit, true);
 
     public void Call(Loc loc, VM vm, Stack stack, int arity, bool recursive)
     {
         Type.Call(loc, vm, stack, this, arity, recursive);
     }
 
-    public T Cast<T>() {
+    public T Cast<T>(Type<T> type)
+    {
+        if (Type != type)
+        {
+            throw new Exception($"Type mismatch: {Type}/{type}");
+        }
+
         return (T)Data;
     }
 

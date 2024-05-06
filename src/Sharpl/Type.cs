@@ -6,6 +6,14 @@ public class AnyType
 {
     public string Name { get; }
 
+    public virtual bool Bool(Value value) {
+        return true;
+    }
+
+    public virtual void Call(Loc loc, VM vm, Stack stack, int arity, bool recursive) {
+        throw new EvalError(loc, "Not supported");
+    }
+
     public virtual void Call(Loc loc, VM vm, Stack stack, Value target, int arity, bool recursive) {
         if (arity != 0) {
             throw new EvalError(loc, "Wrong number of arguments");
@@ -24,7 +32,8 @@ public class AnyType
     }
 
     public virtual void EmitCall(Loc loc, VM vm, Lib lib, Value target, Form.Queue args) {
-        throw new EvalError(loc, "Call not supported");
+        args.Emit(vm, lib);
+        vm.Emit(Ops.CallDirect.Make(loc, target, args.Count));
     }
 
     public virtual void EmitId(Loc loc, VM vm, Lib lib, Value value, Form.Queue args) {

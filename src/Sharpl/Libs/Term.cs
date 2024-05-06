@@ -63,16 +63,4 @@ public class Term : Lib
             Console.WriteLine(res.ToString());
         });
     }
-
-    public Method BindMethod(string name, string[] args, Method.BodyType body)
-    {
-        var m = new Method(name, args, body);
-        Bind(m.Name, Value.Make(Core.Method, m));
-        return m;
-    }
-
-    public void BindType(AnyType t)
-    {
-        Bind(t.Name, Value.Make(Core.Meta, t));
-    }
 }

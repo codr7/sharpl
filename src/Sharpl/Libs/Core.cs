@@ -6,6 +6,7 @@ using System.Text;
 
 public class Core : Lib
 {
+    public static readonly BitType Bit = new BitType("Bit");
     public static readonly IntType Int = new IntType("Int");
     public static readonly LibType Lib = new LibType("Lib");
     public static readonly MetaType Meta = new MetaType("Meta");
@@ -16,12 +17,17 @@ public class Core : Lib
 
     public Core() : base("core", null)
     {
+        BindType(Bit);
         BindType(Int);
         BindType(Lib);
         BindType(Meta);
         BindType(Method);
         BindType(Prim);
         BindType(String);
+
+        Bind("F", Value.F);
+        Bind("_", Value.Nil);
+        Bind("T", Value.T);
 
         BindMethod("+", [], (loc, target, vm, stack, arity, recursive) =>
         {
@@ -62,18 +68,5 @@ public class Core : Lib
 
             stack.Push(Core.Int, res);
         });
-    }
-
-
-    public Method BindMethod(string name, string[] args, Method.BodyType body)
-    {
-        var m = new Method(name, args, body);
-        Bind(m.Name, Value.Make(Method, m));
-        return m;
-    }
-
-    public void BindType(AnyType t)
-    {
-        Bind(t.Name, Value.Make(Meta, t));
     }
 }

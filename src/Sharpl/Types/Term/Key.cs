@@ -10,8 +10,14 @@ public class KeyType : Type<ConsoleKeyInfo>
     public override void Dump(Value value, StringBuilder result)
     {
         result.Append("(Key ");
-        var ki = (ConsoleKeyInfo)value.Data;
+        Say(value, result);
+        result.Append(')');
+    }
 
+    public override void Say(Value value, StringBuilder result)
+    {
+        var ki = value.Cast(this);
+        
         if ((ki.Modifiers & ConsoleModifiers.Alt) != 0)
         {
             result.Append("Alt+");
@@ -28,6 +34,5 @@ public class KeyType : Type<ConsoleKeyInfo>
         }
 
         result.Append(ki.Key.ToString());
-        result.Append(')');
     }
 }

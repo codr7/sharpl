@@ -1,5 +1,7 @@
 namespace Sharpl;
 
+using Libs;
+
 public class Lib
 {
     private Dictionary<string, Value> bindings = new Dictionary<string, Value>();
@@ -29,6 +31,18 @@ public class Lib
     public void Bind(string id, Value value)
     {
         bindings[id] = value;
+    }
+
+    public Method BindMethod(string name, string[] args, Method.BodyType body)
+    {
+        var m = new Method(name, args, body);
+        Bind(m.Name, Value.Make(Core.Method, m));
+        return m;
+    }
+
+    public void BindType(AnyType t)
+    {
+        Bind(t.Name, Value.Make(Core.Meta, t));
     }
 
     public Value? Find(string id)
