@@ -20,7 +20,7 @@ fib
 ** add rgb method to create
 ** change f/b-rgb to take Color arg
 
-* add Point type
+* add Pair type/reader
 
 * add stack type
 ** add stack reader

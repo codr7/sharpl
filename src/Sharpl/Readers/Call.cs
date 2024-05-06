@@ -8,11 +8,7 @@ public struct Call: Reader {
     public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms) {
         var c = source.Peek();
 
-        if (c == -1) {
-            return false;
-        }
-
-        if (c != '(') {
+        if (c == -1 || c != '(') {
             return false;
         }
 

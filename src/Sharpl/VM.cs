@@ -23,6 +23,7 @@ public class VM
 
         Readers.Call.Instance,
         Readers.Int.Instance,
+        Readers.String.Instance,
         
         Readers.Id.Instance
     ];
