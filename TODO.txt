@@ -8,7 +8,11 @@ fib
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
 
-* implement repl
+* add support for lib names
+
+(term/read-line)
+
+* add echo flag to read-key
 
 * add stack type
 ** add stack reader
@@ -16,8 +20,20 @@ fib
 * add rgb method
 ** return ansi escapes to set color
 
-* add io lib with read-key method
-** default echo arg T
-** call Console.ReadKey(!echo)
-
 * add read-line method
+
+(^ repl []
+  (print "sharpl v" VERSION " - may the src be with you\n\n")
+
+  (^ read-input [buffer]
+    (print "  ")
+    (let [line (read-line)]
+      (if line
+        (rec (push buffer line)
+        (string/join buffer \n)))))
+  
+  (let [input (read-input)]
+    (if input
+      (do 
+        (eval input)
+        (repl)))))

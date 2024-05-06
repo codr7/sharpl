@@ -9,6 +9,7 @@ public class VM
     public static readonly int VERSION = 1;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
+    public readonly Libs.Term TermLib = new Libs.Term();
     public readonly Lib UserLib = new Lib("user", null);
 
     public PC PC = 0;

@@ -62,19 +62,6 @@ public class Core : Lib
 
             stack.Push(Core.Int, res);
         });
-
-        BindMethod("say", [], (loc, target, vm, stack, arity, recursive) =>
-        {
-            var res = new StringBuilder();
-
-            while (arity > 0)
-            {
-                stack.Pop().Say(res);
-                arity--;
-            }
-
-            Console.WriteLine(res.ToString());
-        });
     }
 
 
