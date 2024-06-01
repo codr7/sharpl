@@ -4,23 +4,39 @@
 * add load support
 ** claes
 
+* add term/width
+** Console.BufferWidth
+
+* add /
+** like -
+
+* add =
+
+* add define macro
+** add macros
+
+* add if macro
+
 * editor
 ** two panes
 *** switch with tab
+*** display path
 ** highlight current line in active pane
 ** add Editor lib
 *** add Pane type
-*** x, y, path?, buffer
+*** x, path?, buffer
+
+(define pane-width (/ (term/width) 2))
+(define left-pane (editor/Pane 1 pane-width))
+(define right-pane (editor/Pane pane-width pane-width))
+(define active-pane left-pane)
 
 (^ switch-pane []
-  (set active-pane (? (= active-pane left-pane) right-pane left-pane)))
+  (set active-pane (if (= active-pane left-pane) right-pane left-pane)))
 
 * reimplement repl as editor buffer
 ** print line numbers
 *** keep same loc in repl
-
-* add if macro
-** add macros
 
 * add let macro
 ** add frames
