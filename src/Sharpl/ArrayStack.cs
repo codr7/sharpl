@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Text;
 
 namespace Sharpl;
@@ -8,7 +9,10 @@ public class ArrayStack<T>
     private readonly T[] items;
     private int len = 0;
 
-    public T this[int i] => Get(i);
+    public T this[int i] {
+      get => Get(i);
+      set => Set(i, value);
+    }
 
     public int Len { get { return len; } }
 
@@ -49,6 +53,11 @@ public class ArrayStack<T>
 
     public void Reverse(int n) {
         Array.Reverse(items, Len - n, n);
+    }
+
+    public void Set(int i, T value)
+    {
+        items[i] = value;
     }
 
     public override string ToString()

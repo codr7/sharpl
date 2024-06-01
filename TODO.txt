@@ -1,11 +1,8 @@
-* add dec macro
+* add Term double buffering
+** add Term.Screen type
 
-fib
-
-(^ fib-rec [n]
-  (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
-
----
+* add load support
+** claes
 
 * add if macro
 ** add macros
@@ -37,3 +34,14 @@ fib
       (do 
         (eval input)
         (repl)))))
+
+fib
+
+(^ fib-rec [n]
+  (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
+
+* add dec macro
+
+* when sending data
+** choose high throughput or low latency
+*** disable nagle / delayed ack

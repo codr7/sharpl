@@ -1,6 +1,7 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
+using System.Text;
 
 public class Core : Lib
 {
@@ -87,6 +88,20 @@ public class Core : Lib
             int r = stack.Pop().Cast(Core.Int);
 
             stack.Push(Core.Color, System.Drawing.Color.FromArgb(255, r, g, b));
+        });
+
+        BindMethod("say", [], (loc, target, vm, stack, arity, recursive) =>
+        {
+            stack.Reverse(arity);
+            var res = new StringBuilder();
+
+            while (arity > 0)
+            {
+                stack.Pop().Say(res);
+                arity--;
+            }
+
+            Console.WriteLine(res.ToString());
         });
     }
 }

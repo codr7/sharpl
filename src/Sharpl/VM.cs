@@ -1,5 +1,6 @@
 namespace Sharpl;
 
+using System.Security.AccessControl;
 using System.Text;
 
 using PC = int;
@@ -10,7 +11,7 @@ public class VM
 
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.String StringLib = new Libs.String();
-    public readonly Libs.Term TermLib = new Libs.Term();
+    public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null);
 
     public PC PC = 0;
@@ -18,6 +19,7 @@ public class VM
     private ArrayStack<Call> calls = new ArrayStack<Call>(32);
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
     private List<Label> labels = new List<Label>();
+    private ArrayStack<Value> registers = new ArrayStack<Value>(32);
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -25,16 +27,29 @@ public class VM
         Readers.Call.Instance,
         Readers.Int.Instance,
         Readers.String.Instance,
-        
+
         Readers.Id.Instance
     ];
 
     public VM()
     {
+        TermLib = new Libs.Term(this);
         UserLib.BindLib(CoreLib);
         UserLib.BindLib(StringLib);
         UserLib.BindLib(TermLib);
         UserLib.BindLib(UserLib);
+    }
+
+    public int AllocRegister()
+    {
+        var result = registers.Len;
+        registers.Push(Value.Nil);
+        return result;
+    }
+
+    public Value GetRegister(int n)
+    {
+        return registers[n];
     }
 
     public PC Emit(Op op)
@@ -156,7 +171,7 @@ public class VM
 
     public void REPL()
     {
-        Console.Write($"Sharpl v{VERSION} - may the src be with you\n\n");
+        Console.Write($"Sharpl v{VERSION} — may the src be with you\n\n");
         var buffer = new StringBuilder();
         var stack = new Stack(32);
 
@@ -195,4 +210,10 @@ public class VM
             buffer.AppendLine();
         }
     }
-};
+
+    public void SetRegister(int n, Value value)
+    {
+        registers[n] = value;
+    }
+
+}
