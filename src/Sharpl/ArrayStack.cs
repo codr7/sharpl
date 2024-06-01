@@ -5,54 +5,54 @@ namespace Sharpl;
 
 public class ArrayStack<T>
 {
-    private readonly int cap;
+    private readonly int capacity;
     private readonly T[] items;
-    private int len = 0;
+    private int count = 0;
 
     public T this[int i] {
       get => Get(i);
       set => Set(i, value);
     }
 
-    public int Len { get { return len; } }
+    public int Count { get { return count; } }
 
-    public ArrayStack(int cap)
+    public ArrayStack(int capacity)
     {
-        this.cap = cap;
-        items = new T[cap];
+        this.capacity = capacity;
+        items = new T[capacity];
     }
 
     public void Drop(int n)
     {
-        len -= n;
+        count -= n;
     }
 
-    public bool Empty { get { return len == 0; } }
+    public bool Empty { get { return count == 0; } }
 
     public T Get(int i)
     {
         return items[i];
     }
 
-    public T Peek()
+    public T Peek(int offset = 0)
     {
-        return items[len - 1];
+        return items[count - 1 - offset];
     }
 
     public T Pop()
     {
-        len--;
-        return items[len];
+        count--;
+        return items[count];
     }
 
     public void Push(T it)
     {
-        items[len] = it;
-        len++;
+        items[count] = it;
+        count++;
     }
 
     public void Reverse(int n) {
-        Array.Reverse(items, Len - n, n);
+        Array.Reverse(items, Count - n, n);
     }
 
     public void Set(int i, T value)
@@ -70,7 +70,7 @@ public class ArrayStack<T>
         var res = new StringBuilder();
         res.Append('[');
 
-        for (var i = 0; i < len; i++)
+        for (var i = 0; i < count; i++)
         {
             if (i > 0)
             {

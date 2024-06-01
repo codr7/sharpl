@@ -5,6 +5,7 @@ using System.Text;
 
 public class Core : Lib
 {
+    public static readonly BindingType Binding = new BindingType("Binding");
     public static readonly BitType Bit = new BitType("Bit");
     public static readonly ColorType Color = new ColorType("Color");
     public static readonly IntType Int = new IntType("Int");
@@ -17,8 +18,9 @@ public class Core : Lib
 
     public Core() : base("core", null)
     {
-        BindType(Color);
+        BindType(Binding);
         BindType(Bit);
+        BindType(Color);
         BindType(Int);
         BindType(Lib);
         BindType(Meta);

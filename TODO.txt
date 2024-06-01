@@ -29,7 +29,7 @@
         (rec (push buffer line)
         (string/join buffer \n)))))
   
-  (let [input (read-input)]
+  (let [input (read-input [])]
     (if input
       (do 
         (eval input)
@@ -41,7 +41,3 @@ fib
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
 
 * add dec macro
-
-* when sending data
-** choose high throughput or low latency
-*** disable nagle / delayed ack

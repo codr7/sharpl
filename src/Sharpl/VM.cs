@@ -1,5 +1,6 @@
 namespace Sharpl;
 
+using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Text;
 
@@ -18,6 +19,7 @@ public class VM
 
     private ArrayStack<Call> calls = new ArrayStack<Call>(32);
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
+    private ArrayStack<int> frames = new ArrayStack<int>(32);
     private List<Label> labels = new List<Label>();
     private ArrayStack<Value> registers = new ArrayStack<Value>(32);
 
@@ -42,26 +44,35 @@ public class VM
 
     public int AllocRegister()
     {
-        var result = registers.Len;
+        var result = registers.Count;
         registers.Push(Value.Nil);
         return result;
     }
 
-    public Value GetRegister(int n)
-    {
-        return registers[n];
+
+    public void BeginFrame() {
+        frames.Push(registers.Count);
     }
 
     public PC Emit(Op op)
     {
-        var result = code.Len;
+        var result = code.Count;
         code.Push(op);
         return result;
     }
 
     public PC EmitPC
     {
-        get { return code.Len; }
+        get { return code.Count; }
+    }
+
+    public void EndFrame() {
+        frames.Pop();
+    }
+
+    public Value GetRegister(int frameOffset, int index)
+    {
+        return registers[frames.Peek(frameOffset) + index];
     }
 
     public Label Label(PC pc = -1)
@@ -113,6 +124,12 @@ public class VM
                         var callOp = (Ops.CallPrim)op.Data;
                         PC++;
                         callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, false);
+                        break;
+                    }
+                case Op.T.GetRegister:
+                    {
+                        var getOp = (Ops.GetRegister)op.Data;
+                        stack.Push(GetRegister(getOp.FrameOffset, getOp.Index));
                         break;
                     }
                 case Op.T.Goto:
@@ -211,9 +228,8 @@ public class VM
         }
     }
 
-    public void SetRegister(int n, Value value)
+    public void SetRegister(int frameOffset, int index, Value value)
     {
-        registers[n] = value;
+        registers[frames.Peek(frameOffset) + index] = value;
     }
-
 }
