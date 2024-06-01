@@ -1,5 +1,5 @@
-* add Term double buffering
-** add Term.Screen type
+* VC
+** Reformat - Ctrl+Shift+I
 
 * add load support
 ** claes

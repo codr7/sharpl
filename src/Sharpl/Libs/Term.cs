@@ -1,7 +1,7 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Term;
-
+using System.Drawing;
 using System.Text;
 
 public class Term : Lib
@@ -14,22 +14,22 @@ public class Term : Lib
 
         var term = new Sharpl.Term();
 
-        BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("flush", [], (loc, target, vm, stack, arity, recursive) =>
         {
-            var c = stack.Pop().Cast(loc, Core.Color);
-            term.SetBg(c);            
+            term.Flush();
         });
 
-        BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity, recursive) =>
         {
-            var c = stack.Pop().Cast(loc, Core.Color);
-            term.SetFg(c);                        
+            var y = stack.Pop().Cast(loc, Core.Int);
+            var x = stack.Pop().Cast(loc, Core.Int);
+            term.MoveTo(new Point(x, y));
         });
 
         BindMethod("read-key", ["echo"], (loc, target, vm, stack, arity, recursive) =>
         {
             Value? echo = (arity == 0) ? null : stack.Pop();
-            
+
             var k = Console.ReadKey(true);
 
             if (echo is Value e)
@@ -46,8 +46,8 @@ public class Term : Lib
         BindMethod("read-line", ["echo"], (loc, target, vm, stack, arity, recursive) =>
         {
             Value? echo = (arity == 0) ? null : stack.Pop();
- 
-           var res = new StringBuilder();
+
+            var res = new StringBuilder();
 
             while (true)
             {
@@ -70,6 +70,18 @@ public class Term : Lib
             }
 
             stack.Push(Core.String, res.ToString());
+        });
+
+        BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity, recursive) =>
+       {
+           var c = stack.Pop().Cast(loc, Core.Color);
+           term.SetBg(c);
+       });
+
+        BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity, recursive) =>
+        {
+            var c = stack.Pop().Cast(loc, Core.Color);
+            term.SetFg(c);
         });
     }
 }
