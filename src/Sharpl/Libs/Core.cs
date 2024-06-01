@@ -72,17 +72,6 @@ public class Core : Lib
             stack.Push(Core.Int, res);
         });
 
-        BindMethod("rgba", ["r", "g", "b", "a"], (loc, target, vm, stack, arity, recursive) =>
-        {
-            int a = stack.Pop().Cast(Core.Int);
-            int b = stack.Pop().Cast(Core.Int);
-            int g = stack.Pop().Cast(Core.Int);
-            int r = stack.Pop().Cast(Core.Int);
-
-
-            stack.Push(Core.Color, System.Drawing.Color.FromArgb(a, r, g, b));
-        });
-
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity, recursive) =>
         {
             int b = stack.Pop().Cast(Core.Int);

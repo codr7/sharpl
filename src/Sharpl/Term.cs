@@ -24,6 +24,11 @@ public class Term
         }
     }
 
+    public void Clear()
+    {
+        CSI(2, 'J');
+    }
+
     public void MoveTo(Point pos)
     {
         CSI(pos.Y, ';', pos.X, 'H');

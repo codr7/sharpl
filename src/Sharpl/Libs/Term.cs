@@ -14,6 +14,11 @@ public class Term : Lib
 
         var term = new Sharpl.Term();
 
+        BindMethod("clear", [], (loc, target, vm, stack, arity, recursive) =>
+        {
+            term.Clear();
+        });
+
         BindMethod("flush", [], (loc, target, vm, stack, arity, recursive) =>
         {
             term.Flush();
