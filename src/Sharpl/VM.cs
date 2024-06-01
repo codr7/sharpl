@@ -17,11 +17,11 @@ public class VM
 
     public PC PC = 0;
 
-    private ArrayStack<Call> calls = new ArrayStack<Call>(32);
+    private ArrayStack<Call> calls = new ArrayStack<Call>(1024);
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
-    private ArrayStack<int> frames = new ArrayStack<int>(32);
+    private ArrayStack<int> frames = new ArrayStack<int>(1024);
     private List<Label> labels = new List<Label>();
-    private ArrayStack<Value> registers = new ArrayStack<Value>(32);
+    private ArrayStack<Value> registers = new ArrayStack<Value>(1024);
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
