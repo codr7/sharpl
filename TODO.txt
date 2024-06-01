@@ -4,6 +4,21 @@
 * add load support
 ** claes
 
+* editor
+** two panes
+*** switch with tab
+** highlight current line in active pane
+** add Editor lib
+*** add Pane type
+*** x, y, path?, buffer
+
+(^ switch-pane []
+  (set active-pane (? (= active-pane left-pane) right-pane left-pane)))
+
+* reimplement repl as editor buffer
+** print line numbers
+*** keep same loc in repl
+
 * add if macro
 ** add macros
 
