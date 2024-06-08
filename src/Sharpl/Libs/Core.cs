@@ -1,6 +1,7 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
+using System.ComponentModel;
 using System.Text;
 
 public class Core : Lib
@@ -37,7 +38,7 @@ public class Core : Lib
         BindMethod("+", [], (loc, target, vm, stack, arity, recursive) =>
         {
             var res = 0;
-            
+
             while (arity > 0)
             {
                 res += stack.Pop().Cast(loc, Core.Int);
@@ -72,6 +73,28 @@ public class Core : Lib
             }
 
             stack.Push(Core.Int, res);
+        });
+
+        BindMacro("define", ["id", "value"], (loc, target, vm, lib, args) =>
+        {
+            while (true)
+            {
+                var id = args.Pop();
+
+                if (id is null)
+                {
+                    break;
+                }
+
+                if (args.Pop() is Form f && vm.Eval(f, lib, args) is Value v)
+                {
+                    lib.Bind(((Forms.Id)id).Name, v);
+                }
+                else
+                {
+                    throw new EmitError(loc, "Missing value");
+                }
+            }
         });
 
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity, recursive) =>

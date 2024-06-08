@@ -1,13 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add define macro
-
-* add if macro
-
-* add load support
-** claes
-
 * add term/width
 ** Console.BufferWidth
 
@@ -16,6 +9,11 @@
 
 * add term/read-key?
 ** return key if available else _
+
+* add if macro
+
+* add load support
+** claes
 
 * add /
 ** like -

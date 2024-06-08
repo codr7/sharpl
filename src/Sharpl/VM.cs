@@ -1,5 +1,6 @@
 namespace Sharpl;
 
+using System.Reflection.Metadata;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Text;
@@ -8,6 +9,7 @@ using PC = int;
 
 public class VM
 {
+    public static readonly int STACK_SIZE = 1024;
     public static readonly int VERSION = 1;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
@@ -50,7 +52,8 @@ public class VM
     }
 
 
-    public void BeginFrame() {
+    public void BeginFrame()
+    {
         frames.Push(registers.Count);
     }
 
@@ -66,20 +69,9 @@ public class VM
         get { return code.Count; }
     }
 
-    public void EndFrame() {
+    public void EndFrame()
+    {
         frames.Pop();
-    }
-
-    public Value GetRegister(int frameOffset, int index)
-    {
-        return registers[frames.Peek(frameOffset) + index];
-    }
-
-    public Label Label(PC pc = -1)
-    {
-        var l = new Label(pc);
-        labels.Append(l);
-        return l;
     }
 
     public void Eval(PC startPC, Stack stack)
@@ -153,6 +145,35 @@ public class VM
             }
         }
     }
+
+    public void Eval(Form form, Lib lib, Form.Queue args, Stack stack)
+    {
+        var skipLabel = new Label();
+        Emit(Ops.Goto.Make(skipLabel));
+        var startPC = EmitPC;
+        form.Emit(this, lib, args);
+        skipLabel.PC = EmitPC;
+        Eval(startPC, stack);
+    }
+
+    public Value? Eval(Form form, Lib lib, Form.Queue args) {
+        var stack = new Stack(STACK_SIZE);
+        Eval(form, lib, args, stack);
+        return stack.Pop();
+    }
+
+    public Value GetRegister(int frameOffset, int index)
+    {
+        return registers[frames.Peek(frameOffset) + index];
+    }
+
+    public Label Label(PC pc = -1)
+    {
+        var l = new Label(pc);
+        labels.Append(l);
+        return l;
+    }
+
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
     {
