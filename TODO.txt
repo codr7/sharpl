@@ -1,21 +1,26 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* add define macro
+
+* add if macro
+
 * add load support
 ** claes
 
 * add term/width
 ** Console.BufferWidth
 
+* add term/key-pushed?
+** Console.KeyAvailable
+
+* add term/read-key?
+** return key if available else _
+
 * add /
 ** like -
 
 * add =
-
-* add define macro
-** add macros
-
-* add if macro
 
 * editor
 ** two panes

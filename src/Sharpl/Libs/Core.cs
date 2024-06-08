@@ -10,6 +10,7 @@ public class Core : Lib
     public static readonly ColorType Color = new ColorType("Color");
     public static readonly IntType Int = new IntType("Int");
     public static readonly LibType Lib = new LibType("Lib");
+    public static readonly MacroType Macro = new MacroType("Macro");
     public static readonly MetaType Meta = new MetaType("Meta");
     public static readonly MethodType Method = new MethodType("Method");
     public static readonly NilType Nil = new NilType("Nil");
@@ -23,6 +24,7 @@ public class Core : Lib
         BindType(Color);
         BindType(Int);
         BindType(Lib);
+        BindType(Macro);
         BindType(Meta);
         BindType(Method);
         BindType(Prim);

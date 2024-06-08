@@ -37,6 +37,13 @@ public class Lib
             Bind(lib.Name, Value.Make(Core.Lib, lib));
     }
     
+    public Macro BindMacro(string name, string[] args, Macro.BodyType body)
+    {
+        var m = new Macro(name, args, body);
+        Bind(m.Name, Value.Make(Core.Macro, m));
+        return m;
+    }
+
     public Method BindMethod(string name, string[] args, Method.BodyType body)
     {
         var m = new Method(name, args, body);
