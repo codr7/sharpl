@@ -12,6 +12,9 @@
 
 * add =
 
+* add maps/sets
+** add map reader
+
 * editor
 ** two panes
 *** switch with tab
@@ -33,6 +36,9 @@
 ** print line numbers
 *** keep same loc in repl
 
+* add dec macro
+** how do you dec a map entry?
+
 * add let macro
 ** add frames
 
@@ -41,9 +47,6 @@
 * add tail calls
 
 * add Pair type/reader
-
-* add stack type
-** add stack reader
 
 (^ repl []
   (print "sharpl v" VERSION " - may the src be with you\n\n")
@@ -65,5 +68,3 @@ fib
 
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
-
-* add dec macro
