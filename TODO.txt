@@ -71,10 +71,6 @@
 (^ switch-pane []
   (set active-pane (if (= active-pane left-pane) right-pane left-pane)))
 
-* reimplement repl as editor buffer
-** print line numbers
-*** keep same loc in repl
-
 * add dec macro
 ** how do you dec a map entry?
 

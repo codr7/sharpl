@@ -6,21 +6,21 @@ using System.Text;
 
 public class Term
 {
-    private readonly StringBuilder Buffer = new StringBuilder();
+    private readonly StringBuilder buffer = new StringBuilder();
 
     public void Flush()
     {
-        Console.Write(Buffer.ToString());
-        Buffer.Clear();
+        Console.Write(buffer.ToString());
+        buffer.Clear();
     }
     private void CSI(params object[] args)
     {
-        Buffer.Append((char)27);
-        Buffer.Append('[');
+        buffer.Append((char)27);
+        buffer.Append('[');
 
         foreach (var a in args)
         {
-            Buffer.Append(a);
+            buffer.Append(a);
         }
     }
 
@@ -30,6 +30,11 @@ public class Term
     }
 
     public int Height { get => Console.BufferHeight; }
+
+    
+    public void Reset() {
+        CSI("0m");
+    }
 
     public void MoveTo(Point pos)
     {
@@ -47,4 +52,12 @@ public class Term
     }
 
     public int Width { get => Console.BufferWidth; }
+
+    public void Write(object value) {
+        buffer.Append(value);
+    }
+
+    public void WriteLine(object value) {
+        Write($"{value}\n");
+    }
 }

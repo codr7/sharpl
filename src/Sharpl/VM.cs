@@ -1,5 +1,6 @@
 namespace Sharpl;
 
+using System.Drawing;
 using System.Text;
 using Sharpl.Libs;
 using PC = int;
@@ -331,7 +332,12 @@ public class VM
 
     public void REPL()
     {
-        Console.Write($"Sharpl v{VERSION} — may the src be with you\n\n");
+        var term = new Term();
+        term.SetFg(Color.FromArgb(255, 252, 173, 3));
+        term.Write("Sharpl ");
+        term.Reset();
+        term.Write($"v{VERSION}\n");
+        
         var buffer = new StringBuilder();
         var stack = new Stack(32);
         var loc = new Loc("repl");
@@ -339,7 +345,11 @@ public class VM
 
         while (true)
         {
-            Console.Write($"{(loc.Line + bufferLines),4} ");
+            term.SetFg(Color.FromArgb(255, 128, 128, 128));
+            term.Write($"{(loc.Line + bufferLines),4} ");
+            term.Reset();
+            term.Flush();
+
             var line = Console.In.ReadLine();
 
             if (line is null)
@@ -356,11 +366,15 @@ public class VM
                     ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, UserLib);
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
-                    Console.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
+                    term.SetFg(Color.FromArgb(255, 0, 255, 0));
+                    term.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
+                    term.Reset();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    term.SetFg(Color.FromArgb(255, 255, 0, 0));
+                    term.WriteLine(e);
+                    term.Reset();
                 }
                 finally
                 {
@@ -368,7 +382,7 @@ public class VM
                     bufferLines = 0;
                 }
 
-                Console.WriteLine("");
+                term.Write("\n");
             }
             else
             {
