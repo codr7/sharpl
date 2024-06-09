@@ -12,6 +12,15 @@
 ** add char iterator
 ** add step iterator
 
+* add ^-macro
+
+* add vararg support
+** mark method as vararg if last arg is array form
+** (^join [separator [parts]])
+** expand iterator on stack before call
+
+* add apply
+
 * add support for \r\n\t in string literals
 ** add support to String Dump
 
