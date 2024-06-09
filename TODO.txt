@@ -3,9 +3,26 @@
 
 * add array reader
 
+* add let macro
+
 (let [m {"foo":1 "bar":2 "baz":3}]
   (inc (m "bar"))
   m)
+
+* histogram.sl
+
+(let [input (io/slurp (io/open (ARGS 0)) 
+      words (string/split input) "\r\n\t .,?!")
+      result {}]
+  (for w words
+    (inc (result w)))
+  (say result))
+
+* add IO lib
+** open
+** slurp
+** slurp-lines
+** add IStream type
 
 * add Form.CollectIds()
 
