@@ -2,24 +2,29 @@ namespace Sharpl.Readers;
 
 using System.Text;
 
-public struct Id: Reader {
+public struct Id : Reader
+{
     public static readonly Id Instance = new Id();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms) {
+    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    {
         var formLoc = loc;
         var buffer = new StringBuilder();
 
-        while (true) {
+        while (true)
+        {
             var c = source.Peek();
 
-            if (c == -1) {
+            if (c == -1)
+            {
                 break;
             }
-            
+
             var cc = Convert.ToChar(c);
 
-            if (Char.IsWhiteSpace(cc) || Char.IsControl(cc) || 
-                cc == '(' || cc == ')' || c == '"' || c == ':') {
+            if (Char.IsWhiteSpace(cc) || Char.IsControl(cc) ||
+                cc == '(' || cc == ')' || c == '"' || c == ':')
+            {
                 break;
             }
 
@@ -27,12 +32,14 @@ public struct Id: Reader {
             buffer.Append(cc);
             loc.Column++;
 
-            if (cc == '^' && buffer.Length == 1) {
+            if (cc == '^' && buffer.Length == 1)
+            {
                 break;
             }
         }
 
-        if (buffer.Length == 0) {
+        if (buffer.Length == 0)
+        {
             return false;
         }
 

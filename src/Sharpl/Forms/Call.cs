@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Sharpl.Forms;
 
 public class Call : Form
@@ -18,6 +20,15 @@ public class Call : Form
     }
 
     public override string ToString() {
-        return $"({target} {args})";
+        var b = new StringBuilder();
+        b.Append('(');
+        b.Append(target);
+        
+        foreach (var a in args) {
+            b.Append($" {a}");
+        }
+
+        b.Append(')');
+        return b.ToString();
     }     
 }

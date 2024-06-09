@@ -151,7 +151,9 @@ public class VM
                 case Op.T.Goto:
                     {
                         var gotoOp = (Ops.Goto)op.Data;
-                        PC = gotoOp.Target.PC;
+                        #pragma warning disable CS8629               
+                        PC = (PC)gotoOp.Target.PC;
+                        #pragma warning restore CS8629               
                         break;
                     }
                 case Op.T.Push:
@@ -310,7 +312,8 @@ public class VM
                 {
                     Console.WriteLine(e);
                 }
-                finally {
+                finally
+                {
                     buffer.Clear();
                     bufferLines = 0;
                 }
