@@ -19,6 +19,10 @@ public readonly struct Method
 
     public void Call(Loc loc, VM vm, Stack stack, int arity)
     {
+        if (arity < Args.Length) {
+            throw new EvalError(loc, $"Not enough arguments: {this}");
+        }
+        
         Body(loc, this, vm, stack, arity);
     }
 

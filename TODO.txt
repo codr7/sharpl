@@ -1,11 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* drop recursive flag
-
-* add string/up/down methods
-** test
-
 * add array reader
 ** copy call reader
 ** add array form

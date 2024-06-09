@@ -16,3 +16,9 @@
 
 (check (- 2)
   (- 1 3))
+
+(check "FOO"
+  (string/up "Foo"))
+
+(check "foo"
+  (string/down "Foo"))

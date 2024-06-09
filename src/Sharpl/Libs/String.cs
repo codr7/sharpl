@@ -8,6 +8,12 @@ public class String : Lib
 {
     public String() : base("string", null)
     {
+        BindMethod("down", ["input"], (loc, target, vm, stack, arity) =>
+        {
+            var s = stack.Pop().Cast(Core.String);
+            stack.Push(Core.String, s.ToLower());
+        });
+
         BindMethod("join", ["separator"], (loc, target, vm, stack, arity) =>
         {
             stack.Reverse(arity);
@@ -25,6 +31,12 @@ public class String : Lib
             }
 
             stack.Push(Core.String, res.ToString());
+        });
+
+        BindMethod("up", ["input"], (loc, target, vm, stack, arity) =>
+        {
+            var s = stack.Pop().Cast(Core.String);
+            stack.Push(Core.String, s.ToUpper());
         });
     }
 }
