@@ -8,6 +8,6 @@ public readonly record struct CallMethod(Loc Loc, Method Target, int Arity)
     }
 
     public override string ToString() {
-        return $"CallMethod {Target} {Arity}";
+        return $"CallMethod {Target.Name} {Arity}";
     }    
 }
