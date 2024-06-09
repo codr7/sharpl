@@ -2,7 +2,7 @@
 using Sharpl.Libs;
 using Ops = Sharpl.Ops;
 
-var vm = new VM();
+var vm = new VM(VM.DEFAULT_CONFIG);
 vm.UserLib.Import(vm.CoreLib);
 vm.UserLib.Import(vm.TermLib);
 
@@ -20,6 +20,5 @@ if (args.Length == 0) {
     vm.UserLib.Bind("ARGS", Value.Make(Core.Array, vs));
     vm.Load(args[0], vm.UserLib);
     vm.Emit(Ops.Stop.Make());
-    var stack = new Stack(VM.STACK_SIZE);
-    vm.Eval(startPC, stack);
+    vm.Eval(startPC);
 }

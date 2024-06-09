@@ -1,12 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add VM.Config
-** struct with default values
-
-* move read functions from VM to Form
-** convert readers to vararg
-
 * add dynamic bindings
 ** check if binding exists in let macro emit
 *** backup/restore value if it exists

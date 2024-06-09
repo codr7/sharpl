@@ -6,7 +6,18 @@ using PC = int;
 
 public class VM
 {
-    public static readonly int STACK_SIZE = 1024;
+    public struct Config
+    {
+        public int MaxCalls = 128;
+        public int MaxFrames = 248;
+        public int MaxOps = 1024;
+        public int MaxRegisters = 512;
+        public int MaxStackSize = 32;
+
+        public Config() { }
+    };
+
+    public static readonly Config DEFAULT_CONFIG = new Config();
     public static readonly int VERSION = 1;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
@@ -16,12 +27,13 @@ public class VM
 
     public PC PC = 0;
 
-    private ArrayStack<Call> calls = new ArrayStack<Call>(1024);
-    private ArrayStack<Op> code = new ArrayStack<Op>(1024);
-    private ArrayStack<int> frames = new ArrayStack<int>(1024);
-    private List<Label> labels = new List<Label>();
+    private readonly ArrayStack<Call> calls;
+    private readonly ArrayStack<Op> code;
+    private readonly Config config;
+    private readonly ArrayStack<int> frames;
+    private readonly List<Label> labels = new List<Label>();
     private string loadPath = "";
-    private ArrayStack<Value> registers = new ArrayStack<Value>(1024);
+    private ArrayStack<Value> registers;
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -34,8 +46,14 @@ public class VM
         Readers.Id.Instance
     ];
 
-    public VM()
+    public VM(Config config)
     {
+        this.config = config;
+        calls = new ArrayStack<Call>(config.MaxCalls);
+        code = new ArrayStack<Op>(config.MaxOps);
+        frames = new ArrayStack<int>(config.MaxFrames);
+        registers = new ArrayStack<Value>(config.MaxRegisters);
+
         TermLib = new Libs.Term(this);
         UserLib.BindLib(CoreLib);
         UserLib.BindLib(StringLib);
@@ -213,6 +231,11 @@ public class VM
         }
     }
 
+    public void Eval(PC startPC)
+    {
+        Eval(startPC, new Stack(config.MaxStackSize));
+    }
+
     public void Eval(Form form, Env env, Form.Queue args, Stack stack)
     {
         var skipLabel = new Label();
@@ -226,7 +249,7 @@ public class VM
 
     public Value? Eval(Form form, Env env, Form.Queue args)
     {
-        var stack = new Stack(STACK_SIZE);
+        var stack = new Stack(config.MaxStackSize);
         Eval(form, env, args, stack);
         return stack.Pop();
     }
