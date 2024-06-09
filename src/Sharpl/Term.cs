@@ -29,6 +29,8 @@ public class Term
         CSI(2, 'J');
     }
 
+    public int Height { get => Console.BufferHeight; }
+
     public void MoveTo(Point pos)
     {
         CSI(pos.Y, ';', pos.X, 'H');
@@ -43,4 +45,6 @@ public class Term
     {
         CSI("38;2;", color.R, ';', color.G, ';', color.B, 'm');
     }
+
+    public int Width { get => Console.BufferWidth; }
 }

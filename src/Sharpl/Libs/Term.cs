@@ -26,7 +26,7 @@ public class Term : Lib
 
         BindMethod("height", [], (loc, target, vm, stack, arity, recursive) =>
         {
-            stack.Push(Value.Make(Core.Int, Console.BufferHeight));
+            stack.Push(Value.Make(Core.Int, term.Height));
         });
 
         BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity, recursive) =>
@@ -96,7 +96,7 @@ public class Term : Lib
 
         BindMethod("width", [], (loc, target, vm, stack, arity, recursive) =>
         {
-            stack.Push(Value.Make(Core.Int, Console.BufferWidth));
+            stack.Push(Value.Make(Core.Int, term.Width));
         });
     }
 }
