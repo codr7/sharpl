@@ -8,6 +8,6 @@ public readonly record struct Check(Loc Loc, Form Expected)
     }
 
     public override string ToString() {
-        return $"(check {Loc} {Expected})";
+        return $"Check {Loc} {Expected}";
     }
 }

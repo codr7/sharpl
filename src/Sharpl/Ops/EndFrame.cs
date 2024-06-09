@@ -8,6 +8,6 @@ public readonly record struct EndFrame()
     }
 
     public override string ToString() {
-        return "(end-frame)";
+        return "EndFrame";
     }    
 }

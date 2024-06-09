@@ -132,13 +132,6 @@ public class VM
                         callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity);
                         break;
                     }
-                case Op.T.CallPrim:
-                    {
-                        var callOp = (Ops.CallPrim)op.Data;
-                        PC++;
-                        callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity);
-                        break;
-                    }
                 case Op.T.Check:
                     {
                         var checkOp = (Ops.Check)op.Data;

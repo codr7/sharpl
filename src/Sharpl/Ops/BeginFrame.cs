@@ -8,6 +8,6 @@ public readonly record struct BeginFrame()
     }
 
     public override string ToString() {
-        return "(begin-frame)";
+        return "BeginFrame";
     }    
 }

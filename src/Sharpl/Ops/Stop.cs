@@ -9,6 +9,6 @@ public readonly record struct Stop()
     }
 
     public override string ToString() {
-        return $"(stop)";
+        return $"Stop";
     }
 }

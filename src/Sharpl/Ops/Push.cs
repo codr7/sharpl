@@ -8,6 +8,6 @@ public readonly record struct Push(Value Value)
     }
 
     public override string ToString() {
-        return $"(push {Value})";
+        return $"Push {Value}";
     }
 }

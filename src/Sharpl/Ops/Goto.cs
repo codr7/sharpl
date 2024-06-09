@@ -8,6 +8,6 @@ public readonly record struct Goto(Label Target)
     }
 
     public override string ToString() {
-        return $"(goto {Target})";
+        return $"Goto {Target}";
     }
 }

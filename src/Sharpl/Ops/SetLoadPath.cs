@@ -8,6 +8,6 @@ public readonly record struct SetLoadPath(string Path)
     }
 
     public override string ToString() {
-        return $"(set-load-path {Path})";
+        return $"SetLoadPath {Path}";
     }
 }

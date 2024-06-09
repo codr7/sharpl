@@ -15,7 +15,6 @@ public class Core : Lib
     public static readonly MetaType Meta = new MetaType("Meta");
     public static readonly MethodType Method = new MethodType("Method");
     public static readonly NilType Nil = new NilType("Nil");
-    public static readonly PrimType Prim = new PrimType("Prim");
     public static readonly StringType String = new StringType("String");
 
     public Core() : base("core", null)
@@ -29,7 +28,6 @@ public class Core : Lib
         BindType(Macro);
         BindType(Meta);
         BindType(Method);
-        BindType(Prim);
         BindType(String);
 
         Bind("F", Value.F);

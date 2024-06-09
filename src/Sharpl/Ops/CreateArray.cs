@@ -8,6 +8,6 @@ public readonly record struct CreateArray(int Length)
     }
 
     public override string ToString() {
-        return $"(create-array {Length})";
+        return $"CreateArray {Length}";
     }    
 }

@@ -8,6 +8,6 @@ public readonly record struct SetArrayItem(int Index)
     }
 
     public override string ToString() {
-        return $"(set-array-item {Index})";
+        return $"SetArrayItem {Index}";
     }    
 }
