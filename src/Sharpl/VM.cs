@@ -282,10 +282,12 @@ public class VM
         Console.Write($"Sharpl v{VERSION} — may the src be with you\n\n");
         var buffer = new StringBuilder();
         var stack = new Stack(32);
+        var loc = new Loc("repl");
+        var bufferLines = 0;
 
         while (true)
         {
-            Console.Write("  ");
+            Console.Write($"{(loc.Line + bufferLines),4} ");
             var line = Console.In.ReadLine();
 
             if (line is null)
@@ -296,12 +298,10 @@ public class VM
             if (line == "")
             {
                 var startPC = EmitPC;
-                var loc = new Loc("repl");
 
                 try
                 {
                     ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, UserLib);
-                    buffer.Clear();
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
                     Console.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
@@ -310,12 +310,19 @@ public class VM
                 {
                     Console.WriteLine(e);
                 }
+                finally {
+                    buffer.Clear();
+                    bufferLines = 0;
+                }
 
                 Console.WriteLine("");
             }
-
-            buffer.Append(line);
-            buffer.AppendLine();
+            else
+            {
+                buffer.Append(line);
+                buffer.AppendLine();
+                bufferLines++;
+            }
         }
     }
 

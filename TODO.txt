@@ -1,9 +1,7 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* improve repl
-** print line numbers[two positions]
-** keep loc
+* add array reader
 
 (let [m {"foo":1 "bar":2 "baz":3}]
   (inc (m "bar"))
