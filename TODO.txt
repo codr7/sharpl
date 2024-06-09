@@ -1,8 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* load command line args in Program.cs
-
 * improve repl
 ** print line numbers[two positions]
 ** keep loc

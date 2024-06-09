@@ -1,11 +1,11 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
-using System.ComponentModel;
 using System.Text;
 
 public class Core : Lib
 {
+    public static readonly ArrayType Array = new ArrayType("Array");
     public static readonly BindingType Binding = new BindingType("Binding");
     public static readonly BitType Bit = new BitType("Bit");
     public static readonly ColorType Color = new ColorType("Color");
@@ -20,6 +20,7 @@ public class Core : Lib
 
     public Core() : base("core", null)
     {
+        BindType(Array);
         BindType(Binding);
         BindType(Bit);
         BindType(Color);

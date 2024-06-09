@@ -11,7 +11,7 @@ public abstract class AnyType
         return true;
     }
 
-    public virtual void Call(Loc loc, VM vm, Stack stack, int arity, bool recursive)
+    public virtual void Call(Loc loc, VM vm, Stack stack, int arity)
     {
         throw new EvalError(loc, "Not supported");
     }

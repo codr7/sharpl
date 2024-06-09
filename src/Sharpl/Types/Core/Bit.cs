@@ -10,7 +10,7 @@ public class BitType : Type<bool>
         return value.Cast(this);
     }
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity, bool recursive) {
+    public override void Call(Loc loc, VM vm, Stack stack, int arity) {
         stack.Push(this, (bool)stack.Pop());
     }
 
