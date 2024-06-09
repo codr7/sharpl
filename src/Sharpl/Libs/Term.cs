@@ -24,6 +24,11 @@ public class Term : Lib
             term.Flush();
         });
 
+        BindMethod("height", [], (loc, target, vm, stack, arity, recursive) =>
+        {
+            stack.Push(Value.Make(Core.Int, Console.BufferHeight));
+        });
+
         BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity, recursive) =>
         {
             var y = stack.Pop().Cast(loc, Core.Int);
@@ -87,6 +92,11 @@ public class Term : Lib
         {
             var c = stack.Pop().Cast(loc, Core.Color);
             term.SetFg(c);
+        });
+
+        BindMethod("width", [], (loc, target, vm, stack, arity, recursive) =>
+        {
+            stack.Push(Value.Make(Core.Int, Console.BufferWidth));
         });
     }
 }

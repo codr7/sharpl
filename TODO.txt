@@ -1,15 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add term/width
-** Console.BufferWidth
-
-* add term/key-pushed?
-** Console.KeyAvailable
-
-* add term/read-key?
-** return key if available else _
-
 * add if macro
 
 * add load support
