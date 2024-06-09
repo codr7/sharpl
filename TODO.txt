@@ -2,8 +2,18 @@
 ** Reformat - Ctrl+Shift+I
 
 * add array reader
+** copy call reader
+** add array form
+*** add MakeArray op
+*** add SetArrayItem op
 
 * add let macro
+
+* add for loop
+** add array iterator
+
+* add support for \r\n\t in string literals
+** add support to String Dump
 
 (let [m {"foo":1 "bar":2 "baz":3}]
   (inc (m "bar"))
@@ -11,8 +21,8 @@
 
 * histogram.sl
 
-(let [input (io/slurp (io/open (ARGS 0)) 
-      words (string/split input) "\r\n\t .,?!")
+(let [input (io/slurp (io/open (ARGS 0))) 
+      words (string/split input "\r\n\t .,?!")
       result {}]
   (for w words
     (inc (result w)))
