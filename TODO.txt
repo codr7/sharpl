@@ -1,9 +1,15 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* run check in separate namespace
-
 * load command line args in Program.cs
+
+* improve repl
+** print line numbers[two positions]
+** keep loc
+
+(let [m {"foo":1 "bar":2 "baz":3}]
+  (inc (m "bar"))
+  m)
 
 * add Form.CollectIds()
 

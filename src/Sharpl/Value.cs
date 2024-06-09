@@ -52,13 +52,13 @@ public readonly record struct Value(AnyType Type, object Data)
         Type.Dump(this, result);
     }
 
-    public void EmitCall(Loc loc, VM vm, Lib lib, Form.Queue args)
+    public void EmitCall(Loc loc, VM vm, Env env, Form.Queue args)
     {
-        Type.EmitCall(loc, vm, lib, this, args);
+        Type.EmitCall(loc, vm, env, this, args);
     }
-    public void EmitId(Loc loc, VM vm, Lib lib, Form.Queue args)
+    public void EmitId(Loc loc, VM vm, Env env, Form.Queue args)
     {
-        Type.EmitId(loc, vm, lib, this, args);
+        Type.EmitId(loc, vm, env, this, args);
     }
 
     public bool Equals(Value other)

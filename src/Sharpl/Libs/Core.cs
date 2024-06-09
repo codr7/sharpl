@@ -76,7 +76,7 @@ public class Core : Lib
             stack.Push(Core.Int, res);
         });
 
-        BindMacro("check", ["expected", "body"], (loc, target, vm, lib, args) =>
+        BindMacro("check", ["expected", "body"], (loc, target, vm, env, args) =>
          {
              var ef = args.Pop();
 
@@ -85,11 +85,13 @@ public class Core : Lib
                  throw new EmitError(loc, "Missing expected value");
              }
 
+            var bodyEnv = new Env(env);
+
              while (true)
              {
                  if (args.Pop() is Form bf)
                  {
-                     bf.Emit(vm, lib, args);
+                     bf.Emit(vm, bodyEnv, args);
                  }
                  else
                  {
@@ -97,11 +99,11 @@ public class Core : Lib
                  }
              }
 
-             ef.Emit(vm, lib, args);
+             ef.Emit(vm, new Env(env), args);
              vm.Emit(Ops.Check.Make(loc, ef));
          });
 
-        BindMacro("define", ["id", "value"], (loc, target, vm, lib, args) =>
+        BindMacro("define", ["id", "value"], (loc, target, vm, env, args) =>
         {
             while (true)
             {
@@ -112,9 +114,9 @@ public class Core : Lib
                     break;
                 }
 
-                if (args.Pop() is Form f && vm.Eval(f, lib, args) is Value v)
+                if (args.Pop() is Form f && vm.Eval(f, env, args) is Value v)
                 {
-                    lib.Bind(((Forms.Id)id).Name, v);
+                    env.Bind(((Forms.Id)id).Name, v);
                 }
                 else
                 {
@@ -123,15 +125,20 @@ public class Core : Lib
             }
         });
 
-        BindMacro("load", ["path"], (loc, target, vm, lib, args) =>
+        BindMacro("do", [], (loc, target, vm, env, args) =>
+        {
+            args.Emit(vm, new Env(env));
+        });
+
+        BindMacro("load", ["path"], (loc, target, vm, env, args) =>
         {
             while (true)
             {
                 if (args.Pop() is Form pf)
                 {
-                    if (vm.Eval(pf, lib, args) is Value p)
+                    if (vm.Eval(pf, env, args) is Value p)
                     {
-                        vm.Load(p.Cast(pf.Loc, Core.String), lib);
+                        vm.Load(p.Cast(pf.Loc, Core.String), env);
                     }
                     else
                     {

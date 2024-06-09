@@ -180,21 +180,21 @@ public class VM
         }
     }
 
-    public void Eval(Form form, Lib lib, Form.Queue args, Stack stack)
+    public void Eval(Form form, Env env, Form.Queue args, Stack stack)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        form.Emit(this, lib, args);
+        form.Emit(this, env, args);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         Eval(startPC, stack);
     }
 
-    public Value? Eval(Form form, Lib lib, Form.Queue args)
+    public Value? Eval(Form form, Env env, Form.Queue args)
     {
         var stack = new Stack(STACK_SIZE);
-        Eval(form, lib, args, stack);
+        Eval(form, env, args, stack);
         return stack.Pop();
     }
 
@@ -211,7 +211,7 @@ public class VM
     }
 
 
-    public void Load(String path, Lib lib)
+    public void Load(String path, Env env)
     {
         var prevLoadPath = loadPath;
         var p = Path.Combine(loadPath, path);
@@ -237,7 +237,7 @@ public class VM
 
                 var forms = ReadForms(source, ref loc);
                 Emit(Ops.SetLoadPath.Make(loadPath));
-                forms.Emit(this, lib);
+                forms.Emit(this, env);
                 Emit(Ops.SetLoadPath.Make(prevLoadPath));
             }
         }

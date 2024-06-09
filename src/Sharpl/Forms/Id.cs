@@ -4,25 +4,25 @@ namespace Sharpl.Forms;
 
 public class Id : Form
 {
-    public static Value? Find(string name, Lib lib, Loc loc)
+    public static Value? Find(string name, Env env, Loc loc)
     {
         while (true)
         {
             var i = name.IndexOf('/');
             if (i <= 0) { break; }
             var ln = name.Substring(0, i);
-            var lv = lib[ln];
+            var lv = env[ln];
 
             if (lv is null)
             {
                 throw new EmitError(loc, $"Unknown id: {ln}");
             }
 
-            lib = ((Value)lv).Cast(loc, Core.Lib);
+            env = ((Value)lv).Cast(loc, Core.Lib);
             name = name.Substring(i + 1);
         }
 
-        return lib[name];
+        return env[name];
     }
 
     public readonly string Name;
@@ -32,11 +32,11 @@ public class Id : Form
         Name = name;
     }
 
-    public override void Emit(VM vm, Lib lib, Form.Queue args)
+    public override void Emit(VM vm, Env env, Form.Queue args)
     {
-        if (Find(Name, lib, Loc) is Value v)
+        if (Find(Name, env, Loc) is Value v)
         {
-            v.EmitId(Loc, vm, lib, args);
+            v.EmitId(Loc, vm, env, args);
         }
         else
         {
@@ -44,11 +44,11 @@ public class Id : Form
         }
     }
 
-    public override void EmitCall(VM vm, Lib lib, Form.Queue args)
+    public override void EmitCall(VM vm, Env env, Form.Queue args)
     {
-        if (Find(Name, lib, Loc) is Value v)
+        if (Find(Name, env, Loc) is Value v)
         {
-            v.EmitCall(Loc, vm, lib, args);
+            v.EmitCall(Loc, vm, env, args);
         }
         else
         {

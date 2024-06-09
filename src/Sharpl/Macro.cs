@@ -4,7 +4,7 @@ namespace Sharpl;
 
 public readonly struct Macro
 {
-    public delegate void BodyType(Loc loc, Macro target, VM vm, Lib lib, Form.Queue args);
+    public delegate void BodyType(Loc loc, Macro target, VM vm, Env env, Form.Queue args);
 
     public readonly string[] Args;
     public readonly BodyType Body;
@@ -17,9 +17,9 @@ public readonly struct Macro
         Body = body;
     }
 
-    public void Emit(Loc loc, VM vm, Lib lib, Form.Queue args)
+    public void Emit(Loc loc, VM vm, Env env, Form.Queue args)
     {
-        Body(loc, this, vm, lib, args);
+        Body(loc, this, vm, env, args);
     }
 
     public override string ToString()

@@ -9,14 +9,14 @@ public class Literal : Form
         Value = value;
     }
 
-    public override void Emit(VM vm, Lib lib, Form.Queue args)
+    public override void Emit(VM vm, Env env, Form.Queue args)
     {
             vm.Emit(Ops.Push.Make(Value));
     }
 
-    public override void EmitCall(VM vm, Lib lib, Form.Queue args)
+    public override void EmitCall(VM vm, Env env, Form.Queue args)
     {
-        Value.EmitCall(Loc, vm, lib, args);
+        Value.EmitCall(Loc, vm, env, args);
     }
 
     public override string ToString() {

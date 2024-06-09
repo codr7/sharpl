@@ -12,9 +12,9 @@ public class Call : Form
         this.args = args;
     }
 
-    public override void Emit(VM vm, Lib lib, Form.Queue args)
+    public override void Emit(VM vm, Env env, Form.Queue args)
     {
-        target.EmitCall(vm, lib, new Form.Queue(this.args));
+        target.EmitCall(vm, env, new Form.Queue(this.args));
     }
 
     public override string ToString() {
