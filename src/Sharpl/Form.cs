@@ -73,6 +73,17 @@ public abstract class Form
             return null;
         }
 
+        public Form? PopLast()
+        {
+            if (items.Last?.Value is Form f)
+            {
+                items.RemoveLast();
+                return f;
+            }
+
+            return null;
+        }
+
         public void Push(Form form)
         {
             items.AddLast(form);

@@ -1,6 +1,7 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
+using System.ComponentModel;
 using System.Text;
 
 public class Core : Lib
@@ -53,14 +54,15 @@ public class Core : Lib
 
             if (arity > 0)
             {
-                res = stack.Pop().Cast(loc, Core.Int);
-
                 if (arity == 1)
                 {
-                    res = -res;
+                    res = -stack.Pop().Cast(loc, Core.Int);
+
                 }
                 else
                 {
+                    stack.Reverse(arity);
+                    res = stack.Pop().Cast(loc, Core.Int);
                     arity--;
 
                     while (arity > 0)
@@ -73,6 +75,31 @@ public class Core : Lib
 
             stack.Push(Core.Int, res);
         });
+
+        BindMacro("check", ["expected", "body"], (loc, target, vm, lib, args) =>
+         {
+             var ef = args.Pop();
+
+             if (ef is null)
+             {
+                 throw new EmitError(loc, "Missing expected value");
+             }
+
+             while (true)
+             {
+                 if (args.Pop() is Form bf)
+                 {
+                     bf.Emit(vm, lib, args);
+                 }
+                 else
+                 {
+                     break;
+                 }
+             }
+
+             ef.Emit(vm, lib, args);
+             vm.Emit(Ops.Check.Make(loc, ef));
+         });
 
         BindMacro("define", ["id", "value"], (loc, target, vm, lib, args) =>
         {
@@ -92,6 +119,28 @@ public class Core : Lib
                 else
                 {
                     throw new EmitError(loc, "Missing value");
+                }
+            }
+        });
+
+        BindMacro("load", ["path"], (loc, target, vm, lib, args) =>
+        {
+            while (true)
+            {
+                if (args.Pop() is Form pf)
+                {
+                    if (vm.Eval(pf, lib, args) is Value p)
+                    {
+                        vm.Load(p.Cast(pf.Loc, Core.String), lib);
+                    }
+                    else
+                    {
+                        throw new EvalError(pf.Loc, "Missing path");
+                    }
+                }
+                else
+                {
+                    break;
                 }
             }
         });

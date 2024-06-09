@@ -20,7 +20,7 @@ public struct Call: Reader {
             throw new ReadError(loc, "Missing call target");
         }
 
-        var target = forms.Pop();
+        var target = forms.PopLast();
 
         if (target is null) {
             throw new ReadError(loc, "Missing call target");

@@ -1,9 +1,11 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add test suite
-** add load macro
-** add check macro
+* run check in separate namespace
+
+* load command line args in Program.cs
+
+* add Form.CollectIds()
 
 * add if macro
 

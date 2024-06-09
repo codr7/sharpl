@@ -119,6 +119,32 @@ public class VM
                         callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, false);
                         break;
                     }
+                case Op.T.Check:
+                    {
+                        var checkOp = (Ops.Check)op.Data;
+
+                        if (stack.Pop() is Value ev)
+                        {
+                            if (stack.Pop() is Value av)
+                            {
+                                if (!av.Equals(ev))
+                                {
+                                    throw new EvalError(checkOp.Loc, $"Check failed: expected {checkOp.Expected}, actual {av}!");
+                                }
+                            }
+                            else
+                            {
+                                throw new EvalError(checkOp.Loc, "Missing actual value");
+                            }
+                        }
+                        else
+                        {
+                            throw new EvalError(checkOp.Loc, "Missing expected value");
+                        }
+
+                        PC++;
+                        break;
+                    }
                 case Op.T.GetRegister:
                     {
                         var getOp = (Ops.GetRegister)op.Data;
@@ -160,6 +186,7 @@ public class VM
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
         form.Emit(this, lib, args);
+        Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         Eval(startPC, stack);
     }
