@@ -1,6 +1,8 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* drop recursive flag
+
 * add string/up/down methods
 ** test
 
@@ -11,6 +13,7 @@
 *** add SetArrayItem op
 
 * add let macro
+** add Begin/EndFrame ops
 ** add array get/set test
 
 * add for loop

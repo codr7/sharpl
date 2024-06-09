@@ -36,7 +36,7 @@ public class Core : Lib
         Bind("_", Value.Nil);
         Bind("T", Value.T);
 
-        BindMethod("+", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("+", [], (loc, target, vm, stack, arity) =>
         {
             var res = 0;
 
@@ -49,7 +49,7 @@ public class Core : Lib
             stack.Push(Core.Int, res);
         });
 
-        BindMethod("-", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("-", [], (loc, target, vm, stack, arity) =>
         {
             var res = 0;
 
@@ -153,7 +153,7 @@ public class Core : Lib
             }
         });
 
-        BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>
         {
             int b = stack.Pop().Cast(Core.Int);
             int g = stack.Pop().Cast(Core.Int);
@@ -162,7 +162,7 @@ public class Core : Lib
             stack.Push(Core.Color, System.Drawing.Color.FromArgb(255, r, g, b));
         });
 
-        BindMethod("say", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("say", [], (loc, target, vm, stack, arity) =>
         {
             stack.Reverse(arity);
             var res = new StringBuilder();

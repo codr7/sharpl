@@ -14,29 +14,29 @@ public class Term : Lib
 
         var term = new Sharpl.Term();
 
-        BindMethod("clear", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("clear", [], (loc, target, vm, stack, arity) =>
         {
             term.Clear();
         });
 
-        BindMethod("flush", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("flush", [], (loc, target, vm, stack, arity) =>
         {
             term.Flush();
         });
 
-        BindMethod("height", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("height", [], (loc, target, vm, stack, arity) =>
         {
             stack.Push(Value.Make(Core.Int, term.Height));
         });
 
-        BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var y = stack.Pop().Cast(loc, Core.Int);
             var x = stack.Pop().Cast(loc, Core.Int);
             term.MoveTo(new Point(x, y));
         });
 
-        BindMethod("read-key", ["echo"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("read-key", ["echo"], (loc, target, vm, stack, arity) =>
         {
             Value? echo = (arity == 0) ? null : stack.Pop();
 
@@ -53,7 +53,7 @@ public class Term : Lib
             stack.Push(Key, k);
         });
 
-        BindMethod("read-line", ["echo"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("read-line", ["echo"], (loc, target, vm, stack, arity) =>
         {
             Value? echo = (arity == 0) ? null : stack.Pop();
 
@@ -82,19 +82,19 @@ public class Term : Lib
             stack.Push(Core.String, res.ToString());
         });
 
-        BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity) =>
        {
            var c = stack.Pop().Cast(loc, Core.Color);
            term.SetBg(c);
        });
 
-        BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity) =>
         {
             var c = stack.Pop().Cast(loc, Core.Color);
             term.SetFg(c);
         });
 
-        BindMethod("width", [], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("width", [], (loc, target, vm, stack, arity) =>
         {
             stack.Push(Value.Make(Core.Int, term.Width));
         });

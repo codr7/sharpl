@@ -8,7 +8,7 @@ public class String : Lib
 {
     public String() : base("string", null)
     {
-        BindMethod("join", ["separator"], (loc, target, vm, stack, arity, recursive) =>
+        BindMethod("join", ["separator"], (loc, target, vm, stack, arity) =>
         {
             stack.Reverse(arity);
             var sep = stack.Pop();
