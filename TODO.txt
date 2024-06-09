@@ -3,7 +3,9 @@
 
 * add VM.Config
 ** struct with default values
-** including readers
+
+* move read functions from VM to Form
+** convert readers to vararg
 
 * add dynamic bindings
 ** check if binding exists in let macro emit
@@ -13,6 +15,8 @@
 
 * add for loop
 ** add array iterator
+** add char iterator
+** add step iterator
 
 * add support for \r\n\t in string literals
 ** add support to String Dump
