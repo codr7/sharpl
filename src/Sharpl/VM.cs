@@ -334,9 +334,8 @@ public class VM
     {
         var term = new Term();
         term.SetFg(Color.FromArgb(255, 252, 173, 3));
-        term.Write("Sharpl ");
+        term.Write($"Sharpl v{VERSION}\n\n");
         term.Reset();
-        term.Write($"v{VERSION}\n\n");
         
         var buffer = new StringBuilder();
         var stack = new Stack(32);
