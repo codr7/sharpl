@@ -15,6 +15,7 @@ public struct Call: Reader {
         var formLoc = loc;
         loc.Column++;
         source.Read();
+        WhiteSpace.Instance.Read(source, vm, ref loc, forms);
 
         if (!vm.ReadForm(source, ref loc, forms)) {
             throw new ReadError(loc, "Missing call target");
@@ -33,7 +34,7 @@ public struct Call: Reader {
             c = source.Peek();
 
             if (c == -1) {
-                throw new ReadError(loc, "Unexpected end of call form");
+                throw new ReadError(loc, "Unexpected end of call");
             }
             
             if (c == ')') {
@@ -43,7 +44,7 @@ public struct Call: Reader {
             }
 
             if (!vm.ReadForm(source, ref loc, args)) {
-                throw new ReadError(loc, "Unexpected end of call form");
+                throw new ReadError(loc, "Unexpected end of call");
             }
         }
 

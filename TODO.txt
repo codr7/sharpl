@@ -1,15 +1,17 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add array reader
-** copy call reader
-** add array form
-*** add MakeArray op
-*** add SetArrayItem op
+* add array get/set test
 
-* add let macro
-** add Begin/EndFrame ops
-** add array get/set test
+* add VM.Config
+** struct with default values
+** including readers
+
+* add dynamic bindings
+** check if binding exists in let macro emit
+*** backup/restore value if it exists
+*** separate register
+*** add CopyRegister op
 
 * add for loop
 ** add array iterator
@@ -109,3 +111,10 @@ fib
 
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
+
+* add op lib
+** add --emit flag
+** (import op)
+*** add import macro
+** (push x)
+** define as macros emitting ops

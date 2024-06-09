@@ -1,7 +1,7 @@
 namespace Sharpl;
 
 using System.Text;
-
+using Sharpl.Libs;
 using PC = int;
 
 public class VM
@@ -20,12 +20,13 @@ public class VM
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
     private ArrayStack<int> frames = new ArrayStack<int>(1024);
     private List<Label> labels = new List<Label>();
-    private String loadPath = "";
+    private string loadPath = "";
     private ArrayStack<Value> registers = new ArrayStack<Value>(1024);
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
 
+        Readers.Array.Instance,
         Readers.Call.Instance,
         Readers.Int.Instance,
         Readers.String.Instance,
@@ -84,6 +85,12 @@ public class VM
 
             switch (op.Type)
             {
+                case Op.T.BeginFrame:
+                    {
+                        BeginFrame();
+                        PC++;
+                        break;
+                    }
                 case Op.T.CallDirect:
                     {
                         var callOp = (Ops.CallDirect)op.Data;
@@ -140,18 +147,32 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.CreateArray:
+                    {
+                        var createOp = (Ops.CreateArray)op.Data;
+                        stack.Push(Value.Make(Core.Array, new Value[createOp.Length]));
+                        PC++;
+                        break;
+                    }
+                case Op.T.EndFrame:
+                    {
+                        EndFrame();
+                        PC++;
+                        break;
+                    }
                 case Op.T.GetRegister:
                     {
                         var getOp = (Ops.GetRegister)op.Data;
                         stack.Push(GetRegister(getOp.FrameOffset, getOp.Index));
+                        PC++;
                         break;
                     }
                 case Op.T.Goto:
                     {
                         var gotoOp = (Ops.Goto)op.Data;
-                        #pragma warning disable CS8629               
+#pragma warning disable CS8629
                         PC = (PC)gotoOp.Target.PC;
-                        #pragma warning restore CS8629               
+#pragma warning restore CS8629
                         break;
                     }
                 case Op.T.Push:
@@ -161,10 +182,25 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.SetArrayItem:
+                    {
+                        var setOp = (Ops.SetArrayItem)op.Data;
+                        var v = stack.Pop();
+                        stack.Peek().Cast(Core.Array)[setOp.Index] = v;
+                        PC++;
+                        break;
+                    }
                 case Op.T.SetLoadPath:
                     {
                         var setOp = (Ops.SetLoadPath)op.Data;
                         loadPath = setOp.Path;
+                        PC++;
+                        break;
+                    }
+                case Op.T.SetRegister:
+                    {
+                        var setOp = (Ops.SetRegister)op.Data;
+                        SetRegister(setOp.FrameOffset, setOp.Index, stack.Pop());
                         PC++;
                         break;
                     }
@@ -208,14 +244,14 @@ public class VM
     }
 
 
-    public void Load(String path, Env env)
+    public void Load(string path, Env env)
     {
         var prevLoadPath = loadPath;
         var p = Path.Combine(loadPath, path);
 
         try
         {
-            if (Path.GetDirectoryName(p) is String d)
+            if (Path.GetDirectoryName(p) is string d)
             {
                 loadPath = d;
             }

@@ -24,10 +24,12 @@ public abstract class Form
     {
         private LinkedList<Form> items = new LinkedList<Form>();
 
-        public Queue(): this([]) {}
-        
-        public Queue(Form[] items) {
-            foreach (var it in items) {
+        public Queue() : this([]) { }
+
+        public Queue(Form[] items)
+        {
+            foreach (var it in items)
+            {
                 Push(it);
             }
         }
@@ -53,13 +55,24 @@ public abstract class Form
                 var res = new Form[items.Count];
                 var i = 0;
 
-                foreach (var f in items) {
+                foreach (var f in items)
+                {
                     res[i] = f;
                     i++;
                 }
 
                 return res;
             }
+        }
+
+        public Form? Peek()
+        {
+            if (items.First?.Value is Form f)
+            {
+                return f;
+            }
+
+            return null;
         }
 
         public Form? Pop()

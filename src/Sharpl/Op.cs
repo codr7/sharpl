@@ -4,10 +4,12 @@ public readonly struct Op
 {
     public enum T
     {
-        CallDirect, CallIndirect, CallMethod, CallPrim, Check,
+        BeginFrame,
+        CallDirect, CallIndirect, CallMethod, CallPrim, Check, CreateArray,
+        EndFrame,
         GetRegister, Goto,
         Push,
-        SetLoadPath, Stop
+        SetArrayItem, SetLoadPath, SetRegister, Stop
     };
 
     public readonly dynamic Data;

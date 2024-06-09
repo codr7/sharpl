@@ -8,6 +8,9 @@
   (define foo 42)
   foo)
 
+(check 42
+  (let [x 42] x))
+
 (check 3
   (+ 1 2))
   

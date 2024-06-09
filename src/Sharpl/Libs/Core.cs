@@ -86,7 +86,8 @@ public class Core : Lib
                  throw new EmitError(loc, "Missing expected value");
              }
 
-            var bodyEnv = new Env(env);
+             var bodyEnv = new Env(env);
+             vm.Emit(Ops.BeginFrame.Make());
 
              while (true)
              {
@@ -100,6 +101,7 @@ public class Core : Lib
                  }
              }
 
+             vm.Emit(Ops.EndFrame.Make());
              ef.Emit(vm, new Env(env), args);
              vm.Emit(Ops.Check.Make(loc, ef));
          });
@@ -128,7 +130,42 @@ public class Core : Lib
 
         BindMacro("do", [], (loc, target, vm, env, args) =>
         {
+            vm.Emit(Ops.BeginFrame.Make());
             args.Emit(vm, new Env(env));
+            vm.Emit(Ops.EndFrame.Make());
+        });
+
+        BindMacro("let", ["bindings"], (loc, target, vm, env, args) =>
+        {           
+            if (args.Pop() is Forms.Array bsf) {
+                var bs = bsf.Items;
+                vm.Emit(Ops.BeginFrame.Make());
+                var bodyEnv = new Env(env);
+                var registerIndex = 0;
+                var valueArgs = new Form.Queue();
+
+                for (var i = 0; i < bs.Length; i++) {
+                    var idf = bs[i];
+                    i++;
+                    var vf = bs[i];
+                    bodyEnv.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, registerIndex)));
+                    vf.Emit(vm, bodyEnv, valueArgs);
+                    vm.Emit(Ops.SetRegister.Make(0, registerIndex));
+                    registerIndex++;
+                }
+
+                while (true) {
+                    if (args.Pop() is Form f) {
+                        f.Emit(vm, bodyEnv, args);
+                    } else {
+                        break;
+                    }
+                }
+
+                vm.Emit(Ops.EndFrame.Make());
+            } else {
+                throw new EmitError(loc, "Missing bindings");
+            }
         });
 
         BindMacro("load", ["path"], (loc, target, vm, env, args) =>

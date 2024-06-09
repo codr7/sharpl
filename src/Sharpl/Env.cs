@@ -9,6 +9,15 @@ public class Env
     public Env(Env? parent)
     {
         Parent = parent;
+
+        for (var p = parent; p is Env; p = p.Parent) {
+            foreach (var b in p.bindings) {
+                if (b.Value.Type == Core.Binding) {
+                    var v = b.Value.Cast(Core.Binding);
+                    Bind(b.Key, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
+                }
+            }
+        }
     }
 
     public Value? this[string id]

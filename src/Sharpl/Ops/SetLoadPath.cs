@@ -1,8 +1,8 @@
 namespace Sharpl.Ops;
 
-public readonly record struct SetLoadPath(String Path)
+public readonly record struct SetLoadPath(string Path)
 {
-    public static Op Make(String path)
+    public static Op Make(string path)
     {
         return new Op(Op.T.SetLoadPath, new SetLoadPath(path));
     }
