@@ -103,10 +103,3 @@ fib
 
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
-
-* add op lib
-** add --emit flag
-** (import op)
-*** add import macro
-** (push x)
-** define as macros emitting ops
