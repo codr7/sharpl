@@ -26,6 +26,10 @@ public struct Id: Reader {
             source.Read();
             buffer.Append(cc);
             loc.Column++;
+
+            if (cc == '^' && buffer.Length == 1) {
+                break;
+            }
         }
 
         if (buffer.Length == 0) {

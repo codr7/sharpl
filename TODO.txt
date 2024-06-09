@@ -1,6 +1,9 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* add string/up/down methods
+** test
+
 * add array reader
 ** copy call reader
 ** add array form
@@ -8,6 +11,7 @@
 *** add SetArrayItem op
 
 * add let macro
+** add array get/set test
 
 * add for loop
 ** add array iterator
@@ -25,8 +29,16 @@
       words (string/split input "\r\n\t .,?!")
       result {}]
   (for w words
-    (inc (result w)))
-  (say result))
+    (inc (result (string/down w))))
+
+  (let [wcs (apply Array result)
+        swcs (sort wcs (^[l r] (> (rest l) (rest r))))
+        i 0]
+  (for wc swcs
+    (say (second wc) " " (first wc))
+
+    (if (> 10 (inc i)
+      (stop))))))
 
 * add IO lib
 ** open
