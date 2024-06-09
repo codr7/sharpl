@@ -1,10 +1,11 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add if macro
+* add test suite
+** add load macro
+** add check macro
 
-* add load support
-** claes
+* add if macro
 
 * add /
 ** like -

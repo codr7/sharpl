@@ -7,7 +7,7 @@ public readonly struct Op
         CallDirect, CallIndirect, CallMethod, CallPrim,
         GetRegister, Goto,
         Push,
-        Stop
+        SetLoadPath, Stop
     };
 
     public readonly dynamic Data;

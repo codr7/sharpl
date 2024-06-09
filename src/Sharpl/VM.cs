@@ -23,6 +23,7 @@ public class VM
     private ArrayStack<Op> code = new ArrayStack<Op>(1024);
     private ArrayStack<int> frames = new ArrayStack<int>(1024);
     private List<Label> labels = new List<Label>();
+    private String loadPath = "";
     private ArrayStack<Value> registers = new ArrayStack<Value>(1024);
 
     private Reader[] readers = [
@@ -137,6 +138,13 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.SetLoadPath:
+                    {
+                        var setOp = (Ops.SetLoadPath)op.Data;
+                        loadPath = setOp.Path;
+                        PC++;
+                        break;
+                    }
                 case Op.T.Stop:
                     {
                         PC++;
@@ -156,7 +164,8 @@ public class VM
         Eval(startPC, stack);
     }
 
-    public Value? Eval(Form form, Lib lib, Form.Queue args) {
+    public Value? Eval(Form form, Lib lib, Form.Queue args)
+    {
         var stack = new Stack(STACK_SIZE);
         Eval(form, lib, args, stack);
         return stack.Pop();
@@ -174,6 +183,43 @@ public class VM
         return l;
     }
 
+
+    public void Load(String path, Lib lib)
+    {
+        var prevLoadPath = loadPath;
+        var p = Path.Combine(loadPath, path);
+
+        try
+        {
+            if (Path.GetDirectoryName(p) is String d)
+            {
+                loadPath = d;
+            }
+
+            var loc = new Loc(path);
+
+            using (StreamReader source = new StreamReader(path, Encoding.UTF8))
+            {
+                var c = source.Peek();
+
+                if (c == '#')
+                {
+                    source.ReadLine();
+                    loc.NewLine();
+                }
+
+                var forms = ReadForms(source, ref loc);
+                Emit(Ops.SetLoadPath.Make(loadPath));
+                forms.Emit(this, lib);
+                Emit(Ops.SetLoadPath.Make(prevLoadPath));
+            }
+        }
+        finally
+        {
+            loadPath = prevLoadPath;
+        }
+
+    }
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
     {
