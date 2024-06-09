@@ -8,6 +8,6 @@ public readonly record struct CallDirect(Loc Loc, Value Target, int Arity)
     }
 
     public override string ToString() {
-        return $"(call-direct {Arity})";
+        return $"(call-direct {Loc} {Target} {Arity})";
     }    
 }

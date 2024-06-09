@@ -36,23 +36,15 @@ public class ArrayType : Type<Value[]>
                 }
             case 2:
                 {
-                    var i = stack.Pop().Cast(Core.Int);
-                    target.Cast(this)[i] = stack.Pop();
+                    var v = stack.Pop();
+                    target.Cast(this)[stack.Pop().Cast(Core.Int)] = v;
                     break;
                 }
             default:
-                throw new EvalError(loc, "Wrong number of arguments");
+                throw new EvalError(loc, $"Wrong number of arguments: {arity}");
 
         }
-
-        if (arity != 0)
-        {
-            throw new EvalError(loc, "Wrong number of arguments");
-        }
-
-        stack.Push(target);
     }
-
 
     public override void Dump(Value value, StringBuilder result)
     {
@@ -71,6 +63,27 @@ public class ArrayType : Type<Value[]>
         }
 
         result.Append(']');
+    }
+
+    public override bool Equals(Value left, Value right)
+    {
+        var lv = left.Cast(this);
+        var rv = right.Cast(this);
+
+        if (lv.Length != rv.Length)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < lv.Length; i++)
+        {
+            if (!lv[i].Equals(rv[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public override void Say(Value value, StringBuilder result)

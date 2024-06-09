@@ -20,6 +20,15 @@
 (check (- 2)
   (- 1 3))
 
+(check 2
+  (let [x [1 2 3]]
+    (x 1)))
+    
+(check [1 4 3]
+  (let [x [1 2 3]]
+    (x 1 4)
+    x))
+
 (check "FOO"
   (string/up "Foo"))
 

@@ -15,9 +15,10 @@ public abstract class Form
 
     public virtual void EmitCall(VM vm, Env env, Form.Queue args)
     {
+        var arity = args.Count;
         args.Emit(vm, env);
         Emit(vm, env, new Form.Queue());
-        vm.Emit(Ops.CallIndirect.Make(Loc, args.Count));
+        vm.Emit(Ops.CallIndirect.Make(Loc, arity));
     }
 
     public class Queue

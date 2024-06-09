@@ -1,8 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add array get/set test
-
 * add VM.Config
 ** struct with default values
 ** including readers
