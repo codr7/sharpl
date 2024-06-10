@@ -34,3 +34,13 @@
 
 (check "foo"
   (string/down "Foo"))
+
+
+
+(load "test-lib.sl")
+
+(check 42
+  test/foo)
+
+(check user
+  (lib))

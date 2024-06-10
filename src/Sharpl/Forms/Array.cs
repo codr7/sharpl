@@ -11,7 +11,7 @@ public class Array : Form
         Items = items;
     }
 
-    public override void Emit(VM vm, Env env, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args)
     {
         var itemArgs = new Form.Queue();
 
@@ -19,7 +19,7 @@ public class Array : Form
         var i = 0;
 
         foreach (var f in Items) {
-            f.Emit(vm, env, itemArgs);
+            f.Emit(vm, itemArgs);
             vm.Emit(Ops.SetArrayItem.Make(i));
             i++;
         }

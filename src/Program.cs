@@ -18,7 +18,7 @@ if (args.Length == 0) {
     }
     
     vm.UserLib.Bind("ARGS", Value.Make(Core.Array, vs));
-    vm.Load(args[0], vm.UserLib);
+    vm.Load(args[0]);
     vm.Emit(Ops.Stop.Make());
     vm.Eval(startPC);
 }

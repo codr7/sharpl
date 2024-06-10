@@ -1,6 +1,7 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
+using System.ComponentModel;
 using System.Text;
 
 public class Core : Lib
@@ -75,7 +76,7 @@ public class Core : Lib
             stack.Push(Core.Int, res);
         });
 
-        BindMacro("check", ["expected", "body"], (loc, target, vm, env, args) =>
+        BindMacro("check", ["expected", "body"], (loc, target, vm, args) =>
          {
              var ef = args.Pop();
 
@@ -84,27 +85,34 @@ public class Core : Lib
                  throw new EmitError(loc, "Missing expected value");
              }
 
-             var bodyEnv = new Env(env);
              vm.Emit(Ops.BeginFrame.Make());
+             vm.PushEnv();
 
-             while (true)
+             try
              {
-                 if (args.Pop() is Form bf)
+                 while (true)
                  {
-                     bf.Emit(vm, bodyEnv, args);
+                     if (args.Pop() is Form bf)
+                     {
+                         bf.Emit(vm, args);
+                     }
+                     else
+                     {
+                         break;
+                     }
                  }
-                 else
-                 {
-                     break;
-                 }
-             }
 
-             vm.Emit(Ops.EndFrame.Make());
-             ef.Emit(vm, new Env(env), args);
-             vm.Emit(Ops.Check.Make(loc, ef));
+                 vm.Emit(Ops.EndFrame.Make());
+                 ef.Emit(vm, args);
+                 vm.Emit(Ops.Check.Make(loc, ef));
+             }
+             finally
+             {
+                 vm.PopEnv();
+             }
          });
 
-        BindMacro("define", ["id", "value"], (loc, target, vm, env, args) =>
+        BindMacro("define", ["id", "value"], (loc, target, vm, args) =>
         {
             while (true)
             {
@@ -115,9 +123,9 @@ public class Core : Lib
                     break;
                 }
 
-                if (args.Pop() is Form f && vm.Eval(f, env, args) is Value v)
+                if (args.Pop() is Form f && vm.Eval(f, args) is Value v)
                 {
-                    env.Bind(((Forms.Id)id).Name, v);
+                    vm.Env.Bind(((Forms.Id)id).Name, v);
                 }
                 else
                 {
@@ -126,55 +134,108 @@ public class Core : Lib
             }
         });
 
-        BindMacro("do", [], (loc, target, vm, env, args) =>
+        BindMacro("do", [], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make());
-            args.Emit(vm, new Env(env));
+            vm.PushEnv();
+
+            try
+            {
+                args.Emit(vm);
+            }
+            finally
+            {
+                vm.PopEnv();
+            }
+
             vm.Emit(Ops.EndFrame.Make());
         });
 
-        BindMacro("let", ["bindings"], (loc, target, vm, env, args) =>
-        {           
-            if (args.Pop() is Forms.Array bsf) {
+        BindMacro("let", ["bindings"], (loc, target, vm, args) =>
+        {
+            if (args.Pop() is Forms.Array bsf)
+            {
                 var bs = bsf.Items;
                 vm.Emit(Ops.BeginFrame.Make());
-                var bodyEnv = new Env(env);
-                var registerIndex = 0;
-                var valueArgs = new Form.Queue();
+                vm.PushEnv();
 
-                for (var i = 0; i < bs.Length; i++) {
-                    var idf = bs[i];
-                    i++;
-                    var vf = bs[i];
-                    bodyEnv.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, registerIndex)));
-                    vf.Emit(vm, bodyEnv, valueArgs);
-                    vm.Emit(Ops.SetRegister.Make(0, registerIndex));
-                    registerIndex++;
-                }
+                try
+                {
+                    var registerIndex = 0;
+                    var valueArgs = new Form.Queue();
 
-                while (true) {
-                    if (args.Pop() is Form f) {
-                        f.Emit(vm, bodyEnv, args);
-                    } else {
-                        break;
+                    for (var i = 0; i < bs.Length; i++)
+                    {
+                        var idf = bs[i];
+                        i++;
+                        var vf = bs[i];
+                        vm.Env.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, registerIndex)));
+                        vf.Emit(vm, valueArgs);
+                        vm.Emit(Ops.SetRegister.Make(0, registerIndex));
+                        registerIndex++;
                     }
-                }
 
-                vm.Emit(Ops.EndFrame.Make());
-            } else {
+                    while (true)
+                    {
+                        if (args.Pop() is Form f)
+                        {
+                            f.Emit(vm, args);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    vm.Emit(Ops.EndFrame.Make());
+                }
+                finally
+                {
+                    vm.PopEnv();
+                }
+            }
+            else
+            {
                 throw new EmitError(loc, "Missing bindings");
             }
         });
 
-        BindMacro("load", ["path"], (loc, target, vm, env, args) =>
+        BindMacro("lib", [], (loc, target, vm, args) =>
+        {
+            if (args.Count == 0)
+            {
+                vm.Emit(Ops.Push.Make(Value.Make(Core.Lib, vm.Lib)));
+            }
+            else if (args.Pop() is Forms.Id nf)
+            {
+                Lib? lib = null;
+
+                if (vm.Env.Find(nf.Name) is Value v)
+                {
+                    lib = v.Cast(loc, Core.Lib);
+                }
+                else
+                {
+                    lib = new Lib(nf.Name, vm.Env);
+                    vm.Env.BindLib(lib);
+                    vm.Env = lib;
+                }
+            }
+            else
+            {
+                throw new EmitError(loc, "Invalid library name");
+            }
+        });
+
+        BindMacro("load", ["path"], (loc, target, vm, args) =>
         {
             while (true)
             {
                 if (args.Pop() is Form pf)
                 {
-                    if (vm.Eval(pf, env, args) is Value p)
+                    if (vm.Eval(pf, args) is Value p)
                     {
-                        vm.Load(p.Cast(pf.Loc, Core.String), env);
+                        vm.Load(p.Cast(pf.Loc, Core.String));
                     }
                     else
                     {

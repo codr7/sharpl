@@ -1,6 +1,8 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* trace ops in light blue color
+
 * add dynamic bindings
 ** check if binding exists in let macro emit
 *** backup/restore value if it exists

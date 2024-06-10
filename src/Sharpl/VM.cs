@@ -26,11 +26,13 @@ public class VM
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null);
 
+
     public PC PC = 0;
 
     private readonly ArrayStack<Call> calls;
     private readonly ArrayStack<Op> code;
     private readonly Config config;
+    private Env? env;
     private readonly ArrayStack<int> frames;
     private readonly List<Label> labels = new List<Label>();
     private string loadPath = "";
@@ -60,6 +62,8 @@ public class VM
         UserLib.BindLib(StringLib);
         UserLib.BindLib(TermLib);
         UserLib.BindLib(UserLib);
+
+        Env = UserLib;
     }
 
     public int AllocRegister()
@@ -90,6 +94,23 @@ public class VM
     public void EndFrame()
     {
         frames.Pop();
+    }
+
+    public Env Env {
+        get => env ?? UserLib;
+        set => env = value;
+    }
+
+    public void PushEnv() {
+        env = new Env(env);
+    }
+
+    public void PopEnv() {
+        if (env is null) {
+            throw new Exception("No active env");
+        }
+
+        env = env.Parent;
     }
 
     public void Eval(PC startPC, Stack stack)
@@ -230,21 +251,21 @@ public class VM
         Eval(startPC, new Stack(config.MaxStackSize));
     }
 
-    public void Eval(Form form, Env env, Form.Queue args, Stack stack)
+    public void Eval(Form form, Form.Queue args, Stack stack)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        form.Emit(this, env, args);
+        form.Emit(this, args);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         Eval(startPC, stack);
     }
 
-    public Value? Eval(Form form, Env env, Form.Queue args)
+    public Value? Eval(Form form, Form.Queue args)
     {
         var stack = new Stack(config.MaxStackSize);
-        Eval(form, env, args, stack);
+        Eval(form, args, stack);
         return stack.Pop();
     }
 
@@ -260,9 +281,21 @@ public class VM
         return l;
     }
 
+    public Lib Lib {
+        get {
+            for (Env? e = Env; e is Env; e = e.Parent) {
+                if (e is Lib l) {
+                    return l;
+                }
+            }
 
-    public void Load(string path, Env env)
+            return UserLib;
+        }
+    }
+
+    public void Load(string path)
     {
+        var prevEnv = Env;
         var prevLoadPath = loadPath;
         var p = Path.Combine(loadPath, path);
 
@@ -287,12 +320,13 @@ public class VM
 
                 var forms = ReadForms(source, ref loc);
                 Emit(Ops.SetLoadPath.Make(loadPath));
-                forms.Emit(this, env);
+                forms.Emit(this);
                 Emit(Ops.SetLoadPath.Make(prevLoadPath));
             }
         }
         finally
-        {
+        {  
+            Env = prevEnv;
             loadPath = prevLoadPath;
         }
 
@@ -362,7 +396,7 @@ public class VM
 
                 try
                 {
-                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, UserLib);
+                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this);
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
                     term.SetFg(Color.FromArgb(255, 0, 255, 0));

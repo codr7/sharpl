@@ -4,7 +4,7 @@ using Libs;
 
 public class Lib: Env
 {
-    public Lib(string name, Lib? parent): base(parent)
+    public Lib(string name, Env? parent): base(parent)
     {
         Name = name;
     }

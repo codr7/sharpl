@@ -4,7 +4,7 @@ public class MethodType : Type<Method>
 {
     public MethodType(string name) : base(name) { }
 
-    public override void EmitCall(Loc loc, VM vm, Env env, Value target, Form.Queue args)
+    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var m = target.Cast(this);
         var arity = args.Count;
@@ -14,7 +14,7 @@ public class MethodType : Type<Method>
             throw new EmitError(loc, $"Not enough arguments: {m}");
         }
 
-        args.Emit(vm, env);
+        args.Emit(vm);
         vm.Emit(Ops.CallMethod.Make(loc, m, arity));
     }
 }

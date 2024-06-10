@@ -36,14 +36,14 @@ public abstract class AnyType
         result.Append(value.Data.ToString());
     }
 
-    public virtual void EmitCall(Loc loc, VM vm, Env env, Value target, Form.Queue args)
+    public virtual void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var arity = args.Count;
-        args.Emit(vm, env);
+        args.Emit(vm);
         vm.Emit(Ops.CallDirect.Make(loc, target, arity));
     }
 
-    public virtual void EmitId(Loc loc, VM vm, Env env, Value value, Form.Queue args)
+    public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args)
     {
         vm.Emit(Ops.Push.Make(value));
     }

@@ -32,11 +32,11 @@ public class Id : Form
         Name = name;
     }
 
-    public override void Emit(VM vm, Env env, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args)
     {
-        if (Find(Name, env, Loc) is Value v)
+        if (Find(Name, vm.Env, Loc) is Value v)
         {
-            v.EmitId(Loc, vm, env, args);
+            v.EmitId(Loc, vm, args);
         }
         else
         {
@@ -44,11 +44,11 @@ public class Id : Form
         }
     }
 
-    public override void EmitCall(VM vm, Env env, Form.Queue args)
+    public override void EmitCall(VM vm, Form.Queue args)
     {
-        if (Find(Name, env, Loc) is Value v)
+        if (Find(Name, vm.Env, Loc) is Value v)
         {
-            v.EmitCall(Loc, vm, env, args);
+            v.EmitCall(Loc, vm, args);
         }
         else
         {
