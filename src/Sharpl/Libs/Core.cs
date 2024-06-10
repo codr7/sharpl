@@ -3,6 +3,7 @@ namespace Sharpl.Libs;
 using Sharpl.Types.Core;
 using System.ComponentModel;
 using System.Text;
+using System.Xml.XPath;
 
 public class Core : Lib
 {
@@ -34,6 +35,26 @@ public class Core : Lib
         Bind("F", Value.F);
         Bind("_", Value.Nil);
         Bind("T", Value.T);
+
+        BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
+        {
+            var v = stack.Pop();
+            arity--;
+            var res = true;
+
+            while (arity > 0)
+            {
+                if (!stack.Pop().Equals(v))
+                {
+                    res = false;
+                    break;
+                }
+
+                arity--;
+            }
+
+            stack.Push(Value.Make(Core.Bit, res));
+        });
 
         BindMethod("+", [], (loc, target, vm, stack, arity) =>
         {
@@ -71,6 +92,35 @@ public class Core : Lib
                         arity--;
                     }
                 }
+            }
+
+            stack.Push(Core.Int, res);
+        });
+
+        BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
+         {
+             var res = stack.Pop().Cast(loc, Core.Int);
+             arity--;
+
+             while (arity > 0)
+             {
+                 res *= stack.Pop().Cast(loc, Core.Int);
+                 arity--;
+             }
+
+             stack.Push(Core.Int, res);
+         });
+
+        BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
+        {
+            stack.Reverse(arity);
+            var res = stack.Pop().Cast(loc, Core.Int);
+            arity--;
+
+            while (arity > 0)
+            {
+                res /= stack.Pop().Cast(loc, Core.Int);
+                arity--;
             }
 
             stack.Push(Core.Int, res);

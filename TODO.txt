@@ -12,6 +12,8 @@
 *** separate register
 *** add CopyRegister op
 
+* add if macro
+
 * add for loop
 ** add array iterator
 ** add char iterator
@@ -58,13 +60,6 @@
 
 * add Form.CollectIds()
 
-* add if macro
-
-* add /
-** like -
-
-* add =
-
 * add maps/sets
 ** add map reader
 
@@ -87,11 +82,6 @@
 
 * add dec macro
 ** how do you dec a map entry?
-
-* add let macro
-** add frames
-
-* add ^-macro
 
 * add tail calls
 
