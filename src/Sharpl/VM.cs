@@ -28,6 +28,7 @@ public class VM
 
 
     public PC PC = 0;
+    public readonly Term Term = new Term();
 
     private readonly ArrayStack<Call> calls;
     private readonly ArrayStack<Op> code;
@@ -96,21 +97,17 @@ public class VM
         frames.Pop();
     }
 
-    public Env Env {
+    public Env Env
+    {
         get => env ?? UserLib;
         set => env = value;
     }
 
-    public void PushEnv() {
-        env = new Env(env);
-    }
-
-    public void PopEnv() {
-        if (env is null) {
-            throw new Exception("No active env");
+    public void Decode(PC startPC) {
+        for (var pc = startPC; pc < code.Count; pc++) {
+            Term.SetFg(Color.FromArgb(255, 128, 128, 255));
+            Term.Write($"{pc, -4} {code[pc]}\n");
         }
-
-        env = env.Parent;
     }
 
     public void Eval(PC startPC, Stack stack)
@@ -120,8 +117,6 @@ public class VM
         while (true)
         {
             var op = code[PC];
-
-            Console.WriteLine(op);
 
             switch (op.Type)
             {
@@ -281,10 +276,14 @@ public class VM
         return l;
     }
 
-    public Lib Lib {
-        get {
-            for (Env? e = Env; e is Env; e = e.Parent) {
-                if (e is Lib l) {
+    public Lib Lib
+    {
+        get
+        {
+            for (Env? e = Env; e is Env; e = e.Parent)
+            {
+                if (e is Lib l)
+                {
                     return l;
                 }
             }
@@ -325,11 +324,26 @@ public class VM
             }
         }
         finally
-        {  
+        {
             Env = prevEnv;
             loadPath = prevLoadPath;
         }
 
+    }
+
+    public void PopEnv()
+    {
+        if (env is null)
+        {
+            throw new Exception("No active env");
+        }
+
+        env = env.Parent;
+    }
+
+    public void PushEnv()
+    {
+        env = new Env(env);
     }
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
@@ -366,11 +380,10 @@ public class VM
 
     public void REPL()
     {
-        var term = new Term();
-        term.SetFg(Color.FromArgb(255, 252, 173, 3));
-        term.Write($"Sharpl v{VERSION}\n\n");
-        term.Reset();
-        
+        Term.SetFg(Color.FromArgb(255, 252, 173, 3));
+        Term.Write($"Sharpl v{VERSION}\n\n");
+        Term.Reset();
+
         var buffer = new StringBuilder();
         var stack = new Stack(32);
         var loc = new Loc("repl");
@@ -378,10 +391,10 @@ public class VM
 
         while (true)
         {
-            term.SetFg(Color.FromArgb(255, 128, 128, 128));
-            term.Write($"{(loc.Line + bufferLines),4} ");
-            term.Reset();
-            term.Flush();
+            Term.SetFg(Color.FromArgb(255, 128, 128, 128));
+            Term.Write($"{(loc.Line + bufferLines),4} ");
+            Term.Reset();
+            Term.Flush();
 
             var line = Console.In.ReadLine();
 
@@ -399,15 +412,16 @@ public class VM
                     ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this);
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
-                    term.SetFg(Color.FromArgb(255, 0, 255, 0));
-                    term.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
-                    term.Reset();
+                    
+                    Term.SetFg(Color.FromArgb(255, 0, 255, 0));
+                    Term.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
+                    Term.Reset();
                 }
                 catch (Exception e)
                 {
-                    term.SetFg(Color.FromArgb(255, 255, 0, 0));
-                    term.WriteLine(e);
-                    term.Reset();
+                    Term.SetFg(Color.FromArgb(255, 255, 0, 0));
+                    Term.WriteLine(e);
+                    Term.Reset();
                 }
                 finally
                 {
@@ -415,7 +429,7 @@ public class VM
                     bufferLines = 0;
                 }
 
-                term.Write("\n");
+                Term.Write("\n");
             }
             else
             {

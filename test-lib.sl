@@ -3,4 +3,4 @@
 (check test
   (lib))
 
-(define foo 42)
+(define foo 35)

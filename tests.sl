@@ -39,8 +39,14 @@
 
 (load "test-lib.sl")
 
+(lib test
+  (check test
+    (lib))
+    
+  (define bar (+ foo 7)))
+
 (check 42
-  test/foo)
+  test/bar)
 
 (check user
   (lib))

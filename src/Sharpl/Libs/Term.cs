@@ -12,28 +12,26 @@ public class Term : Lib
     {
         BindType(Key);
 
-        var term = new Sharpl.Term();
-
         BindMethod("clear", [], (loc, target, vm, stack, arity) =>
         {
-            term.Clear();
+            vm.Term.Clear();
         });
 
         BindMethod("flush", [], (loc, target, vm, stack, arity) =>
         {
-            term.Flush();
+            vm.Term.Flush();
         });
 
         BindMethod("height", [], (loc, target, vm, stack, arity) =>
         {
-            stack.Push(Value.Make(Core.Int, term.Height));
+            stack.Push(Value.Make(Core.Int, vm.Term.Height));
         });
 
         BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var y = stack.Pop().Cast(loc, Core.Int);
             var x = stack.Pop().Cast(loc, Core.Int);
-            term.MoveTo(new Point(x, y));
+            vm.Term.MoveTo(new Point(x, y));
         });
 
         BindMethod("read-key", ["echo"], (loc, target, vm, stack, arity) =>
@@ -85,18 +83,18 @@ public class Term : Lib
         BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity) =>
        {
            var c = stack.Pop().Cast(loc, Core.Color);
-           term.SetBg(c);
+           vm.Term.SetBg(c);
        });
 
         BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity) =>
         {
             var c = stack.Pop().Cast(loc, Core.Color);
-            term.SetFg(c);
+            vm.Term.SetFg(c);
         });
 
         BindMethod("width", [], (loc, target, vm, stack, arity) =>
         {
-            stack.Push(Value.Make(Core.Int, term.Width));
+            stack.Push(Value.Make(Core.Int, vm.Term.Width));
         });
     }
 }

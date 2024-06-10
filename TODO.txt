@@ -1,7 +1,10 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* trace ops in light blue color
+* add trace macro
+** add vm.Trace bool
+** add Trace op
+** trace body if args
 
 * add dynamic bindings
 ** check if binding exists in let macro emit

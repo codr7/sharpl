@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace Sharpl;
 
 using System.Text;
@@ -48,6 +50,8 @@ public abstract class Form
                 }
             }
         }
+
+        public bool Empty { get => items.Count == 0; }
 
         public Form[] Items
         {

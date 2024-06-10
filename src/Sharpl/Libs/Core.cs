@@ -112,6 +112,16 @@ public class Core : Lib
              }
          });
 
+        BindMacro("decode", [], (loc, target, vm, args) =>
+        {
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            var startPC = vm.EmitPC;
+            args.Emit(vm);
+            skip.PC = vm.EmitPC;
+            vm.Decode(startPC);
+        });
+
         BindMacro("define", ["id", "value"], (loc, target, vm, args) =>
         {
             while (true)
@@ -208,6 +218,7 @@ public class Core : Lib
             }
             else if (args.Pop() is Forms.Id nf)
             {
+                var prevEnv = vm.Env;
                 Lib? lib = null;
 
                 if (vm.Env.Find(nf.Name) is Value v)
@@ -218,7 +229,20 @@ public class Core : Lib
                 {
                     lib = new Lib(nf.Name, vm.Env);
                     vm.Env.BindLib(lib);
-                    vm.Env = lib;
+                }
+
+                vm.Env = lib;
+
+                if (!args.Empty)
+                {
+                    try
+                    {
+                        args.Emit(vm);
+                    }
+                    finally
+                    {
+                        vm.Env = prevEnv;
+                    }
                 }
             }
             else
