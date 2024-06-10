@@ -381,7 +381,7 @@ public class VM
     public void REPL()
     {
         Term.SetFg(Color.FromArgb(255, 252, 173, 3));
-        Term.Write($"Sharpl v{VERSION}\n\n");
+        Term.Write($"sharpl v{VERSION}\n\n");
         Term.Reset();
 
         var buffer = new StringBuilder();
