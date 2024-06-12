@@ -1,11 +1,14 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* fix lib test
+** figure out how to solve lib frames
+*** registers for defines in libraries should have infinite life times
+
 * finish dynamic bindings
-** debug registers in test
-*** add EnterMethod.RegisterCount
 ** add nested check
-** require &-prefix when rebinding dynamic variables
+** require &-prefix to rebind dynamic variables
+*** require that value is found if &
 ** add bindings to readme
 
 * reactivate all tests in TODO
@@ -123,55 +126,3 @@ fib
 
 (^ fib-rec [n]
   (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
-
-
----
-
-(check T
-  (= 42 42))
-
-(check 3
-  (+ 1 2))
-  
-(check 2
-  (- 3 1))
-
-(check (- 2)
-  (- 1 3))
-
-(check 42
-  (* 7 6))
-
-(check 7
-  (/ 42 6))
-
-(check 2
-  (let [x [1 2 3]]
-    (x 1)))
-    
-(check [1 4 3]
-  (let [x [1 2 3]]
-    (x 1 4)
-    x))
-
-(check "FOO"
-  (string/up "Foo"))
-
-(check "foo"
-  (string/down "Foo"))
-
-
-
-(load "test-lib.sl")
-
-(lib test
-  (check test
-    (lib))
-    
-  (define bar (+ foo 7)))
-
-(check 42
-  test/bar)
-
-(check user
-  (lib))
