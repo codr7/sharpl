@@ -12,8 +12,6 @@
 *** require that value is found if &
 ** add bindings to readme
 
-* reactivate all tests in TODO
-
 * implement explicit references
 ** use UserLib as base of method body env
 ** add support for &-args
