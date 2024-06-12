@@ -4,6 +4,10 @@ public class UserMethodType : Type<UserMethod>
 {
     public UserMethodType(string name) : base(name) { }
 
+    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity) {
+        vm.Call(loc, target.Cast(this), arity);
+    }
+
     public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var m = target.Cast(this);

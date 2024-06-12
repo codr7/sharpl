@@ -9,7 +9,18 @@
   foo)
 
 (check 42
-  (let [x 42] x))
+  (let [x 42] 
+    x))
+
+(check 42
+  (^foo [x]
+    x)
+    
+  (foo 42))
+
+(check 42
+  (let [f (^[x] x)]
+    (f 42)))
 
 (check 42
   (define foo 35)

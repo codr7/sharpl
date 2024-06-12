@@ -37,7 +37,8 @@ public class VM
     private readonly ArrayStack<int> frames;
     private readonly List<Label> labels = new List<Label>();
     private string loadPath = "";
-    private ArrayStack<Value> registers;
+    private int nextRegisterIndex = 0;
+    private Value[] registers;
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -56,7 +57,7 @@ public class VM
         calls = new ArrayStack<Call>(config.MaxCalls);
         code = new ArrayStack<Op>(config.MaxOps);
         frames = new ArrayStack<int>(config.MaxFrames);
-        registers = new ArrayStack<Value>(config.MaxRegisters);
+        registers = new Value[config.MaxRegisters];
 
         TermLib = new Libs.Term(this);
         UserLib.BindLib(CoreLib);
@@ -67,17 +68,28 @@ public class VM
         Env = UserLib;
     }
 
-    public int AllocRegister()
-    {
-        var result = registers.Count;
-        registers.Push(Value.Nil);
-        return result;
+    public int AllocRegister() {
+        var res = nextRegisterIndex;
+        nextRegisterIndex++;
+        return res;
     }
-
-
+    
     public void BeginFrame()
     {
-        frames.Push(registers.Count);
+        frames.Push(nextRegisterIndex);
+        nextRegisterIndex = 0;
+    }
+
+    public void Call(Loc loc, UserMethod target, int arity)
+    {
+        if (arity < target.Args.Length)
+        {
+            throw new EvalError(loc, $"Not enough arguments: {target}");
+        }
+
+        BeginFrame();
+        calls.Push(new Call(loc, target, PC));
+        PC = target.StartPC;
     }
 
     public PC Emit(Op op)
@@ -94,7 +106,7 @@ public class VM
 
     public void EndFrame()
     {
-        frames.Pop();
+        nextRegisterIndex = frames.Pop();
     }
 
     public Env Env
@@ -154,7 +166,8 @@ public class VM
                 case Op.T.CallUserMethod:
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
-                        callOp.Target.Call(callOp.Loc, this, callOp.Arity, PC + 1);
+                        PC++;
+                        Call(callOp.Loc, callOp.Target, callOp.Arity);
                         break;
                     }
                 case Op.T.Check:
@@ -196,9 +209,9 @@ public class VM
                         PC++;
                         break;
                     }
-                case Op.T.Enter:
+                case Op.T.EnterMethod:
                     {
-                        var enterOp = (Ops.Enter)op.Data;
+                        var enterOp = (Ops.EnterMethod)op.Data;
                         var t = enterOp.Target;
 
                         for (var i = t.Args.Length - 1; i >= 0; i--)
@@ -207,6 +220,12 @@ public class VM
                         }
 
                         PC++;
+                        break;
+                    }
+                case Op.T.ExitMethod:
+                    {
+                        EndFrame();
+                        PC = calls.Pop().ReturnPC;
                         break;
                     }
                 case Op.T.GetRegister:
@@ -229,12 +248,6 @@ public class VM
                         var pushOp = (Ops.Push)op.Data;
                         stack.Push(pushOp.Value.Copy());
                         PC++;
-                        break;
-                    }
-                case Op.T.Return:
-                    {
-                        EndFrame();
-                        PC = calls.Pop().ReturnPC;
                         break;
                     }
                 case Op.T.SetArrayItem:
@@ -366,11 +379,6 @@ public class VM
         }
 
         env = env.Parent;
-    }
-
-    public void PushCall(Loc loc, UserMethod target, PC returnPC)
-    {
-        calls.Push(new Call(loc, target, returnPC));
     }
 
     public void PushEnv()

@@ -51,10 +51,17 @@ public class Core : Lib
 
             (string, int)[] fas;
  
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            var parentEnv = vm.Env;
+            vm.PushEnv();
+
             if (f is Forms.Array af) {
                 fas = af.Items.Select(f => {
                     if (f is Forms.Id id) {
-                        return (id.Name, vm.AllocRegister());
+                        var r = vm.AllocRegister();
+                        vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, r)));
+                        return (id.Name, r);
                     }
 
                     throw new EmitError(f.Loc, $"Invalid method arg: {f}");
@@ -63,16 +70,13 @@ public class Core : Lib
                 throw new EmitError(loc, "Invalid method args");
             }
 
-            var skip = new Label();
-            vm.Emit(Ops.Goto.Make(skip));
             var method = new UserMethod(loc, vm.EmitPC, name, fas);
-            vm.Env.Bind(name, Value.Make(Core.UserMethod, method));
-            vm.PushEnv();
-            vm.Emit(Ops.Enter.Make(method));
+            parentEnv.Bind(name, Value.Make(Core.UserMethod, method));
+            vm.Emit(Ops.EnterMethod.Make(method));
             args.Emit(vm);
-            vm.PopEnv();
-            vm.Emit(Ops.Return.Make());
+            vm.Emit(Ops.ExitMethod.Make());
             skip.PC = vm.EmitPC;
+            vm.PopEnv();
          });
 
         BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
@@ -260,7 +264,6 @@ public class Core : Lib
 
                 try
                 {
-                    var registerIndex = 0;
                     var valueArgs = new Form.Queue();
 
                     for (var i = 0; i < bs.Length; i++)
@@ -268,10 +271,10 @@ public class Core : Lib
                         var idf = bs[i];
                         i++;
                         var vf = bs[i];
-                        vm.Env.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, registerIndex)));
+                        var r = vm.AllocRegister();
+                        vm.Env.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, r)));
                         vf.Emit(vm, valueArgs);
-                        vm.Emit(Ops.SetRegister.Make(0, registerIndex));
-                        registerIndex++;
+                        vm.Emit(Ops.SetRegister.Make(0, r));
                     }
 
                     while (true)

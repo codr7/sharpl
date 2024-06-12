@@ -18,18 +18,6 @@ public readonly struct UserMethod
         Args = args;
     }
 
-    public void Call(Loc loc, VM vm, int arity, int returnPC)
-    {
-        if (arity < Args.Length)
-        {
-            throw new EvalError(loc, $"Not enough arguments: {this}");
-        }
-
-        vm.PushCall(loc, this, returnPC);
-        vm.BeginFrame();
-        vm.PC = StartPC;
-    }
-
     public override string ToString()
     {
         var result = new StringBuilder();
