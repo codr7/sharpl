@@ -5,11 +5,10 @@ public readonly struct Op
     public enum T
     {
         BeginFrame,
-        CallDirect, CallIndirect, CallMethod, CallUserMethod, Check, CreateArray,
-        EndFrame, EnterMethod,
+        CallDirect, CallIndirect, CallMethod, CallUserMethod, Check, CopyRegister, CreateArray,
+        EndFrame, EnterMethod, ExitMethod,
         GetRegister, Goto,
         Push,
-        ExitMethod,
         SetArrayItem, SetLoadPath, SetRegister, Stop
     };
 

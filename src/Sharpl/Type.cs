@@ -16,7 +16,7 @@ public abstract class AnyType
         throw new EvalError(loc, "Not supported");
     }
 
-    public virtual void Call(Loc loc, VM vm, Stack stack, Value target, int arity)
+    public virtual void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
     {
         if (arity != 0)
         {
@@ -40,7 +40,7 @@ public abstract class AnyType
     {
         var arity = args.Count;
         args.Emit(vm);
-        vm.Emit(Ops.CallDirect.Make(loc, target, arity));
+        vm.Emit(Ops.CallDirect.Make(loc, target, arity, vm.NextRegisterIndex));
     }
 
     public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args)

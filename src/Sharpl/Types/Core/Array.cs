@@ -24,7 +24,7 @@ public class ArrayType : Type<Value[]>
         stack.Push(Value.Make(Core.Array, vs));
     }
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity)
+    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
     {
         switch (arity)
         {

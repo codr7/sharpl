@@ -8,6 +8,6 @@ public readonly record struct GetRegister(int FrameOffset, int Index)
     }
 
     public override string ToString() {
-        return $"GetRegister {FrameOffset} {Index}";
+        return $"GetRegister {FrameOffset}:{Index}";
     }
 }

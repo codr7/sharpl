@@ -2,7 +2,6 @@ namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 
@@ -55,6 +54,7 @@ public class Core : Lib
              var skip = new Label();
              vm.Emit(Ops.Goto.Make(skip));
              var parentEnv = vm.Env;
+             var registerCount = vm.NextRegisterIndex;
              vm.PushEnv();
 
              if (f is Forms.Array af)
@@ -84,7 +84,7 @@ public class Core : Lib
                  parentEnv.Bind(name, v);
              }
 
-             vm.Emit(Ops.EnterMethod.Make(m));
+             vm.Emit(Ops.EnterMethod.Make(m, registerCount));
              args.Emit(vm);
              vm.Emit(Ops.ExitMethod.Make());
              skip.PC = vm.EmitPC;
@@ -195,7 +195,7 @@ public class Core : Lib
                  throw new EmitError(loc, "Missing expected value");
              }
 
-             vm.Emit(Ops.BeginFrame.Make());
+             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
              vm.PushEnv();
 
              try
@@ -243,20 +243,29 @@ public class Core : Lib
                     break;
                 }
 
-                if (args.Pop() is Form f && vm.Eval(f, args) is Value v)
+                if (id is Forms.Id idf)
                 {
-                    vm.Env.Bind(((Forms.Id)id).Name, v);
+                    if (args.Pop() is Form f && vm.Eval(f, args) is Value v)
+                    {
+                        var r = vm.AllocRegister();
+                        vm.Env[idf.Name] = Value.Make(Core.Binding, new Binding(0, r));
+                        vm.SetRegister(0, r, v);
+                    }
+                    else
+                    {
+                        throw new EmitError(loc, "Missing value");
+                    }
                 }
                 else
                 {
-                    throw new EmitError(loc, "Missing value");
+                    throw new EmitError(loc, "Invalid binding: {id}");
                 }
             }
         });
 
         BindMacro("do", [], (loc, target, vm, args) =>
         {
-            vm.Emit(Ops.BeginFrame.Make());
+            vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
             vm.PushEnv();
 
             try
@@ -276,22 +285,43 @@ public class Core : Lib
             if (args.Pop() is Forms.Array bsf)
             {
                 var bs = bsf.Items;
-                vm.Emit(Ops.BeginFrame.Make());
+                vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
                 vm.PushEnv();
 
                 try
                 {
                     var valueArgs = new Form.Queue();
+                    var brs = new List<(int, int, int)>();
 
                     for (var i = 0; i < bs.Length; i++)
                     {
-                        var idf = bs[i];
-                        i++;
-                        var vf = bs[i];
-                        var r = vm.AllocRegister();
-                        vf.Emit(vm, valueArgs);
-                        vm.Emit(Ops.SetRegister.Make(0, r));
-                        vm.Env.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, r)));
+                        var bf = bs[i];
+
+                        if (bf is Forms.Id idf)
+                        {
+                            i++;
+                            bs[i].Emit(vm, valueArgs);
+
+                            if (vm.Env.Find(idf.Name) is Value v && v.Type == Core.Binding)
+                            {
+                                Console.WriteLine("DYNAMIC " + idf.Name);
+                                var r = vm.AllocRegister();
+                                var b = v.Cast(Core.Binding);
+                                brs.Add((r, b.FrameOffset, b.Index));
+                                vm.Emit(Ops.CopyRegister.Make(b.FrameOffset, b.Index, 0, r));
+                                vm.Emit(Ops.SetRegister.Make(b.FrameOffset, b.Index));
+                            }
+                            else
+                            {
+                                var r = vm.AllocRegister();
+                                vm.Emit(Ops.SetRegister.Make(0, r));
+                                vm.Env[idf.Name] = Value.Make(Core.Binding, new Binding(0, r));
+                            }
+                        }
+                        else
+                        {
+                            throw new EmitError(bf.Loc, $"Invalid method arg: {bf}");
+                        }
                     }
 
                     while (true)
@@ -304,6 +334,11 @@ public class Core : Lib
                         {
                             break;
                         }
+                    }
+
+                    foreach (var (fromIndex, toFrameOffset, toIndex) in brs)
+                    {
+                        vm.Emit(Ops.CopyRegister.Make(0, fromIndex, toFrameOffset, toIndex));
                     }
 
                     vm.Emit(Ops.EndFrame.Make());

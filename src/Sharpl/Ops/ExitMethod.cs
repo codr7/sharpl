@@ -9,6 +9,6 @@ public readonly record struct ExitMethod()
     }
 
     public override string ToString() {
-        return $"Return";
+        return $"ExitMethod";
     }
 }

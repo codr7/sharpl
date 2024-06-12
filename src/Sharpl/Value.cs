@@ -17,9 +17,9 @@ public readonly record struct Value(AnyType Type, object Data)
     public static readonly Value Nil = Value.Make(Libs.Core.Nil, false);
     public static readonly Value T = Value.Make(Libs.Core.Bit, true);
 
-    public void Call(Loc loc, VM vm, Stack stack, int arity)
+    public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount)
     {
-        Type.Call(loc, vm, stack, this, arity);
+        Type.Call(loc, vm, stack, this, arity, registerCount);
     }
 
     public T Cast<T>(Type<T> type)

@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace Sharpl;
 
 using System.Drawing;
@@ -66,28 +68,29 @@ public class VM
         UserLib.BindLib(UserLib);
 
         Env = UserLib;
+        BeginFrame(0);
     }
 
-    public int AllocRegister() {
+    public int AllocRegister()
+    {
         var res = nextRegisterIndex;
         nextRegisterIndex++;
         return res;
     }
-    
-    public void BeginFrame()
+
+    public void BeginFrame(int registerCount)
     {
-        frames.Push(nextRegisterIndex);
-        nextRegisterIndex = 0;
+        frames.Push(registerCount+1);
     }
 
-    public void Call(Loc loc, UserMethod target, int arity)
+    public void Call(Loc loc, UserMethod target, int arity, int registerCount)
     {
         if (arity < target.Args.Length)
         {
             throw new EvalError(loc, $"Not enough arguments: {target}");
         }
 
-        BeginFrame();
+        BeginFrame(registerCount);
         calls.Push(new Call(loc, target, PC));
         PC = target.StartPC;
     }
@@ -104,9 +107,9 @@ public class VM
         get { return code.Count; }
     }
 
-    public void EndFrame()
+    public int EndFrame()
     {
-        nextRegisterIndex = frames.Pop();
+        return frames.Pop();
     }
 
     public Env Env
@@ -136,7 +139,8 @@ public class VM
             {
                 case Op.T.BeginFrame:
                     {
-                        BeginFrame();
+                        var beginOp = (Ops.BeginFrame)op.Data;
+                        BeginFrame(beginOp.RegisterCount);
                         PC++;
                         break;
                     }
@@ -145,7 +149,7 @@ public class VM
                         var callOp = (Ops.CallDirect)op.Data;
                         var recursive = !calls.Empty && calls.Peek().Target.Equals(callOp.Target);
                         PC++;
-                        callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity);
+                        callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.CallIndirect:
@@ -153,7 +157,7 @@ public class VM
                         var target = stack.Pop();
                         var callOp = (Ops.CallIndirect)op.Data;
                         PC++;
-                        target.Call(callOp.Loc, this, stack, callOp.Arity);
+                        target.Call(callOp.Loc, this, stack, callOp.Arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.CallMethod:
@@ -167,7 +171,15 @@ public class VM
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
                         PC++;
-                        Call(callOp.Loc, callOp.Target, callOp.Arity);
+                        Call(callOp.Loc, callOp.Target, callOp.Arity, callOp.RegisterCount);
+                        break;
+                    }
+                case Op.T.CopyRegister:
+                    {
+                        var copyOp = (Ops.CopyRegister)op.Data;
+                        var v = GetRegister(copyOp.FromFrameOffset, copyOp.FromIndex);
+                        SetRegister(copyOp.ToFrameOffset, copyOp.ToIndex, v);
+                        PC++;
                         break;
                     }
                 case Op.T.Check:
@@ -213,7 +225,7 @@ public class VM
                     {
                         var enterOp = (Ops.EnterMethod)op.Data;
                         var t = enterOp.Target;
-
+                        
                         for (var i = t.Args.Length - 1; i >= 0; i--)
                         {
                             SetRegister(0, t.Args[i].Item2, stack.Pop());
@@ -304,9 +316,14 @@ public class VM
         return stack.Pop();
     }
 
+    public int FrameCount
+    {
+        get => frames.Count;
+    }
+
     public Value GetRegister(int frameOffset, int index)
     {
-        return registers[frames.Peek(frameOffset) + index];
+        return registers[RegisterIndex(frameOffset, index)];
     }
 
     public Label Label(PC pc = -1)
@@ -371,6 +388,11 @@ public class VM
 
     }
 
+    public int NextRegisterIndex
+    {
+        get => nextRegisterIndex;
+    }
+
     public void PopEnv()
     {
         if (env is null)
@@ -379,11 +401,14 @@ public class VM
         }
 
         env = env.Parent;
+        nextRegisterIndex = EndFrame();
     }
 
     public void PushEnv()
     {
         env = new Env(env);
+        BeginFrame(nextRegisterIndex);
+        nextRegisterIndex = 0;
     }
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
@@ -416,6 +441,14 @@ public class VM
         var forms = new Form.Queue();
         ReadForms(source, ref loc, forms);
         return forms;
+    }
+
+    public int RegisterIndex(int frameOffset, int index) {
+        if (frameOffset > 0) {
+            frameOffset += calls.Count;
+        }       
+
+        return index + frames.Peek(frameOffset);
     }
 
     public void REPL()
@@ -482,6 +515,6 @@ public class VM
 
     public void SetRegister(int frameOffset, int index, Value value)
     {
-        registers[frames.Peek(frameOffset) + index] = value;
+        registers[RegisterIndex(frameOffset, index)] = value;
     }
 }

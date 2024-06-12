@@ -20,7 +20,7 @@ public abstract class Form
         var arity = args.Count;
         args.Emit(vm);
         Emit(vm, new Form.Queue());
-        vm.Emit(Ops.CallIndirect.Make(Loc, arity));
+        vm.Emit(Ops.CallIndirect.Make(Loc, arity, vm.NextRegisterIndex));
     }
 
     public class Queue

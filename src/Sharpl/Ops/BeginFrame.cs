@@ -1,13 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct BeginFrame()
+public readonly record struct BeginFrame(int RegisterCount)
 {
-    public static Op Make()
+    public static Op Make(int registerCount)
     {
-        return new Op(Op.T.BeginFrame, new BeginFrame());
+        return new Op(Op.T.BeginFrame, new BeginFrame(registerCount));
     }
 
     public override string ToString() {
-        return "BeginFrame";
+        return $"BeginFrame {RegisterCount}";
     }    
 }
