@@ -4,6 +4,7 @@
 * fix lib test
 ** figure out how to solve lib frames
 *** registers for defines in libraries should have infinite life times
+*** try putting define registers in the first frame (frames.Count-1)
 
 * finish dynamic bindings
 ** add nested check
