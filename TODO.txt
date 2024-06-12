@@ -1,8 +1,7 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* debug lambda test
-** commit user methods
+* debug type mismatch
 
 * finish dynamic bindings
 ** check if binding exists in let macro emit

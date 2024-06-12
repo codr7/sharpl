@@ -41,7 +41,7 @@ public class Core : Lib
 
         BindMacro("^", [], (loc, target, vm, args) =>
          {
-            var name = "n/a";
+            var name = "";
             var f = args.Pop();
 
             if (f is Forms.Id id) {
@@ -70,13 +70,22 @@ public class Core : Lib
                 throw new EmitError(loc, "Invalid method args");
             }
 
-            var method = new UserMethod(loc, vm.EmitPC, name, fas);
-            parentEnv.Bind(name, Value.Make(Core.UserMethod, method));
-            vm.Emit(Ops.EnterMethod.Make(method));
+            var m = new UserMethod(loc, vm.EmitPC, name, fas);
+            var v = Value.Make(Core.UserMethod, m);
+
+            if (name != "") {
+                parentEnv.Bind(name, v);
+            }
+
+            vm.Emit(Ops.EnterMethod.Make(m));
             args.Emit(vm);
             vm.Emit(Ops.ExitMethod.Make());
             skip.PC = vm.EmitPC;
             vm.PopEnv();
+
+            if (name == "") {
+                vm.Emit(Ops.Push.Make(v));
+            }
          });
 
         BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
