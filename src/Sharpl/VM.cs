@@ -7,18 +7,19 @@ using PC = int;
 
 public class VM
 {
-    public struct Config
+    public struct C
     {
+        public int MaxArgs = 16;
         public int MaxCalls = 128;
         public int MaxFrames = 248;
         public int MaxOps = 1024;
         public int MaxRegisters = 512;
         public int MaxStackSize = 32;
 
-        public Config() { }
+        public C() { }
     };
 
-    public static readonly Config DEFAULT_CONFIG = new Config();
+    public static readonly C DEFAULT_CONFIG = new C();
     public static readonly int VERSION = 1;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
@@ -26,13 +27,12 @@ public class VM
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null);
 
-
+    public readonly C Config;
     public PC PC = 0;
     public readonly Term Term = new Term();
 
     private readonly ArrayStack<Call> calls;
     private readonly ArrayStack<Op> code;
-    private readonly Config config;
     private Env? env;
     private readonly ArrayStack<int> frames;
     private readonly List<Label> labels = new List<Label>();
@@ -50,9 +50,9 @@ public class VM
         Readers.Id.Instance
     ];
 
-    public VM(Config config)
+    public VM(C config)
     {
-        this.config = config;
+        Config = config;
         calls = new ArrayStack<Call>(config.MaxCalls);
         code = new ArrayStack<Op>(config.MaxOps);
         frames = new ArrayStack<int>(config.MaxFrames);
@@ -103,10 +103,12 @@ public class VM
         set => env = value;
     }
 
-    public void Decode(PC startPC) {
-        for (var pc = startPC; pc < code.Count; pc++) {
+    public void Decode(PC startPC)
+    {
+        for (var pc = startPC; pc < code.Count; pc++)
+        {
             Term.SetFg(Color.FromArgb(255, 128, 128, 255));
-            Term.Write($"{pc, -4} {code[pc]}\n");
+            Term.Write($"{pc,-4} {code[pc]}\n");
         }
     }
 
@@ -149,6 +151,12 @@ public class VM
                         callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity);
                         break;
                     }
+                case Op.T.CallUserMethod:
+                    {
+                        var callOp = (Ops.CallUserMethod)op.Data;
+                        callOp.Target.Call(callOp.Loc, this, callOp.Arity, PC + 1);
+                        break;
+                    }
                 case Op.T.Check:
                     {
                         var checkOp = (Ops.Check)op.Data;
@@ -188,6 +196,19 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.Enter:
+                    {
+                        var enterOp = (Ops.Enter)op.Data;
+                        var t = enterOp.Target;
+
+                        for (var i = t.Args.Length - 1; i >= 0; i--)
+                        {
+                            SetRegister(0, t.Args[i].Item2, stack.Pop());
+                        }
+
+                        PC++;
+                        break;
+                    }
                 case Op.T.GetRegister:
                     {
                         var getOp = (Ops.GetRegister)op.Data;
@@ -208,6 +229,12 @@ public class VM
                         var pushOp = (Ops.Push)op.Data;
                         stack.Push(pushOp.Value.Copy());
                         PC++;
+                        break;
+                    }
+                case Op.T.Return:
+                    {
+                        EndFrame();
+                        PC = calls.Pop().ReturnPC;
                         break;
                     }
                 case Op.T.SetArrayItem:
@@ -243,7 +270,7 @@ public class VM
 
     public void Eval(PC startPC)
     {
-        Eval(startPC, new Stack(config.MaxStackSize));
+        Eval(startPC, new Stack(Config.MaxStackSize));
     }
 
     public void Eval(Form form, Form.Queue args, Stack stack)
@@ -259,7 +286,7 @@ public class VM
 
     public Value? Eval(Form form, Form.Queue args)
     {
-        var stack = new Stack(config.MaxStackSize);
+        var stack = new Stack(Config.MaxStackSize);
         Eval(form, args, stack);
         return stack.Pop();
     }
@@ -341,6 +368,11 @@ public class VM
         env = env.Parent;
     }
 
+    public void PushCall(Loc loc, UserMethod target, PC returnPC)
+    {
+        calls.Push(new Call(loc, target, returnPC));
+    }
+
     public void PushEnv()
     {
         env = new Env(env);
@@ -412,7 +444,7 @@ public class VM
                     ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this);
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
-                    
+
                     Term.SetFg(Color.FromArgb(255, 0, 255, 0));
                     Term.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
                     Term.Reset();

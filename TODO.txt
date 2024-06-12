@@ -1,16 +1,21 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* add dynamic bindings
+** check if binding exists in let macro emit
+*** backup/restore value using separate register if it exists
+**** add CopyRegister op
+
 * add trace macro
 ** add vm.Trace bool
 ** add Trace op
 ** trace body if args
 
-* add dynamic bindings
-** check if binding exists in let macro emit
-*** backup/restore value if it exists
-*** separate register
-*** add CopyRegister op
+* add Pair type/reader
+
+* add string calling
+** like array
+** slice if index is pair
 
 * add if macro
 
@@ -84,8 +89,6 @@
 ** how do you dec a map entry?
 
 * add tail calls
-
-* add Pair type/reader
 
 (^ repl []
   (print "sharpl v" VERSION " - may the src be with you\n\n")

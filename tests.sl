@@ -11,6 +11,15 @@
 (check 42
   (let [x 42] x))
 
+(check 42
+  (define foo 35)
+  
+  (^bar []
+    foo)
+
+  (let [foo (+ foo 7)]
+    (bar)))
+
 (check T
   (= 42 42))
 

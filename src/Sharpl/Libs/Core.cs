@@ -1,9 +1,10 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
-using System.ComponentModel;
+using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
-using System.Xml.XPath;
+
 
 public class Core : Lib
 {
@@ -18,6 +19,7 @@ public class Core : Lib
     public static readonly MethodType Method = new MethodType("Method");
     public static readonly NilType Nil = new NilType("Nil");
     public static readonly StringType String = new StringType("String");
+    public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
 
     public Core() : base("core", null)
     {
@@ -31,10 +33,47 @@ public class Core : Lib
         BindType(Meta);
         BindType(Method);
         BindType(String);
+        BindType(UserMethod);
 
         Bind("F", Value.F);
         Bind("_", Value.Nil);
         Bind("T", Value.T);
+
+        BindMacro("^", [], (loc, target, vm, args) =>
+         {
+            var name = "n/a";
+            var f = args.Pop();
+
+            if (f is Forms.Id id) {
+                    name = id.Name;
+                    f = args.Pop();
+            }
+
+            (string, int)[] fas;
+ 
+            if (f is Forms.Array af) {
+                fas = af.Items.Select(f => {
+                    if (f is Forms.Id id) {
+                        return (id.Name, vm.AllocRegister());
+                    }
+
+                    throw new EmitError(f.Loc, $"Invalid method arg: {f}");
+                }).ToArray();
+            } else {
+                throw new EmitError(loc, "Invalid method args");
+            }
+
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            var method = new UserMethod(loc, vm.EmitPC, name, fas);
+            vm.Env.Bind(name, Value.Make(Core.UserMethod, method));
+            vm.PushEnv();
+            vm.Emit(Ops.Enter.Make(method));
+            args.Emit(vm);
+            vm.PopEnv();
+            vm.Emit(Ops.Return.Make());
+            skip.PC = vm.EmitPC;
+         });
 
         BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
