@@ -41,51 +41,59 @@ public class Core : Lib
 
         BindMacro("^", [], (loc, target, vm, args) =>
          {
-            var name = "";
-            var f = args.Pop();
+             var name = "";
+             var f = args.Pop();
 
-            if (f is Forms.Id id) {
-                    name = id.Name;
-                    f = args.Pop();
-            }
+             if (f is Forms.Id id)
+             {
+                 name = id.Name;
+                 f = args.Pop();
+             }
 
-            (string, int)[] fas;
- 
-            var skip = new Label();
-            vm.Emit(Ops.Goto.Make(skip));
-            var parentEnv = vm.Env;
-            vm.PushEnv();
+             (string, int)[] fas;
 
-            if (f is Forms.Array af) {
-                fas = af.Items.Select(f => {
-                    if (f is Forms.Id id) {
-                        var r = vm.AllocRegister();
-                        vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, r)));
-                        return (id.Name, r);
-                    }
+             var skip = new Label();
+             vm.Emit(Ops.Goto.Make(skip));
+             var parentEnv = vm.Env;
+             vm.PushEnv();
 
-                    throw new EmitError(f.Loc, $"Invalid method arg: {f}");
-                }).ToArray();
-            } else {
-                throw new EmitError(loc, "Invalid method args");
-            }
+             if (f is Forms.Array af)
+             {
+                 fas = af.Items.Select(f =>
+                 {
+                     if (f is Forms.Id id)
+                     {
+                         var r = vm.AllocRegister();
+                         vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, r)));
+                         return (id.Name, r);
+                     }
 
-            var m = new UserMethod(loc, vm.EmitPC, name, fas);
-            var v = Value.Make(Core.UserMethod, m);
+                     throw new EmitError(f.Loc, $"Invalid method arg: {f}");
+                 }).ToArray();
+             }
+             else
+             {
+                 throw new EmitError(loc, "Invalid method args");
+             }
 
-            if (name != "") {
-                parentEnv.Bind(name, v);
-            }
+             var m = new UserMethod(loc, vm.EmitPC, name, fas);
+             var v = Value.Make(Core.UserMethod, m);
 
-            vm.Emit(Ops.EnterMethod.Make(m));
-            args.Emit(vm);
-            vm.Emit(Ops.ExitMethod.Make());
-            skip.PC = vm.EmitPC;
-            vm.PopEnv();
+             if (name != "")
+             {
+                 parentEnv.Bind(name, v);
+             }
 
-            if (name == "") {
-                vm.Emit(Ops.Push.Make(v));
-            }
+             vm.Emit(Ops.EnterMethod.Make(m));
+             args.Emit(vm);
+             vm.Emit(Ops.ExitMethod.Make());
+             skip.PC = vm.EmitPC;
+             vm.PopEnv();
+
+             if (name == "")
+             {
+                 vm.Emit(Ops.Push.Make(v));
+             }
          });
 
         BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
@@ -281,9 +289,9 @@ public class Core : Lib
                         i++;
                         var vf = bs[i];
                         var r = vm.AllocRegister();
-                        vm.Env.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, r)));
                         vf.Emit(vm, valueArgs);
                         vm.Emit(Ops.SetRegister.Make(0, r));
+                        vm.Env.Bind(((Forms.Id)idf).Name, Value.Make(Core.Binding, new Binding(0, r)));
                     }
 
                     while (true)
