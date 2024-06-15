@@ -3,6 +3,7 @@ using System.Reflection.Metadata.Ecma335;
 namespace Sharpl;
 
 using System.Text;
+using Sharpl.Ops;
 
 public abstract class Form
 {
@@ -12,6 +13,8 @@ public abstract class Form
     {
         Loc = loc;
     }
+
+    public virtual void CollectIds(HashSet<string> result) { }
 
     public abstract void Emit(VM vm, Form.Queue args);
 
@@ -35,6 +38,18 @@ public abstract class Form
             {
                 Push(it);
             }
+        }
+
+        public string[] CollectIds()
+        {
+            var res = new HashSet<string>();
+
+            foreach (var it in items)
+            {
+                it.CollectIds(res);
+            }
+
+            return res.ToArray();
         }
 
         public int Count { get { return items.Count; } }

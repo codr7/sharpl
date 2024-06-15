@@ -32,6 +32,11 @@ public class Id : Form
         Name = name;
     }
 
+    public override void CollectIds(HashSet<string> result)
+    {
+        result.Add(Name);
+    }
+
     public override void Emit(VM vm, Form.Queue args)
     {
         if (Find(Name, vm.Env, Loc) is Value v)

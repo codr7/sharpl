@@ -8,7 +8,7 @@ public class Term : Lib
 {
     public static readonly KeyType Key = new KeyType("Key");
 
-    public Term(VM vm) : base("term", null)
+    public Term(VM vm) : base("term", null, [])
     {
         BindType(Key);
 

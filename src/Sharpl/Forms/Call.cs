@@ -14,21 +14,34 @@ public class Call : Form
         this.args = args;
     }
 
+    public override void CollectIds(HashSet<string> result)
+    {
+        target.CollectIds(result);
+
+        foreach (var f in args)
+        {
+            f.CollectIds(result);
+        }
+    }
+
+
     public override void Emit(VM vm, Form.Queue args)
     {
         target.EmitCall(vm, new Form.Queue(this.args));
     }
 
-    public override string ToString() {
+    public override string ToString()
+    {
         var b = new StringBuilder();
         b.Append('(');
         b.Append(target);
-        
-        foreach (var a in args) {
+
+        foreach (var a in args)
+        {
             b.Append($" {a}");
         }
 
         b.Append(')');
         return b.ToString();
-    }     
+    }
 }

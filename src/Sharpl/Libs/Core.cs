@@ -20,7 +20,7 @@ public class Core : Lib
     public static readonly StringType String = new StringType("String");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
 
-    public Core() : base("core", null)
+    public Core() : base("core", null, [])
     {
         BindType(Array);
         BindType(Binding);
@@ -55,7 +55,8 @@ public class Core : Lib
              vm.Emit(Ops.Goto.Make(skip));
              var parentEnv = vm.Env;
              var registerCount = vm.NextRegisterIndex;
-             vm.PushEnv();
+             var ids = args.CollectIds();
+             vm.PushEnv(ids);
 
              if (f is Forms.Array af)
              {
@@ -76,7 +77,7 @@ public class Core : Lib
                  throw new EmitError(loc, "Invalid method args");
              }
 
-             var m = new UserMethod(loc, vm.EmitPC, name, fas);
+             var m = new UserMethod(loc, vm, name, ids, fas);
              var v = Value.Make(Core.UserMethod, m);
 
              if (name != "")
@@ -196,7 +197,7 @@ public class Core : Lib
              }
 
              vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-             vm.PushEnv();
+             vm.PushEnv(args.CollectIds());
 
              try
              {
@@ -266,7 +267,7 @@ public class Core : Lib
         BindMacro("do", [], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.PushEnv();
+            vm.PushEnv(args.CollectIds());
 
             try
             {
@@ -282,11 +283,13 @@ public class Core : Lib
 
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>
         {
+            var ids = args.CollectIds();
+
             if (args.Pop() is Forms.Array bsf)
             {
                 var bs = bsf.Items;
                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-                vm.PushEnv();
+                vm.PushEnv(ids);
 
                 try
                 {
@@ -371,7 +374,7 @@ public class Core : Lib
                 }
                 else
                 {
-                    lib = new Lib(nf.Name, vm.Env);
+                    lib = new Lib(nf.Name, vm.Env, args.CollectIds());
                     vm.Env.BindLib(lib);
                 }
 

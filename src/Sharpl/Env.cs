@@ -6,15 +6,15 @@ public class Env
 {
     private Dictionary<string, Value> bindings = new Dictionary<string, Value>();
 
-    public Env(Env? parent)
+    public Env(Env? parent, string[] ids)
     {
         Parent = parent;
 
         for (var p = parent; p is Env; p = p.Parent) {
-            foreach (var b in p.bindings) {
-                if (b.Value.Type == Core.Binding) {
-                    var v = b.Value.Cast(Core.Binding);
-                    Bind(b.Key, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
+            foreach (var id in ids) {
+                if (p.bindings.ContainsKey(id) && p.bindings[id] is Value b && b.Type == Core.Binding) {
+                    var v = b.Cast(Core.Binding);
+                    Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
                 }
             }
         }
@@ -23,6 +23,7 @@ public class Env
     public Value? this[string id]
     {
         get => Find(id);
+        
         set
         {
             if (value == null)

@@ -6,7 +6,7 @@ using System.Text;
 
 public class String : Lib
 {
-    public String() : base("string", null)
+    public String() : base("string", null, [])
     {
         BindMethod("down", ["input"], (loc, target, vm, stack, arity) =>
         {

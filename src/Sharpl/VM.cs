@@ -27,7 +27,7 @@ public class VM
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.String StringLib = new Libs.String();
     public readonly Libs.Term TermLib;
-    public readonly Lib UserLib = new Lib("user", null);
+    public readonly Lib UserLib = new Lib("user", null, []);
 
     public readonly C Config;
     public PC PC = 0;
@@ -404,9 +404,9 @@ public class VM
         nextRegisterIndex = EndFrame();
     }
 
-    public void PushEnv()
+    public void PushEnv(string[] ids)
     {
-        env = new Env(env);
+        env = new Env(env, ids);
         BeginFrame(nextRegisterIndex);
         nextRegisterIndex = 0;
     }

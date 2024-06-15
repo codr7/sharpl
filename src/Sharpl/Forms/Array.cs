@@ -11,6 +11,14 @@ public class Array : Form
         Items = items;
     }
 
+    public override void CollectIds(HashSet<string> result)
+    {
+        foreach (var f in Items)
+        {
+            f.CollectIds(result);
+        }
+    }
+
     public override void Emit(VM vm, Form.Queue args)
     {
         var itemArgs = new Form.Queue();
@@ -18,20 +26,24 @@ public class Array : Form
         vm.Emit(Ops.CreateArray.Make(Items.Length));
         var i = 0;
 
-        foreach (var f in Items) {
+        foreach (var f in Items)
+        {
             f.Emit(vm, itemArgs);
             vm.Emit(Ops.SetArrayItem.Make(i));
             i++;
         }
     }
 
-    public override string ToString() {
+    public override string ToString()
+    {
         var b = new StringBuilder();
         b.Append('[');
         var i = 0;
 
-        foreach (var v in Items) {
-            if (i > 0) {
+        foreach (var v in Items)
+        {
+            if (i > 0)
+            {
                 b.Append(' ');
             }
 
@@ -41,5 +53,5 @@ public class Array : Form
 
         b.Append(']');
         return b.ToString();
-    }     
+    }
 }
