@@ -17,9 +17,9 @@ Bindings come in two flavors, lexical and dynamic scope.
 New lexically scoped bindings may be created using `let`.
 
 ```
-  (let [x 1 
-        y (+ x 2)]
-    y)
+(let [x 1 
+      y (+ x 2)]
+  y)
 
 3
 ```
