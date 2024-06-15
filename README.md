@@ -11,7 +11,7 @@ _
 ```
 
 ## bindings
-Bindings come in two flavors, lexical and dynamic scope.
+Bindings come in two flavors, with lexical or dynamic scope.
 
 ### lexical scope
 New lexically scoped bindings may be created using `let`.
