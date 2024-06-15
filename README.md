@@ -2,13 +2,48 @@
 
 ```
 $ dotnet run
-sharpl v1
+sharpl v2
 
    1 (say "hello")
    2 
 hello
 _
 ```
+
+## bindings
+Bindings come in two flavors, lexical and dynamic scope.
+
+### lexical scope
+New lexically scoped bindings may be created using `let`.
+
+```
+  (let [x 1 
+        y (+ x 2)]
+    y)
+
+3
+```
+
+### dynamic scope
+New dynamically scoped bindings may be created using `define`.
+
+```
+(^foo []
+  (define bar (do (say "compiling") 1)
+          baz 2)
+  (+ bar baz))
+```
+`compiling`
+
+```
+(foo)
+```
+`3`
+
+```
+bar
+```
+`Sharpl.EmitError: repl@6:1 Unknown id: bar`
 
 ## methods
 New methods may be defined using `^`.

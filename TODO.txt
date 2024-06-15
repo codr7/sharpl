@@ -1,12 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* finish defines
-** require &-prefix to rebind dynamic variables
-*** require that value is found if &
-** add bindings to readme
-** commit
-
 * add trace macro
 ** add vm.Trace bool
 ** add Trace op

@@ -1,7 +1,9 @@
 namespace Sharpl.Libs;
 
+using Microsoft.VisualBasic;
 using Sharpl.Types.Core;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 
@@ -248,7 +250,16 @@ public class Core : Lib
                 {
                     if (args.Pop() is Form f)
                     {
-                        f.Emit(vm, args);
+                        try {
+                            if (vm.Eval(f, args) is Value v) {
+                                vm.Emit(Ops.Push.Make(v));
+                            } else {
+                                throw new EmitError(f.Loc, "Missing value");
+                            }
+                        } catch (Exception) {
+                            f.Emit(vm, args);
+                        }
+
                         vm.Define(idf.Name);
                     }
                     else
