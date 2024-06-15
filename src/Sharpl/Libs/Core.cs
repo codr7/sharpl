@@ -246,11 +246,10 @@ public class Core : Lib
 
                 if (id is Forms.Id idf)
                 {
-                    if (args.Pop() is Form f && vm.Eval(f, args) is Value v)
+                    if (args.Pop() is Form f)
                     {
-                        var r = vm.AllocRegister();
-                        vm.Env[idf.Name] = Value.Make(Core.Binding, new Binding(0, r));
-                        vm.SetRegister(0, r, v);
+                        f.Emit(vm, args);
+                        vm.Define(idf.Name);
                     }
                     else
                     {
@@ -307,7 +306,6 @@ public class Core : Lib
 
                             if (vm.Env.Find(idf.Name) is Value v && v.Type == Core.Binding)
                             {
-                                Console.WriteLine("DYNAMIC " + idf.Name);
                                 var r = vm.AllocRegister();
                                 var b = v.Cast(Core.Binding);
                                 brs.Add((r, b.FrameOffset, b.Index));

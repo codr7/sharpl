@@ -32,14 +32,17 @@
   (let [f (^[x] x)]
     (f 42)))
 
-(check 42
+(check 35
   (define foo 35)
   
   (^bar []
     foo)
 
   (let [foo (+ foo 7)]
-    (bar)))
+    (check 42
+      (bar)))
+      
+  (bar))
 
 (check T
   (= 42 42))

@@ -1,22 +1,11 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* fix lib test
-** figure out how to solve lib frames
-*** registers for defines in libraries should have infinite life times
-*** try putting define registers in the first frame (frames.Count-1)
-
-* finish dynamic bindings
-** add nested check
+* finish defines
 ** require &-prefix to rebind dynamic variables
 *** require that value is found if &
 ** add bindings to readme
-
-* implement explicit references
-** use UserLib as base of method body env
-** add support for &-args
-*** import name while processing method args
-** update tests/readme
+** commit
 
 * add trace macro
 ** add vm.Trace bool

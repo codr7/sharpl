@@ -14,7 +14,10 @@ public class Env
             foreach (var id in ids) {
                 if (p.bindings.ContainsKey(id) && p.bindings[id] is Value b && b.Type == Core.Binding) {
                     var v = b.Cast(Core.Binding);
-                    Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
+                    
+                    if (v.FrameOffset != -1) {
+                        Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
+                    }
                 }
             }
         }

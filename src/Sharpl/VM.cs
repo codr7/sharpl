@@ -13,6 +13,7 @@ public class VM
     {
         public int MaxArgs = 16;
         public int MaxCalls = 128;
+        public int MaxDefinitions = 128;
         public int MaxFrames = 248;
         public int MaxOps = 1024;
         public int MaxRegisters = 512;
@@ -35,6 +36,7 @@ public class VM
 
     private readonly ArrayStack<Call> calls;
     private readonly ArrayStack<Op> code;
+    private int definitionCount = 0;
     private Env? env;
     private readonly ArrayStack<int> frames;
     private readonly List<Label> labels = new List<Label>();
@@ -60,6 +62,7 @@ public class VM
         code = new ArrayStack<Op>(config.MaxOps);
         frames = new ArrayStack<int>(config.MaxFrames);
         registers = new Value[config.MaxRegisters];
+        nextRegisterIndex = config.MaxDefinitions;
 
         TermLib = new Libs.Term(this);
         UserLib.BindLib(CoreLib);
@@ -68,7 +71,7 @@ public class VM
         UserLib.BindLib(UserLib);
 
         Env = UserLib;
-        BeginFrame(0);
+        BeginFrame(config.MaxDefinitions);
     }
 
     public int AllocRegister()
@@ -80,7 +83,7 @@ public class VM
 
     public void BeginFrame(int registerCount)
     {
-        frames.Push(registerCount+1);
+        frames.Push(registerCount);
     }
 
     public void Call(Loc loc, UserMethod target, int arity, int registerCount)
@@ -93,6 +96,22 @@ public class VM
         BeginFrame(registerCount);
         calls.Push(new Call(loc, target, PC));
         PC = target.StartPC;
+    }
+
+    public void Decode(PC startPC)
+    {
+        for (var pc = startPC; pc < code.Count; pc++)
+        {
+            Term.SetFg(Color.FromArgb(255, 128, 128, 255));
+            Term.Write($"{pc,-4} {code[pc]}\n");
+        }
+    }
+
+    public void Define(string name) {
+        var i = definitionCount;
+        Env[name] = Value.Make(Core.Binding, new Binding(-1, i));
+        Emit(Ops.SetRegister.Make(-1, i));
+        definitionCount++;
     }
 
     public PC Emit(Op op)
@@ -118,15 +137,6 @@ public class VM
         set => env = value;
     }
 
-    public void Decode(PC startPC)
-    {
-        for (var pc = startPC; pc < code.Count; pc++)
-        {
-            Term.SetFg(Color.FromArgb(255, 128, 128, 255));
-            Term.Write($"{pc,-4} {code[pc]}\n");
-        }
-    }
-
     public void Eval(PC startPC, Stack stack)
     {
         PC = startPC;
@@ -134,7 +144,7 @@ public class VM
         while (true)
         {
             var op = code[PC];
-
+ 
             switch (op.Type)
             {
                 case Op.T.BeginFrame:
@@ -174,14 +184,6 @@ public class VM
                         Call(callOp.Loc, callOp.Target, callOp.Arity, callOp.RegisterCount);
                         break;
                     }
-                case Op.T.CopyRegister:
-                    {
-                        var copyOp = (Ops.CopyRegister)op.Data;
-                        var v = GetRegister(copyOp.FromFrameOffset, copyOp.FromIndex);
-                        SetRegister(copyOp.ToFrameOffset, copyOp.ToIndex, v);
-                        PC++;
-                        break;
-                    }
                 case Op.T.Check:
                     {
                         var checkOp = (Ops.Check)op.Data;
@@ -205,6 +207,14 @@ public class VM
                             throw new EvalError(checkOp.Loc, "Missing expected value");
                         }
 
+                        PC++;
+                        break;
+                    }
+                case Op.T.CopyRegister:
+                    {
+                        var copyOp = (Ops.CopyRegister)op.Data;
+                        var v = GetRegister(copyOp.FromFrameOffset, copyOp.FromIndex);
+                        SetRegister(copyOp.ToFrameOffset, copyOp.ToIndex, v);
                         PC++;
                         break;
                     }
@@ -444,9 +454,13 @@ public class VM
     }
 
     public int RegisterIndex(int frameOffset, int index) {
-        if (frameOffset > 0) {
-            frameOffset += calls.Count;
-        }       
+        if (frameOffset == -1) {
+            return index;
+        }
+
+        //if (frameOffset > 0) {
+        //    frameOffset += calls.Count;
+        //}       
 
         return index + frames.Peek(frameOffset);
     }
