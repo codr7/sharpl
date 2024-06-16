@@ -40,7 +40,7 @@ public abstract class Form
             }
         }
 
-        public string[] CollectIds()
+        public HashSet<string> CollectIds()
         {
             var res = new HashSet<string>();
 
@@ -49,7 +49,7 @@ public abstract class Form
                 it.CollectIds(res);
             }
 
-            return res.ToArray();
+            return res;
         }
 
         public int Count { get { return items.Count; } }

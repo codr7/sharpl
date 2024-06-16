@@ -8,6 +8,6 @@ public readonly record struct CallUserMethod(Loc Loc, UserMethod Target, int Ari
     }
 
     public override string ToString() {
-        return $"CallUserMethod {Target.Name} {Arity} {RegisterCount}";
+        return $"CallUserMethod {Target} {Arity} {RegisterCount}";
     }    
 }

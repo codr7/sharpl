@@ -52,10 +52,16 @@ public readonly record struct Value(AnyType Type, object Data)
         Type.Dump(this, result);
     }
 
+    public void Emit(Loc loc, VM vm, Form.Queue args)
+    {
+        Type.Emit(loc, vm, this, args);
+    }
+
     public void EmitCall(Loc loc, VM vm, Form.Queue args)
     {
         Type.EmitCall(loc, vm, this, args);
     }
+
     public void EmitId(Loc loc, VM vm, Form.Queue args)
     {
         Type.EmitId(loc, vm, this, args);

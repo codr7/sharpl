@@ -86,7 +86,7 @@ public class VM
         frames.Push(registerCount);
     }
 
-    public void Call(Loc loc, UserMethod target, int arity, int registerCount)
+    public void Call(Loc loc, Stack stack, UserMethod target, int arity, int registerCount)
     {
         if (arity < target.Args.Length)
         {
@@ -95,7 +95,23 @@ public class VM
 
         BeginFrame(registerCount);
         calls.Push(new Call(loc, target, PC));
-        PC = target.StartPC;
+
+        for (var i = target.Args.Length - 1; i >= 0; i--)
+        {
+            SetRegister(0, target.Args[i].Item2, stack.Pop());
+        }
+
+        foreach (var (s, (d, v)) in target.Closure)
+        {
+            if (v is not null)
+            {
+                SetRegister(0, d, (Value)v);
+            }
+        }
+
+#pragma warning disable CS8629
+        PC = (PC)target.StartPC;
+#pragma warning restore CS8629
     }
 
     public void Decode(PC startPC)
@@ -107,7 +123,8 @@ public class VM
         }
     }
 
-    public void Define(string name) {
+    public void Define(string name)
+    {
         var i = definitionCount;
         Env[name] = Value.Make(Core.Binding, new Binding(-1, i));
         Emit(Ops.SetRegister.Make(-1, i));
@@ -144,7 +161,8 @@ public class VM
         while (true)
         {
             var op = code[PC];
- 
+            //Console.WriteLine(op);
+
             switch (op.Type)
             {
                 case Op.T.BeginFrame:
@@ -181,7 +199,7 @@ public class VM
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
                         PC++;
-                        Call(callOp.Loc, callOp.Target, callOp.Arity, callOp.RegisterCount);
+                        Call(callOp.Loc, stack, callOp.Target, callOp.Arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.Check:
@@ -231,23 +249,17 @@ public class VM
                         PC++;
                         break;
                     }
-                case Op.T.EnterMethod:
-                    {
-                        var enterOp = (Ops.EnterMethod)op.Data;
-                        var t = enterOp.Target;
-                        
-                        for (var i = t.Args.Length - 1; i >= 0; i--)
-                        {
-                            SetRegister(0, t.Args[i].Item2, stack.Pop());
-                        }
-
-                        PC++;
-                        break;
-                    }
                 case Op.T.ExitMethod:
                     {
+                        var c = calls.Pop();
+
+                        foreach (var (s, (d, v)) in c.Target.Closure)
+                        {
+                            SetRegister(s.FrameOffset, s.Index, GetRegister(0, d));
+                        }
+
                         EndFrame();
-                        PC = calls.Pop().ReturnPC;
+                        PC = c.ReturnPC;
                         break;
                     }
                 case Op.T.GetRegister:
@@ -265,6 +277,21 @@ public class VM
 #pragma warning restore CS8629
                         break;
                     }
+                case Op.T.PrepareClosure:
+                    {
+                        var closureOp = (Ops.PrepareClosure)op.Data;
+                        var m = closureOp.Target;
+
+                        foreach (var (s, (d, v)) in m.Closure)
+                        {
+                            var rv = GetRegister(s.FrameOffset - 1, s.Index);
+                            m.Closure[s] = (d, rv);
+                        }
+
+                        PC++;
+                        break;
+                    }
+
                 case Op.T.Push:
                     {
                         var pushOp = (Ops.Push)op.Data;
@@ -453,8 +480,10 @@ public class VM
         return forms;
     }
 
-    public int RegisterIndex(int frameOffset, int index) {
-        if (frameOffset == -1) {
+    public int RegisterIndex(int frameOffset, int index)
+    {
+        if (frameOffset == -1)
+        {
             return index;
         }
 

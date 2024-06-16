@@ -1,9 +1,7 @@
 namespace Sharpl.Libs;
 
-using Microsoft.VisualBasic;
 using Sharpl.Types.Core;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 
@@ -53,11 +51,15 @@ public class Core : Lib
 
              (string, int)[] fas;
 
-             var skip = new Label();
-             vm.Emit(Ops.Goto.Make(skip));
              var parentEnv = vm.Env;
              var registerCount = vm.NextRegisterIndex;
-             var ids = args.CollectIds();
+
+             var ids = args.CollectIds().Where(
+                id => vm.Env[id] is Value v &&
+                v.Type == Core.Binding &&
+                v.Cast(Core.Binding).FrameOffset != -1).
+                ToArray();
+
              vm.PushEnv(ids);
 
              if (f is Forms.Array af)
@@ -80,6 +82,15 @@ public class Core : Lib
              }
 
              var m = new UserMethod(loc, vm, name, ids, fas);
+
+             if (ids.Length > 0)
+             {
+                 vm.Emit(Ops.PrepareClosure.Make(m));
+             }
+
+             var skip = new Label();
+             vm.Emit(Ops.Goto.Make(skip));
+             m.StartPC = vm.EmitPC;
              var v = Value.Make(Core.UserMethod, m);
 
              if (name != "")
@@ -87,7 +98,6 @@ public class Core : Lib
                  parentEnv.Bind(name, v);
              }
 
-             vm.Emit(Ops.EnterMethod.Make(m, registerCount));
              args.Emit(vm);
              vm.Emit(Ops.ExitMethod.Make());
              skip.PC = vm.EmitPC;
@@ -95,7 +105,7 @@ public class Core : Lib
 
              if (name == "")
              {
-                 vm.Emit(Ops.Push.Make(v));
+                 v.Emit(loc, vm, args);
              }
          });
 
@@ -199,7 +209,7 @@ public class Core : Lib
              }
 
              vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-             vm.PushEnv(args.CollectIds());
+             vm.PushEnv(args.CollectIds().ToArray());
 
              try
              {
@@ -250,13 +260,19 @@ public class Core : Lib
                 {
                     if (args.Pop() is Form f)
                     {
-                        try {
-                            if (vm.Eval(f, args) is Value v) {
+                        try
+                        {
+                            if (vm.Eval(f, args) is Value v)
+                            {
                                 vm.Emit(Ops.Push.Make(v));
-                            } else {
+                            }
+                            else
+                            {
                                 throw new EmitError(f.Loc, "Missing value");
                             }
-                        } catch (Exception) {
+                        }
+                        catch (Exception)
+                        {
                             f.Emit(vm, args);
                         }
 
@@ -277,7 +293,7 @@ public class Core : Lib
         BindMacro("do", [], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.PushEnv(args.CollectIds());
+            vm.PushEnv(args.CollectIds().ToArray());
 
             try
             {
@@ -299,7 +315,7 @@ public class Core : Lib
             {
                 var bs = bsf.Items;
                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-                vm.PushEnv(ids);
+                vm.PushEnv(ids.ToArray());
 
                 try
                 {
@@ -383,7 +399,7 @@ public class Core : Lib
                 }
                 else
                 {
-                    lib = new Lib(nf.Name, vm.Env, args.CollectIds());
+                    lib = new Lib(nf.Name, vm.Env, args.CollectIds().ToArray());
                     vm.Env.BindLib(lib);
                 }
 

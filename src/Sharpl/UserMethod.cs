@@ -1,25 +1,33 @@
 using System.Data;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
+using Sharpl.Libs;
 
 namespace Sharpl;
 
-public readonly struct UserMethod
+public class UserMethod
 {
     public readonly (string, int)[] Args;
-    public readonly Env Env;
-    public readonly string[] Ids;
+    public readonly Dictionary<Binding, (int, Value?)> Closure = new Dictionary<Binding, (int, Value?)>();
     public readonly Loc Loc;
     public readonly string Name;
-    public readonly int StartPC;
+    public int? StartPC;
 
-    public UserMethod(Loc loc, VM vm, string name, string[] ids, (string, int)[] args)
+    public UserMethod(Loc loc, VM vm, string name, string[] closure, (string, int)[] args)
     {
         Loc = loc;
-        Env = vm.Env;
-        StartPC = vm.EmitPC;
         Name = name;
-        Ids = ids;
+
+        Closure = closure.Select<string, (Binding, (int, Value?))>((id) =>
+        {
+#pragma warning disable CS8629
+            var b = ((Value)vm.Env[id]).Cast(Core.Binding);
+#pragma warning restore CS8629
+            var r = vm.AllocRegister();
+            vm.Env[id] = Value.Make(Core.Binding, new Binding(0, r));
+            return (b, (r, null));
+        }).ToDictionary();
+
         Args = args;
     }
 

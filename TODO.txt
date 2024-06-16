@@ -1,6 +1,20 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* rename decode method to emit
+
+* make nil return nil when called
+** allows nested lookups without special syntax
+
+* figure out how to get args directly into registers when calling user methods
+** add Form.Value?
+*** return value for literals
+*** return value for ids if not > -1 bindings
+*** arrays
+** rename SetRegister to SetRegisterIndirect
+*** add SetRegisterDirect with value
+**** clone
+
 * add trace macro
 ** add vm.Trace bool
 ** add Trace op

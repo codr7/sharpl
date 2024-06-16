@@ -12,7 +12,7 @@ public class BindingType : Type<Binding>
         vm.Emit(Ops.CallIndirect.Make(loc, arity, vm.NextRegisterIndex));
     }
     
-    public override void EmitId(Loc loc, VM vm, Value target, Form.Queue args)
+    public override void Emit(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var v = target.Cast(this);
         vm.Emit(Ops.GetRegister.Make(v.FrameOffset, v.Index));

@@ -11,7 +11,7 @@ public class Literal : Form
 
     public override void Emit(VM vm, Form.Queue args)
     {
-            vm.Emit(Ops.Push.Make(Value));
+        Value.Emit(Loc, vm, args);
     }
 
     public override void EmitCall(VM vm, Form.Queue args)

@@ -65,6 +65,16 @@ Leaving out the name creates a lambda.
 ```
 `42`
 
+### closures
+Methods keep copies of any external bindings referenced from their body.
+
+```
+(let [foo (let [bar 42]
+           (^[] bar))]
+  (foo))
+```
+`42`
+
 ## libraries
 `lib` may be used to define/extend libraries.
 

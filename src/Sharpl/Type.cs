@@ -36,6 +36,11 @@ public abstract class AnyType
         result.Append(value.Data.ToString());
     }
 
+    public virtual void Emit(Loc loc, VM vm, Value value, Form.Queue args)
+    {
+        vm.Emit(Ops.Push.Make(value));
+    }
+
     public virtual void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var arity = args.Count;
@@ -45,7 +50,7 @@ public abstract class AnyType
 
     public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args)
     {
-        vm.Emit(Ops.Push.Make(value));
+        Emit(loc, vm, value, args);
     }
 
     public abstract bool Equals(Value left, Value right);
