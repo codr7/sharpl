@@ -6,6 +6,23 @@
 * make nil return nil when called
 ** allows nested lookups without special syntax
 
+* implement inc/dec/set
+** implement for array item
+** implement for string char?
+** add INC/DEC ops that operate on registers
+*** assume integers
+** put items into registers and set back
+
+* add string calling
+** like array
+** slice if index is pair
+
+* add if macro
+** add BRANCH op
+
+(^ fib-rec [n]
+  (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (dec n)))))
+
 * figure out how to get args directly into registers when calling user methods
 ** add Form.Value?
 *** return value for literals
@@ -25,18 +42,10 @@
 
 * add Pair type/reader
 
-* add string calling
-** like array
-** slice if index is pair
-
-* add if macro
-
 * add for loop
 ** add array iterator
 ** add char iterator
 ** add step iterator
-
-* add ^-macro
 
 * add vararg support
 ** mark method as vararg if last arg is array form
@@ -117,8 +126,3 @@
       (do 
         (eval input)
         (repl)))))
-
-fib
-
-(^ fib-rec [n]
-  (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (decr n)))))
