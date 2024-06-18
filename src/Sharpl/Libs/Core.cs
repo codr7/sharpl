@@ -307,6 +307,64 @@ public class Core : Lib
             vm.Decode(startPC);
         });
 
+        BindMacro("if", ["condition"], (loc, target, vm, args) =>
+        {
+            vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+            vm.PushEnv(args.CollectIds().ToArray());
+
+            try
+            {
+                if (args.Pop() is Form f) {
+                    f.Emit(vm, args);
+                } else {
+                    throw new EmitError(loc, "Missing condition");
+                }
+
+                var skip = new Label();
+                vm.Emit(Ops.Branch.Make(skip));
+                args.Emit(vm);
+                skip.PC = vm.EmitPC;
+                vm.Emit(Ops.EndFrame.Make());
+            }
+            finally
+            {
+                vm.PopEnv();
+            }
+        });
+
+       BindMacro("if-else", ["condition"], (loc, target, vm, args) =>
+        {
+            vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+            vm.PushEnv(args.CollectIds().ToArray());
+
+            try
+            {
+                if (args.Pop() is Form cf) {
+                    cf.Emit(vm, args);
+                } else {
+                    throw new EmitError(loc, "Missing condition");
+                }
+
+                var skipElse = new Label();
+                vm.Emit(Ops.Branch.Make(skipElse));
+
+                if (args.Pop() is Form tf) {
+                    tf.Emit(vm, args);
+                }
+
+                var skipEnd = new Label();
+                vm.Emit(Ops.Goto.Make(skipEnd));
+                skipElse.PC = vm.EmitPC;
+                args.Emit(vm);
+                skipEnd.PC = vm.EmitPC;
+                vm.Emit(Ops.EndFrame.Make());
+            }
+            finally
+            {
+                vm.PopEnv();
+            }
+        });
+
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>
         {
             var ids = args.CollectIds();

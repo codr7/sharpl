@@ -49,6 +49,18 @@
       
   (bar))
 
+(check 1
+  1 (if 0 2))
+
+(check 2
+  1 (if 42 2))
+
+(check 2
+  (if-else 0 1 2))
+
+(check 1
+  (if-else 42 1 2))
+
 (check T
   (= 42 42))
 

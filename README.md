@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v2
+sharpl v3
 
    1 (say "hello")
    2 
@@ -37,6 +37,23 @@ New dynamically scoped bindings may be created using `define`.
   (bar))
 ```
 `42`
+
+## branching
+`if` may be used to conditionally evaluate a block of code.
+
+```
+  (if 42 (say "42 is considered T"))
+```
+```
+42 is considered T
+```
+
+`if-else` may be used to specify an else-clause.
+
+```
+  (if-else 42 1 2)
+```
+`2`
 
 ## methods
 New methods may be defined using `^`.

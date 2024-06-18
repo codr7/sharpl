@@ -23,7 +23,7 @@ public class VM
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 2;
+    public static readonly int VERSION = 3;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.String StringLib = new Libs.String();
@@ -170,6 +170,23 @@ public class VM
                         var beginOp = (Ops.BeginFrame)op.Data;
                         BeginFrame(beginOp.RegisterCount);
                         PC++;
+                        break;
+                    }
+                case Op.T.Branch:
+                    {
+                        var branchOp = (Ops.Branch)op.Data;
+
+                        if ((bool)stack.Pop())
+                        {
+                            PC++;
+                        }
+                        else
+                        {
+#pragma warning disable CS8629
+                            PC = (PC)branchOp.Target.PC;
+#pragma warning restore CS8629
+                        }
+
                         break;
                     }
                 case Op.T.CallDirect:
