@@ -28,22 +28,15 @@ New lexically scoped bindings may be created using `let`.
 New dynamically scoped bindings may be created using `define`.
 
 ```
-(^foo []
-  (define bar (do (say "compiling") 1)
-          baz 2)
-  (+ bar baz))
-```
-`compiling`
+(define foo 35)
+  
+(^bar []
+  foo)
 
+(let [foo (+ foo 7)]
+  (bar))
 ```
-(foo)
-```
-`3`
-
-```
-bar
-```
-`Sharpl.EmitError: repl@6:1 Unknown id: bar`
+`42`
 
 ## methods
 New methods may be defined using `^`.
