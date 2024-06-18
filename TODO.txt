@@ -1,8 +1,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* rename decode method to emit
-
 * make nil return nil when called
 ** allows nested lookups without special syntax
 

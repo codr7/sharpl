@@ -106,10 +106,10 @@ Sharpl.EvalError: repl@1:2 Check failed: expected 5, actual 4!
 ```
 
 ## debugging
-`decode` may be used to display the VM operations emitted for an expression.
+`emit` may be used to display the VM operations emitted for an expression.
 
 ```
-(decode (+ 1 2))
+(emit (+ 1 2))
  
 1    Push 1
 2    Push 2

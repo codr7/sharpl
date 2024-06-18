@@ -235,16 +235,6 @@ public class Core : Lib
              }
          });
 
-        BindMacro("decode", [], (loc, target, vm, args) =>
-        {
-            var skip = new Label();
-            vm.Emit(Ops.Goto.Make(skip));
-            var startPC = vm.EmitPC;
-            args.Emit(vm);
-            skip.PC = vm.EmitPC;
-            vm.Decode(startPC);
-        });
-
         BindMacro("define", ["id", "value"], (loc, target, vm, args) =>
         {
             while (true)
@@ -305,6 +295,16 @@ public class Core : Lib
             }
 
             vm.Emit(Ops.EndFrame.Make());
+        });
+
+        BindMacro("emit", [], (loc, target, vm, args) =>
+        {
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            var startPC = vm.EmitPC;
+            args.Emit(vm);
+            skip.PC = vm.EmitPC;
+            vm.Decode(startPC);
         });
 
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>
