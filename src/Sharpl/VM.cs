@@ -16,7 +16,7 @@ public class VM
         public int MaxDefinitions = 128;
         public int MaxFrames = 248;
         public int MaxOps = 1024;
-        public int MaxRegisters = 512;
+        public int MaxRegisters = 1024;
         public int MaxStackSize = 32;
 
         public C() { }
@@ -83,6 +83,10 @@ public class VM
 
     public void BeginFrame(int registerCount)
     {
+        if (!frames.Empty) {   
+            registerCount += frames.Last();
+        }
+        
         frames.Push(registerCount);
     }
 
@@ -161,7 +165,7 @@ public class VM
         while (true)
         {
             var op = code[PC];
-            Console.WriteLine(op);
+            //Console.WriteLine(op);
 
             switch (op.Type)
             {
@@ -292,7 +296,6 @@ public class VM
                     {
                         var getOp = (Ops.GetRegister)op.Data;
                         stack.Push(GetRegister(getOp.FrameOffset, getOp.Index));
-                        Console.WriteLine("GET " + stack);
                         PC++;
                         break;
                     }

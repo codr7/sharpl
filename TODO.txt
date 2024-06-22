@@ -1,12 +1,11 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-fib.sl
-
-* debug fib
-** recursive call clobbers arg register?
 * add bench macro
+
 * use dec
+
+* debug registers in tests.sl
 
 * implement inc/set macros
 ** implement for array item
