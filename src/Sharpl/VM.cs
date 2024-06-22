@@ -260,6 +260,15 @@ public class VM
                         PC++;
                         break;
                     }
+                    case Op.T.Decrement: {
+                        var decrementOp = (Ops.Decrement)op.Data;
+                        var i = RegisterIndex(decrementOp.FrameOffset, decrementOp.Index);
+                        var v = Value.Make(Core.Int, registers[i].Cast(Core.Int) - 1);
+                        registers[i] = v;
+                        stack.Push(v);
+                        PC++;
+                        break;
+                    }
                 case Op.T.EndFrame:
                     {
                         EndFrame();

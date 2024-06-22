@@ -6,6 +6,7 @@ public readonly struct Op
     {
         BeginFrame, Branch,
         CallDirect, CallIndirect, CallMethod, CallUserMethod, Check, CopyRegister, CreateArray,
+        Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,
         PrepareClosure, Push,

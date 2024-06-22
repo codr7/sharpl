@@ -1,15 +1,13 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* implement inc/dec/set
+(^fib-rec [n]
+  (if (< n 2) n (+ (fib-rec (dec n)) (fib-rec (dec n)))))
+
+* implement inc/set
 ** implement for array item
 ** implement for string char?
-** add INC/DEC ops that operate on registers
-*** assume integers
 ** put items into registers and set back
-
-(^ fib-rec [n]
-  (if (< n 2) n (+ (fib-rec (decr n)) (fib-rec (dec n)))))
 
 * add string calling
 ** like array

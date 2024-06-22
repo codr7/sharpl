@@ -1,6 +1,7 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
+using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Text;
 
@@ -234,6 +235,22 @@ public class Core : Lib
                  vm.PopEnv();
              }
          });
+
+        BindMacro("dec", [], (loc, target, vm, args) => {
+            if (args.Pop() is Forms.Id id) {
+                if (vm.Env[id.Name] is Value v) {
+                    if (v.Type == Core.Binding) {
+                        var b = v.Cast(Core.Binding);
+                        vm.Emit(Ops.Decrement.Make(b.FrameOffset, b.Index));                        
+                    }
+                }
+                else {
+                    throw new EmitError(id.Loc, "Invalid target");
+                }    
+            } else {
+                    throw new EmitError(loc, "Invalid target");               
+            }
+        });
 
         BindMacro("decode", [], (loc, target, vm, args) =>
         {
