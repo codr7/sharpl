@@ -3,10 +3,10 @@
 
 fib.sl
 
-* add < method
-** add Comparable trait
-
+* debug fib
+** recursive call clobbers arg register?
 * add bench macro
+* use dec
 
 * implement inc/set macros
 ** implement for array item

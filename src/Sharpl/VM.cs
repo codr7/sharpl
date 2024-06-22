@@ -161,7 +161,7 @@ public class VM
         while (true)
         {
             var op = code[PC];
-            //Console.WriteLine(op);
+            Console.WriteLine(op);
 
             switch (op.Type)
             {
@@ -292,6 +292,7 @@ public class VM
                     {
                         var getOp = (Ops.GetRegister)op.Data;
                         stack.Push(GetRegister(getOp.FrameOffset, getOp.Index));
+                        Console.WriteLine("GET " + stack);
                         PC++;
                         break;
                     }
@@ -522,10 +523,6 @@ public class VM
         {
             return index;
         }
-
-        //if (frameOffset > 0) {
-        //    frameOffset += calls.Count;
-        //}       
 
         return index + frames.Peek(frameOffset);
     }
