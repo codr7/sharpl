@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v3
+sharpl v4
 
    1 (say "hello")
    2 
@@ -11,10 +11,10 @@ _
 ```
 
 ## evaluation
-`#` may be used to evaluate a block of code at emit time, the results are pushed on the stack on evaluation.
+`eval` may be used to evaluate a block of code at emit time, the results are pushed on the stack on evaluation.
 
 ```
-(# (say "emitting" 42))
+(eval (say "emitting" 42))
 ```
 ```
 emitting

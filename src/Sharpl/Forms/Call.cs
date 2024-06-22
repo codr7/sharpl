@@ -27,7 +27,12 @@ public class Call : Form
 
     public override void Emit(VM vm, Form.Queue args)
     {
-        target.EmitCall(vm, new Form.Queue(this.args));
+        var cas =  new Form.Queue(this.args);
+        target.EmitCall(vm,cas);
+
+        foreach (var a in cas) {
+            args.Push(a);
+        }
     }
 
     public override string ToString()

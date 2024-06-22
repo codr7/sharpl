@@ -109,17 +109,6 @@ public class Core : Lib
              }
          });
 
-        BindMacro("#", [], (loc, target, vm, args) =>
-        {
-            var stack = new Stack(vm.Config.MaxStackSize);
-            vm.Eval(args, stack);
-
-            foreach (var it in stack)
-            {
-                vm.Emit(Ops.Push.Make(it));
-            }
-        });
-
         BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Pop();
@@ -271,8 +260,14 @@ public class Core : Lib
                 {
                     if (args.Pop() is Form f)
                     {
+                        if (f is Forms.Literal lit)
+                        {
+                            vm.Env[idf.Name] = lit.Value;
+                        }
 
-                        f.Emit(vm, args);
+                        var v = new Form.Queue();
+                        v.Push(f);
+                        v.Emit(vm, args);
                         vm.Define(idf.Name);
                     }
                     else
@@ -282,7 +277,7 @@ public class Core : Lib
                 }
                 else
                 {
-                    throw new EmitError(loc, "Invalid binding: {id}");
+                    throw new EmitError(loc, $"Invalid binding: {id}");
                 }
             }
         });
@@ -302,6 +297,17 @@ public class Core : Lib
             }
 
             vm.Emit(Ops.EndFrame.Make());
+        });
+
+        BindMacro("eval", [], (loc, target, vm, args) =>
+        {
+            var stack = new Stack(vm.Config.MaxStackSize);
+            vm.Eval(args, stack);
+
+            foreach (var it in stack)
+            {
+                args.Push(new Forms.Literal(loc, it));
+            }
         });
 
         BindMacro("if", ["condition"], (loc, target, vm, args) =>

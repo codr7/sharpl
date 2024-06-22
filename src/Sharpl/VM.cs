@@ -23,7 +23,7 @@ public class VM
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 3;
+    public static readonly int VERSION = 4;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.String StringLib = new Libs.String();

@@ -2,6 +2,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Sharpl;
 
+using System.Collections;
 using System.Text;
 using Sharpl.Ops;
 
@@ -26,7 +27,7 @@ public abstract class Form : Emitter
         vm.Emit(Ops.CallIndirect.Make(Loc, arity, vm.NextRegisterIndex));
     }
 
-    public class Queue : Emitter
+    public class Queue : Emitter, IEnumerable<Form>
     {
         private LinkedList<Form> items = new LinkedList<Form>();
 
@@ -144,6 +145,16 @@ public abstract class Form : Emitter
             }
 
             return res.ToString();
+        }
+
+        public IEnumerator<Form> GetEnumerator()
+        {
+            return items.AsEnumerable().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return items.GetEnumerator();
         }
     }
 }
