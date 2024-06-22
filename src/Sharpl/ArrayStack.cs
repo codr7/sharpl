@@ -23,6 +23,10 @@ public class ArrayStack<T>: IEnumerable<T>
         items = new T[capacity];
     }
 
+    public void Clear() {
+        count = 0;
+    }
+    
     public void Drop(int n)
     {
         count -= n;

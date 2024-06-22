@@ -1,5 +1,6 @@
 namespace Sharpl.Libs;
 
+using Microsoft.VisualBasic;
 using Sharpl.Types.Core;
 using System.Diagnostics.SymbolStore;
 using System.Linq;
@@ -228,6 +229,17 @@ public class Core : Lib
 
             stack.Push(Core.Int, res);
         });
+
+        BindMacro("benchmark", ["n"], (loc, target, vm, args) =>
+         {
+            if (args.Pop() is Form f && vm.Eval(f) is Value n) {
+                vm.Emit(Ops.Benchmark.Make(n.Cast(loc, Core.Int)));
+                args.Emit(vm);
+                vm.Emit(Ops.Stop.Make());
+            } else {
+                throw new EmitError(loc, "Missing repetitions");
+            }
+         });
 
         BindMacro("check", ["expected", "body"], (loc, target, vm, args) =>
          {

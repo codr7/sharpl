@@ -2,6 +2,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Sharpl;
 
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using Sharpl.Libs;
@@ -176,6 +177,28 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.Benchmark: {
+                    var benchmarkOp = (Ops.Benchmark)op.Data;
+                    var bodyPC = PC+1;
+                    var s = new Stack(Config.MaxStackSize);
+                    
+                    for (var i = 0; i < benchmarkOp.N; i++) {
+                        Eval(bodyPC, s);
+                        s.Clear();
+                    }
+
+                    var t = new Stopwatch();
+                    t.Start();
+                    
+                    for (var i = 0; i < benchmarkOp.N; i++) {
+                        Eval(bodyPC, s);
+                        s.Clear();
+                    }
+
+                    t.Stop();
+                    stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
+                    break;
+                }
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;

@@ -129,3 +129,10 @@
 
 (check user
   (lib))
+
+
+
+(load "fib.sl")
+
+(check 55
+  (fib-rec 10))
