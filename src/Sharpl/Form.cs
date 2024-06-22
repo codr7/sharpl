@@ -5,7 +5,7 @@ namespace Sharpl;
 using System.Text;
 using Sharpl.Ops;
 
-public abstract class Form
+public abstract class Form : Emitter
 {
     public readonly Loc Loc;
 
@@ -26,7 +26,7 @@ public abstract class Form
         vm.Emit(Ops.CallIndirect.Make(Loc, arity, vm.NextRegisterIndex));
     }
 
-    public class Queue
+    public class Queue : Emitter
     {
         private LinkedList<Form> items = new LinkedList<Form>();
 
@@ -64,6 +64,11 @@ public abstract class Form
                     v.Emit(vm, this);
                 }
             }
+        }
+
+        public void Emit(VM vm, Queue args)
+        {
+            Emit(vm);
         }
 
         public bool Empty { get => items.Count == 0; }

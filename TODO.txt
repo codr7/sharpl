@@ -116,5 +116,5 @@
   (let [input (read-input [])]
     (if input
       (do 
-        (eval input)
+        (eval input)ger mig absolut iger mig absolut ingentingngenting
         (repl)))))

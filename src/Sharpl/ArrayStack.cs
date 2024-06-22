@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Dynamic;
 using System.Text;
 
 namespace Sharpl;
 
-public class ArrayStack<T>
+public class ArrayStack<T>: IEnumerable<T>
 {
     private readonly int capacity;
     private readonly T[] items;
@@ -87,5 +88,15 @@ public class ArrayStack<T>
 
         res.Append(']');
         return res.ToString();
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return items[0..count].AsEnumerable().GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return items[0..count].GetEnumerator();
     }
 }

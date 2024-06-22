@@ -119,7 +119,7 @@ public class VM
         for (var pc = startPC; pc < code.Count; pc++)
         {
             Term.SetFg(Color.FromArgb(255, 128, 128, 255));
-            Term.Write($"{pc,-4} {code[pc]}\n");
+            Term.Write($"{pc - startPC + 1,-4} {code[pc]}\n");
         }
     }
 
@@ -352,22 +352,32 @@ public class VM
         Eval(startPC, new Stack(Config.MaxStackSize));
     }
 
-    public void Eval(Form form, Form.Queue args, Stack stack)
+    public void Eval(Emitter target, Form.Queue args, Stack stack)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        form.Emit(this, args);
+        target.Emit(this, args);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         Eval(startPC, stack);
     }
 
-    public Value? Eval(Form form, Form.Queue args)
+    public Value? Eval(Emitter target, Form.Queue args)
     {
         var stack = new Stack(Config.MaxStackSize);
-        Eval(form, args, stack);
+        Eval(target, args, stack);
         return stack.Pop();
+    }
+
+    public void Eval(Emitter target, Stack stack)
+    {
+        Eval(target, new Form.Queue(), stack);
+    }
+
+    public Value? Eval(Emitter target)
+    {
+        return Eval(target, new Form.Queue());
     }
 
     public int FrameCount

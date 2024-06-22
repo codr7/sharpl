@@ -23,6 +23,10 @@
   foo)
 
 (check 42
+  (define foo (# (+ 35 7)))
+  foo)
+
+(check 42
   (^foo [x]
     x)
 

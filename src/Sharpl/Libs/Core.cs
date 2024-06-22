@@ -109,6 +109,17 @@ public class Core : Lib
              }
          });
 
+        BindMacro("#", [], (loc, target, vm, args) =>
+        {
+            var stack = new Stack(vm.Config.MaxStackSize);
+            vm.Eval(args, stack);
+
+            foreach (var it in stack)
+            {
+                vm.Emit(Ops.Push.Make(it));
+            }
+        });
+
         BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Pop();
@@ -235,6 +246,16 @@ public class Core : Lib
              }
          });
 
+        BindMacro("decode", [], (loc, target, vm, args) =>
+        {
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            var startPC = vm.EmitPC;
+            args.Emit(vm);
+            skip.PC = vm.EmitPC;
+            vm.Decode(startPC);
+        });
+
         BindMacro("define", ["id", "value"], (loc, target, vm, args) =>
         {
             while (true)
@@ -250,22 +271,8 @@ public class Core : Lib
                 {
                     if (args.Pop() is Form f)
                     {
-                        try
-                        {
-                            if (vm.Eval(f, args) is Value v)
-                            {
-                                vm.Emit(Ops.Push.Make(v));
-                            }
-                            else
-                            {
-                                throw new EmitError(f.Loc, "Missing value");
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            f.Emit(vm, args);
-                        }
 
+                        f.Emit(vm, args);
                         vm.Define(idf.Name);
                     }
                     else
@@ -297,16 +304,6 @@ public class Core : Lib
             vm.Emit(Ops.EndFrame.Make());
         });
 
-        BindMacro("emit", [], (loc, target, vm, args) =>
-        {
-            var skip = new Label();
-            vm.Emit(Ops.Goto.Make(skip));
-            var startPC = vm.EmitPC;
-            args.Emit(vm);
-            skip.PC = vm.EmitPC;
-            vm.Decode(startPC);
-        });
-
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
@@ -314,9 +311,12 @@ public class Core : Lib
 
             try
             {
-                if (args.Pop() is Form f) {
+                if (args.Pop() is Form f)
+                {
                     f.Emit(vm, args);
-                } else {
+                }
+                else
+                {
                     throw new EmitError(loc, "Missing condition");
                 }
 
@@ -332,38 +332,42 @@ public class Core : Lib
             }
         });
 
-       BindMacro("if-else", ["condition"], (loc, target, vm, args) =>
-        {
-            vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.PushEnv(args.CollectIds().ToArray());
+        BindMacro("if-else", ["condition"], (loc, target, vm, args) =>
+         {
+             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+             vm.PushEnv(args.CollectIds().ToArray());
 
-            try
-            {
-                if (args.Pop() is Form cf) {
-                    cf.Emit(vm, args);
-                } else {
-                    throw new EmitError(loc, "Missing condition");
-                }
+             try
+             {
+                 if (args.Pop() is Form cf)
+                 {
+                     cf.Emit(vm, args);
+                 }
+                 else
+                 {
+                     throw new EmitError(loc, "Missing condition");
+                 }
 
-                var skipElse = new Label();
-                vm.Emit(Ops.Branch.Make(skipElse));
+                 var skipElse = new Label();
+                 vm.Emit(Ops.Branch.Make(skipElse));
 
-                if (args.Pop() is Form tf) {
-                    tf.Emit(vm, args);
-                }
+                 if (args.Pop() is Form tf)
+                 {
+                     tf.Emit(vm, args);
+                 }
 
-                var skipEnd = new Label();
-                vm.Emit(Ops.Goto.Make(skipEnd));
-                skipElse.PC = vm.EmitPC;
-                args.Emit(vm);
-                skipEnd.PC = vm.EmitPC;
-                vm.Emit(Ops.EndFrame.Make());
-            }
-            finally
-            {
-                vm.PopEnv();
-            }
-        });
+                 var skipEnd = new Label();
+                 vm.Emit(Ops.Goto.Make(skipEnd));
+                 skipElse.PC = vm.EmitPC;
+                 args.Emit(vm);
+                 skipEnd.PC = vm.EmitPC;
+                 vm.Emit(Ops.EndFrame.Make());
+             }
+             finally
+             {
+                 vm.PopEnv();
+             }
+         });
 
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>
         {

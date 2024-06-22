@@ -10,6 +10,17 @@ hello
 _
 ```
 
+## evaluation
+`#` may be used to evaluate a block of code at emit time, the results are pushed on the stack on evaluation.
+
+```
+(# (say "emitting" 42))
+```
+```
+emitting
+```
+`42`
+
 ## bindings
 Bindings come in two flavors, with lexical or dynamic scope.
 
@@ -123,10 +134,10 @@ Sharpl.EvalError: repl@1:2 Check failed: expected 5, actual 4!
 ```
 
 ## debugging
-`emit` may be used to display the VM operations emitted for an expression.
+`decode` may be used to display the VM operations emitted for an expression.
 
 ```
-(emit (+ 1 2))
+(decode (+ 1 2))
  
 1    Push 1
 2    Push 2
