@@ -6,12 +6,9 @@
 
 * debug registers in tests.sl
 
+* debug fib-tail
+
 * add tail call support
-
-(^fib-tail [n a b]
-  (if-else (> n 1) (fib-tail (dec n) b (+ a b)) (if-else (= n 0) a b)))
-
-(say (benchmark 10000 (fib-tail 70 0 1)))
 
 * implement inc/set macros
 ** implement for array item
