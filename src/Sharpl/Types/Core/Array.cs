@@ -1,9 +1,10 @@
 namespace Sharpl.Types.Core;
 
 using Sharpl.Libs;
+using System.ComponentModel;
 using System.Text;
 
-public class ArrayType : Type<Value[]>
+public class ArrayType : Type<Value[]>, ComparableTrait
 {
     public ArrayType(string name) : base(name) { }
 
@@ -44,6 +45,35 @@ public class ArrayType : Type<Value[]>
                 throw new EvalError(loc, $"Wrong number of arguments: {arity}");
 
         }
+    }
+
+    public Order Compare(Value left, Value right)
+    {
+        var lvs = left.Cast(this);
+        var rvs = right.Cast(this);
+        var res = ComparableTrait.IntOrder(lvs.Length.CompareTo(rvs.Length));
+
+        for (var i = 0; i < lvs.Length && res != Order.EQ; i++)
+        {
+            var lv = lvs[i];
+            var rv = rvs[i];
+
+            if (lv.Type != rv.Type)
+            {
+                throw new Exception($"Type mismatch: {lv} {rv}");
+            }
+
+            if (lv.Type is ComparableTrait t && rv.Type is ComparableTrait)
+            {
+                res = t.Compare(lv, rv);
+            }
+            else
+            {
+                throw new Exception($"Not comparable: {lv} {rv}");
+            }
+        }
+
+        return res;
     }
 
     public override void Dump(Value value, StringBuilder result)

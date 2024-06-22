@@ -3,7 +3,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class StringType : Type<string>
+public class StringType : ComparableType<string>
 {
     public StringType(string name) : base(name) { }
 

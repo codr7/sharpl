@@ -130,6 +130,35 @@ public class Core : Lib
             stack.Push(Value.Make(Core.Bit, res));
         });
 
+        BindMethod("<", ["x", "y"], (loc, target, vm, stack, arity) =>
+        {
+            var lv = stack.Pop();
+            arity--;
+            var res = true;
+            var t = lv.Type as ComparableTrait;
+
+            if (t is null) {
+                throw new EvalError(loc, $"Not comparable: {lv}");
+            }
+
+            while (arity > 0) {
+                var rv = stack.Pop();
+                
+                if (rv.Type != t) {
+                    throw new EvalError(loc, $"Type mismatch: {lv} {rv}");
+                }
+
+                if (t.Compare(lv, rv) != Order.GT) {
+                    res = false;
+                    break;
+                }
+
+                arity--;
+            }
+
+            stack.Push(Value.Make(Core.Bit, res));
+        });
+
         BindMethod("+", [], (loc, target, vm, stack, arity) =>
         {
             var res = 0;

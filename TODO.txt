@@ -1,10 +1,14 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-(^fib-rec [n]
-  (if (< n 2) n (+ (fib-rec (dec n)) (fib-rec (dec n)))))
+fib.sl
 
-* implement inc/set
+* add < method
+** add Comparable trait
+
+* add bench macro
+
+* implement inc/set macros
 ** implement for array item
 ** implement for string char?
 ** put items into registers and set back

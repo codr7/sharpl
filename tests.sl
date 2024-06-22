@@ -68,10 +68,16 @@
 (check T
   (= 42 42))
 
+(check T
+  (< 1 2 3))
+
+(check F
+  (< 1 3 2))
+
 (check 42
   (let [foo 43]
     (dec foo)))
-    
+
 (check 3
   (+ 1 2))
   

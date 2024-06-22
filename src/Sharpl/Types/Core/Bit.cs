@@ -2,7 +2,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class BitType : Type<bool>
+public class BitType : ComparableType<bool>
 {
     public BitType(string name) : base(name) { }
 
