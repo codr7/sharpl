@@ -20,13 +20,12 @@
 ** slice if index is pair
 
 * figure out how to get args directly into registers when calling user methods
-** add Form.Value?
-*** return value for literals
-*** return value for ids if not > -1 bindings
-*** arrays
-** rename SetRegister to SetRegisterIndirect
-*** add SetRegisterDirect with value
-**** clone
+** value for literals
+*** rename SetRegister to SetRegisterIndirect
+**** add SetRegisterDirect with value
+***** clone
+** copy register for bindings
+** arrays
 
 * add trace macro
 ** add vm.Trace bool
