@@ -119,7 +119,7 @@ And when called without arguments, it returns the current library.
 ```
 `(Lib user)`
 
-## testing
+## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
 
 Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests.sl) for examples.
@@ -129,6 +129,15 @@ Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests.
   (+ 2 2))
 
 Sharpl.EvalError: repl@1:2 Check failed: expected 5, actual 4!
+```
+
+## benchmarks
+`benchmark`may be used to measure the number of milliseconds it takes to repeat a block of code a number of times with warmup.
+
+```
+dotnet run -c=Release benchmarks.sl
+510
+266
 ```
 
 ## debugging
