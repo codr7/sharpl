@@ -7,11 +7,10 @@ sharpl v4
    1 (say "hello")
    2 
 hello
-_
 ```
 
 ## evaluation
-`eval` may be used to evaluate a block of code at emit time, the results are pushed on the stack on evaluation.
+`eval` may be used to evaluate a block of code at emit time, the results are pushed on evaluation.
 
 ```
 (eval (say "emitting" 42))
@@ -31,9 +30,8 @@ New lexically scoped bindings may be created using `let`.
 (let [x 1 
       y (+ x 2)]
   y)
-
-3
 ```
+`3`
 
 ### dynamic scope
 New dynamically scoped bindings may be created using `define`.
