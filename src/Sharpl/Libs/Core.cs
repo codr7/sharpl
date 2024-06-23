@@ -1,8 +1,6 @@
 namespace Sharpl.Libs;
 
-using Microsoft.VisualBasic;
 using Sharpl.Types.Core;
-using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Text;
 
@@ -60,7 +58,7 @@ public class Core : Lib
                 id => vm.Env[id] is Value v &&
                 v.Type == Core.Binding &&
                 v.Cast(Core.Binding).FrameOffset != -1).
-                ToArray();
+                ToHashSet<string>();
 
              vm.PushEnv(ids);
 
@@ -83,9 +81,9 @@ public class Core : Lib
                  throw new EmitError(loc, "Invalid method args");
              }
 
-             var m = new UserMethod(loc, vm, name, ids, fas);
+             var m = new UserMethod(loc, vm, name, ids.ToArray(), fas);
 
-             if (ids.Length > 0)
+             if (ids.Count > 0)
              {
                  vm.Emit(Ops.PrepareClosure.Make(m));
              }
@@ -138,18 +136,22 @@ public class Core : Lib
             var res = true;
             var t = lv.Type as ComparableTrait;
 
-            if (t is null) {
+            if (t is null)
+            {
                 throw new EvalError(loc, $"Not comparable: {lv}");
             }
 
-            while (arity > 0) {
+            while (arity > 0)
+            {
                 var rv = stack.Pop();
-                
-                if (rv.Type != t) {
+
+                if (rv.Type != t)
+                {
                     throw new EvalError(loc, $"Type mismatch: {lv} {rv}");
                 }
 
-                if (t.Compare(lv, rv) != Order.GT) {
+                if (t.Compare(lv, rv) != Order.GT)
+                {
                     res = false;
                     break;
                 }
@@ -167,18 +169,22 @@ public class Core : Lib
             var res = true;
             var t = lv.Type as ComparableTrait;
 
-            if (t is null) {
+            if (t is null)
+            {
                 throw new EvalError(loc, $"Not comparable: {lv}");
             }
 
-            while (arity > 0) {
+            while (arity > 0)
+            {
                 var rv = stack.Pop();
-                
-                if (rv.Type != t) {
+
+                if (rv.Type != t)
+                {
                     throw new EvalError(loc, $"Type mismatch: {lv} {rv}");
                 }
 
-                if (t.Compare(lv, rv) != Order.LT) {
+                if (t.Compare(lv, rv) != Order.LT)
+                {
                     res = false;
                     break;
                 }
@@ -262,13 +268,16 @@ public class Core : Lib
 
         BindMacro("benchmark", ["n"], (loc, target, vm, args) =>
          {
-            if (args.Pop() is Form f && vm.Eval(f) is Value n) {
-                vm.Emit(Ops.Benchmark.Make(n.Cast(loc, Core.Int)));
-                args.Emit(vm);
-                vm.Emit(Ops.Stop.Make());
-            } else {
-                throw new EmitError(loc, "Missing repetitions");
-            }
+             if (args.Pop() is Form f && vm.Eval(f) is Value n)
+             {
+                 vm.Emit(Ops.Benchmark.Make(n.Cast(loc, Core.Int)));
+                 args.Emit(vm);
+                 vm.Emit(Ops.Stop.Make());
+             }
+             else
+             {
+                 throw new EmitError(loc, "Missing repetitions");
+             }
          });
 
         BindMacro("check", ["expected", "body"], (loc, target, vm, args) =>
@@ -281,7 +290,7 @@ public class Core : Lib
              }
 
              vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-             vm.PushEnv(args.CollectIds().ToArray());
+             vm.PushEnv(args.CollectIds());
 
              try
              {
@@ -298,28 +307,36 @@ public class Core : Lib
                  }
 
                  vm.Emit(Ops.EndFrame.Make());
-                 ef.Emit(vm, args);
-                 vm.Emit(Ops.Check.Make(loc, ef));
              }
              finally
              {
                  vm.PopEnv();
              }
+
+             ef.Emit(vm, args);
+             vm.Emit(Ops.Check.Make(loc, ef));
          });
 
-        BindMacro("dec", [], (loc, target, vm, args) => {
-            if (args.Pop() is Forms.Id id) {
-                if (vm.Env[id.Name] is Value v) {
-                    if (v.Type == Core.Binding) {
+        BindMacro("dec", [], (loc, target, vm, args) =>
+        {
+            if (args.Pop() is Forms.Id id)
+            {
+                if (vm.Env[id.Name] is Value v)
+                {
+                    if (v.Type == Core.Binding)
+                    {
                         var b = v.Cast(Core.Binding);
-                        vm.Emit(Ops.Decrement.Make(b.FrameOffset, b.Index));                        
+                        vm.Emit(Ops.Decrement.Make(b.FrameOffset, b.Index));
                     }
                 }
-                else {
+                else
+                {
                     throw new EmitError(id.Loc, "Invalid target");
-                }    
-            } else {
-                    throw new EmitError(loc, "Invalid target");               
+                }
+            }
+            else
+            {
+                throw new EmitError(loc, "Invalid target");
             }
         });
 
@@ -373,7 +390,7 @@ public class Core : Lib
         BindMacro("do", [], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.PushEnv(args.CollectIds().ToArray());
+            vm.PushEnv(args.CollectIds());
 
             try
             {
@@ -401,7 +418,7 @@ public class Core : Lib
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.PushEnv(args.CollectIds().ToArray());
+            vm.PushEnv(args.CollectIds());
 
             try
             {
@@ -429,7 +446,7 @@ public class Core : Lib
         BindMacro("if-else", ["condition"], (loc, target, vm, args) =>
          {
              vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-             vm.PushEnv(args.CollectIds().ToArray());
+             vm.PushEnv(args.CollectIds());
 
              try
              {
@@ -471,7 +488,7 @@ public class Core : Lib
             {
                 var bs = bsf.Items;
                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-                vm.PushEnv(ids.ToArray());
+                vm.PushEnv(ids);
 
                 try
                 {
@@ -555,7 +572,7 @@ public class Core : Lib
                 }
                 else
                 {
-                    lib = new Lib(nf.Name, vm.Env, args.CollectIds().ToArray());
+                    lib = new Lib(nf.Name, vm.Env, args.CollectIds());
                     vm.Env.BindLib(lib);
                 }
 

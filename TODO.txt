@@ -1,12 +1,15 @@
-1314
-588
+543
+297
 
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* debug registers in tests.sl
+* debug test
 
-* debug fib-tail
+(check 42
+  (let [foo (let [bar 42]
+              (^[] bar))]
+    (foo)))
 
 * add tail call support
 

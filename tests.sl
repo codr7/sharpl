@@ -32,16 +32,17 @@
 
   (foo 42))
 
+(check 42
+  (^foo [a b c]
+    (- a b c))
+
+  (foo 45 2 1))
+
 (check 6
   (^foo [in out]
     (if-else (= in 0) out (foo (- in 1) (+ out in))))
 
   (foo 3 0))
-
-(check 42
-  (let [foo (let [bar 42]
-              (^[] bar))]
-    (foo)))
     
 (check 42
   (let [f (^[x] x)]

@@ -4,7 +4,7 @@ using Libs;
 
 public class Lib: Env
 {
-    public Lib(string name, Env? parent, string[] ids): base(parent, ids)
+    public Lib(string name, Env? parent, HashSet<string> ids): base(parent, ids)
     {
         Name = name;
     }

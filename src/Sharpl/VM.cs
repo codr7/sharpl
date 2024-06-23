@@ -39,7 +39,7 @@ public class VM
     private readonly ArrayStack<Op> code;
     private int definitionCount = 0;
     private Env? env;
-    private readonly ArrayStack<int> frames;
+    private readonly ArrayStack<(int, int)> frames;
     private readonly List<Label> labels = new List<Label>();
     private string loadPath = "";
     private int nextRegisterIndex = 0;
@@ -61,9 +61,9 @@ public class VM
         Config = config;
         calls = new ArrayStack<Call>(config.MaxCalls);
         code = new ArrayStack<Op>(config.MaxOps);
-        frames = new ArrayStack<int>(config.MaxFrames);
+        frames = new ArrayStack<(int, int)>(config.MaxFrames);
         registers = new Value[config.MaxRegisters];
-        nextRegisterIndex = config.MaxDefinitions;
+        nextRegisterIndex = 0;
 
         TermLib = new Libs.Term(this);
         UserLib.BindLib(CoreLib);
@@ -74,7 +74,7 @@ public class VM
         Env = UserLib;
         BeginFrame(config.MaxDefinitions);
     }
-
+ 
     public int AllocRegister()
     {
         var res = nextRegisterIndex;
@@ -84,11 +84,14 @@ public class VM
 
     public void BeginFrame(int registerCount)
     {
-        if (!frames.Empty) {   
-            registerCount += frames.Last();
-        }
+        var total = registerCount;
         
-        frames.Push(registerCount);
+        if (!frames.Empty) {
+            total += frames.Last().Item2;
+        }
+
+        frames.Push((registerCount, total));
+        nextRegisterIndex = 0;
     }
 
     public void Call(Loc loc, Stack stack, UserMethod target, int arity, int registerCount)
@@ -148,7 +151,7 @@ public class VM
         get { return code.Count; }
     }
 
-    public int EndFrame()
+    public (int, int) EndFrame()
     {
         return frames.Pop();
     }
@@ -501,14 +504,13 @@ public class VM
         }
 
         env = env.Parent;
-        nextRegisterIndex = EndFrame();
+        nextRegisterIndex = EndFrame().Item1;
     }
 
-    public void PushEnv(string[] ids)
+    public void PushEnv(HashSet<string> ids)
     {
         env = new Env(env, ids);
         BeginFrame(nextRegisterIndex);
-        nextRegisterIndex = 0;
     }
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
@@ -550,7 +552,7 @@ public class VM
             return index;
         }
 
-        return index + frames.Peek(frameOffset);
+        return index + frames.Peek(frameOffset).Item2;
     }
 
     public void REPL()

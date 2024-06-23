@@ -6,7 +6,7 @@ public class Env
 {
     private Dictionary<string, Value> bindings = new Dictionary<string, Value>();
 
-    public Env(Env? parent, string[] ids)
+    public Env(Env? parent, HashSet<string> ids)
     {
         Parent = parent;
 
@@ -18,6 +18,8 @@ public class Env
                     if (v.FrameOffset != -1) {
                         Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
                     }
+
+                    ids.Remove(id);
                 }
             }
         }
