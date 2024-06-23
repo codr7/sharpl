@@ -2,6 +2,7 @@ namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 
@@ -54,8 +55,8 @@ public class Core : Lib
              var parentEnv = vm.Env;
              var registerCount = vm.NextRegisterIndex;
 
-             var ids = args.CollectIds().Where(
-                id => vm.Env[id] is Value v &&
+             var ids = args.CollectIds().Where(id =>
+                vm.Env[id] is Value v &&
                 v.Type == Core.Binding &&
                 v.Cast(Core.Binding).FrameOffset != -1).
                 ToHashSet<string>();
@@ -487,6 +488,15 @@ public class Core : Lib
             if (args.Pop() is Forms.Array bsf)
             {
                 var bs = bsf.Items;
+
+                for (var i = 0; i < bs.Length; i += 2)
+                {
+                    if (bs[i] is Forms.Id f)
+                    {
+                        ids.Remove(f.Name);
+                    }
+                }
+
                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
                 vm.PushEnv(ids);
 

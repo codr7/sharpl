@@ -45,6 +45,11 @@
   (foo 3 0))
     
 (check 42
+  (let [foo (let [bar 42]
+              (^[] bar))]
+    (foo)))
+    
+(check 42
   (let [f (^[x] x)]
     (f 42)))
 

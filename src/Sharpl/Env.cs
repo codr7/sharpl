@@ -9,17 +9,27 @@ public class Env
     public Env(Env? parent, HashSet<string> ids)
     {
         Parent = parent;
+        var uids = new HashSet<string>();
 
-        for (var p = parent; p is Env; p = p.Parent) {
-            foreach (var id in ids) {
-                if (p.bindings.ContainsKey(id) && p.bindings[id] is Value b && b.Type == Core.Binding) {
+        for (var p = parent; p is Env; p = p.Parent)
+        {
+            foreach (var id in ids)
+            {
+                if (uids.Contains(id))
+                {
+                    continue;
+                }
+
+                if (p.bindings.ContainsKey(id) && p.bindings[id] is Value b && b.Type == Core.Binding)
+                {
                     var v = b.Cast(Core.Binding);
-                    
-                    if (v.FrameOffset != -1) {
-                        Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset+1, v.Index)));
+
+                    if (v.FrameOffset != -1)
+                    {
+                        Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset + 1, v.Index)));
                     }
 
-                    ids.Remove(id);
+                    uids.Add(id);
                 }
             }
         }
@@ -28,7 +38,7 @@ public class Env
     public Value? this[string id]
     {
         get => Find(id);
-        
+
         set
         {
             if (value == null)
@@ -47,10 +57,11 @@ public class Env
         bindings[id] = value;
     }
 
-    public void BindLib(Lib lib) {
-            Bind(lib.Name, Value.Make(Core.Lib, lib));
+    public void BindLib(Lib lib)
+    {
+        Bind(lib.Name, Value.Make(Core.Lib, lib));
     }
-    
+
     public Macro BindMacro(string name, string[] args, Macro.BodyType body)
     {
         var m = new Macro(name, args, body);
@@ -75,8 +86,10 @@ public class Env
         return bindings.ContainsKey(id) ? bindings[id] : Parent?.Find(id);
     }
 
-    public void Import(Env source) {
-        foreach (var (id, v) in source.bindings) {
+    public void Import(Env source)
+    {
+        foreach (var (id, v) in source.bindings)
+        {
             Bind(id, v);
         }
     }

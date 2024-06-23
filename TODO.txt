@@ -4,14 +4,15 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* debug test
-
-(check 42
-  (let [foo (let [bar 42]
-              (^[] bar))]
-    (foo)))
-
 * add tail call support
+
+* figure out how to get args directly into registers when calling user methods
+** value for literals
+*** rename SetRegister to SetRegisterIndirect
+**** add SetRegisterDirect with value
+***** clone
+** copy register for bindings
+** arrays
 
 * implement inc/set macros
 ** implement for array item
@@ -21,14 +22,6 @@
 * add string calling
 ** like array
 ** slice if index is pair
-
-* figure out how to get args directly into registers when calling user methods
-** value for literals
-*** rename SetRegister to SetRegisterIndirect
-**** add SetRegisterDirect with value
-***** clone
-** copy register for bindings
-** arrays
 
 * add trace macro
 ** add vm.Trace bool
