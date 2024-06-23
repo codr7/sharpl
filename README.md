@@ -17,7 +17,7 @@ It comes with a basic REPL for standalone use, but is designed to be trivial to 
 `eval` may be used to evaluate a block of code at emit time, the results are pushed on evaluation.
 
 ```
-(eval (say "emitting" 42))
+(eval (say "emitting") 42)
 ```
 ```
 emitting

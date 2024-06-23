@@ -23,6 +23,9 @@
 ** like array
 ** slice if index is pair
 
+* add apply
+** jalang
+
 * add trace macro
 ** add vm.Trace bool
 ** add Trace op
@@ -42,8 +45,6 @@
 ** mark method as vararg if last arg is array form
 ** (^join [separator [parts]])
 ** expand iterator on stack before call
-
-* add apply
 
 * add support for \r\n\t in string literals
 ** add support to String Dump
