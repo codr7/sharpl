@@ -1,10 +1,10 @@
 namespace Sharpl.Types.Core;
 
+using Sharpl.Iters.Core;
 using Sharpl.Libs;
-using System.ComponentModel;
 using System.Text;
 
-public class ArrayType : Type<Value[]>, ComparableTrait
+public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait
 {
     public ArrayType(string name) : base(name) { }
 
@@ -114,6 +114,12 @@ public class ArrayType : Type<Value[]>, ComparableTrait
         }
 
         return true;
+    }
+
+    public Iter Iter(Value target)
+    {
+        var t = target.Cast(this);
+        return new ArrayItems(t, 0, t.Length);
     }
 
     public override void Say(Value value, StringBuilder result)

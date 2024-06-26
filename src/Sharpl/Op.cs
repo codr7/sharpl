@@ -9,24 +9,27 @@ public readonly struct Op
         Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,
-        PrepareClosure, Push,
-        SetArrayItem, SetLoadPath, SetRegister, Stop
+        PrepareClosure, Push, PushSplat,
+        SetArrayItem, SetLoadPath, SetRegister, Splat, Stop
     };
 
-    public readonly dynamic Data;
+    public readonly object Data;
     public T Type { get; }
 
-    public Op(T type, dynamic data)
+    public Op(T type, object data)
     {
-        this.Type = type;
-        this.Data = data;
+        Type = type;
+        Data = data;
     }
 
     public override string ToString() {
         if (Data is null) {
-            return $"({Type})"; 
+            return $"{Type}"; 
             
         }
-        return Data.ToString(); 
+
+#pragma warning disable CS8603 // Possible null reference return.
+        return Data.ToString();
+#pragma warning restore CS8603 // Possible null reference return.
     }
 }

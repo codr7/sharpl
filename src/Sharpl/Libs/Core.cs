@@ -13,6 +13,7 @@ public class Core : Lib
     public static readonly BitType Bit = new BitType("Bit");
     public static readonly ColorType Color = new ColorType("Color");
     public static readonly IntType Int = new IntType("Int");
+    public static readonly IterType Iter = new IterType("Iter");
     public static readonly LibType Lib = new LibType("Lib");
     public static readonly MacroType Macro = new MacroType("Macro");
     public static readonly MetaType Meta = new MetaType("Meta");
@@ -410,9 +411,9 @@ public class Core : Lib
             var stack = new Stack(vm.Config.MaxStackSize);
             vm.Eval(args, stack);
 
-            foreach (var it in stack)
+            foreach (var it in stack.Reverse())
             {
-                args.Push(new Forms.Literal(loc, it));
+                args.PushFirst(new Forms.Literal(loc, it));
             }
         });
 

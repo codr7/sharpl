@@ -1,6 +1,7 @@
 namespace Sharpl;
 
 using System.Text;
+using Sharpl.Forms;
 
 public abstract class AnyType
 {
@@ -44,8 +45,15 @@ public abstract class AnyType
     public virtual void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var arity = args.Count;
+        var splat = args.IsSplat;
+
+        if (splat)
+        {
+            vm.Emit(Ops.PushSplat.Make());
+        }
+
         args.Emit(vm);
-        vm.Emit(Ops.CallDirect.Make(loc, target, arity, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallDirect.Make(loc, target, arity, splat, vm.NextRegisterIndex));
     }
 
     public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args)
@@ -54,7 +62,7 @@ public abstract class AnyType
     }
 
     public abstract bool Equals(Value left, Value right);
-    
+
     public virtual void Say(Value value, StringBuilder result)
     {
         Dump(value, result);
@@ -71,7 +79,7 @@ public abstract class AnyType
     }
 }
 
-public class Type<T> : AnyType 
+public class Type<T> : AnyType
 {
     public Type(string name) : base(name) { }
 

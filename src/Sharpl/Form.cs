@@ -3,6 +3,7 @@ using System.Reflection.Metadata.Ecma335;
 namespace Sharpl;
 
 using System.Collections;
+using System.Runtime;
 using System.Text;
 using Sharpl.Ops;
 
@@ -24,8 +25,10 @@ public abstract class Form : Emitter
         var arity = args.Count;
         args.Emit(vm);
         Emit(vm, new Form.Queue());
-        vm.Emit(Ops.CallIndirect.Make(Loc, arity, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallIndirect.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
+
+    public virtual bool IsSplat => false;
 
     public class Queue : Emitter, IEnumerable<Form>
     {
@@ -126,6 +129,27 @@ public abstract class Form : Emitter
         public void Push(Form form)
         {
             items.AddLast(form);
+        }
+
+        public void PushFirst(Form form)
+        {
+            items.AddFirst(form);
+        }
+
+        public bool IsSplat
+        {
+            get
+            {
+                foreach (var f in items)
+                {
+                    if (f.IsSplat)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
         public override string ToString()

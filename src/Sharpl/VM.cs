@@ -5,6 +5,7 @@ namespace Sharpl;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Xml.Xsl;
 using Sharpl.Libs;
 using PC = int;
 
@@ -18,13 +19,14 @@ public class VM
         public int MaxFrames = 248;
         public int MaxOps = 1024;
         public int MaxRegisters = 1024;
+        public int MaxSplats = 16;
         public int MaxStackSize = 32;
 
         public C() { }
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 5;
+    public static readonly int VERSION = 6;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.String StringLib = new Libs.String();
@@ -44,6 +46,7 @@ public class VM
     private string loadPath = "";
     private int nextRegisterIndex = 0;
     private Value[] registers;
+    private ArrayStack<int> splats;
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -51,6 +54,7 @@ public class VM
         Readers.Array.Instance,
         Readers.Call.Instance,
         Readers.Int.Instance,
+        Readers.Splat.Instance,
         Readers.String.Instance,
 
         Readers.Id.Instance
@@ -63,6 +67,7 @@ public class VM
         code = new ArrayStack<Op>(config.MaxOps);
         frames = new ArrayStack<(int, int)>(config.MaxFrames);
         registers = new Value[config.MaxRegisters];
+        splats = new ArrayStack<int>(config.MaxSplats);
         nextRegisterIndex = 0;
 
         TermLib = new Libs.Term(this);
@@ -74,7 +79,7 @@ public class VM
         Env = UserLib;
         BeginFrame(config.MaxDefinitions);
     }
- 
+
     public int AllocRegister()
     {
         var res = nextRegisterIndex;
@@ -85,8 +90,9 @@ public class VM
     public void BeginFrame(int registerCount)
     {
         var total = registerCount;
-        
-        if (!frames.Empty) {
+
+        if (!frames.Empty)
+        {
             total += frames.Last().Item2;
         }
 
@@ -180,28 +186,31 @@ public class VM
                         PC++;
                         break;
                     }
-                case Op.T.Benchmark: {
-                    var benchmarkOp = (Ops.Benchmark)op.Data;
-                    var bodyPC = PC+1;
-                    var s = new Stack(Config.MaxStackSize);
-                    
-                    for (var i = 0; i < benchmarkOp.N; i++) {
-                        Eval(bodyPC, s);
-                        s.Clear();
-                    }
+                case Op.T.Benchmark:
+                    {
+                        var benchmarkOp = (Ops.Benchmark)op.Data;
+                        var bodyPC = PC + 1;
+                        var s = new Stack(Config.MaxStackSize);
 
-                    var t = new Stopwatch();
-                    t.Start();
-                    
-                    for (var i = 0; i < benchmarkOp.N; i++) {
-                        Eval(bodyPC, s);
-                        s.Clear();
-                    }
+                        for (var i = 0; i < benchmarkOp.N; i++)
+                        {
+                            Eval(bodyPC, s);
+                            s.Clear();
+                        }
 
-                    t.Stop();
-                    stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
-                    break;
-                }
+                        var t = new Stopwatch();
+                        t.Start();
+
+                        for (var i = 0; i < benchmarkOp.N; i++)
+                        {
+                            Eval(bodyPC, s);
+                            s.Clear();
+                        }
+
+                        t.Stop();
+                        stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
+                        break;
+                    }
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
@@ -223,30 +232,58 @@ public class VM
                     {
                         var callOp = (Ops.CallDirect)op.Data;
                         var recursive = !calls.Empty && calls.Peek().Target.Equals(callOp.Target);
+                        var arity = callOp.Arity;
+
+                        if (callOp.Splat)
+                        {
+                            arity = arity + splats.Pop() - 1;
+                        }
+
                         PC++;
-                        callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity, callOp.RegisterCount);
+                        callOp.Target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.CallIndirect:
                     {
                         var target = stack.Pop();
                         var callOp = (Ops.CallIndirect)op.Data;
+                        var arity = callOp.Arity;
+
+                        if (callOp.Splat)
+                        {
+                            arity = arity + splats.Pop() - 1;
+                        }
+
                         PC++;
-                        target.Call(callOp.Loc, this, stack, callOp.Arity, callOp.RegisterCount);
+                        target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.CallMethod:
                     {
                         var callOp = (Ops.CallMethod)op.Data;
+                        var arity = callOp.Arity;
+
+                        if (callOp.Splat)
+                        {
+                            arity = arity + splats.Pop() - 1;
+                        }
+
                         PC++;
-                        callOp.Target.Call(callOp.Loc, this, stack, callOp.Arity);
+                        callOp.Target.Call(callOp.Loc, this, stack, arity);
                         break;
                     }
                 case Op.T.CallUserMethod:
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
+                        var arity = callOp.Arity;
+
+                        if (callOp.Splat)
+                        {
+                            arity = arity + splats.Pop() - 1;
+                        }
+
                         PC++;
-                        Call(callOp.Loc, stack, callOp.Target, callOp.Arity, callOp.RegisterCount);
+                        Call(callOp.Loc, stack, callOp.Target, arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.Check:
@@ -290,7 +327,8 @@ public class VM
                         PC++;
                         break;
                     }
-                    case Op.T.Decrement: {
+                case Op.T.Decrement:
+                    {
                         var decrementOp = (Ops.Decrement)op.Data;
                         var i = RegisterIndex(decrementOp.FrameOffset, decrementOp.Index);
                         var v = Value.Make(Core.Int, registers[i].Cast(Core.Int) - 1);
@@ -355,6 +393,12 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.PushSplat:
+                    {
+                        splats.Push(0);
+                        PC++;
+                        break;
+                    }
                 case Op.T.SetArrayItem:
                     {
                         var setOp = (Ops.SetArrayItem)op.Data;
@@ -374,6 +418,43 @@ public class VM
                     {
                         var setOp = (Ops.SetRegister)op.Data;
                         SetRegister(setOp.FrameOffset, setOp.Index, stack.Pop());
+                        PC++;
+                        break;
+                    }
+                case Op.T.Splat:
+                    {
+                        var splatOp = (Ops.Splat)op.Data;
+
+                        if (stack.Pop() is Value tv)
+                        {
+                            if (tv.Type is Types.Core.IterTrait tt)
+                            {
+                                if (splats.Count == 0)
+                                {
+                                    throw new EvalError(splatOp.Loc, "Splat outside context");
+                                }
+
+                                var arity = splats.Pop();
+
+                                foreach (var v in tt.Iter(tv))
+                                {
+                                    stack.Push(v);
+                                    arity++;
+                                }
+
+                                splats.Push(arity);
+
+                            }
+                            else
+                            {
+                                throw new EvalError(splatOp.Loc, $"Invalid splat target: {tv}");
+                            }
+                        }
+                        else
+                        {
+                            throw new EvalError(splatOp.Loc, "Missing splat target");
+                        }
+
                         PC++;
                         break;
                     }

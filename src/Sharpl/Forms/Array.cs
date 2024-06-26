@@ -1,6 +1,7 @@
 namespace Sharpl.Forms;
 
 using System.Text;
+using Sharpl.Libs;
 
 public class Array : Form
 {
@@ -21,16 +22,36 @@ public class Array : Form
 
     public override void Emit(VM vm, Form.Queue args)
     {
-        var itemArgs = new Form.Queue();
-
-        vm.Emit(Ops.CreateArray.Make(Items.Length));
-        var i = 0;
+        var splat = false;
 
         foreach (var f in Items)
         {
-            f.Emit(vm, itemArgs);
-            vm.Emit(Ops.SetArrayItem.Make(i));
-            i++;
+            if (f is Splat)
+            {
+                splat = true;
+                break;
+            }
+        }
+
+
+        if (splat)
+        {
+            args.PushFirst(new Call(Loc, new Id(Loc, "Array"), Items));
+        }
+        else
+        {
+
+            var itemArgs = new Form.Queue();
+
+            vm.Emit(Ops.CreateArray.Make(Items.Length));
+            var i = 0;
+
+            foreach (var f in Items)
+            {
+                f.Emit(vm, itemArgs);
+                vm.Emit(Ops.SetArrayItem.Make(i));
+                i++;
+            }
         }
     }
 

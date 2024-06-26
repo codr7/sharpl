@@ -120,7 +120,11 @@
 (check "foo"
   (string/down "Foo"))
 
+(check 42
+  (- [43 1]*))
 
+(check [1 2 3 4 5]
+  [1 2 [3 4]* 5])
 
 (load "test-lib.sl")
 

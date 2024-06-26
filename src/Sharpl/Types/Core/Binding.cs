@@ -6,10 +6,11 @@ public class BindingType : Type<Binding>
     
     public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args) {
         var arity = args.Count;
+        var splat = args.IsSplat;
         args.Emit(vm);
         var v = target.Cast(this);
         vm.Emit(Ops.GetRegister.Make(v.FrameOffset, v.Index));
-        vm.Emit(Ops.CallIndirect.Make(loc, arity, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallIndirect.Make(loc, arity, splat, vm.NextRegisterIndex));
     }
     
     public override void Emit(Loc loc, VM vm, Value target, Form.Queue args)
