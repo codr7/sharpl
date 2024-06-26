@@ -26,13 +26,12 @@ public class Array : Form
 
         foreach (var f in Items)
         {
-            if (f is Splat)
+            if (f.IsSplat)
             {
                 splat = true;
                 break;
             }
         }
-
 
         if (splat)
         {
@@ -40,7 +39,6 @@ public class Array : Form
         }
         else
         {
-
             var itemArgs = new Form.Queue();
 
             vm.Emit(Ops.CreateArray.Make(Items.Length));

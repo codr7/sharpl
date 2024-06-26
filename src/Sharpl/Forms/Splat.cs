@@ -11,7 +11,9 @@ public class Splat : Form
 
     public override void Emit(VM vm, Form.Queue args)
     {
-        Target.Emit(vm, args);
+        var targetArgs = new Form.Queue();
+        targetArgs.Push(Target);
+        targetArgs.Emit(vm);
         vm.Emit(Ops.Splat.Make(Loc));
     }
 

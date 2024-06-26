@@ -4,6 +4,7 @@ namespace Sharpl;
 
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Xsl;
 using Sharpl.Libs;
@@ -425,8 +426,14 @@ public class VM
                     {
                         var splatOp = (Ops.Splat)op.Data;
 
-                        if (stack.Pop() is Value tv)
+                        if (stack.Count == 0)
                         {
+                            throw new EvalError(splatOp.Loc, "Missing splat target");
+                        }
+                        else
+                        {
+                            var tv = stack.Pop();
+
                             if (tv.Type is Types.Core.IterTrait tt)
                             {
                                 if (splats.Count == 0)
@@ -443,16 +450,11 @@ public class VM
                                 }
 
                                 splats.Push(arity);
-
                             }
                             else
                             {
                                 throw new EvalError(splatOp.Loc, $"Invalid splat target: {tv}");
                             }
-                        }
-                        else
-                        {
-                            throw new EvalError(splatOp.Loc, "Missing splat target");
                         }
 
                         PC++;
