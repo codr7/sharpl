@@ -13,17 +13,6 @@ hello
 Sharpl is a custom Lisp interpreter implemented in C#.<br/>
 It comes with a basic REPL for standalone use, but is designed to be trivial to embed in C# projects.
 
-## evaluation
-`eval` may be used to evaluate a block of code at emit time, the results are pushed on evaluation.
-
-```
-(eval (say "emitting") 42)
-```
-```
-emitting
-```
-`42`
-
 ## bindings
 Bindings come in two flavors, with lexical or dynamic scope.
 
@@ -122,6 +111,17 @@ And when called without arguments, it returns the current library.
 (lib)
 ```
 `(Lib user)`
+
+## evaluation
+`eval` may be used to evaluate a block of code at emit time, the results are pushed on evaluation.
+
+```
+(eval (say "emitting") 42)
+```
+```
+emitting
+```
+`42`
 
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
