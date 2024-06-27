@@ -13,8 +13,8 @@ public class IO : Lib
     {
         BindType(ReadStream);
 
-        Bind("STDIN", Value.Make(IO.ReadStream, Console.In));
-        
+        Bind("IN", Value.Make(IO.ReadStream, Console.In));
+
         BindMethod("read-lines", ["in"], (loc, target, vm, stack, arity) =>
         {
             var s = stack.Pop().Cast(ReadStream);
