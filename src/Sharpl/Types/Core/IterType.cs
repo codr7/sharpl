@@ -8,7 +8,7 @@ public class IterType : Type<Iter>, IterTrait
 
     public override void Dump(Value value, StringBuilder result)
     {
-        result.Append($"Iter ${this}");
+        result.Append($"Iter {value.Cast(this)}");
     }
 
     public Iter Iter(Value target)

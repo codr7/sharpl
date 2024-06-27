@@ -4,6 +4,12 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+cat fib.sl | ./testio.sl
+
+* add (io/do-read (path) body)
+** add read-lines test
+*** add io-tests.sl
+
 * add iter support to array
 
 * add iter support to int

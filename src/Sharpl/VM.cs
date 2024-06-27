@@ -30,6 +30,7 @@ public class VM
     public static readonly int VERSION = 6;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
+    public readonly Libs.IO IOLib = new Libs.IO();
     public readonly Libs.String StringLib = new Libs.String();
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
@@ -73,6 +74,7 @@ public class VM
 
         TermLib = new Libs.Term(this);
         UserLib.BindLib(CoreLib);
+        UserLib.BindLib(IOLib);
         UserLib.BindLib(StringLib);
         UserLib.BindLib(TermLib);
         UserLib.BindLib(UserLib);
