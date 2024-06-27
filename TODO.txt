@@ -4,18 +4,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-cat fib.sl | ./testio.sl
-
-* finish (io/do-read (path) body*)
-** add support for args
-*** bind var in env
-*** add io-tests.sl
-*** remove testio.sl
-
-(io/do-read (in "fib.sl") (say (io/lines in)*))
-
-* define as read-lines function using eval
-
 * add StreamWriter type
 ** bind OUT
 ** add do-write

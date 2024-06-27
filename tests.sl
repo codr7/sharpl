@@ -132,22 +132,6 @@
 (check [1 2 3 4 5]
   [1 2 [3 4]* 5])
 
-(load "test-lib.sl")
-
-(lib test
-  (check test
-    (lib))
-    
-  (define bar (+ foo 7)))
-
-(check 42
-  test/bar)
-
-(check user
-  (lib))
-
-
-
 (load "fib.sl")
 
 (check 55
@@ -155,3 +139,6 @@
 
 (check 55
   (fib-tail 10 0 1))
+
+(load "io-tests.sl")  
+(load "lib-tests.sl")

@@ -3,8 +3,6 @@ using Sharpl.Libs;
 using Ops = Sharpl.Ops;
 
 var vm = new VM(VM.DEFAULT_CONFIG);
-vm.UserLib.Import(vm.CoreLib);
-vm.UserLib.Import(vm.TermLib);
 
 if (args.Length == 0) {
     vm.REPL();

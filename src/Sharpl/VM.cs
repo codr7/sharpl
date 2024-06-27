@@ -31,7 +31,7 @@ public class VM
     public static readonly int VERSION = 6;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
-    public readonly Libs.IO IOLib = new Libs.IO();
+    public readonly Libs.IO IOLib;
     public readonly Libs.String StringLib = new Libs.String();
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
@@ -73,15 +73,18 @@ public class VM
         splats = new ArrayStack<int>(config.MaxSplats);
         nextRegisterIndex = 0;
 
-        TermLib = new Libs.Term(this);
-        UserLib.BindLib(CoreLib);
-        UserLib.BindLib(IOLib);
-        UserLib.BindLib(StringLib);
-        UserLib.BindLib(TermLib);
-        UserLib.BindLib(UserLib);
-
+        UserLib.Init(this);
+        UserLib.Import(CoreLib);
         Env = UserLib;
         BeginFrame(config.MaxDefinitions);
+
+        IOLib = new IO(this);
+        IOLib.Init(this);
+        
+        StringLib.Init(this);
+
+        TermLib = new Libs.Term(this);
+        TermLib.Init(this);
     }
 
     public int AllocRegister()
@@ -341,6 +344,24 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.DoRead:
+                    {
+                        var openOp = (Ops.DoRead)op.Data;
+                        StreamReader sr;
+
+                        if (stack.Pop() is Value p)
+                        {
+                            sr = new StreamReader(p.Cast(openOp.Loc, Core.String));
+                            SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.StreamReader, sr));
+                        }
+                        else
+                        {
+                            throw new EvalError(openOp.Loc, "Missing path");
+                        }
+
+                        PC++;
+                        break;
+                    }
                 case Op.T.EndFrame:
                     {
                         EndFrame();
@@ -375,16 +396,6 @@ public class VM
 #pragma warning restore CS8629
                         break;
                     }
-                case Op.T.OpenStreamReader:
-                {
-                    var openOp = (Ops.OpenStreamReader)op.Data;
-
-                    if (stack.Pop() is Value p) {
-                        SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.StreamReader, new StreamReader(p.Cast(openOp.Loc, Core.String))));
-                    }
-                    PC++;
-                    break;
-                }
                 case Op.T.PrepareClosure:
                     {
                         var closureOp = (Ops.PrepareClosure)op.Data;
@@ -502,7 +513,7 @@ public class VM
     {
         var stack = new Stack(Config.MaxStackSize);
         Eval(target, args, stack);
-        return stack.Pop();
+        return (stack.Count == 0) ? null : stack.Pop();
     }
 
     public void Eval(Emitter target, Stack stack)
@@ -513,6 +524,13 @@ public class VM
     public Value? Eval(Emitter target)
     {
         return Eval(target, new Form.Queue());
+    }
+
+    public Value? Eval(string code)
+    {
+        var loc = new Loc("Eval");
+        var forms = ReadForms(new StringReader(code), ref loc);
+        return Eval(forms);
     }
 
     public int FrameCount

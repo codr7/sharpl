@@ -7,7 +7,7 @@ public class IO : Lib
 {
     public static readonly StreamReaderType StreamReader = new StreamReaderType("StreamReader");
 
-    public IO() : base("io", null, [])
+    public IO(VM vm) : base("io", null, [])
     {
         BindType(StreamReader);
 
@@ -15,24 +15,40 @@ public class IO : Lib
 
         BindMacro("do-read", ["path"], (loc, target, vm, args) =>
          {
-             if (args.Pop() is Form f)
+             if (args.Pop() is Form afs)
              {
-                 var startPC = vm.EmitPC;
-                 f.Emit(vm, args);
-                 var reg = vm.AllocRegister();
-                 vm.Emit(Ops.OpenStreamReader.Make(loc, 0, reg));
-                 args.Emit(vm);
-                 vm.Emit(Ops.Stop.Make());
-                 var stack = new Stack(vm.Config.MaxStackSize);
+                 if (afs is Forms.Array af)
+                 {
+                     if (af.Items.Length < 2)
+                     {
+                         throw new EmitError(loc, "Missing args");
+                     }
 
-                 try
-                 {
-                     vm.Eval(startPC, stack);
+                     var reg = vm.AllocRegister();
+                     var a0 = af.Items[0];
+
+                     if (a0 is Forms.Id id)
+                     {
+                         vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, reg)));
+                     }
+                     else
+                     {
+                         throw new EmitError(a0.Loc, "Expected identifier: {a0}");
+                     }
+
+                     var startPC = vm.EmitPC;
+                     af.Items[1].Emit(vm, args);
+                     vm.Emit(Ops.DoRead.Make(loc, 0, reg));
+                     args.Emit(vm);
                  }
-                 finally
+                 else
                  {
-                     vm.GetRegister(0, reg).Cast(IO.StreamReader).Close();
+                     throw new EmitError(loc, "Invalid args");
                  }
+             }
+             else
+             {
+                 throw new EmitError(loc, "Missing args");
              }
          });
 
@@ -41,5 +57,15 @@ public class IO : Lib
             var s = stack.Pop().Cast(StreamReader);
             stack.Push(Value.Make(Core.Iter, new StreamLines(s)));
         });
+    }
+
+    protected override void OnInit(VM vm) {
+        Import(vm.CoreLib);
+
+        vm.Eval("""
+          (^read-lines [path]
+            (do-read [in path] 
+              (lines in)))
+        """);
     }
 }
