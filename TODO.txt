@@ -6,9 +6,10 @@
 
 cat fib.sl | ./testio.sl
 
-* add (io/do-read (path) body)
-** add read-lines test
+* add (io/do-read (path) body*)
+** add lines test
 *** add io-tests.sl
+*** remove testio.sl
 
 * add iter support to array
 

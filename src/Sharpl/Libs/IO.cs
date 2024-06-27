@@ -15,7 +15,7 @@ public class IO : Lib
 
         Bind("IN", Value.Make(IO.ReadStream, Console.In));
 
-        BindMethod("read-lines", ["in"], (loc, target, vm, stack, arity) =>
+        BindMethod("lines", ["in"], (loc, target, vm, stack, arity) =>
         {
             var s = stack.Pop().Cast(ReadStream);
             stack.Push(Value.Make(Core.Iter, new StreamLines(s)));

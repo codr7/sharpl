@@ -1,3 +1,3 @@
 #!/usr/local/bin/sharpl
 
-(say [(io/read-lines io/IN)*])
+(say [(io/lines io/IN)*])
