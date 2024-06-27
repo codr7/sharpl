@@ -9,6 +9,7 @@ public readonly struct Op
         Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,
+        OpenStreamReader,
         PrepareClosure, Push, PushSplat,
         SetArrayItem, SetLoadPath, SetRegister, Splat, Stop
     };

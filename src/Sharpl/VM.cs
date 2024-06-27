@@ -5,6 +5,7 @@ namespace Sharpl;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Xsl;
 using Sharpl.Libs;
@@ -374,6 +375,16 @@ public class VM
 #pragma warning restore CS8629
                         break;
                     }
+                case Op.T.OpenStreamReader:
+                {
+                    var openOp = (Ops.OpenStreamReader)op.Data;
+
+                    if (stack.Pop() is Value p) {
+                        SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.StreamReader, new StreamReader(p.Cast(openOp.Loc, Core.String))));
+                    }
+                    PC++;
+                    break;
+                }
                 case Op.T.PrepareClosure:
                     {
                         var closureOp = (Ops.PrepareClosure)op.Data;

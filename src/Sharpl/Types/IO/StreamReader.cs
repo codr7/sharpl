@@ -4,13 +4,13 @@ using System.Text;
 using Sharpl.Types.Core;
 using Sharpl.Iters.IO;
 
-public class ReadStreamType : Type<TextReader>, IterTrait
+public class StreamReaderType : Type<TextReader>, IterTrait
 {
-    public ReadStreamType(string name) : base(name) { }
+    public StreamReaderType(string name) : base(name) { }
 
     public override void Dump(Value value, StringBuilder result)
     {
-        result.Append($"(ReadStream {value.Cast(this)})");
+        result.Append($"(StreamReader {value.Cast(this)})");
     }
 
     public Iter Iter(Value target)
