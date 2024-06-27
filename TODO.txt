@@ -16,6 +16,10 @@ cat fib.sl | ./testio.sl
 
 * define as read-lines function using eval
 
+* add StreamWriter type
+** bind OUT
+** add do-write
+
 * add iter support to array
 
 * add iter support to int
