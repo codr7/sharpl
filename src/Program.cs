@@ -15,7 +15,7 @@ if (args.Length == 0) {
         vs[i] = Value.Make(Core.String, args[i+1]);
     }
     
-    vm.UserLib.Bind("ARGS", Value.Make(Core.Array, vs));
+    vm.UserLib.Bind("ARG", Value.Make(Core.Array, vs));
     vm.Load(args[0]);
     vm.Emit(Ops.Stop.Make());
     vm.Eval(startPC);

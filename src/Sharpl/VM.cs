@@ -28,7 +28,7 @@ public class VM
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 6;
+    public static readonly int VERSION = 7;
 
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.IO IOLib;
@@ -57,6 +57,7 @@ public class VM
         Readers.Array.Instance,
         Readers.Call.Instance,
         Readers.Int.Instance,
+        Readers.Pair.Instance,
         Readers.Splat.Instance,
         Readers.String.Instance,
 
@@ -296,7 +297,7 @@ public class VM
                 case Op.T.Check:
                     {
                         var checkOp = (Ops.Check)op.Data;
-
+                        
                         if (stack.Pop() is Value ev)
                         {
                             if (stack.Pop() is Value av)
@@ -331,6 +332,15 @@ public class VM
                     {
                         var createOp = (Ops.CreateArray)op.Data;
                         stack.Push(Value.Make(Core.Array, new Value[createOp.Length]));
+                        PC++;
+                        break;
+                    }
+                case Op.T.CreatePair:
+                    {
+                        var createOp = (Ops.CreatePair)op.Data;
+                        var r = stack.Pop();
+                        var l = stack.Pop();
+                        stack.Push(Value.Make(Core.Pair, (l, r)));
                         PC++;
                         break;
                     }

@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v6
+sharpl v7
 
    1 (say "hello")
    2 
@@ -86,6 +86,24 @@ Methods keep copies of any external bindings referenced from their body.
   (foo))
 ```
 `42`
+
+## composite types
+
+### pairs
+Pairs may be formed by putting a colon between two values.
+
+```
+1:2:3
+```
+`1:2:3`
+
+### arrays
+Arrays may be created by enclosing a sequence of values in brackets.
+
+```
+[1 2 3]
+```
+`[1 2 3]`
 
 ## libraries
 `lib` may be used to define/extend libraries.

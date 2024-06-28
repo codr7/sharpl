@@ -19,6 +19,7 @@ public class Core : Lib
     public static readonly MetaType Meta = new MetaType("Meta");
     public static readonly MethodType Method = new MethodType("Method");
     public static readonly NilType Nil = new NilType("Nil");
+    public static readonly PairType Pair = new PairType("Pair");
     public static readonly StringType String = new StringType("String");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
 
@@ -33,6 +34,7 @@ public class Core : Lib
         BindType(Macro);
         BindType(Meta);
         BindType(Method);
+        BindType(Pair);
         BindType(String);
         BindType(UserMethod);
 

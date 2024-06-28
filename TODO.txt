@@ -4,6 +4,18 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+* add pair-calling like array
+** get/set
+** test
+** readme
+
+* factr
+** rewrite one regexp at a time in body
+** regexp replace
+** add read-string
+** fix DoEnv
+** add for loop
+
 * add separate frame to do-read
 ** add DoEnv(env, ()=>)
 *** use prev var
@@ -42,6 +54,8 @@
 * add iter support to array
 
 * add iter support to int
+
+* add iter support to nil
 
 * add iter support to string
 ** add char type

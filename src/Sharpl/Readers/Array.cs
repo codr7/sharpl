@@ -1,7 +1,5 @@
 namespace Sharpl.Readers;
 
-using System.Text;
-
 public struct Array: Reader {
     public static readonly Array Instance = new Array();
 
