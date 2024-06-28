@@ -1,13 +1,8 @@
-using System.Reflection.Metadata.Ecma335;
-
 namespace Sharpl;
 
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
-using System.Xml.Xsl;
 using Sharpl.Libs;
 using PC = int;
 
@@ -280,6 +275,21 @@ public class VM
                         callOp.Target.Call(callOp.Loc, this, stack, arity);
                         break;
                     }
+                case Op.T.CallRegister:
+                    {
+                        var callOp = (Ops.CallRegister)op.Data;
+                        var arity = callOp.Arity;
+
+                        if (callOp.Splat)
+                        {
+                            arity = arity + splats.Pop() - 1;
+                        }
+
+                        PC++;
+                        var target = GetRegister(callOp.TargetFrameOffset, callOp.TargetIndex);
+                        target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
+                        break;
+                    }
                 case Op.T.CallUserMethod:
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
@@ -297,7 +307,7 @@ public class VM
                 case Op.T.Check:
                     {
                         var checkOp = (Ops.Check)op.Data;
-                        
+
                         if (stack.Pop() is Value ev)
                         {
                             if (stack.Pop() is Value av)
@@ -395,7 +405,7 @@ public class VM
 
                         if (stack.Pop() is Value p)
                         {
-                            sr = new StreamReader(p.Cast(openOp.Loc, Core.String));
+                            sr = new StreamReader(Path.Combine(loadPath, p.Cast(openOp.Loc, Core.String)));
                             SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.InputStream, sr));
                         }
                         else
@@ -468,7 +478,7 @@ public class VM
                         {
                             var tv = stack.Pop();
 
-                            if (tv.Type is Types.Core.IterTrait tt)
+                            if (tv.Type is Types.Core.IterableTrait tt)
                             {
                                 if (splats.Count == 0)
                                 {
@@ -581,7 +591,7 @@ public class VM
         var prevEnv = Env;
         var prevLoadPath = loadPath;
         var p = Path.Combine(loadPath, path);
-
+    
         try
         {
             if (Path.GetDirectoryName(p) is string d)
@@ -591,7 +601,7 @@ public class VM
 
             var loc = new Loc(path);
 
-            using (StreamReader source = new StreamReader(path, Encoding.UTF8))
+            using (StreamReader source = new StreamReader(p, Encoding.UTF8))
             {
                 var c = source.Peek();
 

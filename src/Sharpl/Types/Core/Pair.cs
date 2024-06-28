@@ -7,7 +7,7 @@ using System.Formats.Tar;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
+public class PairType : Type<(Value, Value)>, ComparableTrait, IterableTrait
 {    
     public static Value Update(Loc loc, Value target, Value value, int i) {
         if (i == 0) {

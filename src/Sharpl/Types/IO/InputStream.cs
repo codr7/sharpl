@@ -4,7 +4,7 @@ using System.Text;
 using Sharpl.Types.Core;
 using Sharpl.Iters.IO;
 
-public class InputStreamType : Type<TextReader>, IterTrait
+public class InputStreamType : Type<TextReader>, IterableTrait
 {
     public InputStreamType(string name) : base(name) { }
 

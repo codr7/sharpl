@@ -156,7 +156,7 @@
 (check [1 2 3 4 5]
   [1 2 [3 4]* 5])
 
-(load "fib.sl")
+(load "../fib.sl")
 
 (check 55
   (fib-rec 10))

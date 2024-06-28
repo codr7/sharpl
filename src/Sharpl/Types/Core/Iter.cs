@@ -2,7 +2,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class IterType : Type<Iter>, IterTrait
+public class IterType : Type<Iter>, IterableTrait
 {
     public IterType(string name) : base(name) { }
 

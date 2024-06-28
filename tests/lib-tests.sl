@@ -1,4 +1,4 @@
-(load "test-lib.sl")
+(load "lib.sl")
 
 (lib test
   (check test
