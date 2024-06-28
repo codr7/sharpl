@@ -89,6 +89,20 @@ Methods keep copies of any external bindings referenced from their body.
 
 ## composite types
 
+### arrays
+Arrays may be created by enclosing a sequence of values in brackets.
+
+```
+[1 2 3]
+```
+`[1 2 3]`
+
+Or by calling the type constructor.
+
+```
+(Array 1:2:3*)
+```
+
 ### pairs
 Pairs may be formed by putting a colon between two values.
 
@@ -97,13 +111,12 @@ Pairs may be formed by putting a colon between two values.
 ```
 `1:2:3`
 
-### arrays
-Arrays may be created by enclosing a sequence of values in brackets.
+Or by calling the type constructor.
 
 ```
-[1 2 3]
+(Pair [1 2 3]*)
 ```
-`[1 2 3]`
+`1:2:3`
 
 ## libraries
 `lib` may be used to define/extend libraries.

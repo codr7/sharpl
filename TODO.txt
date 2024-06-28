@@ -4,11 +4,6 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add pair-calling like array
-** get/set
-** test
-** readme
-
 * factr
 ** rewrite one regexp at a time in body
 ** regexp replace

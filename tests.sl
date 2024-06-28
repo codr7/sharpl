@@ -123,17 +123,38 @@
 (check 42
   (- [43 1]*))
 
+(check F
+  (Bit T:F))
+
+(check F
+  (Bit F:T))
+
+(check T
+  (Bit T:T))
+
+(check 1:4:3
+  (let [foo 1:2:3]
+    (foo 1 4)))
+
+(check [1 2 3]
+  [1:2:3*])
+
+(check 1:2:3
+  (Pair [1 2 3]*))
+
 (check []
   [[[]*]*])
 
 (check [42]
   [[[42]*]*])
 
+(check [1 4 3]
+  (let [foo [1 2 3]]
+    (foo 1 4)
+    foo))
+
 (check [1 2 3 4 5]
   [1 2 [3 4]* 5])
-
-(check [1 2 3]
-  [1:2:3*])
 
 (load "fib.sl")
 
