@@ -102,6 +102,7 @@ Or by calling the type constructor.
 ```
 (Array 1:2:3*)
 ```
+`[1 2 3]`
 
 ### pairs
 Pairs may be formed by putting a colon between two values.
