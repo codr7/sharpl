@@ -158,7 +158,7 @@ emitting
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
 
-Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all.sl) for examples.
+Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
 
 ```
 (check 5
