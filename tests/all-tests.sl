@@ -123,46 +123,8 @@
 (check 42
   (- [43 1]*))
 
-(check F
-  (Bit T:F))
-
-(check F
-  (Bit F:T))
-
-(check T
-  (Bit T:T))
-
-(check 1:4:3
-  (let [foo 1:2:3]
-    (foo 1 4)))
-
-(check [1 2 3]
-  [1:2:3*])
-
-(check 1:2:3
-  (Pair [1 2 3]*))
-
-(check []
-  [[[]*]*])
-
-(check [42]
-  [[[42]*]*])
-
-(check [1 4 3]
-  (let [foo [1 2 3]]
-    (foo 1 4)
-    foo))
-
-(check [1 2 3 4 5]
-  [1 2 [3 4]* 5])
-
-(load "../fib.sl")
-
-(check 55
-  (fib-rec 10))
-
-(check 55
-  (fib-tail 10 0 1))
-
+(load "array-tests.sl")
+(load "fib-tests.sl")
 (load "io-tests.sl")  
 (load "lib-tests.sl")
+(load "pair-tests.sl")
