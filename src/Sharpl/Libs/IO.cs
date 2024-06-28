@@ -5,13 +5,13 @@ using Sharpl.Types.IO;
 
 public class IO : Lib
 {
-    public static readonly StreamReaderType StreamReader = new StreamReaderType("StreamReader");
+    public static readonly InputStreamType InputStream = new InputStreamType("InputStream");
 
     public IO(VM vm) : base("io", null, [])
     {
-        BindType(StreamReader);
+        BindType(InputStream);
 
-        Bind("IN", Value.Make(IO.StreamReader, Console.In));
+        Bind("IN", Value.Make(IO.InputStream, Console.In));
 
         BindMacro("do-read", ["path"], (loc, target, vm, args) =>
          {
@@ -38,7 +38,7 @@ public class IO : Lib
 
                      var startPC = vm.EmitPC;
                      af.Items[1].Emit(vm, args);
-                     vm.Emit(Ops.DoRead.Make(loc, 0, reg));
+                     vm.Emit(Ops.OpenInputStream.Make(loc, 0, reg));
                      args.Emit(vm);
                  }
                  else
@@ -54,7 +54,7 @@ public class IO : Lib
 
         BindMethod("lines", ["in"], (loc, target, vm, stack, arity) =>
         {
-            var s = stack.Pop().Cast(StreamReader);
+            var s = stack.Pop().Cast(InputStream);
             stack.Push(Value.Make(Core.Iter, new StreamLines(s)));
         });
     }

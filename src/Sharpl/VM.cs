@@ -80,7 +80,7 @@ public class VM
 
         IOLib = new IO(this);
         IOLib.Init(this);
-        
+
         StringLib.Init(this);
 
         TermLib = new Libs.Term(this);
@@ -344,24 +344,6 @@ public class VM
                         PC++;
                         break;
                     }
-                case Op.T.DoRead:
-                    {
-                        var openOp = (Ops.DoRead)op.Data;
-                        StreamReader sr;
-
-                        if (stack.Pop() is Value p)
-                        {
-                            sr = new StreamReader(p.Cast(openOp.Loc, Core.String));
-                            SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.StreamReader, sr));
-                        }
-                        else
-                        {
-                            throw new EvalError(openOp.Loc, "Missing path");
-                        }
-
-                        PC++;
-                        break;
-                    }
                 case Op.T.EndFrame:
                     {
                         EndFrame();
@@ -394,6 +376,24 @@ public class VM
 #pragma warning disable CS8629
                         PC = (PC)gotoOp.Target.PC;
 #pragma warning restore CS8629
+                        break;
+                    }
+                case Op.T.OpenInputStream:
+                    {
+                        var openOp = (Ops.OpenInputStream)op.Data;
+                        StreamReader sr;
+
+                        if (stack.Pop() is Value p)
+                        {
+                            sr = new StreamReader(p.Cast(openOp.Loc, Core.String));
+                            SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.InputStream, sr));
+                        }
+                        else
+                        {
+                            throw new EvalError(openOp.Loc, "Missing path");
+                        }
+
+                        PC++;
                         break;
                     }
                 case Op.T.PrepareClosure:
