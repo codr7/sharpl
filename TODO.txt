@@ -4,20 +4,14 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* factr
+* add separate frame to do-read
+
+* rexplacer
 ** rewrite one regexp at a time in body
-** regexp replace
+** add regexp replace
 ** add read-string
 ** fix DoEnv
 ** add for loop
-
-* add separate frame to do-read
-** add DoEnv(env, ()=>)
-*** use prev var
-*** creaye new if null env
-**** remove PushEnv
-** add DoFrame(()=>)
-** grep "vm.Env ="
 
 * add for loop
 ** multiple bindings

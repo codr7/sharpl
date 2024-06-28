@@ -11,18 +11,12 @@ public class Lib : Env
 
     public void Init(VM vm)
     {
-        var prevEnv = vm.Env;
-        prevEnv.BindLib(this);
-        vm.Env = this;
+        vm.Env.BindLib(this);
 
-        try
+        vm.DoEnv(this, () =>
         {
             OnInit(vm);
-        }
-        finally
-        {
-            vm.Env = prevEnv;
-        }
+        });
     }
 
     public string Name { get; }

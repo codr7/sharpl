@@ -148,6 +148,19 @@ public class VM
         definitionCount++;
     }
 
+    public void DoEnv(Env env, Action action) {
+        var prevEnv = Env;
+        Env = env;
+        BeginFrame(nextRegisterIndex);
+
+        try {
+            action();
+        } finally {
+            Env = prevEnv;
+            nextRegisterIndex = EndFrame().Item1;
+        }
+    }
+
     public PC Emit(Op op)
     {
         var result = code.Count;
@@ -628,23 +641,6 @@ public class VM
     public int NextRegisterIndex
     {
         get => nextRegisterIndex;
-    }
-
-    public void PopEnv()
-    {
-        if (env is null)
-        {
-            throw new Exception("No active env");
-        }
-
-        env = env.Parent;
-        nextRegisterIndex = EndFrame().Item1;
-    }
-
-    public void PushEnv(HashSet<string> ids)
-    {
-        env = new Env(env, ids);
-        BeginFrame(nextRegisterIndex);
     }
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
