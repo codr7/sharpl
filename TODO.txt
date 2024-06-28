@@ -4,14 +4,13 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-* add separate frame to do-read
+cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-* rexplacer
-** rewrite one regexp at a time in body
-** add regexp replace
-** add read-string
-** fix DoEnv
-** add for loop
+* trex
+** add io/string
+** add reduce
+*** jalang
+** try on realistic input
 
 * add for loop
 ** multiple bindings

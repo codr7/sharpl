@@ -1,0 +1,6 @@
+#!sharpl
+
+(let [in (io/string io/IN)
+      rs (load (ARG 0))
+      out (reduce (^[r out] (rxplace s r*) rs))]
+  (say out))

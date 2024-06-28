@@ -3,7 +3,7 @@ namespace Sharpl.Libs;
 using Sharpl.Types.Core;
 using System.Linq;
 using System.Text;
-
+using System.Text.RegularExpressions;
 
 public class Core : Lib
 {
@@ -600,6 +600,14 @@ public class Core : Lib
                     break;
                 }
             }
+        });
+
+       BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) => {
+         var n = stack.Pop().Cast(loc, Core.String);
+         var o = stack.Pop().Cast(loc, Core.String);
+         var i = stack.Pop().Cast(loc, Core.String);
+         o = o.Replace(" ", "\\s*");
+         stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
         });
 
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>

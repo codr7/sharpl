@@ -24,22 +24,25 @@ public class IO : Lib
                          throw new EmitError(loc, "Missing args");
                      }
 
-                     var reg = vm.AllocRegister();
-                     var a0 = af.Items[0];
-
-                     if (a0 is Forms.Id id)
+                     vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
                      {
-                         vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, reg)));
-                     }
-                     else
-                     {
-                         throw new EmitError(a0.Loc, "Expected identifier: {a0}");
-                     }
+                         var reg = vm.AllocRegister();
+                         var a0 = af.Items[0];
 
-                     var startPC = vm.EmitPC;
-                     af.Items[1].Emit(vm, args);
-                     vm.Emit(Ops.OpenInputStream.Make(loc, 0, reg));
-                     args.Emit(vm);
+                         if (a0 is Forms.Id id)
+                         {
+                             vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, reg)));
+                         }
+                         else
+                         {
+                             throw new EmitError(a0.Loc, "Expected identifier: {a0}");
+                         }
+
+                         var startPC = vm.EmitPC;
+                         af.Items[1].Emit(vm, args);
+                         vm.Emit(Ops.OpenInputStream.Make(loc, 0, reg));
+                         args.Emit(vm);
+                     });
                  }
                  else
                  {
@@ -59,7 +62,8 @@ public class IO : Lib
         });
     }
 
-    protected override void OnInit(VM vm) {
+    protected override void OnInit(VM vm)
+    {
         Import(vm.CoreLib);
 
         vm.Eval("""
