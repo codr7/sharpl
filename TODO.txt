@@ -5,10 +5,18 @@
 ** Reformat - Ctrl+Shift+I
 
 * add separate frame to do-read
+** add DoEnv(env, ()=>)
+*** use prev var
+*** creaye new if null env
+**** remove PushEnv
+** add DoFrame(()=>)
+** grep "vm.Env ="
 
 * add for loop
 ** multiple bindings
 ** iterate until any eof
+** don't iterate var if expr contains previous vars
+*** evaluate and bind per iteration instead
 
 (let [n 0]
   (for [i [1 2 3] 
