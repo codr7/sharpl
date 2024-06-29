@@ -16,6 +16,8 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 * rename Form.Queue.Push/Pop to TryPush/Pop
 ** add force methods like ArrayStack
 
+* oop.sl
+
 * add for loop
 ** multiple bindings
 ** iterate until any eof
