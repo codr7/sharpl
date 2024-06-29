@@ -1,5 +1,10 @@
 #!/usr/local/bin/sharpl
 
+(define rules [])
+
+(^define-rule [in out]
+  (push rules in:out))
+
 (let [in    (io/string io/IN)
       rules (load (ARG 0))
       out   (reduce (^[r out] (rxplace s r*) rules))]

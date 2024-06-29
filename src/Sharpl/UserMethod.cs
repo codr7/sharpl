@@ -31,6 +31,21 @@ public class UserMethod
         Args = args;
     }
 
+    public void BindArgs(VM vm, int arity, Stack stack) {
+        for (var i = Args.Length - 1; i >= 0; i--)
+        {
+            vm.SetRegister(0, Args[i].Item2, stack.Pop());
+        }
+
+        foreach (var (s, (d, v)) in Closure)
+        {
+            if (v is not null)
+            {
+                vm.SetRegister(0, d, (Value)v);
+            }
+        }
+    }
+
     public override string ToString()
     {
         var result = new StringBuilder();

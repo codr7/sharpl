@@ -94,6 +94,10 @@ public class ArrayStack<T>: IEnumerable<T>
         return res.ToString();
     }
 
+    public void Trunc(int n) {
+        count = n;
+    }
+
     public IEnumerator<T> GetEnumerator()
     {
         return items[0..count].AsEnumerable().GetEnumerator();

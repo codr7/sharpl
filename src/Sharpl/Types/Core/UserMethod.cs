@@ -8,7 +8,7 @@ public class UserMethodType : Type<UserMethod>
 
     public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
     {
-        vm.Call(loc, stack, target.Cast(this), arity, registerCount);
+        vm.CallUserMethod(loc, stack, target.Cast(this), arity, registerCount);
     }
 
     public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)

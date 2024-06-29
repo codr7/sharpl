@@ -602,12 +602,68 @@ public class Core : Lib
             }
         });
 
-       BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) => {
-         var n = stack.Pop().Cast(loc, Core.String);
-         var o = stack.Pop().Cast(loc, Core.String);
-         var i = stack.Pop().Cast(loc, Core.String);
-         o = o.Replace(" ", "\\s*");
-         stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
+        BindMacro("return", [], (loc, target, vm, args) =>
+        {
+            UserMethod? m = null;
+
+            if (args.Pop() is Forms.Call c)
+            {
+
+                if (c.Target is Forms.Literal lt && lt.Value is var lv && lv.Type == Core.UserMethod)
+                {
+                    m = lv.Cast(Core.UserMethod);
+                }
+                else if (c.Target is Forms.Id it && vm.Env[it.Name] is Value iv && iv.Type == Core.UserMethod)
+                {
+                    m = iv.Cast(Core.UserMethod);
+                }
+
+                if (m is UserMethod)
+                {
+                    if (!args.Empty)
+                    {
+                        throw new EmitError(loc, "Too many args in tail call");
+                    }
+
+                    var emptyArgs = new Form.Queue();
+                    var splat = false;
+
+                    foreach (var f in c.Args)
+                    {
+                        if (f.IsSplat)
+                        {
+                            splat = true;
+                        }
+                    }
+
+                    if (!splat && c.Args.Length < m.Args.Length)
+                    {
+                        throw new EmitError(loc, $"Not enough arguments: {m}");
+                    }
+
+                    foreach (var f in c.Args)
+                    {
+                        f.Emit(vm, emptyArgs);
+                    }
+
+                    vm.Emit(Ops.CallTail.Make(loc, m, c.Args.Length, splat));
+                }
+            }
+
+            if (m is null)
+            {
+                args.Emit(vm);
+                vm.Emit(Ops.ExitMethod.Make());
+            }
+        });
+
+        BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
+        {
+            var n = stack.Pop().Cast(loc, Core.String);
+            var o = stack.Pop().Cast(loc, Core.String);
+            var i = stack.Pop().Cast(loc, Core.String);
+            o = o.Replace(" ", "\\s*");
+            stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
         });
 
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>

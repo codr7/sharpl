@@ -1,3 +1,1 @@
-[
-    "public class (\w+)":"type $1 struct"
-]
+(define-rule "public class (\w+)" "type $1 struct")

@@ -1,5 +1,5 @@
 483
-275
+134
 
 * VC
 ** Reformat - Ctrl+Shift+I
@@ -9,8 +9,12 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 * trex
 ** add io/string
 ** add reduce
-*** jalang
-** try on realistic input
+*** claes/jalang
+** add StackTrait with push
+*** implement for Array
+
+* rename Form.Queue.Push/Pop to TryPush/Pop
+** add force methods like ArrayStack
 
 * add for loop
 ** multiple bindings

@@ -5,7 +5,7 @@ public readonly struct Op
     public enum T
     {
         BeginFrame, Benchmark, Branch,
-        CallDirect, CallIndirect, CallMethod, CallUserMethod, CallRegister, Check, CopyRegister, CreateArray, CreatePair,
+        CallDirect, CallIndirect, CallMethod, CallTail, CallUserMethod, CallRegister, Check, CopyRegister, CreateArray, CreatePair,
         Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,

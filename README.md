@@ -87,6 +87,22 @@ Methods keep copies of any external bindings referenced from their body.
 ```
 `42`
 
+### tail calls
+`return` may be used to convert any call into a tail call.
+
+```
+(^foo []
+  2)
+
+(^bar []
+  1
+  (return (foo))
+  3)
+
+(bar)
+```
+`2`
+
 ## composite types
 
 ### arrays

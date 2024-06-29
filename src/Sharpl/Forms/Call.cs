@@ -4,14 +4,14 @@ using System.Text;
 
 public class Call : Form
 {
-    private readonly Form[] Args;
-    private readonly Form Target;
+    public readonly Form[] Args;
+    public readonly Form Target;
 
 
     public Call(Loc loc, Form target, Form[] args) : base(loc)
     {
-        this.Target = target;
-        this.Args = args;
+        Target = target;
+        Args = args;
     }
 
     public override void CollectIds(HashSet<string> result)

@@ -103,7 +103,7 @@ public class VM
         nextRegisterIndex = 0;
     }
 
-    public void Call(Loc loc, Stack stack, UserMethod target, int arity, int registerCount)
+    public void CallUserMethod(Loc loc, Stack stack, UserMethod target, int arity, int registerCount)
     {
         if (arity < target.Args.Length)
         {
@@ -111,21 +111,8 @@ public class VM
         }
 
         BeginFrame(registerCount);
-        calls.Push(new Call(loc, target, PC));
-
-        for (var i = target.Args.Length - 1; i >= 0; i--)
-        {
-            SetRegister(0, target.Args[i].Item2, stack.Pop());
-        }
-
-        foreach (var (s, (d, v)) in target.Closure)
-        {
-            if (v is not null)
-            {
-                SetRegister(0, d, (Value)v);
-            }
-        }
-
+        calls.Push(new Call(loc, target, PC, frames.Count));
+        target.BindArgs(this, arity, stack);
 #pragma warning disable CS8629
         PC = (PC)target.StartPC;
 #pragma warning restore CS8629
@@ -148,14 +135,18 @@ public class VM
         definitionCount++;
     }
 
-    public void DoEnv(Env env, Action action) {
+    public void DoEnv(Env env, Action action)
+    {
         var prevEnv = Env;
         Env = env;
         BeginFrame(nextRegisterIndex);
 
-        try {
+        try
+        {
             action();
-        } finally {
+        }
+        finally
+        {
             Env = prevEnv;
             nextRegisterIndex = EndFrame().Item1;
         }
@@ -303,6 +294,30 @@ public class VM
                         target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
                     }
+                case Op.T.CallTail:
+                    {
+                        var bindOp = (Ops.CallTail)op.Data;
+                        var arity = bindOp.Arity;
+
+                        if (bindOp.Splat)
+                        {
+                            arity += splats.Pop();
+                        }
+
+                        if (arity < bindOp.Target.Args.Length)
+                        {
+                            throw new EvalError(bindOp.Loc, $"Not enough arguments: {bindOp.Target} {arity}");
+                        }
+
+                        var frameCount = frames.Count - calls.Peek().FrameOffset;
+                        var call = calls.Peek();
+                        frames.Trunc(call.FrameOffset);
+                        bindOp.Target.BindArgs(this, bindOp.Arity, stack);
+#pragma warning disable CS8629
+                        PC = (int)bindOp.Target.StartPC;
+#pragma warning restore CS8629
+                        break;
+                    }
                 case Op.T.CallUserMethod:
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
@@ -314,7 +329,7 @@ public class VM
                         }
 
                         PC++;
-                        Call(callOp.Loc, stack, callOp.Target, arity, callOp.RegisterCount);
+                        CallUserMethod(callOp.Loc, stack, callOp.Target, arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.Check:
@@ -604,7 +619,7 @@ public class VM
         var prevEnv = Env;
         var prevLoadPath = loadPath;
         var p = Path.Combine(loadPath, path);
-    
+
         try
         {
             if (Path.GetDirectoryName(p) is string d)

@@ -127,5 +127,6 @@
 (load "fib-tests.sl")
 (load "io-tests.sl")  
 (load "lib-tests.sl")
+(load "method-tests.sl")
 (load "pair-tests.sl")
 (load "rx-tests.sl")
