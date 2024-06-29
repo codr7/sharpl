@@ -90,7 +90,7 @@ Methods keep copies of any external bindings referenced from their body.
 ### tail calls
 `return` may be used to convert any call into a tail call.
 
-This will keep going forever without consuming any stack space:
+This will keep going forever without consuming space:
 ```
 (^foo []
   (return (foo)))
