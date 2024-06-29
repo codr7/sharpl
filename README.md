@@ -98,12 +98,15 @@ This will keep going forever without consuming any stack space:
 (foo)
 ```
 
-While this will not:
+This won't:
 ```
 (^foo []
   (foo))
 
 (foo)
+```
+```
+System.IndexOutOfRangeException: Index was outside the bounds of the array.
 ```
 
 ## composite types
