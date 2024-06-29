@@ -98,7 +98,7 @@ This will keep going forever without consuming space:
 (foo)
 ```
 
-This won't:
+Without `return` the call quickly runs out of space:
 ```
 (^foo []
   (foo))
