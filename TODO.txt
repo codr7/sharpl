@@ -16,17 +16,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 * rename Form.Queue.Push/Pop to TryPush/Pop
 ** add force methods like ArrayStack
 
-* add curry macro
-** insert args into calls in body
-
-  (curry [u1] 
-    ('set-name "Foo")
-    ('set-email "foo@foo.com"))
-
-  (curry [_ (_ 'to-string)] 
-    (say u1) 
-    (say u2))
-
 * oop.sl
 
 * add for loop

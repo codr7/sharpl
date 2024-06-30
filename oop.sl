@@ -12,15 +12,12 @@
 
 (let [u1 (make-user)
       u2 (make-user)]
-  (curry [u1] 
-    ('set-name "Foo")
-    ('set-email "foo@foo.com"))
-  (curry [u2] 
-    ('set-name "Bar")
-    ('set-email "bar@bar.com"))
-  (curry [_ (_ 'to-string)] 
-    (say u1) 
-    (say u2)))
+    (u1 'set-name "Foo")
+    (u1 'set-email "foo@foo.com")
+    (u2 'set-name "Bar")
+    (u2 'set-email "bar@bar.com")
+    (say (u1 'to-string)) 
+    (say (u2 'to-string)))
 
 * implement string type call
 ** array
