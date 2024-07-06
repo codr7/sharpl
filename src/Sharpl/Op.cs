@@ -4,7 +4,6 @@ public readonly struct Op
 {
     public enum T
     {
-        AddMapItem,
         BeginFrame, Benchmark, Branch,
         CallDirect, CallStack, CallMethod, CallTail, CallUserMethod, CallRegister, 
         Check, CopyRegister, 
@@ -15,7 +14,7 @@ public readonly struct Op
         IterNext,
         OpenInputStream, 
         PrepareClosure, Push, PushSplat,
-        SetArrayItem, SetLoadPath, SetRegister, 
+        SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
         Splat, Stop
     };
 

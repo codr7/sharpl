@@ -31,7 +31,7 @@ public class Map : Form
         {
             f.Item1.Emit(vm, itemArgs, quoted);
             f.Item2.Emit(vm, itemArgs, quoted);
-            vm.Emit(Ops.AddMapItem.Make());
+            vm.Emit(Ops.SetMapItem.Make());
             i++;
         }
     }

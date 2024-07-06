@@ -189,15 +189,6 @@ public class VM
 
             switch (op.Type)
             {
-                case Op.T.AddMapItem:
-                    {
-                        var v = stack.Pop();
-                        var k = stack.Pop();
-                        stack.Peek().Cast(Core.Map)[k] = v;
-                        PC++;
-                        break;
-                    }
-
                 case Op.T.BeginFrame:
                     {
                         var beginOp = (Ops.BeginFrame)op.Data;
@@ -538,6 +529,14 @@ public class VM
                     {
                         var setOp = (Ops.SetLoadPath)op.Data;
                         loadPath = setOp.Path;
+                        PC++;
+                        break;
+                    }
+                case Op.T.SetMapItem:
+                    {
+                        var v = stack.Pop();
+                        var k = stack.Pop();
+                        stack.Peek().Cast(Core.Map)[k] = v;
                         PC++;
                         break;
                     }
