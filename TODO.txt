@@ -6,6 +6,13 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
+* add reduce
+** claes/jalang
+
+* rename Binding to Register
+** frameOffset & index
+** use instead of separate vars in ops
+
 * trex
 ** add io/string
 ** add reduce
@@ -45,16 +52,12 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
 * figure out how to close StreamReaders opened using do-read
 
-* add iter support to array
-
 * add iter support to int
 
 * add iter support to nil
 
 * add iter support to string
 ** add char type
-
-* add tail call support
 
 * figure out how to get args directly into registers when calling user methods
 ** value for literals
