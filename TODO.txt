@@ -16,6 +16,13 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
 * oop.sl
 
+* add map support
+** add custom map type
+*** binary search
+*** realloc array
+
+* add map fib
+
 * add for loop
 ** multiple bindings
 ** iterate until any eof
@@ -27,14 +34,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
         j [4 5 6]]
     (inc n (* i j)))
   n)
-
-* add map function
-** jalang
-
-* add map fib
-** add custom map type
-*** binary search
-*** realloc array
 
 * add OutputStream type
 ** bind OUT
