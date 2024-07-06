@@ -6,6 +6,9 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
+* add iter support to nil
+** add NilIter
+
 * trex
 ** add io/string
 ** add StackTrait with push
@@ -38,10 +41,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 ** add do-write
 
 * figure out how to close StreamReaders opened using do-read
-
-* add iter support to int
-
-* add iter support to nil
 
 * add iter support to string
 ** add char type

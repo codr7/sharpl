@@ -76,6 +76,12 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
         return res;
     }
 
+    public Iter CreateIter(Value target)
+    {
+        var t = target.Cast(this);
+        return new ArrayItems(t, 0, t.Length);
+    }
+
     public override void Dump(Value value, StringBuilder result)
     {
         result.Append('[');
@@ -114,12 +120,6 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
         }
 
         return true;
-    }
-
-    public Iter CreateIter(Value target)
-    {
-        var t = target.Cast(this);
-        return new ArrayItems(t, 0, t.Length);
     }
 
     public override void Say(Value value, StringBuilder result)

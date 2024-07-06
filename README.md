@@ -160,6 +160,12 @@ Or by calling the type constructor.
 ```
 `6`
 
+Which could also be expressed in a more condensed form thanks to the fact that integers are iterable.
+
+```
+(reduce + 4 0)
+```
+
 ## libraries
 `lib` may be used to define/extend libraries.
 
