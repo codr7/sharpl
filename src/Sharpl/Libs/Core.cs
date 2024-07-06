@@ -21,6 +21,7 @@ public class Core : Lib
     public static readonly NilType Nil = new NilType("Nil");
     public static readonly PairType Pair = new PairType("Pair");
     public static readonly StringType String = new StringType("String");
+    public static readonly SymbolType Symbol = new SymbolType("Symbol");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
 
     public Core() : base("core", null, [])
@@ -36,6 +37,7 @@ public class Core : Lib
         BindType(Method);
         BindType(Pair);
         BindType(String);
+        BindType(Symbol);
         BindType(UserMethod);
 
         Bind("F", Value.F);

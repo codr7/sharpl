@@ -25,7 +25,7 @@ public class Call : Form
     }
 
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args, int quoted)
     {
         var cas =  new Form.Queue(Args);
         Target.EmitCall(vm,cas);

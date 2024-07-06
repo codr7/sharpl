@@ -1,5 +1,6 @@
 namespace Sharpl.Forms;
 
+using System.Runtime.InteropServices;
 using Sharpl.Libs;
 
 public class Id : Form
@@ -37,15 +38,22 @@ public class Id : Form
         result.Add(Name);
     }
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args, int quoted)
     {
-        if (Find(Name, vm.Env, Loc) is Value v)
+        if (quoted == 0)
         {
-            v.EmitId(Loc, vm, args);
+            if (Find(Name, vm.Env, Loc) is Value v)
+            {
+                v.EmitId(Loc, vm, args);
+            }
+            else
+            {
+                throw new EmitError(Loc, $"Unknown id: {Name}");
+            }
         }
         else
         {
-            throw new EmitError(Loc, $"Unknown id: {Name}");
+            vm.Emit(Ops.Push.Make(Value.Make(Core.Symbol, vm.GetSymbol(Name))));
         }
     }
 

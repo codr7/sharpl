@@ -9,7 +9,7 @@ public class Splat : Form
         Target = target;
     }
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args, int quoted)
     {
         var targetArgs = new Form.Queue();
         targetArgs.Push(Target);

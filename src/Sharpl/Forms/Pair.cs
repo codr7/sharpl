@@ -20,7 +20,7 @@ public class Pair : Form
         Right.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args, int quoted)
     {
         var leftArgs = new Form.Queue();
         Left.Emit(vm, leftArgs);

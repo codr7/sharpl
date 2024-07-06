@@ -20,7 +20,7 @@ public class Array : Form
         }
     }
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Form.Queue args, int quoted)
     {
         var splat = false;
 
@@ -46,7 +46,7 @@ public class Array : Form
 
             foreach (var f in Items)
             {
-                f.Emit(vm, itemArgs);
+                f.Emit(vm, itemArgs, quoted);
                 vm.Emit(Ops.SetArrayItem.Make(i));
                 i++;
             }

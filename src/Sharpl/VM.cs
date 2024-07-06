@@ -1,5 +1,6 @@
 namespace Sharpl;
 
+using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
@@ -46,6 +47,7 @@ public class VM
     private int nextRegisterIndex = 0;
     private Value[] registers;
     private ArrayStack<int> splats;
+    private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -54,6 +56,7 @@ public class VM
         Readers.Call.Instance,
         Readers.Int.Instance,
         Readers.Pair.Instance,
+        Readers.Quote.Instance,
         Readers.Splat.Instance,
         Readers.String.Instance,
 
@@ -622,14 +625,24 @@ public class VM
         get => frames.Count;
     }
 
+    public Value Get(Register register)
+    {
+        return GetRegister(register.FrameOffset, register.Index);
+    }
+
     public Value GetRegister(int frameOffset, int index)
     {
         return registers[RegisterIndex(frameOffset, index)];
     }
 
-    public Value Get(Register register)
-    {
-        return GetRegister(register.FrameOffset, register.Index);
+    public Symbol GetSymbol(string name) {
+        if (symbols.ContainsKey(name)) {
+            return symbols[name];
+        }
+
+        var s = new Symbol(name);
+        symbols[name] = s;
+        return s;
     }
 
     public Label Label(PC pc = -1)

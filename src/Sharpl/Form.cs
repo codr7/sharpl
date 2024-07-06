@@ -18,7 +18,11 @@ public abstract class Form : Emitter
 
     public virtual void CollectIds(HashSet<string> result) { }
 
-    public abstract void Emit(VM vm, Form.Queue args);
+    public abstract void Emit(VM vm, Form.Queue args, int quoted);
+
+    public void Emit(VM vm, Form.Queue args) {
+        Emit(vm, args, 0);
+    }
 
     public virtual void EmitCall(VM vm, Form.Queue args)
     {
@@ -115,7 +119,8 @@ public abstract class Form : Emitter
             return null;
         }
 
-        public Form Pop() {
+        public Form Pop()
+        {
 #pragma warning disable CS8603 // Possible null reference return.
             return TryPop();
 #pragma warning restore CS8603 // Possible null reference return.
@@ -132,7 +137,8 @@ public abstract class Form : Emitter
             return null;
         }
 
-        public Form PopLast() {
+        public Form PopLast()
+        {
 #pragma warning disable CS8603 // Possible null reference return.
             return TryPopLast();
 #pragma warning restore CS8603 // Possible null reference return.
