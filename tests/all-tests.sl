@@ -123,6 +123,9 @@
 (check 42
   (- [43 1]*))
 
+(check 6
+  (reduce + [1 2 3] 0))
+
 (load "array-tests.sl")
 (load "fib-tests.sl")
 (load "io-tests.sl")  

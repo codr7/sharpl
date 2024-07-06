@@ -25,7 +25,7 @@ public abstract class Form : Emitter
         var arity = args.Count;
         args.Emit(vm);
         Emit(vm, new Form.Queue());
-        vm.Emit(Ops.CallIndirect.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public virtual bool IsSplat => false;

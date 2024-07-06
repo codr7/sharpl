@@ -251,21 +251,6 @@ public class VM
                         callOp.Target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
                     }
-                case Op.T.CallIndirect:
-                    {
-                        var target = stack.Pop();
-                        var callOp = (Ops.CallIndirect)op.Data;
-                        var arity = callOp.Arity;
-
-                        if (callOp.Splat)
-                        {
-                            arity = arity + splats.Pop() - 1;
-                        }
-
-                        PC++;
-                        target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
-                        break;
-                    }
                 case Op.T.CallMethod:
                     {
                         var callOp = (Ops.CallMethod)op.Data;
@@ -291,7 +276,22 @@ public class VM
                         }
 
                         PC++;
-                        var target = GetRegister(callOp.TargetFrameOffset, callOp.TargetIndex);
+                        var target = Get(callOp.Target);
+                        target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
+                        break;
+                    }
+                case Op.T.CallStack:
+                    {
+                        var target = stack.Pop();
+                        var callOp = (Ops.CallStack)op.Data;
+                        var arity = callOp.Arity;
+
+                        if (callOp.Splat)
+                        {
+                            arity = arity + splats.Pop() - 1;
+                        }
+
+                        PC++;
                         target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
                     }
@@ -377,13 +377,11 @@ public class VM
                 case Op.T.CreateIter:
                     {
                         var createOp = (Ops.CreateIter)op.Data;
-                        var t = createOp.Target;
-                        var i = RegisterIndex(t.FrameOffset, t.Index);
-                        var v = registers[i];
+                        var v = stack.Pop();
 
                         if (v.Type is IterableTrait it)
                         {
-                            registers[i] = Value.Make(Core.Iter, it.CreateIter(v));
+                            Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v)));
                         }
                         else
                         {
@@ -452,12 +450,14 @@ public class VM
 
                         if (Get(iterOp.Iter).Cast(Core.Iter).Next() is Value v)
                         {
-                            Set(iterOp.Value, v);
+                            stack.Push(v);
                             PC++;
                         }
                         else
                         {
-                            PC = iterOp.ExitPC;
+#pragma warning disable CS8629 // Nullable value type may be null.
+                            PC = (int)iterOp.Done.PC;
+#pragma warning restore CS8629 // Nullable value type may be null.
                         }
 
                         break;

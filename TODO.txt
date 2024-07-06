@@ -6,13 +6,6 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-* add reduce
-** jalang
-
-* rename Binding to Register
-** frameOffset & index
-** use instead of separate vars in ops
-
 * trex
 ** add io/string
 ** add reduce
@@ -39,7 +32,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
 * add map function
 ** jalang
-** slurp sources
 
 * add map fib
 ** add custom map type

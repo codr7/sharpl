@@ -1,5 +1,6 @@
 namespace Sharpl.Libs;
 
+using Sharpl.Ops;
 using Sharpl.Types.Core;
 using System.Linq;
 using System.Text;
@@ -657,6 +658,36 @@ public class Core : Lib
             }
         });
 
+      BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
+        {
+            var iter = new Register(0, vm.AllocRegister());
+            var methodForm = args.Pop();
+            var sequenceForm = args.Pop();
+            var seedForm = args.Pop();
+
+            var emptyArgs = new Form.Queue();
+
+            var method = new Register(0, vm.AllocRegister());
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            methodForm.Emit(vm, emptyArgs);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            vm.Emit(Ops.SetRegister.Make(method.FrameOffset, method.Index));
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            sequenceForm.Emit(vm, emptyArgs);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            vm.Emit(Ops.CreateIter.Make(loc, iter));
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            seedForm.Emit(vm, emptyArgs);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            var start = new Label(vm.EmitPC);
+            var done = new Label();
+            vm.Emit(Ops.IterNext.Make(loc, iter, done));
+            vm.Emit(Ops.CallRegister.Make(loc, method, 2, false, vm.NextRegisterIndex));
+            vm.Emit(Ops.Goto.Make(start));
+            done.PC = vm.EmitPC;
+        });
+  
         BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
         {
             var n = stack.Pop().Cast(loc, Core.String);
