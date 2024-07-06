@@ -45,12 +45,12 @@ public class Core : Lib
         BindMacro("^", [], (loc, target, vm, args) =>
          {
              var name = "";
-             var f = args.Pop();
+             var f = args.TryPop();
 
              if (f is Forms.Id id)
              {
                  name = id.Name;
-                 f = args.Pop();
+                 f = args.TryPop();
              }
 
              (string, int)[] fas;
@@ -272,7 +272,7 @@ public class Core : Lib
 
         BindMacro("benchmark", ["n"], (loc, target, vm, args) =>
          {
-             if (args.Pop() is Form f && vm.Eval(f) is Value n)
+             if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
                  vm.Emit(Ops.Benchmark.Make(n.Cast(loc, Core.Int)));
                  args.Emit(vm);
@@ -286,7 +286,7 @@ public class Core : Lib
 
         BindMacro("check", ["expected", "body"], (loc, target, vm, args) =>
          {
-             var ef = args.Pop();
+             var ef = args.TryPop();
 
              if (ef is null)
              {
@@ -299,7 +299,7 @@ public class Core : Lib
              {
                  while (true)
                  {
-                     if (args.Pop() is Form bf)
+                     if (args.TryPop() is Form bf)
                      {
                          bf.Emit(vm, args);
                      }
@@ -317,7 +317,7 @@ public class Core : Lib
 
         BindMacro("dec", [], (loc, target, vm, args) =>
         {
-            if (args.Pop() is Forms.Id id)
+            if (args.TryPop() is Forms.Id id)
             {
                 if (vm.Env[id.Name] is Value v)
                 {
@@ -352,7 +352,7 @@ public class Core : Lib
         {
             while (true)
             {
-                var id = args.Pop();
+                var id = args.TryPop();
 
                 if (id is null)
                 {
@@ -361,7 +361,7 @@ public class Core : Lib
 
                 if (id is Forms.Id idf)
                 {
-                    if (args.Pop() is Form f)
+                    if (args.TryPop() is Form f)
                     {
                         if (f is Forms.Literal lit)
                         {
@@ -415,7 +415,7 @@ public class Core : Lib
             vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
             {
 
-                if (args.Pop() is Form f)
+                if (args.TryPop() is Form f)
                 {
                     f.Emit(vm, args);
                 }
@@ -439,7 +439,7 @@ public class Core : Lib
              vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
              {
 
-                 if (args.Pop() is Form cf)
+                 if (args.TryPop() is Form cf)
                  {
                      cf.Emit(vm, args);
                  }
@@ -451,7 +451,7 @@ public class Core : Lib
                  var skipElse = new Label();
                  vm.Emit(Ops.Branch.Make(skipElse));
 
-                 if (args.Pop() is Form tf)
+                 if (args.TryPop() is Form tf)
                  {
                      tf.Emit(vm, args);
                  }
@@ -469,7 +469,7 @@ public class Core : Lib
         {
             var ids = args.CollectIds();
 
-            if (args.Pop() is Forms.Array bsf)
+            if (args.TryPop() is Forms.Array bsf)
             {
                 var bs = bsf.Items;
 
@@ -519,7 +519,7 @@ public class Core : Lib
 
                     while (true)
                     {
-                        if (args.Pop() is Form f)
+                        if (args.TryPop() is Form f)
                         {
                             f.Emit(vm, args);
                         }
@@ -549,7 +549,7 @@ public class Core : Lib
             {
                 vm.Emit(Ops.Push.Make(Value.Make(Core.Lib, vm.Lib)));
             }
-            else if (args.Pop() is Forms.Id nf)
+            else if (args.TryPop() is Forms.Id nf)
             {
                 Lib? lib = null;
 
@@ -585,7 +585,7 @@ public class Core : Lib
         {
             while (true)
             {
-                if (args.Pop() is Form pf)
+                if (args.TryPop() is Form pf)
                 {
                     if (vm.Eval(pf, args) is Value p)
                     {
@@ -607,7 +607,7 @@ public class Core : Lib
         {
             UserMethod? m = null;
 
-            if (args.Pop() is Forms.Call c)
+            if (args.TryPop() is Forms.Call c)
             {
 
                 if (c.Target is Forms.Literal lt && lt.Value is var lv && lv.Type == Core.UserMethod)
@@ -664,22 +664,16 @@ public class Core : Lib
             var methodForm = args.Pop();
             var sequenceForm = args.Pop();
             var seedForm = args.Pop();
-
             var emptyArgs = new Form.Queue();
 
             var method = new Register(0, vm.AllocRegister());
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             methodForm.Emit(vm, emptyArgs);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             vm.Emit(Ops.SetRegister.Make(method.FrameOffset, method.Index));
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             sequenceForm.Emit(vm, emptyArgs);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             vm.Emit(Ops.CreateIter.Make(loc, iter));
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             seedForm.Emit(vm, emptyArgs);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             var start = new Label(vm.EmitPC);
             var done = new Label();
             vm.Emit(Ops.IterNext.Make(loc, iter, done));

@@ -716,7 +716,7 @@ public class VM
     {
         var forms = new Form.Queue();
         ReadForm(source, ref loc, forms);
-        return forms.Pop();
+        return forms.TryPop();
     }
 
     public void ReadForms(TextReader source, ref Loc loc, Form.Queue forms)

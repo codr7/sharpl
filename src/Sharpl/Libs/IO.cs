@@ -15,7 +15,7 @@ public class IO : Lib
 
         BindMacro("do-read", ["path"], (loc, target, vm, args) =>
          {
-             if (args.Pop() is Form afs)
+             if (args.TryPop() is Form afs)
              {
                  if (afs is Forms.Array af)
                  {

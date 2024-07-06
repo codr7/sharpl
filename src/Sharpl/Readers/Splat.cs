@@ -13,7 +13,7 @@ public struct Splat: Reader {
         var formLoc = loc;
         loc.Column++;
         source.Read();
-        var target = forms.PopLast();
+        var target = forms.TryPopLast();
 
 #pragma warning disable CS8604 // Possible null reference argument.
         forms.Push(new Forms.Splat(formLoc, target));

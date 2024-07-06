@@ -26,7 +26,7 @@ public struct Call : Reader
             throw new ReadError(loc, "Missing call target");
         }
 
-        var target = args.PopLast();
+        var target = args.TryPopLast();
 
         if (target is null)
         {

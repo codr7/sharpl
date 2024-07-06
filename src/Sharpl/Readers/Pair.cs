@@ -14,7 +14,7 @@ public struct Pair: Reader {
             return false;
         }
 
-        var left = forms.PopLast();
+        var left = forms.TryPopLast();
 
         if (left is null) {
             throw new EmitError(loc, "Missing left value");
@@ -36,7 +36,7 @@ public struct Pair: Reader {
             }
         }
 
-        var right = forms.PopLast();
+        var right = forms.TryPopLast();
 
         if (right is null) {
             throw new ReadError(loc, "Missing right value");

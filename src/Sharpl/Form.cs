@@ -63,7 +63,7 @@ public abstract class Form : Emitter
         {
             while (Count > 0)
             {
-                if (Pop() is Form v)
+                if (TryPop() is Form v)
                 {
                     v.Emit(vm, this);
                 }
@@ -104,7 +104,7 @@ public abstract class Form : Emitter
             return null;
         }
 
-        public Form? Pop()
+        public Form? TryPop()
         {
             if (items.First?.Value is Form f)
             {
@@ -115,7 +115,13 @@ public abstract class Form : Emitter
             return null;
         }
 
-        public Form? PopLast()
+        public Form Pop() {
+#pragma warning disable CS8603 // Possible null reference return.
+            return TryPop();
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public Form? TryPopLast()
         {
             if (items.Last?.Value is Form f)
             {
@@ -124,6 +130,12 @@ public abstract class Form : Emitter
             }
 
             return null;
+        }
+
+        public Form PopLast() {
+#pragma warning disable CS8603 // Possible null reference return.
+            return TryPopLast();
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public void Push(Form form)
