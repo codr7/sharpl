@@ -4,10 +4,11 @@ public readonly struct Op
 {
     public enum T
     {
+        AddMapItem,
         BeginFrame, Benchmark, Branch,
         CallDirect, CallStack, CallMethod, CallTail, CallUserMethod, CallRegister, 
         Check, CopyRegister, 
-        CreateArray, CreateIter, CreatePair,
+        CreateArray, CreateIter, CreateMap, CreatePair,
         Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,

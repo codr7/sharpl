@@ -16,6 +16,7 @@ public class Core : Lib
     public static readonly IterType Iter = new IterType("Iter");
     public static readonly LibType Lib = new LibType("Lib");
     public static readonly MacroType Macro = new MacroType("Macro");
+    public static readonly MapType Map = new MapType("Map");
     public static readonly MetaType Meta = new MetaType("Meta");
     public static readonly MethodType Method = new MethodType("Method");
     public static readonly NilType Nil = new NilType("Nil");
@@ -33,6 +34,7 @@ public class Core : Lib
         BindType(Int);
         BindType(Lib);
         BindType(Macro);
+        BindType(Map);
         BindType(Meta);
         BindType(Method);
         BindType(Pair);

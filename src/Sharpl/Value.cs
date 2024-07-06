@@ -1,10 +1,12 @@
 namespace Sharpl;
 
 using System.Text;
+using Sharpl.Types.Core;
 
-public readonly record struct Value(AnyType Type, object Data)
+public readonly record struct Value(AnyType Type, object Data) : IComparable<Value>
 {
-    public static explicit operator bool(Value v) {
+    public static explicit operator bool(Value v)
+    {
         return v.Type.Bool(v);
     }
 
@@ -13,9 +15,9 @@ public readonly record struct Value(AnyType Type, object Data)
         return new Value(type, data);
     }
 
-    public static readonly Value F = Value.Make(Libs.Core.Bit, false);
-    public static readonly Value Nil = Value.Make(Libs.Core.Nil, false);
-    public static readonly Value T = Value.Make(Libs.Core.Bit, true);
+    public static readonly Value F = Make(Libs.Core.Bit, false);
+    public static readonly Value Nil = Make(Libs.Core.Nil, false);
+    public static readonly Value T = Make(Libs.Core.Bit, true);
 
     public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount)
     {
@@ -94,5 +96,20 @@ public readonly record struct Value(AnyType Type, object Data)
         var res = new StringBuilder();
         Dump(res);
         return res.ToString();
+    }
+
+    public int CompareTo(Value other)
+    {
+        if (other.Type != Type)
+        {
+            return Type.Name.CompareTo(other.Type.Name);
+        }
+
+        if (Type is ComparableTrait ct)
+        {
+            return ComparableTrait.OrderInt(ct.Compare(this, other));
+        }
+
+        throw new Exception("Not comparable");
     }
 }

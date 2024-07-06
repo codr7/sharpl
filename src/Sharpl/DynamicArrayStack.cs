@@ -3,27 +3,29 @@ using System.Text;
 
 namespace Sharpl;
 
-public class ArrayStack<T>: IEnumerable<T>
+public class DynamicArrayStack<T> : IEnumerable<T>
 {
-    private readonly T[] items;
     private int count = 0;
+    private T[] items;
 
-    public T this[int i] {
-      get => Get(i);
-      set => Set(i, value);
+    public T this[int i]
+    {
+        get => Get(i);
+        set => Set(i, value);
     }
 
     public int Count { get { return count; } }
 
-    public ArrayStack(int capacity)
+    public DynamicArrayStack(int capacity)
     {
         items = new T[capacity];
     }
 
-    public void Clear() {
+    public void Clear()
+    {
         count = 0;
     }
-    
+
     public void Drop(int n)
     {
         count -= n;
@@ -36,6 +38,34 @@ public class ArrayStack<T>: IEnumerable<T>
         return items[i];
     }
 
+    public void Delete(int i) {
+        Array.ConstrainedCopy(items, i+1, items, i, count - i - 1);
+        count--;
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return items[0..count].AsEnumerable().GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return items[0..count].GetEnumerator();
+    }
+
+    public void Insert(int i, T it) {
+        Reserve(1);
+
+        if (i < count) {
+            Array.ConstrainedCopy(items, i, items, i+1, count - i);
+        }
+
+        items[i] = it;
+        count++;
+    }
+
+    public T[] Items { get => items; }
+    
     public T Peek(int offset = 0)
     {
         return items[count - 1 - offset];
@@ -49,11 +79,20 @@ public class ArrayStack<T>: IEnumerable<T>
 
     public void Push(T it)
     {
+        Reserve(1);
         items[count] = it;
         count++;
     }
 
-    public void Reverse(int n) {
+    public void Reserve(int n) {
+        while (count + n <= items.Length)
+        {
+            Array.Resize(ref items, items.Length * 2);
+        }
+    }
+
+    public void Reverse(int n)
+    {
         Array.Reverse(items, Count - n, n);
     }
 
@@ -91,17 +130,8 @@ public class ArrayStack<T>: IEnumerable<T>
         return res.ToString();
     }
 
-    public void Trunc(int n) {
+    public void Trunc(int n)
+    {
         count = n;
-    }
-
-    public IEnumerator<T> GetEnumerator()
-    {
-        return items[0..count].AsEnumerable().GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return items[0..count].GetEnumerator();
     }
 }

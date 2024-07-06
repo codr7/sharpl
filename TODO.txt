@@ -6,8 +6,16 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
+* add map reader
+* add map fib
+
 * add iter support to nil
 ** add NilIter
+
+* add io/dump/slurp methods
+** slurp literals using readers
+*** error for other forms
+** take Input/OutputStream
 
 * trex
 ** add io/string
@@ -17,11 +25,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 * oop.sl
 
 * add map support
-** add custom map type
-*** binary search
-*** realloc array
-
-* add map fib
 
 * add for loop
 ** multiple bindings
@@ -97,17 +100,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
     (if (> 10 (inc i)
       (stop))))))
-
-* add IO lib
-** open
-** slurp
-** slurp-lines
-** add IStream type
-
-* add Form.CollectIds()
-
-* add maps/sets
-** add map reader
 
 * editor
 ** two panes

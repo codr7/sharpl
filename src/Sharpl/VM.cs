@@ -1,6 +1,5 @@
 namespace Sharpl;
 
-using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
@@ -190,6 +189,15 @@ public class VM
 
             switch (op.Type)
             {
+                case Op.T.AddMapItem:
+                    {
+                        var v = stack.Pop();
+                        var k = stack.Pop();
+                        stack.Peek().Cast(Core.Map)[k] = v;
+                        PC++;
+                        break;
+                    }
+
                 case Op.T.BeginFrame:
                     {
                         var beginOp = (Ops.BeginFrame)op.Data;
@@ -391,6 +399,13 @@ public class VM
                             throw new EvalError(createOp.Loc, $"Not iterable: {v}");
                         }
 
+                        PC++;
+                        break;
+                    }
+                case Op.T.CreateMap:
+                    {
+                        var createOp = (Ops.CreateMap)op.Data;
+                        stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>(createOp.Length)));
                         PC++;
                         break;
                     }
@@ -635,8 +650,10 @@ public class VM
         return registers[RegisterIndex(frameOffset, index)];
     }
 
-    public Symbol GetSymbol(string name) {
-        if (symbols.ContainsKey(name)) {
+    public Symbol GetSymbol(string name)
+    {
+        if (symbols.ContainsKey(name))
+        {
             return symbols[name];
         }
 

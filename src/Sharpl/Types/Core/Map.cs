@@ -4,25 +4,27 @@ using Sharpl.Iters.Core;
 using Sharpl.Libs;
 using System.Text;
 
-public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
+public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait/*, IterableTrait*/
 {
-    public ArrayType(string name) : base(name) { }
+    public MapType(string name) : base(name) { }
 
     public override bool Bool(Value value)
     {
-        return value.Cast(this).Length != 0;
+        return value.Cast(this).Count != 0;
     }
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        var vs = new Value[arity];
+        var m = new OrderedMap<Value, Value>(arity / 2);
 
-        for (var i = arity - 1; i >= 0; i--)
+        for (var i = arity - 1; i >= 0; i -= 2)
         {
-            vs[i] = stack.Pop();
+            var v = stack.Pop();
+            var k = stack.Pop();
+            m[k] = v;
         }
 
-        stack.Push(Value.Make(this, vs));
+        stack.Push(Value.Make(this, m));
     }
 
     public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
@@ -31,14 +33,14 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
         {
             case 1:
                 {
-                    var i = stack.Pop().Cast(Core.Int);
-                    stack.Push(target.Cast(this)[i]);
+                    var k = stack.Pop();
+                    stack.Push(target.Cast(this)[k]);
                     break;
                 }
             case 2:
                 {
                     var v = stack.Pop();
-                    target.Cast(this)[stack.Pop().Cast(Core.Int)] = v;
+                    target.Cast(this)[stack.Pop()] = v;
                     break;
                 }
             default:
@@ -49,14 +51,14 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
 
     public Order Compare(Value left, Value right)
     {
-        var lvs = left.Cast(this);
-        var rvs = right.Cast(this);
-        var res = ComparableTrait.IntOrder(lvs.Length.CompareTo(rvs.Length));
+        var lm = left.Cast(this);
+        var rm = right.Cast(this);
+        var res = ComparableTrait.IntOrder(lm.Count.CompareTo(rm.Count));
 
-        for (var i = 0; i < lvs.Length && res != Order.EQ; i++)
+        for (var i = 0; i < lm.Count && res != Order.EQ; i++)
         {
-            var lv = lvs[i];
-            var rv = rvs[i];
+            var lv = lm.Items[i].Item1;
+            var rv = rm.Items[i].Item1;
 
             if (lv.Type != rv.Type)
             {
@@ -76,15 +78,16 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
         return res;
     }
 
+    /*
     public Iter CreateIter(Value target)
     {
         var t = target.Cast(this);
-        return new ArrayItems(t, 0, t.Length);
-    }
+        return new MapItems(t);
+    }*/
 
     public override void Dump(Value value, StringBuilder result)
     {
-        result.Append('[');
+        result.Append('{');
         var i = 0;
 
         foreach (var v in value.Cast(this))
@@ -94,11 +97,13 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
                 result.Append(' ');
             }
 
-            v.Dump(result);
+            v.Item1.Dump(result);
+            result.Append(':');
+            v.Item2.Dump(result);
             i++;
         }
 
-        result.Append(']');
+        result.Append('}');
     }
 
     public override bool Equals(Value left, Value right)
@@ -106,14 +111,14 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
         var lv = left.Cast(this);
         var rv = right.Cast(this);
 
-        if (lv.Length != rv.Length)
+        if (lv.Count != rv.Count)
         {
             return false;
         }
 
-        for (var i = 0; i < lv.Length; i++)
+        for (var i = 0; i < lv.Count; i++)
         {
-            if (!lv[i].Equals(rv[i]))
+            if (!lv.Items[i].Equals(rv.Items[i]))
             {
                 return false;
             }
@@ -124,7 +129,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
 
     public override void Say(Value value, StringBuilder result)
     {
-        result.Append('[');
+        result.Append('{');
         var i = 0;
 
         foreach (var v in value.Cast(this))
@@ -134,10 +139,12 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
                 result.Append(' ');
             }
 
-            v.Say(result);
+            v.Item1.Say(result);
+            result.Append(':');
+            v.Item2.Say(result);
             i++;
         }
 
-        result.Append(']');
+        result.Append('}');
     }
 }
