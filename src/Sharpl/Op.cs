@@ -5,7 +5,7 @@ public readonly struct Op
     public enum T
     {
         BeginFrame, Benchmark, Branch,
-        CallDirect, CallIndirect, CallMethod, CallTail, CallUserMethod, CallRegister, Check, CopyRegister, CreateArray, CreatePair,
+        CallDirect, CallIndirect, CallMethod, CallTail, CallUserMethod, CallRegister, Check, CopyRegister, CreateArray, CreateIter, CreatePair,
         Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,
@@ -25,7 +25,7 @@ public readonly struct Op
 
     public override string ToString() {
         if (Data is null) {
-            return $"{Type}"; 
+            return $"{Type}";
             
         }
 

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using Sharpl.Libs;
+using Sharpl.Types.Core;
 using PC = int;
 
 public class VM
@@ -373,6 +374,22 @@ public class VM
                         PC++;
                         break;
                     }
+                    case Op.T.CreateIter:
+                    {
+                        var createOp = (Ops.CreateIter)op.Data;
+                        var t = createOp.Target;
+                        var i = RegisterIndex(t.FrameOffset, t.Index);
+                        var v = registers[i];
+
+                        if (v.Type is IterableTrait it) {
+                            registers[i] = Value.Make(Core.Iter, it.CreateIter(v));
+                        } else {
+                            throw new EvalError(createOp.Loc, $"Not iterable: {v}");
+                        }
+                        
+                        PC++;
+                        break;
+                    }
                 case Op.T.CreatePair:
                     {
                         var createOp = (Ops.CreatePair)op.Data;
@@ -515,7 +532,7 @@ public class VM
 
                                 var arity = splats.Pop();
 
-                                foreach (var v in tt.Iter(tv))
+                                foreach (var v in tt.CreateIter(tv))
                                 {
                                     stack.Push(v);
                                     arity++;

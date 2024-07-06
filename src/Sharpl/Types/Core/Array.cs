@@ -116,7 +116,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait
         return true;
     }
 
-    public Iter Iter(Value target)
+    public Iter CreateIter(Value target)
     {
         var t = target.Cast(this);
         return new ArrayItems(t, 0, t.Length);

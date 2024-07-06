@@ -11,7 +11,7 @@ public class IterType : Type<Iter>, IterableTrait
         result.Append($"Iter {value.Cast(this)}");
     }
 
-    public Iter Iter(Value target)
+    public Iter CreateIter(Value target)
     {
         return target.Cast(this);
     }

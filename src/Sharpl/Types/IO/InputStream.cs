@@ -13,7 +13,7 @@ public class InputStreamType : Type<TextReader>, IterableTrait
         result.Append($"(InputStream {value.Cast(this)})");
     }
 
-    public Iter Iter(Value target)
+    public Iter CreateIter(Value target)
     {
         return new StreamLines(target.Cast(this));
     }

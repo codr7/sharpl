@@ -125,7 +125,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterableTrait
         return lp.Item1.Equals(rp.Item1) && lp.Item2.Equals(rp.Item2);
     }
 
-    public Iter Iter(Value target)
+    public Iter CreateIter(Value target)
     {
         return new PairItems(target);
     }
