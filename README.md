@@ -109,6 +109,17 @@ Without `return` the call quickly runs out of space:
 System.IndexOutOfRangeException: Index was outside the bounds of the array.
 ```
 
+## quoting
+Expressions may be quoted by prefixing with `'`.
+
+### symbols
+The type of a quoted identifier is `Symbol`.
+
+```
+(= (Symbol "foo" 42) 'foo42)
+```
+`T`
+
 ## composite types
 
 ### arrays
@@ -140,6 +151,14 @@ Or by calling the type constructor.
 (Pair [1 2 3]*)
 ```
 `1:2:3`
+
+## iterators
+`reduce` may be used to transform any iterable into a single value.
+
+```
+(reduce + [1 2 3] 0)
+```
+`6`
 
 ## libraries
 `lib` may be used to define/extend libraries.
