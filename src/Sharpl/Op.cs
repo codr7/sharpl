@@ -5,13 +5,17 @@ public readonly struct Op
     public enum T
     {
         BeginFrame, Benchmark, Branch,
-        CallDirect, CallIndirect, CallMethod, CallTail, CallUserMethod, CallRegister, Check, CopyRegister, CreateArray, CreateIter, CreatePair,
+        CallDirect, CallIndirect, CallMethod, CallTail, CallUserMethod, CallRegister, 
+        Check, CopyRegister, 
+        CreateArray, CreateIter, CreatePair,
         Decrement,
         EndFrame, ExitMethod,
         GetRegister, Goto,
+        IterNext,
         OpenInputStream, 
         PrepareClosure, Push, PushSplat,
-        SetArrayItem, SetLoadPath, SetRegister, Splat, Stop
+        SetArrayItem, SetLoadPath, SetRegister, 
+        Splat, Stop
     };
 
     public readonly object Data;

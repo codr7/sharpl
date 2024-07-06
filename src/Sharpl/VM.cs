@@ -374,19 +374,22 @@ public class VM
                         PC++;
                         break;
                     }
-                    case Op.T.CreateIter:
+                case Op.T.CreateIter:
                     {
                         var createOp = (Ops.CreateIter)op.Data;
                         var t = createOp.Target;
                         var i = RegisterIndex(t.FrameOffset, t.Index);
                         var v = registers[i];
 
-                        if (v.Type is IterableTrait it) {
+                        if (v.Type is IterableTrait it)
+                        {
                             registers[i] = Value.Make(Core.Iter, it.CreateIter(v));
-                        } else {
+                        }
+                        else
+                        {
                             throw new EvalError(createOp.Loc, $"Not iterable: {v}");
                         }
-                        
+
                         PC++;
                         break;
                     }
@@ -441,6 +444,22 @@ public class VM
 #pragma warning disable CS8629
                         PC = (PC)gotoOp.Target.PC;
 #pragma warning restore CS8629
+                        break;
+                    }
+                case Op.T.IterNext:
+                    {
+                        var iterOp = (Ops.IterNext)op.Data;
+
+                        if (Get(iterOp.Iter).Cast(Core.Iter).Next() is Value v)
+                        {
+                            Set(iterOp.Value, v);
+                            PC++;
+                        }
+                        else
+                        {
+                            PC = iterOp.ExitPC;
+                        }
+
                         break;
                     }
                 case Op.T.OpenInputStream:
@@ -606,6 +625,11 @@ public class VM
     public Value GetRegister(int frameOffset, int index)
     {
         return registers[RegisterIndex(frameOffset, index)];
+    }
+
+    public Value Get(Register register)
+    {
+        return GetRegister(register.FrameOffset, register.Index);
     }
 
     public Label Label(PC pc = -1)
@@ -782,5 +806,10 @@ public class VM
     public void SetRegister(int frameOffset, int index, Value value)
     {
         registers[RegisterIndex(frameOffset, index)] = value;
+    }
+
+    public void Set(Register register, Value value)
+    {
+        SetRegister(register.FrameOffset, register.Index, value);
     }
 }
