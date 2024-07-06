@@ -26,7 +26,7 @@ public class Env
 
                     if (v.FrameOffset != -1)
                     {
-                        Bind(id, Value.Make(Core.Binding, new Binding(v.FrameOffset + 1, v.Index)));
+                        Bind(id, Value.Make(Core.Binding, new Register(v.FrameOffset + 1, v.Index)));
                     }
 
                     uids.Add(id);

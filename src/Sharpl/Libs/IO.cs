@@ -31,7 +31,7 @@ public class IO : Lib
 
                          if (a0 is Forms.Id id)
                          {
-                             vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, reg)));
+                             vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Register(0, reg)));
                          }
                          else
                          {

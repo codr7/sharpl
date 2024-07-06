@@ -7,7 +7,7 @@
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
 * add reduce
-** claes/jalang
+** jalang
 
 * rename Binding to Register
 ** frameOffset & index

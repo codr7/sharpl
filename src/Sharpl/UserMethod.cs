@@ -8,7 +8,7 @@ namespace Sharpl;
 public class UserMethod
 {
     public readonly (string, int)[] Args;
-    public readonly Dictionary<Binding, (int, Value?)> Closure = new Dictionary<Binding, (int, Value?)>();
+    public readonly Dictionary<Register, (int, Value?)> Closure = new Dictionary<Register, (int, Value?)>();
     public readonly Loc Loc;
     public readonly string Name;
     public int? StartPC;
@@ -18,13 +18,13 @@ public class UserMethod
         Loc = loc;
         Name = name;
 
-        Closure = closure.Select<string, (Binding, (int, Value?))>((id) =>
+        Closure = closure.Select<string, (Register, (int, Value?))>((id) =>
         {
 #pragma warning disable CS8629
             var b = ((Value)vm.Env[id]).Cast(Core.Binding);
 #pragma warning restore CS8629
             var r = vm.AllocRegister();
-            vm.Env[id] = Value.Make(Core.Binding, new Binding(0, r));
+            vm.Env[id] = Value.Make(Core.Binding, new Register(0, r));
             return (b, (r, null));
         }).ToDictionary();
 

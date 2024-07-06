@@ -1,6 +1,6 @@
 namespace Sharpl.Types.Core;
 
-public class BindingType : Type<Binding>
+public class BindingType : Type<Register>
 {
     public BindingType(string name) : base(name) { }
     

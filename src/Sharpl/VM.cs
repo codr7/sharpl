@@ -130,7 +130,7 @@ public class VM
     public void Define(string name)
     {
         var i = definitionCount;
-        Env[name] = Value.Make(Core.Binding, new Binding(-1, i));
+        Env[name] = Value.Make(Core.Binding, new Register(-1, i));
         Emit(Ops.SetRegister.Make(-1, i));
         definitionCount++;
     }

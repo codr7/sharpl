@@ -72,7 +72,7 @@ public class Core : Lib
                          if (f is Forms.Id id)
                          {
                              var r = vm.AllocRegister();
-                             vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Binding(0, r)));
+                             vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Register(0, r)));
                              return (id.Name, r);
                          }
 
@@ -507,7 +507,7 @@ public class Core : Lib
                             {
                                 var r = vm.AllocRegister();
                                 vm.Emit(Ops.SetRegister.Make(0, r));
-                                vm.Env[idf.Name] = Value.Make(Core.Binding, new Binding(0, r));
+                                vm.Env[idf.Name] = Value.Make(Core.Binding, new Register(0, r));
                             }
                         }
                         else
