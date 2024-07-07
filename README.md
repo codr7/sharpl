@@ -45,16 +45,16 @@ New dynamically scoped bindings may be created using `define`.
 `if` may be used to conditionally evaluate a block of code.
 
 ```
-  (if 42 (say "42 is true"))
+  (if T (say "is true"))
 ```
 ```
-42 is true
+is true
 ```
 
 `if-else` may be used to specify an else-clause.
 
 ```
-  (if-else 42 1 2)
+  (if-else F 1 2)
 ```
 `2`
 
