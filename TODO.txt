@@ -1,17 +1,21 @@
-470
-132
+497
+137
+829
 
 * VC
 ** Reformat - Ctrl+Shift+I
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-* debug fib-map
-
-** add MapItems iter
-
 * use Array.BinarySearch in OrderedMap?
 ** benchmark
+
+* add or tests
+
+* fix closure readme/example/test
+** use dec
+
+** add MapItems iter
 
 * add iter support to nil
 ** add NilIter

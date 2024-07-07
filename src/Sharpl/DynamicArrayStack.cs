@@ -92,7 +92,7 @@ public class DynamicArrayStack<T> : IEnumerable<T>
     {
         while (count + n >= items.Length)
         {
-            Array.Resize(ref items, items.Length * 2);
+            Array.Resize(ref items, (count == 0) ? 3 : items.Length * 2);
         }
     }
 

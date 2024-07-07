@@ -8,7 +8,7 @@ public readonly struct Op
         CallDirect, CallStack, CallMethod, CallTail, CallUserMethod, CallRegister, 
         Check, CopyRegister, 
         CreateArray, CreateIter, CreateMap, CreatePair,
-        Decrement,
+        Decrement, Drop,
         EndFrame, ExitMethod,
         GetRegister, Goto,
         IterNext,

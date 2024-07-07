@@ -6,7 +6,9 @@
 
 (^ fib-map [n m]
   (or (m n)
-      (let [result (if (< n 2) n (+ (fib-map (- n 1) m)
-                                    (fib-map (- n 2) m)))] 
-        (m n result)
-	result)))
+      (if-else (< n 2) 
+        n 
+        (let [result (+ (fib-map (- n 1) m)
+                        (fib-map (- n 2) m))] 
+          (m n result)
+	        result))))

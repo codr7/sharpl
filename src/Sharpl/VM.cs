@@ -420,6 +420,13 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.Drop:
+                    {
+                        var dropOp = (Ops.Drop)op.Data;
+                        stack.Drop(dropOp.Count);
+                        PC++;
+                        break;
+                    }
                 case Op.T.EndFrame:
                     {
                         EndFrame();

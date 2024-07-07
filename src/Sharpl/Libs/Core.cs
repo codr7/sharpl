@@ -2,6 +2,7 @@ namespace Sharpl.Libs;
 
 using Sharpl.Ops;
 using Sharpl.Types.Core;
+using System.Configuration.Assemblies;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -609,17 +610,26 @@ public class Core : Lib
 
         BindMacro("or", ["value1"], (loc, target, vm, args) =>
          {
-            var done = new Label();
+             var done = new Label();
+             var first = true;
 
-            while (!args.Empty) {
-                args.Pop().Emit(vm, args);
-                
-                if (!args.Empty) { 
-                    vm.Emit(Ops.Or.Make(done));
-                }
-            }
+             while (!args.Empty)
+             {
+                 if (!first)
+                 {
+                     vm.Emit(Ops.Drop.Make(1));
+                 }
 
-            done.PC = vm.EmitPC;
+                 args.Pop().Emit(vm, args);
+
+                 if (!args.Empty)
+                 {
+                     vm.Emit(Ops.Or.Make(done));
+                     first = false;
+                 }
+             }
+
+             done.PC = vm.EmitPC;
          });
 
         BindMacro("return", [], (loc, target, vm, args) =>
@@ -677,30 +687,30 @@ public class Core : Lib
             }
         });
 
-      BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
-        {
-            var iter = new Register(0, vm.AllocRegister());
-            var methodForm = args.Pop();
-            var sequenceForm = args.Pop();
-            var seedForm = args.Pop();
-            var emptyArgs = new Form.Queue();
+        BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
+          {
+              var iter = new Register(0, vm.AllocRegister());
+              var methodForm = args.Pop();
+              var sequenceForm = args.Pop();
+              var seedForm = args.Pop();
+              var emptyArgs = new Form.Queue();
 
-            var method = new Register(0, vm.AllocRegister());
-            methodForm.Emit(vm, emptyArgs);
-            vm.Emit(Ops.SetRegister.Make(method.FrameOffset, method.Index));
+              var method = new Register(0, vm.AllocRegister());
+              methodForm.Emit(vm, emptyArgs);
+              vm.Emit(Ops.SetRegister.Make(method.FrameOffset, method.Index));
 
-            sequenceForm.Emit(vm, emptyArgs);
-            vm.Emit(Ops.CreateIter.Make(loc, iter));
-            seedForm.Emit(vm, emptyArgs);
+              sequenceForm.Emit(vm, emptyArgs);
+              vm.Emit(Ops.CreateIter.Make(loc, iter));
+              seedForm.Emit(vm, emptyArgs);
 
-            var start = new Label(vm.EmitPC);
-            var done = new Label();
-            vm.Emit(Ops.IterNext.Make(loc, iter, done));
-            vm.Emit(Ops.CallRegister.Make(loc, method, 2, false, vm.NextRegisterIndex));
-            vm.Emit(Ops.Goto.Make(start));
-            done.PC = vm.EmitPC;
-        });
-  
+              var start = new Label(vm.EmitPC);
+              var done = new Label();
+              vm.Emit(Ops.IterNext.Make(loc, iter, done));
+              vm.Emit(Ops.CallRegister.Make(loc, method, 2, false, vm.NextRegisterIndex));
+              vm.Emit(Ops.Goto.Make(start));
+              done.PC = vm.EmitPC;
+          });
+
         BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
         {
             var n = stack.Pop().Cast(loc, Core.String);
