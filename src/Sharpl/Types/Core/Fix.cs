@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class FixType : ComparableType<ulong>
+public class FixType : ComparableType<ulong>, NumericTrait
 {
     public FixType(string name) : base(name) { }
 
@@ -21,5 +21,93 @@ public class FixType : ComparableType<ulong>
     public override void Dump(Value value, StringBuilder result)
     {
         result.Append(Fix.ToString(value.Cast(this)));
+    }
+
+    public void Add(Loc loc, VM vm, Stack stack, int arity)
+    {
+        if (arity == 0) {
+            stack.Push(this, Fix.Make(1, 0));
+        }
+
+        var res = stack.Pop().Cast(loc, this);
+        arity--;
+
+        while (arity > 0)
+        {
+            res = Fix.Add(res, stack.Pop().Cast(loc, this));
+            arity--;
+        }
+
+        stack.Push(this, res);
+    }
+
+    public void Divide(Loc loc, VM vm, Stack stack, int arity)
+    {
+        if (arity == 0) {
+            stack.Push(this, Fix.Make(1, 0));
+        }
+
+        stack.Reverse(arity);
+        var res = stack.Pop().Cast(loc, this);
+        arity--;
+
+        while (arity > 0)
+        {
+            res = Fix.Divide(res, stack.Pop().Cast(loc, this));
+            arity--;
+        }
+
+        stack.Push(this, res);
+    }
+
+    public override bool Equals(Value left, Value right)
+    {
+        return Fix.Equals(left.Cast(this), right.Cast(this));
+    }
+
+    public void Multiply(Loc loc, VM vm, Stack stack, int arity)
+    {        
+        if (arity == 0) {
+            stack.Push(this, Fix.Make(1, 0));
+        }
+
+        var res = stack.Pop().Cast(loc, this);
+        arity--;
+
+        while (arity > 0)
+        {
+            res = Fix.Multiply(res, stack.Pop().Cast(loc, this));
+            arity--;
+        }
+
+        stack.Push(this, res);
+    }
+
+    public void Subtract(Loc loc, VM vm, Stack stack, int arity)
+    {
+        var res = Fix.Make(1, 0);
+
+        if (arity > 0)
+        {
+            if (arity == 1)
+            {
+                res = Fix.Negate(stack.Pop().Cast(loc, this));
+
+            }
+            else
+            {
+                stack.Reverse(arity);
+                res = stack.Pop().Cast(loc, this);
+                arity--;
+
+                while (arity > 0)
+                {
+                    res = Fix.Subtract(res, stack.Pop().Cast(loc, this));
+                    arity--;
+                }
+            }
+        }
+
+        stack.Push(this, res);
     }
 }

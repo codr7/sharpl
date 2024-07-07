@@ -207,72 +207,46 @@ public class Core : Lib
 
         BindMethod("+", [], (loc, target, vm, stack, arity) =>
         {
-            var res = 0;
+            var v = stack.Peek();
 
-            while (arity > 0)
-            {
-                res += stack.Pop().Cast(loc, Core.Int);
-                arity--;
+            if (v.Type is NumericTrait nt) {
+                nt.Add(loc, vm, stack, arity);
+            } else {
+                throw new EvalError(loc, $"Expected numeric value: {v}");
             }
-
-            stack.Push(Core.Int, res);
         });
 
         BindMethod("-", [], (loc, target, vm, stack, arity) =>
         {
-            var res = 0;
+            var v = stack.Peek();
 
-            if (arity > 0)
-            {
-                if (arity == 1)
-                {
-                    res = -stack.Pop().Cast(loc, Core.Int);
-
-                }
-                else
-                {
-                    stack.Reverse(arity);
-                    res = stack.Pop().Cast(loc, Core.Int);
-                    arity--;
-
-                    while (arity > 0)
-                    {
-                        res -= stack.Pop().Cast(loc, Core.Int);
-                        arity--;
-                    }
-                }
+            if (v.Type is NumericTrait nt) {
+                nt.Subtract(loc, vm, stack, arity);
+            } else {
+                throw new EvalError(loc, $"Expected numeric value: {v}");
             }
-
-            stack.Push(Core.Int, res);
         });
 
         BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
          {
-             var res = stack.Pop().Cast(loc, Core.Int);
-             arity--;
+            var v = stack.Peek();
 
-             while (arity > 0)
-             {
-                 res *= stack.Pop().Cast(loc, Core.Int);
-                 arity--;
-             }
-
-             stack.Push(Core.Int, res);
+            if (v.Type is NumericTrait nt) {
+                nt.Multiply(loc, vm, stack, arity);
+            } else {
+                throw new EvalError(loc, $"Expected numeric value: {v}");
+            }
          });
 
         BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
-            stack.Reverse(arity);
-            var res = stack.Pop().Cast(loc, Core.Int);
-            arity--;
+            var v = stack.Peek();
 
-            while (arity > 0)
-            {
-                res /= stack.Pop().Cast(loc, Core.Int);
-                arity--;
+            if (v.Type is NumericTrait nt) {
+                nt.Divide(loc, vm, stack, arity);
+            } else {
+                throw new EvalError(loc, $"Expected numeric value: {v}");
             }
-
-            stack.Push(Core.Int, res);
         });
 
         BindMacro("benchmark", ["n"], (loc, target, vm, args) =>
