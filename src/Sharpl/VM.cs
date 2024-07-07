@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Text;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
+
+
 using PC = int;
 
 public class VM
@@ -519,7 +521,8 @@ public class VM
                         var closureOp = (Ops.PrepareClosure)op.Data;
                         var m = closureOp.Target;
 
-                        foreach (var (id, d, s) in m.Closure) {
+                        foreach (var (id, d, s) in m.Closure)
+                        {
                             m.ClosureValues[d] = Get(s);
                         }
 
