@@ -114,38 +114,26 @@
     (x 1 4)
     x))
 
-(check 'foo42
-  (Symbol "foo" 42))
+(check 42
+  (or F 42))
+
+(check 0
+  (or F 0))
 
 (check T
-  (= 'foo 'foo))
-
-(check F
-  (= 'foo 'bar))
-
-(check ['foo 'bar 'baz]
-  '[foo bar baz])
-
-(check "FOO"
-  (string/up "Foo"))
-
-(check "foo"
-  (string/down "Foo"))
+  (or T 42))
 
 (check 42
   (- [43 1]*))
 
-(check 6
-  (reduce + [1 2 3] 0))
-
-(check 6
-  (reduce + 4 0))
-
 (load "array-tests.sl")
 (load "fib-tests.sl")
 (load "io-tests.sl")  
+(load "iter-tests.sl")
 (load "lib-tests.sl")
 (load "map-tests.sl")
 (load "method-tests.sl")
 (load "pair-tests.sl")
+(load "quote-tests.sl")
 (load "rx-tests.sl")
+(load "string-tests.sl")
