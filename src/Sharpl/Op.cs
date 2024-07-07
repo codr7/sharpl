@@ -12,7 +12,7 @@ public readonly struct Op
         EndFrame, ExitMethod,
         GetRegister, Goto,
         IterNext,
-        OpenInputStream, 
+        OpenInputStream, Or, 
         PrepareClosure, Push, PushSplat,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
         Splat, Stop

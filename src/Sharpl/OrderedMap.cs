@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace Sharpl;
 
 public class OrderedMap<K, V> where K : IComparable<K>
@@ -15,6 +17,11 @@ public class OrderedMap<K, V> where K : IComparable<K>
         set => Set(key, value);
     }
 
+    public bool ContainsKey(K key) {
+        var (_, ok) = Find(key);
+        return ok;
+    }
+    
     public int Count { get => items.Count; }
 
     public void Delete(int i)
@@ -74,6 +81,19 @@ public class OrderedMap<K, V> where K : IComparable<K>
     }
 
     public (K, V)[] Items { get => items.Items; }
+
+    public V? Remove(K key) {
+        var (i, ok) = Find(key);
+
+        if (!ok) {
+            return default;
+        }
+
+        var v = items[i].Item2;
+        Delete(i);
+        return v;
+    }
+
     public V? Set(K key, V? value)
     {
         var (i, ok) = Find(key);

@@ -30,14 +30,28 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait/*, Iterab
         {
             case 1:
                 {
+                    var m = target.Cast(this);
                     var k = stack.Pop();
-                    stack.Push(target.Cast(this)[k]);
+                    
+                    if (m.ContainsKey(k)) {
+                        stack.Push(m[k]);
+                    } else {
+                        stack.Push(Value.Nil);
+                    }
+
                     break;
                 }
             case 2:
                 {
+                    var m = target.Cast(this);
                     var v = stack.Pop();
-                    target.Cast(this)[stack.Pop()] = v;
+                    
+                    if (v.Equals(Value.Nil)) {
+                        m.Remove(stack.Pop());
+                    } else {
+                        m.Set(stack.Pop(), v);
+                    }
+
                     break;
                 }
             default:

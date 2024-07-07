@@ -6,12 +6,18 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-** add map fib
+* debug fib-map
 
 ** add MapItems iter
 
+* use Array.BinarySearch in OrderedMap?
+** benchmark
+
 * add iter support to nil
 ** add NilIter
+
+* add Fix type
+** check c project
 
 * add array fib
 ** add repeat method

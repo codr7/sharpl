@@ -607,6 +607,21 @@ public class Core : Lib
             }
         });
 
+        BindMacro("or", ["value1"], (loc, target, vm, args) =>
+         {
+            var done = new Label();
+
+            while (!args.Empty) {
+                args.Pop().Emit(vm, args);
+                
+                if (!args.Empty) { 
+                    vm.Emit(Ops.Or.Make(done));
+                }
+            }
+
+            done.PC = vm.EmitPC;
+         });
+
         BindMacro("return", [], (loc, target, vm, args) =>
         {
             UserMethod? m = null;

@@ -233,7 +233,7 @@ public class VM
                         else
                         {
 #pragma warning disable CS8629
-                            PC = (PC)branchOp.Target.PC;
+                            PC = (PC)branchOp.Right.PC;
 #pragma warning restore CS8629
                         }
 
@@ -488,6 +488,23 @@ public class VM
                         }
 
                         PC++;
+                        break;
+                    }
+                case Op.T.Or:
+                    {
+                        var orOp = (Ops.Or)op.Data;
+
+                        if ((bool)stack.Peek())
+                        {
+#pragma warning disable CS8629
+                            PC = (PC)orOp.Done.PC;
+#pragma warning restore CS8629
+                        }
+                        else
+                        {
+                            PC++;
+                        }
+
                         break;
                     }
                 case Op.T.PrepareClosure:
