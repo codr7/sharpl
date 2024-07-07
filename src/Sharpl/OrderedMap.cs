@@ -26,11 +26,10 @@ public class OrderedMap<K, V> where K : IComparable<K>
     {
         var min = 0;
         var max = items.Count;
-        var i = 0;
 
         while (min < max)
         {
-            i = (min + max) / 2;
+            var i = (min + max) / 2;
             var it = items[i];
 
             var cres = key.CompareTo(it.Item1);
@@ -49,7 +48,7 @@ public class OrderedMap<K, V> where K : IComparable<K>
             }
         }
 
-        return (i, false);
+        return (max, false);
     }
 
     public V? Get(K key)

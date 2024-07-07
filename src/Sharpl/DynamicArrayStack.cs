@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 
 namespace Sharpl;
@@ -38,8 +39,9 @@ public class DynamicArrayStack<T> : IEnumerable<T>
         return items[i];
     }
 
-    public void Delete(int i) {
-        Array.ConstrainedCopy(items, i+1, items, i, count - i - 1);
+    public void Delete(int i)
+    {
+        Array.ConstrainedCopy(items, i + 1, items, i, count - i - 1);
         count--;
     }
 
@@ -53,10 +55,12 @@ public class DynamicArrayStack<T> : IEnumerable<T>
         return items[0..count].GetEnumerator();
     }
 
-    public void Insert(int i, T it) {
+    public void Insert(int i, T it)
+    {
         Reserve(1);
 
-        if (i < count) {
+        if (i < count)
+        {
             Array.ConstrainedCopy(items, i, items, i+1, count - i);
         }
 
@@ -65,7 +69,7 @@ public class DynamicArrayStack<T> : IEnumerable<T>
     }
 
     public T[] Items { get => items; }
-    
+
     public T Peek(int offset = 0)
     {
         return items[count - 1 - offset];
@@ -84,8 +88,9 @@ public class DynamicArrayStack<T> : IEnumerable<T>
         count++;
     }
 
-    public void Reserve(int n) {
-        while (count + n <= items.Length)
+    public void Reserve(int n)
+    {
+        while (count + n >= items.Length)
         {
             Array.Resize(ref items, items.Length * 2);
         }

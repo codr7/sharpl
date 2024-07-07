@@ -23,7 +23,10 @@ public struct Id : Reader
             var cc = Convert.ToChar(c);
 
             if (Char.IsWhiteSpace(cc) || Char.IsControl(cc) ||
-                cc == '(' || cc == ')' || cc == '[' || cc == ']' || c == '"' || c == '\'' || c == ':')
+                c == '(' || c == ')' ||
+                c == '[' || c == ']' ||
+                c == '{' || c == '}' ||
+                c == '"' || c == '\'' || c == ':')
             {
                 break;
             }

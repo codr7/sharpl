@@ -3,7 +3,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class SymbolType : Type<Symbol>
+public class SymbolType : Type<Symbol>, ComparableTrait
 {
     public SymbolType(string name) : base(name) { }
     
@@ -19,6 +19,13 @@ public class SymbolType : Type<Symbol>
         }
 
         stack.Push(Value.Make(this, vm.GetSymbol(res.ToString())));
+    }
+
+    public Order Compare(Value left, Value right)
+    {
+        var lv = left.Cast(this);
+        var rv = right.Cast(this);
+        return ComparableTrait.IntOrder(lv.Name.CompareTo(rv.Name));
     }
 
     public override bool Equals(Value left, Value right)

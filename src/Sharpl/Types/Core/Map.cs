@@ -1,7 +1,5 @@
 namespace Sharpl.Types.Core;
 
-using Sharpl.Iters.Core;
-using Sharpl.Libs;
 using System.Text;
 
 public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait/*, IterableTrait*/
@@ -17,11 +15,10 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait/*, Iterab
     {
         var m = new OrderedMap<Value, Value>(arity / 2);
 
-        for (var i = arity - 1; i >= 0; i -= 2)
+        for (var i = 0; i < arity; i++)
         {
-            var v = stack.Pop();
-            var k = stack.Pop();
-            m[k] = v;
+            var p = stack.Pop().Cast(loc, Libs.Core.Pair);
+            m[p.Item1] = p.Item2;
         }
 
         stack.Push(Value.Make(this, m));

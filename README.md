@@ -123,19 +123,36 @@ The type of a quoted identifier is `Symbol`.
 ## composite types
 
 ### arrays
-Arrays may be created by enclosing a sequence of values in brackets.
+Arrays are fixed size.<br/>
+New arrays may be created by enclosing a sequence of values in brackets.
 
 ```
 [1 2 3]
 ```
 `[1 2 3]`
 
-Or by calling the type constructor.
+Or by calling the constructor explicitly.
 
 ```
 (Array 1:2:3*)
 ```
 `[1 2 3]`
+
+### maps
+Maps are ordered lookup tables.<br/>
+New maps may be created by enclosing a sequence of pairs in curly braces.
+
+```
+{'foo:1 'bar:2 'baz:3}
+```
+`{'bar:2 'baz:3 'foo:1}`
+
+Or by calling the constructor explicitly.
+
+```
+(Map ['foo:1 'bar:2 'baz:3]*)
+```
+`{'bar:2 'baz:3 'foo:1}`
 
 ### pairs
 Pairs may be formed by putting a colon between two values.

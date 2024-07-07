@@ -6,11 +6,18 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-* add map reader
-* add map fib
+** add map fib
+
+** add MapItems iter
 
 * add iter support to nil
 ** add NilIter
+
+* add array fib
+** add repeat method
+*** optional n
+*** add Repeat iter
+** fill with _
 
 * add io/dump/slurp methods
 ** slurp literals using readers

@@ -54,6 +54,7 @@ public class VM
         Readers.Array.Instance,
         Readers.Call.Instance,
         Readers.Int.Instance,
+        Readers.Map.Instance,
         Readers.Pair.Instance,
         Readers.Quote.Instance,
         Readers.Splat.Instance,
