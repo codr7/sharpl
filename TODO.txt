@@ -7,17 +7,14 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
+* add Fix type
+** check c project
+
 * add is macro
 ** add Value.is
 ** compare data usning ==
 ** add value vs identity to readme
 *** map tests
-
-* add iter support to nil
-** add NilIter
-
-* add Fix type
-** check c project
 
 * add zip/unzip
 ** add Iter lib

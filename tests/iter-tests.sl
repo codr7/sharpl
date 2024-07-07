@@ -1,3 +1,6 @@
+(check []
+  [_*])
+  
 (check 6
   (reduce + [1 2 3] 0))
 
