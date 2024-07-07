@@ -437,9 +437,9 @@ public class VM
                     {
                         var c = calls.Pop();
 
-                        foreach (var (s, (d, v)) in c.Target.Closure)
+                        foreach (var (id, s, _) in c.Target.Closure)
                         {
-                            SetRegister(s.FrameOffset, s.Index, GetRegister(0, d));
+                            c.Target.ClosureValues[s] = GetRegister(0, s);
                         }
 
                         EndFrame();
@@ -519,10 +519,8 @@ public class VM
                         var closureOp = (Ops.PrepareClosure)op.Data;
                         var m = closureOp.Target;
 
-                        foreach (var (s, (d, v)) in m.Closure)
-                        {
-                            var rv = GetRegister(s.FrameOffset - 1, s.Index);
-                            m.Closure[s] = (d, rv);
+                        foreach (var (id, d, s) in m.Closure) {
+                            m.ClosureValues[d] = Get(s);
                         }
 
                         PC++;

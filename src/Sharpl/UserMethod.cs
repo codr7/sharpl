@@ -8,26 +8,25 @@ namespace Sharpl;
 public class UserMethod
 {
     public readonly (string, int)[] Args;
-    public readonly Dictionary<Register, (int, Value?)> Closure = new Dictionary<Register, (int, Value?)>();
+    public readonly (string, int, Register)[] Closure;
+    public readonly Dictionary<int, Value> ClosureValues = new Dictionary<int, Value>();
     public readonly Loc Loc;
     public readonly string Name;
     public int? StartPC;
 
-    public UserMethod(Loc loc, VM vm, string name, string[] closure, (string, int)[] args)
+    public UserMethod(Loc loc, VM vm, string name, string[] ids, (string, int)[] args)
     {
         Loc = loc;
         Name = name;
-
-        Closure = closure.Select<string, (Register, (int, Value?))>((id) =>
+        Closure = ids.AsEnumerable().Select<string, (string, int, Register)>(id =>
         {
 #pragma warning disable CS8629
             var b = ((Value)vm.Env[id]).Cast(Core.Binding);
 #pragma warning restore CS8629
             var r = vm.AllocRegister();
             vm.Env[id] = Value.Make(Core.Binding, new Register(0, r));
-            return (b, (r, null));
-        }).ToDictionary();
-
+            return (id, r, b);
+        }).ToArray();
         Args = args;
     }
 
@@ -37,12 +36,9 @@ public class UserMethod
             vm.SetRegister(0, Args[i].Item2, stack.Pop());
         }
 
-        foreach (var (s, (d, v)) in Closure)
+        foreach (var (r, v) in ClosureValues)
         {
-            if (v is not null)
-            {
-                vm.SetRegister(0, d, (Value)v);
-            }
+            vm.SetRegister(0, r, v);
         }
     }
 

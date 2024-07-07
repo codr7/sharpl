@@ -78,14 +78,23 @@ Leaving out the name creates a lambda.
 `42`
 
 ### closures
-Methods keep copies of any external bindings referenced from their body.
+External bindings are captured at method definition time.
 
 ```
-(let [foo (let [bar 42]
-           (^[] bar))]
-  (foo))
+(^make-countdown [max]
+  (let [n max]
+    (^[] (dec n))))
+
+(define foo (make-countdown 42))
+
+(foo)
 ```
-`42`
+`41`
+
+```
+(foo)
+```
+`40`
 
 ### tail calls
 `return` may be used to convert any call into a tail call.

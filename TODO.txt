@@ -7,9 +7,6 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-* fix closure readme/example/test
-** use dec
-
 ** add MapItems iter
 
 * add iter support to nil
