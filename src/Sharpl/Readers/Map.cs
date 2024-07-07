@@ -16,7 +16,7 @@ public struct Map: Reader {
         loc.Column++;
         source.Read();
         
-        var itemForms = new Form.Queue();
+        var items = new Form.Queue();
 
         while (true) {
             WhiteSpace.Instance.Read(source, vm, ref loc, forms);
@@ -32,20 +32,12 @@ public struct Map: Reader {
                 break;
             }
 
-            if (!vm.ReadForm(source, ref loc, itemForms)) {
+            if (!vm.ReadForm(source, ref loc, items)) {
                 throw new ReadError(loc, "Unexpected end of map");
             }
         }
 
-        var items = itemForms.AsEnumerable().Select(it => {
-            if (it is Forms.Pair p) {
-                return (p.Left, p.Right);
-            }
-
-            throw new ReadError(it.Loc, $"Invalid map item: {it}");
-        }).ToArray();
-
-        forms.Push(new Forms.Map(formLoc, items));
+        forms.Push(new Forms.Map(formLoc, items.Items));
         return true;
     }
 }

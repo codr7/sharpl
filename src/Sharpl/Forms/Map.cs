@@ -4,9 +4,9 @@ using System.Text;
 
 public class Map : Form
 {
-    public readonly (Form, Form)[] Items;
+    public readonly Form[] Items;
 
-    public Map(Loc loc, (Form, Form)[] items) : base(loc)
+    public Map(Loc loc, Form[] items) : base(loc)
     {
         Items = items;
     }
@@ -15,24 +15,45 @@ public class Map : Form
     {
         foreach (var f in Items)
         {
-            f.Item1.CollectIds(result);
-            f.Item2.CollectIds(result);
+            f.CollectIds(result);
         }
     }
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
+    public override void Emit(VM vm, Queue args, int quoted)
     {
-
-        var itemArgs = new Form.Queue();
-        vm.Emit(Ops.CreateMap.Make(Items.Length));
-        var i = 0;
+        var callConstructor = false;
 
         foreach (var f in Items)
         {
-            f.Item1.Emit(vm, itemArgs, quoted);
-            f.Item2.Emit(vm, itemArgs, quoted);
-            vm.Emit(Ops.SetMapItem.Make());
-            i++;
+            if (!(f is Pair))
+            {
+                callConstructor = true;
+                break;
+            }
+        }
+
+        if (callConstructor)
+        {
+            args.PushFirst(new Call(Loc, new Id(Loc, "Map"), Items));
+        }
+        else
+        {
+            var itemArgs = new Queue();
+            vm.Emit(Ops.CreateMap.Make(Items.Length));
+            var i = 0;
+
+            foreach (var f in Items)
+            {
+                if (f is Pair pf) {
+                    pf.Left.Emit(vm, itemArgs, quoted);
+                    pf.Right.Emit(vm, itemArgs, quoted);
+                } else {
+                    f.Emit(vm, itemArgs, quoted);
+                }
+                
+                vm.Emit(Ops.SetMapItem.Make());
+                i++;
+            }
         }
     }
 
@@ -42,16 +63,14 @@ public class Map : Form
         b.Append('{');
         var i = 0;
 
-        foreach (var v in Items)
+        foreach (var f in Items)
         {
             if (i > 0)
             {
                 b.Append(' ');
             }
 
-            b.Append(v.Item1);
-            b.Append(':');
-            b.Append(v.Item2);
+            b.Append(f);
             i++;
         }
 

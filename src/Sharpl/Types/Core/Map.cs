@@ -2,7 +2,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait/*, IterableTrait*/
+public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterableTrait
 {
     public MapType(string name) : base(name) { }
 
@@ -89,12 +89,12 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait/*, Iterab
         return res;
     }
 
-    /*
+    
     public Iter CreateIter(Value target)
     {
-        var t = target.Cast(this);
-        return new MapItems(t);
-    }*/
+        var m = target.Cast(this);
+        return new Iters.Core.MapItems(m.Items, 0, m.Count);
+    }
 
     public override void Dump(Value value, StringBuilder result)
     {
