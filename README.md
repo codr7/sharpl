@@ -11,7 +11,8 @@ hello
 
 ## introduction
 Sharpl is a custom Lisp interpreter implemented in C#.<br/>
-It comes with a basic REPL for standalone use, but is designed to be trivial to embed in C# projects.
+It comes with a basic REPL for standalone use and is trivial to embed.<br/>
+The code base currently hovers around 4kloc.
 
 ## bindings
 Bindings come in two flavors, with lexical or dynamic scope.
