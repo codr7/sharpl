@@ -7,6 +7,10 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
+* implement all fix fast paths
+** add/mul/div
+** like sub
+
 * add is macro
 ** add Value.is
 ** compare data usning ==
@@ -17,10 +21,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 ** add Iter lib
 *** move reduce
 *** import by default?
-
-* add fix fast paths
-** add/sub/mul/div
-** when both values have same scale
 
 * add array fib
 ** add repeat method
