@@ -100,7 +100,7 @@ External bindings are captured at method definition time.
 ### tail calls
 `return` may be used to convert any call into a tail call.
 
-This will keep going forever without consuming space:
+This example will keep going forever without consuming more space:
 ```
 (^foo []
   (return (foo)))
@@ -108,7 +108,7 @@ This will keep going forever without consuming space:
 (foo)
 ```
 
-Without `return` the call quickly runs out of space:
+Without `return` it quickly runs out of space:
 ```
 (^foo []
   (foo))
