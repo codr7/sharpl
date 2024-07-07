@@ -28,9 +28,9 @@ public class VM
     public static readonly C DEFAULT_CONFIG = new C();
     public static readonly int VERSION = 7;
 
-    public readonly Libs.Core CoreLib = new Libs.Core();
-    public readonly Libs.IO IOLib;
-    public readonly Libs.String StringLib = new Libs.String();
+    public readonly Core CoreLib = new Core();
+    public readonly IO IOLib;
+    public readonly String StringLib = new String();
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
 
@@ -55,6 +55,7 @@ public class VM
 
         Readers.Array.Instance,
         Readers.Call.Instance,
+        Readers.Fix.Instance,
         Readers.Int.Instance,
         Readers.Map.Instance,
         Readers.Pair.Instance,

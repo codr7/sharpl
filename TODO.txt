@@ -7,12 +7,12 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 
-* add Fix reader
-** add Fix type
+* finish fix
 ** add Fix lib
-** add trunc/frac methods
-** add tests
+*** add trunc/frac methods
 ** implement add/sub/mul/div
+** more tests
+** readme
 
 * add is macro
 ** add Value.is

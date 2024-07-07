@@ -7,7 +7,7 @@ using UT = ulong;
 public static class Fix
 {
     public static readonly int HeaderBits = 8;
-    public static readonly int ExpBits = 1;
+    public static readonly int ExpBits = 7;
 
     public static T Scale(byte exp)
     {
@@ -24,9 +24,9 @@ public static class Fix
 
     public static UT Make(byte exp, T val)
     {
-        return (UT)(exp & ((1 << ExpBits) - 1)) +
+        return exp +
          (UT)(((val < 0) ? 1 : 0) << ExpBits) +
-         ((UT)((val < 0) ? val : -val) << HeaderBits);
+         (UT)(((val < 0) ? -val : val) << HeaderBits);
     }
 
     public static byte Exp(UT it)
@@ -36,8 +36,8 @@ public static class Fix
 
     public static T Val(UT it)
     {
-        var v = (T)it >> HeaderBits;
-        return (((it >> ExpBits) & 1) == 1) ? -v : v;
+        UT v = it >> HeaderBits;
+        return (((it >> ExpBits) & 1) == 1) ? (long)v * -1 : (long)v;
     }
 
     public static T Trunc(UT it)

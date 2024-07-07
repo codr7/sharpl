@@ -1,7 +1,5 @@
 namespace Sharpl.Types.Core;
 
-using System.Text;
-
 public class IntType : ComparableType<int>, IterableTrait
 {
     public IntType(string name) : base(name) { }

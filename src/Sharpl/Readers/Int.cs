@@ -22,6 +22,10 @@ public struct Int : Reader
                 break;
             }
 
+            if (c == '.') {
+                return Fix.Instance.Read(source, vm, ref loc, forms, formLoc, v);
+            }
+
             var cc = Convert.ToChar(c);
 
             if (!Char.IsAsciiDigit(cc))
