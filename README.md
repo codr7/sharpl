@@ -138,10 +138,7 @@ New arrays may be created by enclosing a sequence of values in brackets.
 ```
 [1 2 3]
 ```
-`[1 2 3]`
-
 Or by calling the constructor explicitly.
-
 ```
 (Array 1:2:3*)
 ```
@@ -154,10 +151,7 @@ New maps may be created by enclosing a sequence of pairs in curly braces.
 ```
 {'foo:1 'bar:2 'baz:3}
 ```
-`{'bar:2 'baz:3 'foo:1}`
-
 Or by calling the constructor explicitly.
-
 ```
 (Map ['foo:1 'bar:2 'baz:3]*)
 ```
