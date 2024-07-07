@@ -132,7 +132,7 @@ The type of a quoted identifier is `Symbol`.
 ## composite types
 
 ### arrays
-Arrays are fixed size.<br/>
+Arrays are fixed size sequences of values.<br/>
 New arrays may be created by enclosing a sequence of values in brackets.
 
 ```
@@ -145,7 +145,7 @@ Or by calling the constructor explicitly.
 `[1 2 3]`
 
 ### maps
-Maps are ordered lookup tables.<br/>
+Maps are ordered mappings from keys to values.<br/>
 New maps may be created by enclosing a sequence of pairs in curly braces.
 
 ```
