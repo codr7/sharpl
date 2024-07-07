@@ -123,7 +123,7 @@ System.IndexOutOfRangeException: Index was outside the bounds of the array.
 Expressions may be quoted by prefixing with `'`.
 
 ### symbols
-The type of a quoted identifier is `Symbol`.
+Identifiers turn into symbols when quoted.
 
 ```
 (= (Symbol "foo" 42) 'foo42)
