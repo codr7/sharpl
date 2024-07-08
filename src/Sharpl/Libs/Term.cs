@@ -12,9 +12,14 @@ public class Term : Lib
     {
         BindType(Key);
 
-        BindMethod("clear", [], (loc, target, vm, stack, arity) =>
+        BindMethod("clear-line", [], (loc, target, vm, stack, arity) =>
         {
-            vm.Term.Clear();
+            vm.Term.ClearLine();
+        });
+
+        BindMethod("clear-screen", [], (loc, target, vm, stack, arity) =>
+        {
+            vm.Term.ClearScreen();
         });
 
         BindMethod("flush", [], (loc, target, vm, stack, arity) =>
@@ -29,9 +34,9 @@ public class Term : Lib
 
         BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
-            var y = stack.Pop().Cast(loc, Core.Int);
+            var y = stack.Pop();
             var x = stack.Pop().Cast(loc, Core.Int);
-            vm.Term.MoveTo(new Point(x, y));
+            vm.Term.MoveTo(x, (y == Value.Nil) ? null : y.Cast(loc, Core.Int));
         });
 
         BindMethod("read-key", [], (loc, target, vm, stack, arity) =>
@@ -84,6 +89,16 @@ public class Term : Lib
         BindMethod("reset", [], (loc, target, vm, stack, arity) =>
         {
             vm.Term.Reset();
+        });
+
+        BindMethod("restore", [], (loc, target, vm, stack, arity) =>
+        {
+            vm.Term.Restore();
+        });
+
+        BindMethod("save", [], (loc, target, vm, stack, arity) =>
+        {
+            vm.Term.Save();
         });
 
         BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity) =>

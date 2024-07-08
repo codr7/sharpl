@@ -24,7 +24,12 @@ public class Term
         }
     }
 
-    public void Clear()
+    public void ClearLine()
+    {
+        CSI(0, 'K');
+    }
+
+    public void ClearScreen()
     {
         CSI(2, 'J');
     }
@@ -32,13 +37,25 @@ public class Term
     public int Height { get => Console.BufferHeight; }
 
     
-    public void MoveTo(Point pos)
+    public void MoveTo(int x, int? y = null)
     {
-        CSI(pos.Y, ';', pos.X, 'H');
+        if (y == null) {
+            CSI(x, 'G');
+        } else {
+            CSI(y, ';', x, 'H');
+        }
     }
 
     public void Reset() {
         CSI("0m");
+    }
+
+    public void Restore() {
+        CSI('u');
+    }
+
+    public void Save() {
+        CSI('s');
     }
 
     public void SetBg(Color color)

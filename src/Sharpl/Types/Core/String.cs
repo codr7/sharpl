@@ -3,7 +3,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class StringType : ComparableType<string>
+public class StringType : ComparableType<string>, SequenceTrait
 {
     public StringType(string name) : base(name) { }
 
@@ -31,6 +31,10 @@ public class StringType : ComparableType<string>
         result.Append('"');
         result.Append(value.Data);
         result.Append('"');
+    }
+
+    public int Length(Value target) {
+        return target.Cast(this).Length;
     }
 
     public override void Say(Value value, StringBuilder result)

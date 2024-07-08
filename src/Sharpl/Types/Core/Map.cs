@@ -2,7 +2,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterableTrait
+public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterableTrait, SequenceTrait
 {
     public MapType(string name) : base(name) { }
 
@@ -136,6 +136,10 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, Iterable
         }
 
         return true;
+    }
+
+    public int Length(Value target) {
+        return target.Cast(this).Count;
     }
 
     public override void Say(Value value, StringBuilder result)

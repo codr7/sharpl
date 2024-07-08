@@ -209,9 +209,12 @@ public class Core : Lib
         {
             var v = stack.Peek();
 
-            if (v.Type is NumericTrait nt) {
+            if (v.Type is NumericTrait nt)
+            {
                 nt.Add(loc, vm, stack, arity);
-            } else {
+            }
+            else
+            {
                 throw new EvalError(loc, $"Expected numeric value: {v}");
             }
         });
@@ -220,31 +223,40 @@ public class Core : Lib
         {
             var v = stack.Peek();
 
-            if (v.Type is NumericTrait nt) {
+            if (v.Type is NumericTrait nt)
+            {
                 nt.Subtract(loc, vm, stack, arity);
-            } else {
+            }
+            else
+            {
                 throw new EvalError(loc, $"Expected numeric value: {v}");
             }
         });
 
         BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
          {
-            var v = stack.Peek();
+             var v = stack.Peek();
 
-            if (v.Type is NumericTrait nt) {
-                nt.Multiply(loc, vm, stack, arity);
-            } else {
-                throw new EvalError(loc, $"Expected numeric value: {v}");
-            }
+             if (v.Type is NumericTrait nt)
+             {
+                 nt.Multiply(loc, vm, stack, arity);
+             }
+             else
+             {
+                 throw new EvalError(loc, $"Expected numeric value: {v}");
+             }
          });
 
         BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Peek();
 
-            if (v.Type is NumericTrait nt) {
+            if (v.Type is NumericTrait nt)
+            {
                 nt.Divide(loc, vm, stack, arity);
-            } else {
+            }
+            else
+            {
                 throw new EvalError(loc, $"Expected numeric value: {v}");
             }
         });
@@ -444,6 +456,20 @@ public class Core : Lib
              });
          });
 
+        BindMethod("length", ["it"], (loc, target, vm, stack, arity) =>
+        {
+            var v = stack.Pop();
+
+            if (v.Type is SequenceTrait st)
+            {
+                stack.Push(Core.Int, st.Length(v));
+            }
+            else
+            {
+                throw new EvalError(loc, $"Expected sequence: {v}");
+            }
+        });
+
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>
         {
             var ids = args.CollectIds();
@@ -595,7 +621,7 @@ public class Core : Lib
                  }
 
                  args.Pop().Emit(vm, args);
-
+ 
                  if (!args.Empty)
                  {
                      vm.Emit(Ops.Or.Make(done));
@@ -713,7 +739,7 @@ public class Core : Lib
                 stack.Pop().Say(res);
                 arity--;
             }
-            
+
             Console.WriteLine(res.ToString());
         });
     }
