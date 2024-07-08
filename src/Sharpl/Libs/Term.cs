@@ -34,8 +34,9 @@ public class Term : Lib
             vm.Term.MoveTo(new Point(x, y));
         });
 
-        BindMethod("read-key", ["echo"], (loc, target, vm, stack, arity) =>
+        BindMethod("read-key", [], (loc, target, vm, stack, arity) =>
         {
+            vm.Term.Flush();
             Value? echo = (arity == 0) ? null : stack.Pop();
 
             var k = Console.ReadKey(true);
@@ -53,8 +54,8 @@ public class Term : Lib
 
         BindMethod("read-line", ["echo"], (loc, target, vm, stack, arity) =>
         {
+            vm.Term.Flush();
             Value? echo = (arity == 0) ? null : stack.Pop();
-
             var res = new StringBuilder();
 
             while (true)
@@ -80,6 +81,11 @@ public class Term : Lib
             stack.Push(Core.String, res.ToString());
         });
 
+        BindMethod("reset", [], (loc, target, vm, stack, arity) =>
+        {
+            vm.Term.Reset();
+        });
+
         BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity) =>
        {
            var c = stack.Pop().Cast(loc, Core.Color);
@@ -95,6 +101,20 @@ public class Term : Lib
         BindMethod("width", [], (loc, target, vm, stack, arity) =>
         {
             stack.Push(Value.Make(Core.Int, vm.Term.Width));
+        });
+
+        BindMethod("write", [], (loc, target, vm, stack, arity) =>
+        {
+            stack.Reverse(arity);
+            var res = new StringBuilder();
+
+            while (arity > 0)
+            {
+                stack.Pop().Say(res);
+                arity--;
+            }
+
+            vm.Term.Write(res.ToString());
         });
     }
 }

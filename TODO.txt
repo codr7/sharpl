@@ -11,6 +11,10 @@ cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
 ** add/mul/div
 ** like sub
 
+* acc.sl
+** add input row
+*** from, to, date, amount & notes
+
 * add is macro
 ** add Value.is
 ** compare data usning ==

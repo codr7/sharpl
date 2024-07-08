@@ -713,7 +713,7 @@ public class Core : Lib
                 stack.Pop().Say(res);
                 arity--;
             }
-
+            
             Console.WriteLine(res.ToString());
         });
     }

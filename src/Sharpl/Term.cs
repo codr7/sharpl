@@ -32,13 +32,13 @@ public class Term
     public int Height { get => Console.BufferHeight; }
 
     
-    public void Reset() {
-        CSI("0m");
-    }
-
     public void MoveTo(Point pos)
     {
         CSI(pos.Y, ';', pos.X, 'H');
+    }
+
+    public void Reset() {
+        CSI("0m");
     }
 
     public void SetBg(Color color)
