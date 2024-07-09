@@ -5,13 +5,27 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
-cat src/Sharpl/Loc.cs | dotnet run trex c#-go.trex
+cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
+
+* add Compose/Composition
+** add Compose form
+*** implement EmitCall
+** add Composition type
+*** implement Call
+** (compose foo bar baz)
 
 * implement all fix fast paths
 ** add/mul/div
 ** like sub
 
 * acc
+** try switching to scrolling region for scrollUp
+*** use regular scroll ansi code
+** bind key constants in term
+*** ESC ENTER DOWN LEFT RIGHT
+** add Term/key-char
+*** add char type
+** add quit command
 ** implement read-command
 ** implement form to create account
 

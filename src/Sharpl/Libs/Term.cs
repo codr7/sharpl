@@ -12,6 +12,9 @@ public class Term : Lib
     {
         BindType(Key);
 
+        Bind("DOWN", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false)));
+        Bind("UP", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false)));
+
         BindMethod("clear-line", [], (loc, target, vm, stack, arity) =>
         {
             vm.Term.ClearLine();
@@ -101,13 +104,60 @@ public class Term : Lib
             vm.Term.Save();
         });
 
-        BindMethod("set-bg", ["color"], (loc, target, vm, stack, arity) =>
+        BindMethod("set-region", [], (loc, target, vm, stack, arity) => {
+            if (arity == 0) {
+                vm.Term.SetRegion();
+                return;    
+            }
+
+            stack.Reverse(arity);
+            var min = (1, 1);
+            var max = (vm.Term.Width, vm.Term.Height);
+ 
+            if (arity > 0) {
+                var p = stack.Pop().Cast(loc, Core.Pair);
+                min = (p.Item1.Cast(loc, Core.Int), p.Item2.Cast(loc, Core.Int));
+                arity--;
+            }
+
+            if (arity > 0) {
+                var p = stack.Pop().Cast(loc, Core.Pair);
+                max = (p.Item1.Cast(loc, Core.Int), p.Item2.Cast(loc, Core.Int));
+                arity--;
+            }
+
+           vm.Term.SetRegion(min, max);
+        });
+
+        BindMethod("scroll-down", [], (loc, target, vm, stack, arity) => {
+            var lines = 1;
+ 
+            if (arity > 0) {
+                lines = stack.Pop().Cast(loc, Core.Int);
+                arity--;
+            }
+
+           vm.Term.ScrollDown(lines);
+        });
+
+        BindMethod("scroll-up", [], (loc, target, vm, stack, arity) => {
+            var lines = 1;
+ 
+            if (arity > 0) {
+                lines = stack.Pop().Cast(loc, Core.Int);
+                arity--;
+            }
+
+           vm.Term.ScrollUp(lines);
+        });
+
+        BindMethod("pick-back", ["color"], (loc, target, vm, stack, arity) =>
        {
            var c = stack.Pop().Cast(loc, Core.Color);
            vm.Term.SetBg(c);
        });
 
-        BindMethod("set-fg", ["color"], (loc, target, vm, stack, arity) =>
+        BindMethod("pick-front", ["color"], (loc, target, vm, stack, arity) =>
         {
             var c = stack.Pop().Cast(loc, Core.Color);
             vm.Term.SetFg(c);

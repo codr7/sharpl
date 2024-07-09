@@ -1,7 +1,9 @@
 
 namespace Sharpl;
 
+using System.Data;
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 public class Term
@@ -36,26 +38,52 @@ public class Term
 
     public int Height { get => Console.BufferHeight; }
 
-    
+
     public void MoveTo(int x, int? y = null)
     {
-        if (y == null) {
+        if (y == null)
+        {
             CSI(x, 'G');
-        } else {
+        }
+        else
+        {
             CSI(y, ';', x, 'H');
         }
     }
 
-    public void Reset() {
+    public void Reset()
+    {
         CSI("0m");
     }
 
-    public void Restore() {
+    public void Restore()
+    {
         CSI('u');
     }
 
-    public void Save() {
+    public void Save()
+    {
         CSI('s');
+    }
+
+    public void SetRegion((int, int) min, (int, int) max)
+    {
+        CSI(min.Item2, ';', max.Item2, ';', min.Item1, ';', max.Item1, 'r');
+    }
+
+    public void SetRegion()
+    {
+        CSI('r');
+    }
+
+    public void ScrollUp(int lines = 1)
+    {
+        CSI(lines, 'S');
+    }
+
+   public void ScrollDown(int lines = 1)
+    {
+        CSI(lines, 'T');
     }
 
     public void SetBg(Color color)
@@ -70,11 +98,13 @@ public class Term
 
     public int Width { get => Console.BufferWidth; }
 
-    public void Write(object value) {
+    public void Write(object value)
+    {
         buffer.Append(value);
     }
 
-    public void WriteLine(object value) {
+    public void WriteLine(object value)
+    {
         Write($"{value}\n");
     }
 }

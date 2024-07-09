@@ -14,31 +14,46 @@
   (term/move-to 1 1)
   (term/flush))
 
-(^right-align [text col]
-  (term/move-to (+ (- col (length text)) 1) _)
+(^right-align [text x]
+  (term/move-to (+ (- x (length text)) 1) _)
   (term/write text))
 
 (^draw-header []
   (term/move-to 1 1)
   (term/clear-line)
-  (term/set-fg (rgb 255 0 0))
+  (term/pick-front (rgb 255 0 0))
   (right-align "acc v1" (term/width)))
 
 (^read-command []
   (let [k (term/read-key)]
     (term/save)
     (draw-header)
+
+    (if (= k term/UP) 
+      (term/set-region 1:2 (term/width):(- (term/height) 2))
+      (term/scroll-up)
+      (term/set-region))
+
+    (if (= k term/DOWN) 
+      (term/set-region 1:2 (term/width):(- (term/height) 2))
+      (term/scroll-down)
+      (term/set-region))
+
     (term/move-to 1 1)
-    (term/set-fg (rgb 255 0 0))
+    (term/pick-front (rgb 255 0 0))
     (term/write k)
+
     (term/restore))
   (return (read-command)))
 
 (term/clear-screen)
 (draw-header)
 
+(term/move-to 5 5)
+(term/write "hello")
+
 (term/move-to 1 (term/height))
-(term/set-fg (rgb 255 0 0))
+(term/pick-front (rgb 255 0 0))
 (term/write ": ")
 
 (let [commands {}]

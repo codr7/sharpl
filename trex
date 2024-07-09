@@ -5,7 +5,8 @@
 (^define-rule [in out]
   (push rules in:out))
 
+(load (ARG 0))
+
 (let [in    (io/string io/IN)
-      rules (load (ARG 0))
       out   (reduce (^[r out] (rxplace s r*) rules))]
   (say out))
