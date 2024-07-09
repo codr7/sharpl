@@ -306,6 +306,31 @@ public class Core : Lib
              });
          });
 
+        BindMacro("comp", [], (loc, target, vm, args) =>
+                {
+                    var m = new UserMethod(loc, vm, $"(comp {args})", [], []);
+                    var skip = new Label();
+                    vm.Emit(Ops.Goto.Make(skip));
+                    m.StartPC = vm.EmitPC;
+                    var v = Value.Make(Core.UserMethod, m);
+
+                    var emptyArgs = new Form.Queue();
+                    var callArgs = new Form.Queue();
+                    callArgs.Push(new Forms.Any(loc));
+
+                    var call = args.Aggregate(new Forms.Call(loc, args.Pop(), callArgs.ToArray()), (result, f) =>
+                    {
+                        var nestedArgs = new Form.Queue();
+                        nestedArgs.Push(result);
+                        return new Forms.Call(loc, f, nestedArgs.ToArray());
+                    });
+
+                    call.Emit(vm, emptyArgs);
+                    vm.Emit(Ops.ExitMethod.Make());
+                    skip.PC = vm.EmitPC;
+                    v.Emit(loc, vm, args);
+                });
+
         BindMacro("dec", [], (loc, target, vm, args) =>
         {
             if (args.TryPop() is Forms.Id id)
@@ -621,7 +646,7 @@ public class Core : Lib
                  }
 
                  args.Pop().Emit(vm, args);
- 
+
                  if (!args.Empty)
                  {
                      vm.Emit(Ops.Or.Make(done));

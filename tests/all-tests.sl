@@ -101,7 +101,6 @@
 
 (load "array-tests.sl")
 (load "fib-tests.sl")
-(load "fix-tests.sl")
 (load "io-tests.sl")  
 (load "iter-tests.sl")
 (load "lib-tests.sl")

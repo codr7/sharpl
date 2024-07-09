@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v7
+sharpl v8
 
    1 (say "hello")
    2 
@@ -118,6 +118,25 @@ Without `return` it quickly runs out of space:
 ```
 System.IndexOutOfRangeException: Index was outside the bounds of the array.
 ```
+
+### composition
+Methods may be composed using `comp`.
+
+```
+(^foo [x]
+  (+ x 1))
+  
+(^bar [x]
+  (* x 2))
+
+(let [f (comp foo bar)]
+  (say f)
+  (f 20))
+```
+```
+(Method (comp foo bar) [])
+```
+`42`
 
 ## quoting
 Expressions may be quoted by prefixing with `'`.

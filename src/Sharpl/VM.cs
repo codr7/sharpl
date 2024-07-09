@@ -26,7 +26,7 @@ public class VM
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 7;
+    public static readonly int VERSION = 8;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
@@ -112,11 +112,6 @@ public class VM
 
     public void CallUserMethod(Loc loc, Stack stack, UserMethod target, int arity, int registerCount)
     {
-        if (arity < target.Args.Length)
-        {
-            throw new EvalError(loc, $"Not enough arguments: {target}");
-        }
-
         BeginFrame(registerCount);
         calls.Push(new Call(loc, target, PC, frames.Count));
         target.BindArgs(this, arity, stack);

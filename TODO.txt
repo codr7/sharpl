@@ -7,13 +7,6 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* add Compose/Composition
-** add Compose form
-*** implement EmitCall
-** add Composition type
-*** implement Call
-** (compose foo bar baz)
-
 * implement all fix fast paths
 ** add/mul/div
 ** like sub

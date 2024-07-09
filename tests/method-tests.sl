@@ -34,3 +34,12 @@
               (^[] (dec bar)))]
     (foo)
     (foo)))
+
+(check 3
+  (^foo [x]
+    (+ x 1))
+  
+  (^bar [x]
+    (+ x 2))
+
+  ((comp foo bar) 0))
