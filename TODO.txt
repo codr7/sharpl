@@ -20,6 +20,17 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** implement read-command
 ** implement form to create account
 
+* add vararg support
+** collect args in array
+** use to fix comp
+*** replaces Any hack
+**** remove Any form
+
+(^foo [bar*]
+  (- *bar))
+
+(foo 42 7)
+
 * add is macro
 ** add Value.is
 ** compare data usning ==
