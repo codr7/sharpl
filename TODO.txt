@@ -12,10 +12,8 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** like sub
 
 * acc
-** try switching to scrolling region for scrollUp
-*** use regular scroll ansi code
 ** bind key constants in term
-*** ESC ENTER DOWN LEFT RIGHT
+*** ESC ENTER LEFT RIGHT
 ** add Term/key-char
 *** add char type
 ** add quit command
