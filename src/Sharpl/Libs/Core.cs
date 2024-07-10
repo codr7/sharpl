@@ -327,7 +327,7 @@ public class Core : Lib
 
                     var returnArgs = new Form.Queue();
                     returnArgs.Push(call);
-                    new Forms.Call(loc, new Forms.Id(loc, "return"), returnArgs.ToArray()).Emit(vm, emptyArgs); 
+                    new Forms.Call(loc, new Forms.Id(loc, "return"), returnArgs.ToArray()).Emit(vm, emptyArgs);
                     vm.Emit(Ops.ExitMethod.Make());
                     skip.PC = vm.EmitPC;
                     v.Emit(loc, vm, args);
@@ -633,6 +633,11 @@ public class Core : Lib
                     break;
                 }
             }
+        });
+
+        BindMethod("not", ["it"], (loc, target, vm, stack, arity) =>
+        {
+            stack.Push(Core.Bit, !(bool)stack.Pop());
         });
 
         BindMacro("or", ["value1"], (loc, target, vm, args) =>

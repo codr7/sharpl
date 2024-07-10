@@ -13,6 +13,7 @@ public class Term : Lib
         BindType(Key);
 
         Bind("DOWN", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false)));
+        Bind("ESC", Value.Make(Term.Key, new ConsoleKeyInfo('\u001B', ConsoleKey.Escape, false, false, false)));
         Bind("UP", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false)));
 
         BindMethod("clear-line", [], (loc, target, vm, stack, arity) =>

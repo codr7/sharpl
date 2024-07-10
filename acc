@@ -43,14 +43,15 @@
     (term/pick-front (rgb 255 0 0))
     (term/write k)
 
-    (term/restore))
-  (return (read-command)))
+    (term/restore)
+
+    (if (not (= k term/ESC))
+      (return (read-command)))
+      
+    _))
 
 (term/clear-screen)
 (draw-header)
-
-(term/move-to 5 5)
-(term/write "hello")
 
 (term/move-to 1 (term/height))
 (term/pick-front (rgb 255 0 0))
