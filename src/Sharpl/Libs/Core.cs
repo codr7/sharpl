@@ -325,7 +325,9 @@ public class Core : Lib
                         return new Forms.Call(loc, f, nestedArgs.ToArray());
                     });
 
-                    call.Emit(vm, emptyArgs);
+                    var returnArgs = new Form.Queue();
+                    returnArgs.Push(call);
+                    new Forms.Call(loc, new Forms.Id(loc, "return"), returnArgs.ToArray()).Emit(vm, emptyArgs); 
                     vm.Emit(Ops.ExitMethod.Make());
                     skip.PC = vm.EmitPC;
                     v.Emit(loc, vm, args);
