@@ -43,3 +43,9 @@
     (+ x 2))
 
   ((comp foo bar) 0))
+
+(check 35
+  (^foo [bar*]
+    (- bar*))
+  
+  (foo 42 7))

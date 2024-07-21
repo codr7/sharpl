@@ -29,16 +29,6 @@
     (term/save)
     (draw-header)
 
-    (if (= k term/UP) 
-      (term/set-region 1:2 (term/width):(- (term/height) 2))
-      (term/scroll-up)
-      (term/set-region))
-
-    (if (= k term/DOWN) 
-      (term/set-region 1:2 (term/width):(- (term/height) 2))
-      (term/scroll-down)
-      (term/set-region))
-
     (term/move-to 1 1)
     (term/pick-front (rgb 255 0 0))
     (term/write k)

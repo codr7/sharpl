@@ -7,29 +7,19 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
+* find better comp syntax?
+
 * implement all fix fast paths
 ** add/mul/div
 ** like sub
 
 * acc
 ** bind key constants in term
-*** ESC ENTER LEFT RIGHT
+*** ENTER LEFT RIGHT
 ** add Term/key-char
 *** add char type
-** add quit command
 ** implement read-command
 ** implement form to create account
-
-* add vararg support
-** collect args in array
-** use to fix comp
-*** replaces Any hack
-**** remove Any form
-
-(^foo [bar*]
-  (- *bar))
-
-(foo 42 7)
 
 * add is macro
 ** add Value.is
@@ -172,3 +162,14 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
       (do 
         (eval input)ger mig absolut iger mig absolut ingentingngenting
         (repl)))))
+
+
+    (if (= k term/UP) 
+      (term/set-region 1:2 (term/width):(- (term/height) 2))
+      (term/scroll-up)
+      (term/set-region))
+
+    (if (= k term/DOWN) 
+      (term/set-region 1:2 (term/width):(- (term/height) 2))
+      (term/scroll-down)
+      (term/set-region))

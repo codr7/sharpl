@@ -1,5 +1,6 @@
 namespace Sharpl.Libs;
 
+using Sharpl.Forms;
 using Sharpl.Types.Core;
 using System.Linq;
 using System.Text;
@@ -69,12 +70,25 @@ public class Core : Lib
                 v.Cast(Core.Binding).FrameOffset != -1).
                 ToHashSet<string>();
 
+             bool vararg = false;
+
              vm.DoEnv(new Env(vm.Env, ids), () =>
              {
+
                  if (f is Forms.Array af)
                  {
                      fas = af.Items.Select(f =>
                      {
+                         if (vararg) {
+                            throw new EmitError(f.Loc, "Vararg must be final param.");
+                         }
+
+                         if (f is Forms.Splat s)
+                         {
+                             f = s.Target;
+                             vararg = true;
+                         }
+
                          if (f is Forms.Id id)
                          {
                              var r = vm.AllocRegister();
@@ -90,7 +104,7 @@ public class Core : Lib
                      throw new EmitError(loc, "Invalid method args");
                  }
 
-                 var m = new UserMethod(loc, vm, name, ids.ToArray(), fas);
+                 var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
 
                  if (ids.Count > 0)
                  {
@@ -308,17 +322,13 @@ public class Core : Lib
 
         BindMacro("comp", [], (loc, target, vm, args) =>
                 {
-                    var m = new UserMethod(loc, vm, $"(comp {args})", [], []);
+                    var m = new UserMethod(loc, vm, $"(comp {args})", [], [], true);
                     var skip = new Label();
                     vm.Emit(Ops.Goto.Make(skip));
                     m.StartPC = vm.EmitPC;
                     var v = Value.Make(Core.UserMethod, m);
-
-                    var emptyArgs = new Form.Queue();
-                    var callArgs = new Form.Queue();
-                    callArgs.Push(new Forms.Any(loc));
-
-                    var call = args.Aggregate(new Forms.Call(loc, args.Pop(), callArgs.ToArray()), (result, f) =>
+ 
+                    var call = args.Aggregate(new Forms.Call(loc, args.Pop(), [new Any(loc)]), (result, f) =>
                     {
                         var nestedArgs = new Form.Queue();
                         nestedArgs.Push(result);
@@ -327,6 +337,7 @@ public class Core : Lib
 
                     var returnArgs = new Form.Queue();
                     returnArgs.Push(call);
+                    var emptyArgs = new Form.Queue();
                     new Forms.Call(loc, new Forms.Id(loc, "return"), returnArgs.ToArray()).Emit(vm, emptyArgs);
                     vm.Emit(Ops.ExitMethod.Make());
                     skip.PC = vm.EmitPC;
