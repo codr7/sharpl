@@ -120,7 +120,7 @@ System.IndexOutOfRangeException: Index was outside the bounds of the array.
 ```
 
 ### composition
-Methods may be composed using `comp`.
+Methods may be composed using `&`.
 
 ```
 (^foo [x]
@@ -129,12 +129,12 @@ Methods may be composed using `comp`.
 (^bar [x]
   (* x 2))
 
-(let [f (comp foo bar)]
+(let [f foo & bar]
   (say f)
   (f 20))
 ```
 ```
-(Method (comp foo bar) [])
+(Method foo & bar [])
 ```
 `42`
 

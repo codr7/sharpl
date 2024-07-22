@@ -1,8 +1,8 @@
 namespace Sharpl.Forms;
 
-public class Any : Form
+public class Nil : Form
 {
-    public Any(Loc loc) : base(loc) { }
+    public Nil(Loc loc) : base(loc) { }
 
     public override void Emit(VM vm, Form.Queue args, int quoted) { }
 
@@ -10,6 +10,6 @@ public class Any : Form
 
     public override string ToString()
     {
-        return "?";
+        return "_";
     }
 }

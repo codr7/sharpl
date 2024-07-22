@@ -53,6 +53,7 @@ public class VM
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
 
+        Readers.And.Instance,
         Readers.Array.Instance,
         Readers.Call.Instance,
         Readers.Fix.Instance,
@@ -118,6 +119,19 @@ public class VM
 #pragma warning disable CS8629
         PC = (PC)target.StartPC;
 #pragma warning restore CS8629
+    }
+
+    public Value Compose(Loc loc, Form left, Form right)
+    {
+        var m = new UserMethod(loc, this, $"{left} & {right}", [], [], false);
+        var skip = new Label();
+        Emit(Ops.Goto.Make(skip));
+        m.StartPC = EmitPC;
+        var f = new Forms.Call(loc, new Forms.Id(loc, "return"), [new Forms.Call(loc, right, [new Forms.Call(loc, left, [new Forms.Nil(loc)])])]);
+        f.Emit(this, new Form.Queue());
+        Emit(Ops.ExitMethod.Make());
+        skip.PC = EmitPC;
+        return Value.Make(Libs.Core.UserMethod, m);
     }
 
     public void Decode(PC startPC)

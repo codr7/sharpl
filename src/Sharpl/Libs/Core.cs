@@ -1,6 +1,5 @@
 namespace Sharpl.Libs;
 
-using Sharpl.Forms;
 using Sharpl.Types.Core;
 using System.Linq;
 using System.Text;
@@ -319,30 +318,6 @@ public class Core : Lib
                  vm.Emit(Ops.Check.Make(loc, ef));
              });
          });
-
-        BindMacro("comp", [], (loc, target, vm, args) =>
-                {
-                    var m = new UserMethod(loc, vm, $"(comp {args})", [], [], true);
-                    var skip = new Label();
-                    vm.Emit(Ops.Goto.Make(skip));
-                    m.StartPC = vm.EmitPC;
-                    var v = Value.Make(Core.UserMethod, m);
- 
-                    var call = args.Aggregate(new Forms.Call(loc, args.Pop(), [new Any(loc)]), (result, f) =>
-                    {
-                        var nestedArgs = new Form.Queue();
-                        nestedArgs.Push(result);
-                        return new Forms.Call(loc, f, nestedArgs.ToArray());
-                    });
-
-                    var returnArgs = new Form.Queue();
-                    returnArgs.Push(call);
-                    var emptyArgs = new Form.Queue();
-                    new Forms.Call(loc, new Forms.Id(loc, "return"), returnArgs.ToArray()).Emit(vm, emptyArgs);
-                    vm.Emit(Ops.ExitMethod.Make());
-                    skip.PC = vm.EmitPC;
-                    v.Emit(loc, vm, args);
-                });
 
         BindMacro("dec", [], (loc, target, vm, args) =>
         {

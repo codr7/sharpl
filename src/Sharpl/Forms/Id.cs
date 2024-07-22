@@ -1,11 +1,10 @@
 namespace Sharpl.Forms;
 
-using System.Runtime.InteropServices;
 using Sharpl.Libs;
 
 public class Id : Form
 {
-    public static Value? Find(string name, Env env, Loc loc)
+    public static Value? GetId(string name, Env env, Loc loc)
     {
         while (true)
         {
@@ -42,7 +41,7 @@ public class Id : Form
     {
         if (quoted == 0)
         {
-            if (Find(Name, vm.Env, Loc) is Value v)
+            if (GetId(Name, vm.Env, Loc) is Value v)
             {
                 v.EmitId(Loc, vm, args);
             }
@@ -59,7 +58,7 @@ public class Id : Form
 
     public override void EmitCall(VM vm, Form.Queue args)
     {
-        if (Find(Name, vm.Env, Loc) is Value v)
+        if (GetId(Name, vm.Env, Loc) is Value v)
         {
             v.EmitCall(Loc, vm, args);
         }
@@ -67,6 +66,11 @@ public class Id : Form
         {
             throw new EmitError(Loc, $"Unknown id: {Name}");
         }
+    }
+
+    public override Value? GetValue(VM vm)
+    {
+        return GetId(Name, vm.Env, Loc);
     }
 
     public override string ToString()

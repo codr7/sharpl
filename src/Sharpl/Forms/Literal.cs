@@ -19,6 +19,10 @@ public class Literal : Form
         Value.EmitCall(Loc, vm, args);
     }
 
+    public override Value? GetValue(VM vm) { 
+        return Value;
+    }
+
     public override string ToString() {
         return Value.ToString();
     }

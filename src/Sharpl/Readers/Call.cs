@@ -1,7 +1,5 @@
 namespace Sharpl.Readers;
 
-using System.Text;
-
 public struct Call : Reader
 {
     public static readonly Call Instance = new Call();
@@ -19,19 +17,6 @@ public struct Call : Reader
         loc.Column++;
         source.Read();
         var args = new Form.Queue();
-        WhiteSpace.Instance.Read(source, vm, ref loc, args);
-
-        if (!vm.ReadForm(source, ref loc, args))
-        {
-            throw new ReadError(loc, "Missing call target");
-        }
-
-        var target = args.TryPopLast();
-
-        if (target is null)
-        {
-            throw new ReadError(loc, "Missing call target");
-        }
 
         while (true)
         {
@@ -52,10 +37,16 @@ public struct Call : Reader
 
             if (!vm.ReadForm(source, ref loc, args))
             {
-                throw new ReadError(loc, "Unexpected end of call");
+                throw new ReadError(loc, "Unexpected end of call " + forms);
             }
         }
 
+        if (args.Empty)
+        {
+            throw new ReadError(loc, "Missing call target");
+        }
+
+        var target = args.Pop();
         forms.Push(new Forms.Call(formLoc, (Form)target, args.Items));
         return true;
     }

@@ -25,10 +25,10 @@ public class Call : Form
     }
 
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
+    public override void Emit(VM vm, Queue args, int quoted)
     {
-        var cas =  new Form.Queue(Args);
-        Target.EmitCall(vm,cas);
+        var cas =  new Queue(Args);
+        Target.EmitCall(vm, cas);
 
         foreach (var a in cas) {
             args.Push(a);

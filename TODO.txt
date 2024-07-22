@@ -7,7 +7,7 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* find better comp syntax?
+* add vararg readme
 
 * implement all fix fast paths
 ** add/mul/div

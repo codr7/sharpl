@@ -5,6 +5,7 @@ namespace Sharpl;
 using System.Collections;
 using System.Runtime;
 using System.Text;
+using Sharpl.Forms;
 using Sharpl.Ops;
 
 public abstract class Form : Emitter
@@ -20,7 +21,8 @@ public abstract class Form : Emitter
 
     public abstract void Emit(VM vm, Form.Queue args, int quoted);
 
-    public void Emit(VM vm, Form.Queue args) {
+    public void Emit(VM vm, Form.Queue args)
+    {
         Emit(vm, args, 0);
     }
 
@@ -30,6 +32,11 @@ public abstract class Form : Emitter
         args.Emit(vm);
         Emit(vm, new Form.Queue());
         vm.Emit(Ops.CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
+    }
+
+    public virtual Value? GetValue(VM vm)
+    { 
+        return null;
     }
 
     public virtual bool IsSplat => false;

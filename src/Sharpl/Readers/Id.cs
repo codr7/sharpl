@@ -26,8 +26,8 @@ public struct Id : Reader
                 c == '(' || c == ')' ||
                 c == '[' || c == ']' ||
                 c == '{' || c == '}' ||
-                c == '"' || c == '\'' || c == ':' ||
-                (c == '*' && buffer.Length != 0))
+                c == '"' || c == '\'' || c == ':' || c == '&' ||
+                ((c == '*') && buffer.Length != 0))
             {
                 break;
             }

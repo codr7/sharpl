@@ -42,7 +42,7 @@
   (^bar [x]
     (+ x 2))
 
-  ((comp foo bar) 0))
+  (foo & bar 0))
 
 (check 35
   (^foo [bar*]
