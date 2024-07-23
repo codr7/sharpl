@@ -26,7 +26,7 @@ public class VM
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 9;
+    public static readonly int VERSION = 10;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;

@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v9
+sharpl v10
 
    1 (say "hello")
    2 
@@ -174,6 +174,12 @@ Expressions may be quoted by prefixing with `'`.
 <br/>
 For some types they return the same result; integers, strings, pairs, methods etc.<br/>
 For others; like arrays and maps; two values may well be equal despite having different identities.
+
+```
+(is [1 2 3] [1 2 3])
+```
+`F`
+
 
 ## atomic types
 
