@@ -41,7 +41,7 @@ public class ArrayStack<T> : IEnumerable<T>, IList<T>
     }
 
     public T Peek(int offset = 0)
-    {
+    {   
         return items[count - 1 - offset];
     }
 
