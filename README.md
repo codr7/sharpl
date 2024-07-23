@@ -324,7 +324,7 @@ Sharpl.EvalError: repl@1:2 Check failed: expected 5, actual 4!
 `benchmark`may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
 
 ```
-dotnet run -c=Release benchmarks.sl
+dotnet run -c Release benchmarks.sl
 497
 137
 829
