@@ -356,9 +356,6 @@ emitting
 
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
-
-Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
-
 ```
 (check 5
   (+ 2 2))
@@ -374,6 +371,8 @@ When called with a single argument, it simply checks if it's true.
 ```
 Sharpl.EvalError: repl@1:2 Check failed: expected T, actual 0!
 ```
+
+Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
 
 ## benchmarks
 `benchmark`may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
