@@ -17,6 +17,16 @@ The code base currently hovers around 4kloc and has no external dependencies.<br
 <br/>
 All features described in this document are part of the [test suite](https://github.com/codr7/sharpl/tree/main/tests) and expected to work as described.
 
+## novelties
+
+- Pairs, arrays, maps and method compositions have dedicated syntax.
+- Varargs use `*`, same as Python.
+- Splatting is supported using `*`, same as Python.
+- Unified, deeply integrated iterator protocol.
+- Default decimal type is fixpoint.
+- Nil is called `_`.
+- Errors include line numbers, even inside the REPL.
+
 ## bindings
 Bindings come in two flavors, with lexical or dynamic scope.
 
