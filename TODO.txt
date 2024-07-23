@@ -1,11 +1,13 @@
-267
-123
-345
+247
+119
+330
 
 * VC
 ** Reformat - Ctrl+Shift+I
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
+
+ [^1]
 
 * add unquote
 ** add form/reader
