@@ -166,6 +166,21 @@ Identifiers turn into symbols when quoted.
 ```
 `T`
 
+### fixpoints
+Decimal expressions are interpreted as fixpoint values with the specified number of decimals.
+
+```
+1.234
+```
+`1.234`
+
+Leading zero is optional.
+
+```
+(= 0.123 .123)
+```
+`T`
+
 ## composite types
 
 ### arrays
