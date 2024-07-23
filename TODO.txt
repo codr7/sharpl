@@ -19,6 +19,8 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** add/mul/div
 ** like sub
 
+* implement rest of IList in DynamicArrayStack
+
 * acc
 ** bind key constants in term
 *** ENTER LEFT RIGHT

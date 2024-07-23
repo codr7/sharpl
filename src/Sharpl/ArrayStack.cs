@@ -3,14 +3,15 @@ using System.Text;
 
 namespace Sharpl;
 
-public class ArrayStack<T>: IEnumerable<T>
+public class ArrayStack<T> : IEnumerable<T>, IList<T>
 {
     private readonly T[] items;
     private int count = 0;
 
-    public T this[int i] {
-      get => Get(i);
-      set => Set(i, value);
+    public T this[int i]
+    {
+        get => Get(i);
+        set => Set(i, value);
     }
 
     public int Count { get { return count; } }
@@ -20,16 +21,19 @@ public class ArrayStack<T>: IEnumerable<T>
         items = new T[capacity];
     }
 
-    public void Clear() {
+    public void Clear()
+    {
         count = 0;
     }
-    
+
     public void Drop(int n)
     {
         count -= n;
     }
 
     public bool Empty { get { return count == 0; } }
+
+    public bool IsReadOnly => throw new NotImplementedException();
 
     public T Get(int i)
     {
@@ -53,7 +57,8 @@ public class ArrayStack<T>: IEnumerable<T>
         count++;
     }
 
-    public void Reverse(int n) {
+    public void Reverse(int n)
+    {
         Array.Reverse(items, Count - n, n);
     }
 
@@ -91,7 +96,8 @@ public class ArrayStack<T>: IEnumerable<T>
         return res.ToString();
     }
 
-    public void Trunc(int n) {
+    public void Trunc(int n)
+    {
         count = n;
     }
 
@@ -103,5 +109,46 @@ public class ArrayStack<T>: IEnumerable<T>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return items[0..count].GetEnumerator();
+    }
+
+    public int IndexOf(T item)
+    {
+        return Array.IndexOf(items, item);
+    }
+
+    public void Insert(int index, T item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveAt(int index)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Add(T item)
+    {
+        Push(item);
+    }
+
+    public bool Contains(T item)
+    {
+        return Array.IndexOf(items, item) > -1;
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        Array.Copy(items[arrayIndex..], array, count);
+    }
+
+    public bool Remove(T item)
+    {
+        if (count > 0)
+        {
+            Pop();
+            return true;
+        }
+
+        return false;
     }
 }
