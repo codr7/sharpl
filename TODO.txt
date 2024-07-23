@@ -7,7 +7,9 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* add vararg readme
+* finish varargs
+** improve printing (add *)
+** add readme
 
 * implement all fix fast paths
 ** add/mul/div
@@ -28,9 +30,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 *** map tests
 
 * add zip/unzip
-** add Iter lib
-*** move reduce
-*** import by default?
 
 * add array fib
 ** add repeat method
@@ -81,11 +80,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** copy register for bindings
 ** arrays
 
-* implement inc/set macros
-** implement for array item
-** implement for string char?
-** put items into registers and set back
-
 * add object string calling
 ** like array
 ** slice if index is pair
@@ -97,11 +91,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 * add Reader.Composite type
 ** move logic from VM
-
-* add vararg support
-** mark method as vararg if last arg is array form
-** (^join [separator [parts]])
-** expand iterator on stack before call
 
 * add support for \r\n\t in string literals
 ** add support to String Dump
@@ -127,15 +116,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
     (if (> 10 (inc i)
       (stop))))))
 
-* editor
-** two panes
-*** switch with tab
-*** display path
-** highlight current line in active pane
-** add Editor lib
-*** add Pane type
-*** x, path?, buffer
-
 (define pane-width (/ (term/width) 2))
 (define left-pane (editor/Pane 1 pane-width))
 (define right-pane (editor/Pane pane-width pane-width))
@@ -143,9 +123,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 (^ switch-pane []
   (set active-pane (if (= active-pane left-pane) right-pane left-pane)))
-
-* improve dec macro
-** how do you dec a map entry?
 
 (^ repl []
   (print "sharpl v" VERSION " - may the src be with you\n\n")
