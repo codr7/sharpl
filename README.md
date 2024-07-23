@@ -298,6 +298,17 @@ And when called without arguments, it returns the current library.
 ```
 `(Lib user)`
 
+## errors
+`fail` may be used to signal an error.<br/>
+Since there are no facilities for handling errors yet, this means evaluation will stop unconditionally.
+
+```
+(fail "Bummer!")
+```
+```
+Sharpl.EvalError: repl@1:2 Bummer!
+```
+
 ## evaluation
 `eval` may be used to evaluate a block of code at emit time.
 

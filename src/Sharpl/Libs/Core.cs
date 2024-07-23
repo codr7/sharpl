@@ -412,6 +412,19 @@ public class Core : Lib
             }
         });
 
+        BindMethod("fail", [], (loc, target, vm, stack, arity) => {
+            stack.Reverse(arity);
+            var res = new StringBuilder();
+
+            while (arity > 0)
+            {
+                stack.Pop().Say(res);
+                arity--;
+            }
+
+            throw new EvalError(loc, res.ToString());
+        });
+
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
