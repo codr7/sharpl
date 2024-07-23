@@ -9,19 +9,10 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* rename if-else to else
-
-* rename length to len
-
-* rename Symbol to Sym
-
-* rename String to Str
-** including lib
-
-* rename benchmark to bench
-* bump version
-
-* --
+* investigate compiling linq expressions
+** https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-8.0
+** add Linq.Expression? Op.Compile()
+*** default null
 
 * add unquote
 ** add form/reader
@@ -35,7 +26,7 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** add/mul/div
 ** like sub
 
-* implement rest of IList in DynamicArrayStack
+* implement IList in DynamicArrayStack
 ** benchmark fib map
 
 * add iter macro
@@ -61,6 +52,16 @@ Foo/bar
 
 * add support for optional method args
 ** suffix with ?
+
+* rename if-else to else
+* rename length to len
+* rename Symbol to Sym
+* rename String to Str
+** including lib
+* rename benchmark to bench
+* bump version
+
+* --
 
 * acc
 ** bind key constants in term
