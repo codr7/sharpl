@@ -13,7 +13,7 @@ hello
 Sharpl is a custom Lisp interpreter implemented in C#.<br/>
 <br/>
 It's trivial to embed and comes with a simple REPL.<br/>
-The code base currently hovers around 4kloc.<br/>
+The code base currently hovers around 4kloc and has no external dependencies.<br/>
 <br/>
 All features described in this document are part of the [test suite](https://github.com/codr7/sharpl/tree/main/tests) and expected to work as described.
 
