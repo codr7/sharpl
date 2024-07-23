@@ -17,10 +17,14 @@ public class And : Form
         Right.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
-    {       
-        vm.Emit(Ops.Push.Make(vm.Compose(Loc, Left, Right)));
+    public override void Emit(VM vm, Queue args, int quoted)
+    {
+        vm.Emit(Ops.Push.Make(vm.Compose(Loc, Left, Right, new Queue())));
+    }
 
+    public override void EmitCall(VM vm, Queue args)
+    {
+        vm.Compose(Loc, Left, Right, args).EmitCall(Loc, vm, args);
     }
 
     public override string ToString()

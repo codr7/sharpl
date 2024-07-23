@@ -121,14 +121,13 @@ public class VM
 #pragma warning restore CS8629
     }
 
-    public Value Compose(Loc loc, Form left, Form right)
+    public Value Compose(Loc loc, Form left, Form right, Form.Queue args)
     {
         var m = new UserMethod(loc, this, $"{left} & {right}", [], [], false);
         var skip = new Label();
         Emit(Ops.Goto.Make(skip));
         m.StartPC = EmitPC;
-        var f = new Forms.Call(loc, new Forms.Id(loc, "return"), [new Forms.Call(loc, right, [new Forms.Call(loc, left, [new Forms.Nil(loc)])])]);
-        f.Emit(this, new Form.Queue());
+        Emit($"(return ({right} ({left} {args})))", loc);
         Emit(Ops.ExitMethod.Make());
         skip.PC = EmitPC;
         return Value.Make(Libs.Core.UserMethod, m);
@@ -173,6 +172,10 @@ public class VM
         var result = code.Count;
         code.Push(op);
         return result;
+    }
+
+    public void Emit(string code, Loc loc) {
+        ReadForms(new StringReader(code), ref loc).Emit(this);
     }
 
     public PC EmitPC

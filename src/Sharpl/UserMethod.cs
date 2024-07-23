@@ -18,6 +18,7 @@ public class UserMethod
     {
         Loc = loc;
         Name = name;
+
         Closure = ids.AsEnumerable().Select<string, (string, int, Register)>(id =>
         {
 #pragma warning disable CS8629
@@ -27,48 +28,48 @@ public class UserMethod
             vm.Env[id] = Value.Make(Core.Binding, new Register(0, r));
             return (id, r, b);
         }).ToArray();
+
         Args = args;
         Vararg = vararg;
     }
 
-    public void BindArgs(VM vm, int arity, Stack stack) {       
+    public void BindArgs(VM vm, int arity, Stack stack)
+    {
         for (var i = Args.Length - 1; i >= 0; i--)
         {
-            if (Vararg && i == Args.Length - 1) {
+            if (Vararg && i == Args.Length - 1)
+            {
                 var n = arity - Args.Length + 1;
                 var vs = new Value[n];
 
-                for (var j = n-1; j >= 0; j--) {
+                for (var j = n - 1; j >= 0; j--)
+                {
                     vs[j] = stack.Pop();
                 }
 
-                vm.SetRegister(0, Args[i].Item2, Value.Make(Core.Array, vs));     
-            } else {
+                vm.SetRegister(0, Args[i].Item2, Value.Make(Core.Array, vs));
+            }
+            else
+            {
                 vm.SetRegister(0, Args[i].Item2, stack.Pop());
             }
         }
 
-        foreach (var (r, v) in ClosureValues)
-        {
-            vm.SetRegister(0, r, v);
-        }
+        foreach (var (r, v) in ClosureValues) { vm.SetRegister(0, r, v); }
     }
 
     public override string ToString()
     {
         var result = new StringBuilder();
-        result.Append($"(Method {Name} [");
+        result.Append($"(^{Name} [");
 
         for (var i = 0; i < Args.Length; i++)
         {
-            if (i > 0)
-            {
-                result.Append(' ');
-            }
-
+            if (i > 0) { result.Append(' '); }
             result.Append(Args[i].Item1);
         }
 
+        if (Vararg) { result.Append('*'); }
         result.Append("])");
         return result.ToString();
     }
