@@ -7,6 +7,14 @@
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
+* add unquote
+** add form/reader
+** add test
+** add readme
+
+(let [bar 42]
+  '[foo ,bar baz])
+
 * implement all fix fast paths
 ** add/mul/div
 ** like sub

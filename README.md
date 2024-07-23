@@ -26,6 +26,9 @@ All features described in this document are part of the [test suite](https://git
 - Default decimal type is fixpoint.
 - Nil is called `_`.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
+- Lambdas actually look like anonymous methods.
+- `eval` evaluates its arguments at emit time.
+- Explicit tail calls using `return`.
 - Errors include line numbers, even inside the REPL.
 
 ## bindings
