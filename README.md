@@ -246,7 +246,7 @@ And when called without arguments, it returns the current library.
 `(Lib user)`
 
 ## evaluation
-`eval` may be used to evaluate a block of code at emit time, the results are pushed on evaluation.
+`eval` may be used to evaluate a block of code at emit time.
 
 ```
 (eval (say "emitting") 42)
