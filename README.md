@@ -25,6 +25,8 @@ All features described in this document are part of the [test suite](https://git
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
 - Nil is called `_`.
+- Both true (`T`) and false (`F`) are defined.
+- Empty strings, arrays and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
 - Lambdas actually look like anonymous methods.
 - `eval` evaluates its arguments at emit time.
