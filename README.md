@@ -130,7 +130,7 @@ The name is bound to an array containing all trailing arguments when the method 
 (foo 1 2 3)
 ```
 ```
-1 2 3
+123
 ```
 
 ### composition
