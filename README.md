@@ -380,9 +380,6 @@ Sharpl.EvalError: repl@1:2 Check failed: expected T, actual 0!
 
 ```
 dotnet run -c Release benchmarks.sl
-497
-137
-829
 ```
 
 ## debugging

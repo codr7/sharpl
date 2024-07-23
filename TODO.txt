@@ -6,10 +6,10 @@
 ** Reformat - Ctrl+Shift+I
 
 [^1]
+source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-source.AsSpan(start, length).CopyTo(dest)
 
 * investigate compiling linq expressions
 ** https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-8.0
