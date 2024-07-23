@@ -32,6 +32,7 @@ All features described in this document are part of the [test suite](https://git
 - There is no List, except for nested pairs, which is not as bad as it sounds thanks to the syntax.
 - Parens are used for calls only.
 - Most things are callable, simlar to Clojure.
+- Maps are ordered, not hashed.
 - Errors include line numbers, even inside the REPL.
 
 ## bindings
