@@ -158,6 +158,8 @@ Methods may be composed using `&`.
 ## quoting
 Expressions may be quoted by prefixing with `'`.
 
+## atomic types
+
 ### symbols
 Identifiers turn into symbols when quoted.
 
@@ -182,6 +184,21 @@ Leading zero is optional.
 `T`
 
 ## composite types
+
+### pairs
+Pairs may be formed by putting a colon between two values.
+
+```
+1:2:3
+```
+`1:2:3`
+
+Or by calling the type constructor.
+
+```
+(Pair [1 2 3]*)
+```
+`1:2:3`
 
 ### arrays
 Arrays are fixed size sequences of values.<br/>
@@ -208,21 +225,6 @@ Or by calling the constructor explicitly.
 (Map '[foo:1 bar:2 baz:3]*)
 ```
 `{'bar:2 'baz:3 'foo:1}`
-
-### pairs
-Pairs may be formed by putting a colon between two values.
-
-```
-1:2:3
-```
-`1:2:3`
-
-Or by calling the type constructor.
-
-```
-(Pair [1 2 3]*)
-```
-`1:2:3`
 
 ## iterators
 `reduce` may be used to transform any iterable into a single value.
