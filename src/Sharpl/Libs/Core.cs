@@ -2,6 +2,7 @@ namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -78,8 +79,9 @@ public class Core : Lib
                  {
                      fas = af.Items.Select(f =>
                      {
-                         if (vararg) {
-                            throw new EmitError(f.Loc, "Vararg must be final param.");
+                         if (vararg)
+                         {
+                             throw new EmitError(f.Loc, "Vararg must be final param.");
                          }
 
                          if (f is Forms.Splat s)
@@ -288,35 +290,39 @@ public class Core : Lib
              }
          });
 
-        BindMacro("check", ["expected", "body"], (loc, target, vm, args) =>
+        BindMacro("check", ["x"], (loc, target, vm, args) =>
          {
-             var ef = args.TryPop();
+             var ef = args.Pop();
+            var emptyArgs = true;
 
-             if (ef is null)
+             if (!args.Empty)
              {
-                 throw new EmitError(loc, "Missing expected value");
-             }
+                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
-             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-
-             vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
-             {
-                 while (true)
+                 vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
                  {
-                     if (args.TryPop() is Form bf)
+
+                     while (true)
                      {
-                         bf.Emit(vm, args);
+                         if (args.TryPop() is Form bf)
+                         {
+                             bf.Emit(vm, args);
+                         }
+                         else
+                         {
+                             break;
+                         }
                      }
-                     else
-                     {
-                         break;
-                     }
-                 }
+
+                 });
 
                  vm.Emit(Ops.EndFrame.Make());
-                 ef.Emit(vm, args);
-                 vm.Emit(Ops.Check.Make(loc, ef));
-             });
+                 emptyArgs = false;
+             }
+
+             ef.Emit(vm, new Form.Queue());
+             if (emptyArgs) { Value.T.Emit(loc, vm, new Form.Queue()); }
+             vm.Emit(Ops.Check.Make(loc));
          });
 
         BindMacro("dec", [], (loc, target, vm, args) =>
@@ -412,7 +418,8 @@ public class Core : Lib
             }
         });
 
-        BindMethod("fail", [], (loc, target, vm, stack, arity) => {
+        BindMethod("fail", [], (loc, target, vm, stack, arity) =>
+        {
             stack.Reverse(arity);
             var res = new StringBuilder();
 

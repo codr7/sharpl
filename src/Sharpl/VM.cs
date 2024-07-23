@@ -17,7 +17,7 @@ public class VM
         public int MaxCalls = 128;
         public int MaxDefinitions = 128;
         public int MaxFrames = 248;
-        public int MaxOps = 1024;
+        public int MaxOps = 2048;
         public int MaxRegisters = 1024;
         public int MaxSplats = 16;
         public int MaxStackSize = 32;
@@ -359,10 +359,9 @@ public class VM
                         {
                             if (stack.Pop() is Value av)
                             {
-                                if (!av.Equals(ev))
-                                {
-                                    throw new EvalError(checkOp.Loc, $"Check failed: expected {checkOp.Expected}, actual {av}!");
-                                }
+                                var dav = av;
+                                if (ev.Type == Core.Bit && av.Type != Core.Bit) { av = Value.Make(Core.Bit, (bool)av); }
+                                if (!av.Equals(ev)) { throw new EvalError(checkOp.Loc, $"Check failed: expected {ev}, actual {dav}!"); }
                             }
                             else
                             {

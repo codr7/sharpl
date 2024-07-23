@@ -4,7 +4,7 @@
 $ dotnet run
 sharpl v11
 
-   1 (say "hello")
+   1 (say 'hello)
    2 
 hello
 ```
@@ -68,10 +68,10 @@ New dynamically scoped bindings may be created using `define`.
 `if` may be used to conditionally evaluate a block of code.
 
 ```
-  (if T (say "is true"))
+  (if T (say 'is-true))
 ```
 ```
-is true
+is-true
 ```
 
 `if-else` may be used to specify an else-clause.
@@ -200,12 +200,36 @@ For others; like arrays and maps; two values may well be equal despite having di
 Identifiers turn into symbols when quoted.
 
 ```
-(= (Symbol "foo" 42) 'foo42)
+(= (Symbol 'foo 42) 'foo42)
 ```
 `T`
 
+### strings
+Strings use double quotes.
+
+```
+(string/up "Foo")
+```
+`"FOO"`
+
+### integers
+Integers support the regular arithmetic operations.
+
+```
+(- (+ 1 4 5) 3 2)
+```
+`5`
+
+Negative integers lack syntax, and must be created by way of subtraction.
+
+```
+(- 42)
+```
+`-42`
+
 ### fixpoints
-Decimal expressions are read as fixpoint values with specified number of decimals.
+Decimal expressions are read as fixpoint values with specified number of decimals.<br/>
+Like integers, fixpoints support the regular arithmetic operations.
 
 ```
 1.234
@@ -218,6 +242,13 @@ Leading zero is optional.
 (= 0.123 .123)
 ```
 `T`
+
+Also like integers; negative fixpoints lack syntax, and must be created by way of subtraction.
+
+```
+(- 1.234)
+```
+`-1.234`
 
 ## composite types
 
@@ -306,17 +337,17 @@ And when called without arguments, it returns the current library.
 Since there are no facilities for handling errors yet, this means evaluation will stop unconditionally.
 
 ```
-(fail "Bummer!")
+(fail 'bummer)
 ```
 ```
-Sharpl.EvalError: repl@1:2 Bummer!
+Sharpl.EvalError: repl@1:2 bummer
 ```
 
 ## evaluation
 `eval` may be used to evaluate a block of code at emit time.
 
 ```
-(eval (say "emitting") 42)
+(eval (say 'emitting) 42)
 ```
 ```
 emitting
@@ -331,8 +362,17 @@ Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/
 ```
 (check 5
   (+ 2 2))
-
+```
+```
 Sharpl.EvalError: repl@1:2 Check failed: expected 5, actual 4!
+```
+
+When called with a single argument, it simply checks if it's true.
+```
+(check 0)
+```
+```
+Sharpl.EvalError: repl@1:2 Check failed: expected T, actual 0!
 ```
 
 ## benchmarks

@@ -9,3 +9,7 @@
 
 (check {1:2 3:4}
   {[3:4 1:2]*})
+
+(let [m1 '{foo:1 bar:2} m2 (Map m1*)]
+  (check (not (is m1 m2)))
+  (check (= m1 m2)))

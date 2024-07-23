@@ -5,9 +5,23 @@
 * VC
 ** Reformat - Ctrl+Shift+I
 
+[^1]
+
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
- [^1]
+* rename if-else to else
+
+* rename length to len
+
+* rename Symbol to Sym
+
+* rename String to Str
+** including lib
+
+* rename benchmark to bench
+* bump version
+
+* --
 
 * add unquote
 ** add form/reader
@@ -22,6 +36,31 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** like sub
 
 * implement rest of IList in DynamicArrayStack
+** benchmark fib map
+
+* add iter macro
+** define usermethod like VM.Compose
+** call body while T
+
+(let [i 3]
+  (iter 
+    (say i)
+    (> (dec i) 0)
+    
+  (say 'boom)))
+
+* add enums
+
+(enum Foo bar baz)
+
+Foo/bar
+(Foo 0)
+(Foo 'baz)
+(Int Foo/bar)
+(Str Foo/bar)
+
+* add support for optional method args
+** suffix with ?
 
 * acc
 ** bind key constants in term
@@ -30,12 +69,6 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 *** add char type
 ** implement read-command
 ** implement form to create account
-
-* add is macro
-** add Value.is
-** compare data usning ==
-** add value vs identity to readme
-*** map tests
 
 * add zip/unzip
 

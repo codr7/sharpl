@@ -4,8 +4,7 @@
 (check F
   (Bit F:T))
 
-(check T
-  (Bit T:T))
+(check (Bit T:T))
 
 (check 1:4:3
   (let [foo 1:2:3]

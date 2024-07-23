@@ -1,3 +1,5 @@
+(check (is "abc" "abc"))
+
 (check "FOO"
   (string/up "Foo"))
 

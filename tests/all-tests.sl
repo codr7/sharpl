@@ -50,17 +50,9 @@
 (check 1
   (if-else 42 1 2))
 
-(check T
-  (is "abc" "abc"))
+(check (= 42 42))
 
-(check F
-  (is [1 2 3] [1 2 3]))
-
-(check T
-  (= 42 42))
-
-(check T
-  (< 1 2 3))
+(check (< 1 2 3))
 
 (check F
   (< 1 3 2))
@@ -99,8 +91,7 @@
 (check 0
   (or F 0))
 
-(check T
-  (or T 42))
+(check (or T 42))
 
 (check 42
   (- [43 1]*))
