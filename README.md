@@ -171,9 +171,13 @@ Expressions may be quoted by prefixing with `'`.
 
 ## value vs. identity
 `=` may be used to compare values deeply, while `is` compares identities.<br/>
-<br/>
-For some types they return the same result; integers, strings, pairs, methods etc.<br/>
+For some types they return the same result; integers, strings, pairs, methods etc.
+
 For others; like arrays and maps; two values may well be equal despite having different identities.
+```
+(= [1 2 3] [1 2 3])
+```
+`T`
 
 ```
 (is [1 2 3] [1 2 3])
