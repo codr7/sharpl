@@ -29,7 +29,8 @@ All features described in this document are part of the [test suite](https://git
 - Lambdas actually look like anonymous methods.
 - `eval` evaluates its arguments at emit time.
 - Explicit tail calls using `return`.
-- There is no List, except for nested pairs, which is not as bad as it sounds due to the syntax.
+- There is no List, except for nested pairs, which is not as bad as it sounds thanks to the syntax.
+- Parens are used for calls only.
 - Errors include line numbers, even inside the REPL.
 
 ## bindings
