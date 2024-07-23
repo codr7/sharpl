@@ -37,16 +37,13 @@ public class UserMethod
     {
         for (var i = Args.Length - 1; i >= 0; i--)
         {
+            if (Args[i].Item2 == -1) { continue; }
+
             if (Vararg && i == Args.Length - 1)
             {
                 var n = arity - Args.Length + 1;
                 var vs = new Value[n];
-
-                for (var j = n - 1; j >= 0; j--)
-                {
-                    vs[j] = stack.Pop();
-                }
-
+                for (var j = n - 1; j >= 0; j--) { vs[j] = stack.Pop(); }
                 vm.SetRegister(0, Args[i].Item2, Value.Make(Core.Array, vs));
             }
             else
@@ -61,7 +58,7 @@ public class UserMethod
     public override string ToString()
     {
         var result = new StringBuilder();
-        result.Append($"(^{Name} [");
+        result.Append($"({Name} [");
 
         for (var i = 0; i < Args.Length; i++)
         {

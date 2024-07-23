@@ -123,7 +123,7 @@ public class VM
 
     public Value Compose(Loc loc, Form left, Form right, Form.Queue args)
     {
-        var m = new UserMethod(loc, this, $"{left} & {right}", [], [], false);
+        var m = new UserMethod(loc, this, $"{left} & {right}", [], [("values*", -1)], false);
         var skip = new Label();
         Emit(Ops.Goto.Make(skip));
         m.StartPC = EmitPC;

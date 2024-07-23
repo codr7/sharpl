@@ -151,7 +151,7 @@ Methods may be composed using `&`.
   (f 20))
 ```
 ```
-(Method foo & bar [])
+(foo & bar [values*])
 ```
 `42`
 
@@ -289,5 +289,5 @@ dotnet run -c=Release benchmarks.sl
  
 1    Push 1
 2    Push 2
-3    CallMethod (Method + []) 2 False
+3    CallMethod (+ []) 2 False
 ```
