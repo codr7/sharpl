@@ -183,11 +183,11 @@ Maps are ordered mappings from keys to values.<br/>
 New maps may be created by enclosing a sequence of pairs in curly braces.
 
 ```
-{'foo:1 'bar:2 'baz:3}
+'{foo:1 bar:2 baz:3}
 ```
 Or by calling the constructor explicitly.
 ```
-(Map ['foo:1 'bar:2 'baz:3]*)
+(Map '[foo:1 bar:2 baz:3]*)
 ```
 `{'bar:2 'baz:3 'foo:1}`
 
