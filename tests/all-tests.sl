@@ -51,6 +51,12 @@
   (if-else 42 1 2))
 
 (check T
+  (is "abc" "abc"))
+
+(check F
+  (is [1 2 3] [1 2 3]))
+
+(check T
   (= 42 42))
 
 (check T

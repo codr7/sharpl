@@ -25,6 +25,7 @@ All features described in this document are part of the [test suite](https://git
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
 - Nil is called `_`.
+- `=` is generic and compares values deeply, `is` may be used to compare identity.
 - Errors include line numbers, even inside the REPL.
 
 ## bindings
@@ -167,6 +168,12 @@ Methods may be composed using `&`.
 
 ## quoting
 Expressions may be quoted by prefixing with `'`.
+
+## value vs. identity
+`=` may be used to compare values deeply, while `is` compares identities.<br/>
+<br/>
+For some types they return the same result; integers, strings, pairs, methods etc.<br/>
+For others; like arrays and maps; two values may well be equal despite having different identities.
 
 ## atomic types
 

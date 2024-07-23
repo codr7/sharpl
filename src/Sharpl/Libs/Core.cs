@@ -131,7 +131,7 @@ public class Core : Lib
              });
          });
 
-        BindMethod("=", ["x", "y"], (loc, target, vm, stack, arity) =>
+        BindMethod("=", ["x"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Pop();
             arity--;
@@ -468,6 +468,28 @@ public class Core : Lib
                  vm.Emit(Ops.EndFrame.Make());
              });
          });
+
+        BindMethod("is", ["x"], (loc, target, vm, stack, arity) =>
+        {
+            var v = stack.Pop();
+            arity--;
+            var res = true;
+
+            while (arity > 0)
+            {
+                var sv = stack.Pop();
+
+                if (sv.Type != v.Type || !sv.Data.Equals(v.Data))
+                {
+                    res = false;
+                    break;
+                }
+
+                arity--;
+            }
+
+            stack.Push(Value.Make(Core.Bit, res));
+        });
 
         BindMethod("length", ["it"], (loc, target, vm, stack, arity) =>
         {
