@@ -20,7 +20,7 @@ All features described in this document are part of the [test suite](https://git
 ## novelties
 
 - Pairs, arrays, maps and method compositions have dedicated syntax.
-- Varargs use `*`, similar Python.
+- Varargs use `*`, similar to Python.
 - Splatting is supported using `*`, simlar to Python.
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
