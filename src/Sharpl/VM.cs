@@ -104,7 +104,7 @@ public class VM
 
         if (!frames.Empty)
         {
-            total += frames.Last().Item2;
+            total += frames[^1].Item2;
         }
 
         frames.Push((registerCount, total));
