@@ -167,7 +167,7 @@ Identifiers turn into symbols when quoted.
 `T`
 
 ### fixpoints
-Decimal expressions are interpreted as fixpoint values with specified number of decimals.
+Decimal expressions are read as fixpoint values with specified number of decimals.
 
 ```
 1.234
