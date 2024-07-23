@@ -20,8 +20,8 @@ All features described in this document are part of the [test suite](https://git
 ## novelties
 
 - Pairs, arrays, maps and method compositions have dedicated syntax.
-- Varargs use `*`, same as Python.
-- Splatting is supported using `*`, same as Python.
+- Varargs use `*`, similar Python.
+- Splatting is supported using `*`, simlar to Python.
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
 - Nil is called `_`.
@@ -31,7 +31,7 @@ All features described in this document are part of the [test suite](https://git
 - Explicit tail calls using `return`.
 - There is no List, except for nested pairs, which is not as bad as it sounds thanks to the syntax.
 - Parens are used for calls only.
-- Most things are callable, much like Clojure.
+- Most things are callable, simlar to Clojure.
 - Errors include line numbers, even inside the REPL.
 
 ## bindings
