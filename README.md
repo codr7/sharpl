@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v10
+sharpl v11
 
    1 (say "hello")
    2 
