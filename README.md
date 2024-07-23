@@ -193,7 +193,7 @@ Pairs may be formed by putting a colon between two values.
 ```
 `1:2:3`
 
-Or by calling the type constructor.
+Or by calling the constructor explicitly.
 
 ```
 (Pair [1 2 3]*)
