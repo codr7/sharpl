@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v8
+sharpl v9
 
    1 (say "hello")
    2 
@@ -117,6 +117,20 @@ Without `return` it quickly runs out of space:
 ```
 ```
 System.IndexOutOfRangeException: Index was outside the bounds of the array.
+```
+
+### varargs
+`methods` may be defined as taking a variable number of arguments by suffixing the last parameter with `*`.
+The name is bound to an array containing all trailing arguments when the method is called.
+
+```
+(^foo [bar*]
+  (say bar*))
+  
+(foo 1 2 3)
+```
+```
+1 2 3
 ```
 
 ### composition
