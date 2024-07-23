@@ -14,6 +14,7 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** add Range type
 ** optional start (0), end (exclusive) & stride
 ** return iter
+** make Int non-iterable
 
 (range 0 _ 5)
 
