@@ -10,16 +10,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* add span type
-** Span<Value>
-** use as result type for slice
-** support reslicing/getting values by calling like array
-
-* investigate compiling linq expressions
-** https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-8.0
-** add Linq.Expression? Op.Compile()
-*** default null
-
 * add unquote
 ** add form/reader
 ** add test
@@ -35,6 +25,16 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 * implement IList in DynamicArrayStack
 ** benchmark fib map
 ** try replacing ArrayStack in VM
+
+* add span type
+** Span<Value>
+** use as result type for slice
+** support reslicing/getting values by calling like array
+
+* investigate compiling linq expressions
+** https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-8.0
+** add Linq.Expression? Op.Compile()
+*** default null
 
 * add iter macro
 ** define usermethod like VM.Compose
