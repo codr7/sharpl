@@ -12,7 +12,7 @@
 
 (check 6
   (^foo [in out]
-    (if-else (= in 0) out (foo (- in 1) (+ out in))))
+    (else (= in 0) out (foo (- in 1) (+ out in))))
 
   (foo 3 0))
     

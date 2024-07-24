@@ -456,7 +456,7 @@ public class Core : Lib
             });
         });
 
-        BindMacro("if-else", ["condition"], (loc, target, vm, args) =>
+        BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
          {
              vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 

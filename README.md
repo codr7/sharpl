@@ -74,10 +74,10 @@ New dynamically scoped bindings may be created using `define`.
 is-true
 ```
 
-`if-else` may be used to specify an else-clause.
+`else` may be used to specify an else-clause.
 
 ```
-  (if-else F 1 2)
+  (else F 1 2)
 ```
 `2`
 

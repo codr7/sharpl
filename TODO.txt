@@ -57,10 +57,6 @@ Foo/bar
 (Int Foo/bar)
 (Str Foo/bar)
 
-* add support for optional method args
-** suffix with ?
-
-* rename if-else to else
 * rename length to len
 * rename Symbol to Sym
 * rename String to Str
