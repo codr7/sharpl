@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class FixType : ComparableType<ulong>, NumericTrait
+public class FixType : ComparableType<ulong>, NumericTrait, RangeTrait
 {
     public FixType(string name) : base(name) { }
 
@@ -13,9 +13,17 @@ public class FixType : ComparableType<ulong>, NumericTrait
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        var v = stack.Pop().Cast(loc, Libs.Core.Int);
-        var e = stack.Pop().Cast(loc, Libs.Core.Int);
+        var v = stack.Pop().TryCast(loc, Libs.Core.Int);
+        var e = stack.Pop().TryCast(loc, Libs.Core.Int);
         stack.Push(Value.Make(Libs.Core.Fix, Fix.Make((byte)e, v)));
+    }
+
+    public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
+    {
+        ulong? minVal = min.TryCast(this);
+        ulong? maxVal = max.TryCast(this);
+        ulong strideVal = stride.Cast(this);
+        return new Iters.Core.FixRange(minVal ?? Fix.Make(0, 0), maxVal, strideVal);
     }
 
     public override void Dump(Value value, StringBuilder result)
@@ -29,12 +37,12 @@ public class FixType : ComparableType<ulong>, NumericTrait
             stack.Push(this, Fix.Make(1, 0));
         }
 
-        var res = stack.Pop().Cast(loc, this);
+        var res = stack.Pop().TryCast(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res = Fix.Add(res, stack.Pop().Cast(loc, this));
+            res = Fix.Add(res, stack.Pop().TryCast(loc, this));
             arity--;
         }
 
@@ -48,12 +56,12 @@ public class FixType : ComparableType<ulong>, NumericTrait
         }
 
         stack.Reverse(arity);
-        var res = stack.Pop().Cast(loc, this);
+        var res = stack.Pop().TryCast(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res = Fix.Divide(res, stack.Pop().Cast(loc, this));
+            res = Fix.Divide(res, stack.Pop().TryCast(loc, this));
             arity--;
         }
 
@@ -71,12 +79,12 @@ public class FixType : ComparableType<ulong>, NumericTrait
             stack.Push(this, Fix.Make(1, 0));
         }
 
-        var res = stack.Pop().Cast(loc, this);
+        var res = stack.Pop().TryCast(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res = Fix.Multiply(res, stack.Pop().Cast(loc, this));
+            res = Fix.Multiply(res, stack.Pop().TryCast(loc, this));
             arity--;
         }
 
@@ -91,18 +99,18 @@ public class FixType : ComparableType<ulong>, NumericTrait
         {
             if (arity == 1)
             {
-                res = Fix.Negate(stack.Pop().Cast(loc, this));
+                res = Fix.Negate(stack.Pop().TryCast(loc, this));
 
             }
             else
             {
                 stack.Reverse(arity);
-                res = stack.Pop().Cast(loc, this);
+                res = stack.Pop().TryCast(loc, this);
                 arity--;
 
                 while (arity > 0)
                 {
-                    res = Fix.Subtract(res, stack.Pop().Cast(loc, this));
+                    res = Fix.Subtract(res, stack.Pop().TryCast(loc, this));
                     arity--;
                 }
             }

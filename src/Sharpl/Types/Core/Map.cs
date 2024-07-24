@@ -2,7 +2,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterableTrait, SequenceTrait
+public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrait, SeqTrait
 {
     public MapType(string name) : base(name) { }
 
@@ -17,7 +17,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, Iterable
 
         for (var i = 0; i < arity; i++)
         {
-            var p = stack.Pop().Cast(loc, Libs.Core.Pair);
+            var p = stack.Pop().TryCast(loc, Libs.Core.Pair);
             m[p.Item1] = p.Item2;
         }
 

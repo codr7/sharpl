@@ -18,7 +18,7 @@ public class Id : Form
                 throw new EmitError(loc, $"Unknown id: {ln}");
             }
 
-            env = ((Value)lv).Cast(loc, Core.Lib);
+            env = ((Value)lv).TryCast(loc, Core.Lib);
             name = name.Substring(i + 1);
         }
 

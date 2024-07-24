@@ -1,5 +1,5 @@
 namespace Sharpl.Types.Core;
 
-public interface SequenceTrait {
+public interface SeqTrait {
     int Length(Value target);
 };

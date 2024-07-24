@@ -4,7 +4,7 @@ using Sharpl.Iters.Core;
 using Sharpl.Libs;
 using System.Text;
 
-public class ArrayType : Type<Value[]>, ComparableTrait, IterableTrait, SequenceTrait
+public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, SeqTrait
 {
     public ArrayType(string name) : base(name) { }
 

@@ -1,6 +1,6 @@
 namespace Sharpl.Types.Core;
 
-public class IntType : ComparableType<int>, IterableTrait, NumericTrait
+public class IntType : ComparableType<int>, NumericTrait, RangeTrait
 {
     public IntType(string name) : base(name) { }
 
@@ -9,9 +9,12 @@ public class IntType : ComparableType<int>, IterableTrait, NumericTrait
         return value.Cast(this) != 0;
     }
 
-    public Iter CreateIter(Value target)
+    public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
     {
-        return new Iters.Core.Range(0, target.Cast(this));
+        int minVal = (min.Type == Libs.Core.Nil) ? 0 : min.TryCast(loc, this);
+        int? maxVal = (max.Type == Libs.Core.Nil) ? null : max.TryCast(loc, this);
+        int strideVal = (stride.Type == Libs.Core.Nil) ? ((maxVal is int mv && maxVal < minVal) ? -1 : 1) : stride.TryCast(loc, this);
+        return new Iters.Core.IntRange(minVal, maxVal, strideVal);
     }
 
     public void Add(Loc loc, VM vm, Stack stack, int arity)
@@ -20,7 +23,7 @@ public class IntType : ComparableType<int>, IterableTrait, NumericTrait
 
         while (arity > 0)
         {
-            res += stack.Pop().Cast(loc, this);
+            res += stack.Pop().TryCast(loc, this);
             arity--;
         }
 
@@ -30,12 +33,12 @@ public class IntType : ComparableType<int>, IterableTrait, NumericTrait
     public void Divide(Loc loc, VM vm, Stack stack, int arity)
     {
         stack.Reverse(arity);
-        var res = stack.Pop().Cast(loc, this);
+        var res = stack.Pop().TryCast(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res /= stack.Pop().Cast(loc, this);
+            res /= stack.Pop().TryCast(loc, this);
             arity--;
         }
 
@@ -44,12 +47,12 @@ public class IntType : ComparableType<int>, IterableTrait, NumericTrait
 
     public void Multiply(Loc loc, VM vm, Stack stack, int arity)
     {
-        var res = stack.Pop().Cast(loc, this);
+        var res = stack.Pop().TryCast(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res *= stack.Pop().Cast(loc, this);
+            res *= stack.Pop().TryCast(loc, this);
             arity--;
         }
 
@@ -64,18 +67,18 @@ public class IntType : ComparableType<int>, IterableTrait, NumericTrait
         {
             if (arity == 1)
             {
-                res = -stack.Pop().Cast(loc, this);
+                res = -stack.Pop().TryCast(loc, this);
 
             }
             else
             {
                 stack.Reverse(arity);
-                res = stack.Pop().Cast(loc, this);
+                res = stack.Pop().TryCast(loc, this);
                 arity--;
 
                 while (arity > 0)
                 {
-                    res -= stack.Pop().Cast(loc, this);
+                    res -= stack.Pop().TryCast(loc, this);
                     arity--;
                 }
             }

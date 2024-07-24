@@ -14,7 +14,7 @@ public class MethodType : Type<Method>
         var arity = args.Count;
         var splat = args.IsSplat;
         
-        if (!splat && arity < m.Args.Length)
+        if (!splat && arity < m.MinArgCount)
         {
             throw new EmitError(loc, $"Not enough arguments: {m}");
         }

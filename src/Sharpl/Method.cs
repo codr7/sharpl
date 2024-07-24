@@ -9,17 +9,20 @@ public readonly struct Method
     public readonly string[] Args;
     public readonly BodyType Body;
     public readonly string Name;
+    public readonly int MinArgCount;
 
     public Method(string name, string[] args, BodyType body)
     {
         Name = name;
         Args = args;
+        MinArgCount = args.Count((a) => !a.EndsWith('?'));
         Body = body;
+
     }
 
     public void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        if (arity < Args.Length) {
+        if (arity < MinArgCount) {
             throw new EvalError(loc, $"Not enough arguments: {this}");
         }
         

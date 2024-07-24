@@ -194,10 +194,16 @@ For others; like arrays and maps; two values may well be equal despite having di
 `F`
 
 
-## atomic types
+## types
+
+### nil
+The `Nil` type has one value, `_`; which really represents the absence of a value.
+
+### bits
+The `Bit` type has two values, `T` and `F`.
 
 ### symbols
-Identifiers turn into symbols when quoted.
+Symbols may be created by quoting identifiers.
 
 ```
 (= (Symbol 'foo 42) 'foo42)

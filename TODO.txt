@@ -11,9 +11,13 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 * add range method
+** returns iter
 ** add Range type
+** add Type.range(start, end, stride)
+** implement for Int/fix
+** rename Iters/IntRange.
+** add Iters/FixRange
 ** start, optional end (exclusive) & stride
-** return iter
 ** make Int non-iterable
 
 (range 0 _ 5)

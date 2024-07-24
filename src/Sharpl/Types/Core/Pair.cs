@@ -1,13 +1,10 @@
 namespace Sharpl.Types.Core;
 
-using Sharpl.Forms;
 using Sharpl.Iters.Core;
 using Sharpl.Libs;
-using System.Formats.Tar;
-using System.Runtime.CompilerServices;
 using System.Text;
 
-public class PairType : Type<(Value, Value)>, ComparableTrait, IterableTrait
+public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
 {    
     public static Value Update(Loc loc, Value target, Value value, int i) {
         if (i == 0) {
@@ -60,18 +57,18 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterableTrait
                 {
                     var t = target;
 
-                    for (var i = stack.Pop().Cast(loc, Core.Int); i >= 0; i--)
+                    for (var i = stack.Pop().TryCast(loc, Core.Int); i >= 0; i--)
                     {
                         switch (i)
                         {
                             case 0:
-                                stack.Push(target.Cast(loc, this).Item1);
+                                stack.Push(target.TryCast(loc, this).Item1);
                                 break;
                             case 1:
-                                stack.Push(target.Cast(loc, this).Item2);
+                                stack.Push(target.TryCast(loc, this).Item2);
                                 break;
                             default:
-                                t = target.Cast(loc, this).Item2;
+                                t = target.TryCast(loc, this).Item2;
                                 break;
                         }
                     }
@@ -81,7 +78,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterableTrait
             case 2:
                 {
                     var v = stack.Pop();
-                    var i = stack.Pop().Cast(loc, Core.Int);
+                    var i = stack.Pop().TryCast(loc, Core.Int);
                     stack.Push(Update(loc, target, v, i));
                     break;
                 }

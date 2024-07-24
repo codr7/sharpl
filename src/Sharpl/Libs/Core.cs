@@ -280,7 +280,7 @@ public class Core : Lib
          {
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
-                 vm.Emit(Ops.Benchmark.Make(n.Cast(loc, Core.Int)));
+                 vm.Emit(Ops.Benchmark.Make(n.TryCast(loc, Core.Int)));
                  args.Emit(vm);
                  vm.Emit(Ops.Stop.Make());
              }
@@ -515,7 +515,7 @@ public class Core : Lib
         {
             var v = stack.Pop();
 
-            if (v.Type is SequenceTrait st)
+            if (v.Type is SeqTrait st)
             {
                 stack.Push(Core.Int, st.Length(v));
             }
@@ -615,7 +615,7 @@ public class Core : Lib
 
                 if (vm.Env.Find(nf.Name) is Value v)
                 {
-                    lib = v.Cast(loc, Core.Lib);
+                    lib = v.TryCast(loc, Core.Lib);
                 }
                 else
                 {
@@ -649,7 +649,7 @@ public class Core : Lib
                 {
                     if (vm.Eval(pf, args) is Value p)
                     {
-                        vm.Load(p.Cast(pf.Loc, Core.String));
+                        vm.Load(p.TryCast(pf.Loc, Core.String));
                     }
                     else
                     {
@@ -692,6 +692,33 @@ public class Core : Lib
              done.PC = vm.EmitPC;
          });
 
+        BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) => {
+            Value max = Value.Nil, min = Value.Nil, stride = Value.Nil;
+            AnyType t = Nil;
+            stack.Reverse(arity);
+
+            switch (arity) {
+                case 1:
+                    max = stack.Pop();
+                    t = (max.Type == Nil) ? t : max.Type;
+                    break;
+                case 2:
+                    min = stack.Pop();
+                    t = (min.Type == Nil || t != Nil) ? t : min.Type;
+                    goto case 1;
+                case 3:
+                    stride = stack.Pop();
+                    t = (stride.Type == Nil || t != Nil) ? t : stride.Type;
+                    goto case 2;
+            }
+
+            if (t is RangeTrait rt) {
+                stack.Push(Core.Iter, rt.CreateRange(loc, min, max, stride));
+            } else {
+                throw new EvalError(loc, $"Invalid range type: {t}");
+            }
+        });
+
         BindMacro("return", [], (loc, target, vm, args) =>
         {
             UserMethod? m = null;
@@ -726,7 +753,7 @@ public class Core : Lib
                         }
                     }
 
-                    if (!splat && c.Args.Length < m.Args.Length)
+                    if (!splat && c.Args.Length < m.MinArgCount)
                     {
                         throw new EmitError(loc, $"Not enough arguments: {m}");
                     }
@@ -773,9 +800,9 @@ public class Core : Lib
 
         BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
         {
-            var n = stack.Pop().Cast(loc, Core.String);
-            var o = stack.Pop().Cast(loc, Core.String);
-            var i = stack.Pop().Cast(loc, Core.String);
+            var n = stack.Pop().TryCast(loc, Core.String);
+            var o = stack.Pop().TryCast(loc, Core.String);
+            var i = stack.Pop().TryCast(loc, Core.String);
             o = o.Replace(" ", "\\s*");
             stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
         });

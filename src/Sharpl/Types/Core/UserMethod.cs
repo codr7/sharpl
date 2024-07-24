@@ -17,7 +17,7 @@ public class UserMethodType : Type<UserMethod>
         var arity = args.Count;
         var splat = args.IsSplat;
         
-        if (!splat && arity < m.Args.Length)
+        if (!splat && arity < m.MinArgCount)
         {
             throw new EmitError(loc, $"Not enough arguments: {m}");
         }

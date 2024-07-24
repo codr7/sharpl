@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Transactions;
 using Sharpl;
 
 public interface Iter : IEnumerable<Value>
@@ -8,7 +7,7 @@ public interface Iter : IEnumerable<Value>
     {
 #pragma warning disable CS8629
         public Value Current => (Value)current;
-        object System.Collections.IEnumerator.Current => (Value)current;
+        object IEnumerator.Current => (Value)current;
 #pragma warning restore CS8629
 
         private Value? current;

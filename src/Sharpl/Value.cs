@@ -34,14 +34,19 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         return (T)Data;
     }
 
-    public T Cast<T>(Loc loc, Type<T> type)
+    public int CompareTo(Value other)
     {
-        if (Type != type)
+        if (other.Type != Type)
         {
-            throw new EvalError(loc, $"Type mismatch: {Type}/{type}");
+            return Type.Name.CompareTo(other.Type.Name);
         }
 
-        return (T)Data;
+        if (Type is ComparableTrait ct)
+        {
+            return ComparableTrait.OrderInt(ct.Compare(this, other));
+        }
+
+        throw new Exception("Not comparable");
     }
 
     public Value Copy()
@@ -98,18 +103,18 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         return res.ToString();
     }
 
-    public int CompareTo(Value other)
+    public T? TryCast<T>(Type<T> type)
     {
-        if (other.Type != Type)
+        return (Type == type) ? (T)Data : default;
+    }
+
+    public T TryCast<T>(Loc loc, Type<T> type)
+    {
+        if (Type != type)
         {
-            return Type.Name.CompareTo(other.Type.Name);
+            throw new EvalError(loc, $"Type mismatch: {Type}/{type}");
         }
 
-        if (Type is ComparableTrait ct)
-        {
-            return ComparableTrait.OrderInt(ct.Compare(this, other));
-        }
-
-        throw new Exception("Not comparable");
+        return (T)Data;
     }
 }

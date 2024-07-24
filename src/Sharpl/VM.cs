@@ -20,7 +20,7 @@ public class VM
         public int MaxOps = 2048;
         public int MaxRegisters = 1024;
         public int MaxSplats = 16;
-        public int MaxStackSize = 32;
+        public int MaxStackSize = 64;
 
         public C() { }
     };
@@ -201,7 +201,7 @@ public class VM
         while (true)
         {
             var op = code[PC];
-            //Console.WriteLine(op);
+            Console.WriteLine(op);
 
             switch (op.Type)
             {
@@ -323,7 +323,7 @@ public class VM
                             arity += splats.Pop();
                         }
 
-                        if (arity < bindOp.Target.Args.Length)
+                        if (arity < bindOp.Target.MinArgCount)
                         {
                             throw new EvalError(bindOp.Loc, $"Not enough arguments: {bindOp.Target} {arity}");
                         }
@@ -396,7 +396,7 @@ public class VM
                         var createOp = (Ops.CreateIter)op.Data;
                         var v = stack.Pop();
 
-                        if (v.Type is IterableTrait it)
+                        if (v.Type is IterTrait it)
                         {
                             Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v)));
                         }
@@ -500,7 +500,7 @@ public class VM
 
                         if (stack.Pop() is Value p)
                         {
-                            sr = new StreamReader(Path.Combine(loadPath, p.Cast(openOp.Loc, Core.String)));
+                            sr = new StreamReader(Path.Combine(loadPath, p.TryCast(openOp.Loc, Core.String)));
                             SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.InputStream, sr));
                         }
                         else
@@ -574,6 +574,7 @@ public class VM
                     {
                         var v = stack.Pop();
                         var k = stack.Pop();
+                        Console.WriteLine("K " + k + " V " + v);
                         stack.Peek().Cast(Core.Map)[k] = v;
                         PC++;
                         break;
@@ -597,7 +598,7 @@ public class VM
                         {
                             var tv = stack.Pop();
 
-                            if (tv.Type is Types.Core.IterableTrait tt)
+                            if (tv.Type is Types.Core.IterTrait tt)
                             {
                                 if (splats.Count == 0)
                                 {

@@ -7,6 +7,7 @@ namespace Sharpl;
 public class UserMethod
 {
     public readonly (string, int)[] Args;
+    public readonly int MinArgCount;
     public readonly (string, int, Register)[] Closure;
     public readonly Dictionary<int, Value> ClosureValues = new Dictionary<int, Value>();
     public readonly Loc Loc;
@@ -30,6 +31,7 @@ public class UserMethod
         }).ToArray();
 
         Args = args;
+        MinArgCount = args[0..(vararg ? ^1 : ^0)].Count((a) => !a.Item1.EndsWith('?'));
         Vararg = vararg;
     }
 
@@ -37,6 +39,7 @@ public class UserMethod
     {
         for (var i = Args.Length - 1; i >= 0; i--)
         {
+            if (i >= arity) { break; }
             if (Args[i].Item2 == -1) { continue; }
 
             if (Vararg && i == Args.Length - 1)

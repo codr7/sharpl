@@ -2,7 +2,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class NilType : Type<bool>, IterableTrait
+public class NilType : Type<bool>, IterTrait
 {
     public NilType(string name) : base(name) { }
 
