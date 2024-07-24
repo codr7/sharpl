@@ -23,7 +23,8 @@ public class FixType : ComparableType<ulong>, NumericTrait, RangeTrait
         ulong? minVal = min.TryCast(this);
         ulong? maxVal = max.TryCast(this);
         ulong strideVal = stride.Cast(this);
-        return new Iters.Core.FixRange(minVal ?? Fix.Make(0, 0), maxVal, strideVal);
+
+        return new Iters.Core.FixRange(minVal ?? Fix.Make(1, 0), maxVal, strideVal);
     }
 
     public override void Dump(Value value, StringBuilder result)

@@ -233,6 +233,13 @@ Negative integers lack syntax, and must be created by way of subtraction.
 ```
 `-42`
 
+`range` may be used to create a new integer range.
+
+```
+[(range 1 10 2)*]
+```
+`[1 3 5 7 9]`
+
 ### fixpoints
 Decimal expressions are read as fixpoint values with specified number of decimals.<br/>
 Like integers, fixpoints support the regular arithmetic operations.
@@ -255,6 +262,13 @@ Also like integers; negative fixpoints lack syntax, and must be created by way o
 (- 1.234)
 ```
 `-1.234`
+
+`range` may be used to create a new fixpoint range.
+
+```
+[(range 1.1 1.4 .1)*]
+```
+`[1.1 1.2 1.3 1.4]`
 
 ## composite types
 
@@ -306,12 +320,6 @@ Or by calling the constructor explicitly.
 (reduce + [1 2 3] 0)
 ```
 `6`
-
-Which could also be expressed in a more condensed form thanks to the fact that integers are iterable.
-
-```
-(reduce + 4 0)
-```
 
 ## libraries
 `lib` may be used to define/extend libraries.

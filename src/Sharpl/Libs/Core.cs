@@ -695,16 +695,15 @@ public class Core : Lib
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) => {
             Value max = Value.Nil, min = Value.Nil, stride = Value.Nil;
             AnyType t = Nil;
-            stack.Reverse(arity);
 
             switch (arity) {
                 case 1:
-                    max = stack.Pop();
-                    t = (max.Type == Nil) ? t : max.Type;
-                    break;
-                case 2:
                     min = stack.Pop();
                     t = (min.Type == Nil || t != Nil) ? t : min.Type;
+                    break;
+                case 2:
+                    max = stack.Pop();
+                    t = (max.Type == Nil) ? t : max.Type;
                     goto case 1;
                 case 3:
                     stride = stack.Pop();

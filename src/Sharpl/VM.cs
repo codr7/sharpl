@@ -201,7 +201,7 @@ public class VM
         while (true)
         {
             var op = code[PC];
-            Console.WriteLine(op);
+            //Console.WriteLine(op);
 
             switch (op.Type)
             {
@@ -574,7 +574,6 @@ public class VM
                     {
                         var v = stack.Pop();
                         var k = stack.Pop();
-                        Console.WriteLine("K " + k + " V " + v);
                         stack.Peek().Cast(Core.Map)[k] = v;
                         PC++;
                         break;
