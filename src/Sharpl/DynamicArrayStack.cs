@@ -40,7 +40,8 @@ public class DynamicArrayStack<T> : IEnumerable<T>
 
     public void Delete(int i)
     {
-        items.AsSpan(i + 1, count - i - 1).CopyTo(items.AsSpan(i));
+        //items.AsSpan(i + 1, count - i - 1).CopyTo(items.AsSpan(i));
+        Array.ConstrainedCopy(items, i + 1, items, i, count - i - 1);
         count--;
     }
 
@@ -60,7 +61,8 @@ public class DynamicArrayStack<T> : IEnumerable<T>
 
         if (i < count)
         {
-            items.AsSpan(i, count - 1).CopyTo(items.AsSpan(i + 1));
+            //items.AsSpan(i, count - 1).CopyTo(items.AsSpan(i + 1));
+            Array.ConstrainedCopy(items, i, items, i+1, count - i);
         }
 
         items[i] = it;
