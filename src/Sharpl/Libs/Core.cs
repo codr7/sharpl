@@ -275,7 +275,7 @@ public class Core : Lib
             }
         });
 
-        BindMacro("benchmark", ["n"], (loc, target, vm, args) =>
+        BindMacro("bench", ["n"], (loc, target, vm, args) =>
          {
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {

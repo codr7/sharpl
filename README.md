@@ -389,7 +389,7 @@ Sharpl.EvalError: repl@1:2 Check failed: expected T, actual 0!
 Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
 
 ## benchmarks
-`benchmark`may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
+`bench`may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
 
 ```
 dotnet run -c Release benchmarks.sl
