@@ -19,7 +19,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 14;
+    public static readonly int VERSION = 15;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
@@ -56,6 +56,7 @@ public class VM
         Readers.Quote.Instance,
         Readers.Splat.Instance,
         Readers.String.Instance,
+        Readers.Unquote.Instance,
 
         Readers.Id.Instance
     ];

@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v14
+sharpl v15
 
    1 (say 'hello)
    2 
@@ -177,6 +177,14 @@ Methods may be composed using `&`.
 
 ## quoting
 Expressions may be quoted by prefixing with `'`.
+
+### unquoting
+`,` may be used to temporarily decrease quoting depth while evaluating the next form.
+
+```
+(let [bar 42]
+  '[foo ,bar baz])
+```
 
 ## value and identity
 `=` may be used to compare values deeply, while `is` compares identity.<br/>

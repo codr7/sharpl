@@ -10,13 +10,11 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* add unquote
-** add form/reader
-** add test
-** add readme
+* add splat unquote
 
-(let [bar 42]
-  '[foo ,bar baz])
+* add gensym support
+** use constructor
+** add sym method to create syms
 
 * implement all fix fast paths
 ** add/mul/div
