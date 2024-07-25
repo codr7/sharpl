@@ -57,9 +57,9 @@ public class ArrayStack<T> : IEnumerable<T>, IList<T>
         items.Add(it);
     }
 
-    public void Reverse(int n)
+    public void Reverse(int i, int n)
     {
-        items.Reverse(Count - n, n);
+        items.Reverse(i, n);
     }
 
     public void Set(int i, T value)

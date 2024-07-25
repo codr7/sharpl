@@ -7,4 +7,9 @@ public class Stack : ArrayStack<Value>
     {
         this.Push(Value.Make(type, data));
     }
+
+    public void Reverse(int n)
+    {
+        Reverse(Count - n, n);
+    }    
 }
