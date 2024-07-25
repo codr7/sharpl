@@ -2,11 +2,11 @@ namespace Sharpl;
 
 public class OrderedMap<K, V> where K : IComparable<K>
 {
-    private readonly DynamicArrayStack<(K, V)> items;
+    private readonly SList<(K, V)> items;
 
     public OrderedMap(int capacity)
     {
-        items = new DynamicArrayStack<(K, V)>(capacity);
+        items = new SList<(K, V)>(capacity);
     }
 
     public V? this[K key]
@@ -24,7 +24,7 @@ public class OrderedMap<K, V> where K : IComparable<K>
 
     public void Delete(int i)
     {
-        items.Delete(i);
+        items.RemoveAt(i);
     }
 
     public (int, bool) Find(K key)
@@ -78,7 +78,7 @@ public class OrderedMap<K, V> where K : IComparable<K>
         items.Insert(i, (key, value));
     }
 
-    public (K, V)[] Items { get => items.Items; }
+    public (K, V)[] Items { get => items.ToArray(); }
 
     public V? Remove(K key) {
         var (i, ok) = Find(key);

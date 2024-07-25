@@ -3,26 +3,41 @@ using System.Text;
 
 namespace Sharpl;
 
-public class ArrayStack<T> : IEnumerable<T>, IList<T>
+public class SList<T> : IEnumerable<T>, IList<T>
 {
     private readonly List<T> items = new List<T>();
- 
+
     public T this[int i]
     {
-        get => Get(i);
-        set => Set(i, value);
+        get => items[i];
+        set => items[i] = value;
     }
 
     public int Count { get { return items.Count; } }
 
-    public ArrayStack(int capacity)
+    public SList(int capacity)
     {
         items.EnsureCapacity(capacity);
+    }
+
+    public void Add(T item)
+    {
+        items.Add(item);
     }
 
     public void Clear()
     {
         items.Clear();
+    }
+
+    public bool Contains(T it)
+    {
+        return items.Contains(it);
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        items.CopyTo(array, arrayIndex);
     }
 
     public void Drop(int n)
@@ -32,15 +47,30 @@ public class ArrayStack<T> : IEnumerable<T>, IList<T>
 
     public bool Empty { get { return items.Count == 0; } }
 
-    public bool IsReadOnly => throw new NotImplementedException();
-
-    public T Get(int i)
+    public IEnumerator<T> GetEnumerator()
     {
-        return items[i];
+        return items.GetEnumerator();
     }
 
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return items.GetEnumerator();
+    }
+
+    public int IndexOf(T it)
+    {
+        return items.IndexOf(it);
+    }
+
+    public void Insert(int i, T it)
+    {
+        items.Insert(i, it);
+    }
+
+    public bool IsReadOnly => throw new NotImplementedException();
+
     public T Peek(int offset = 0)
-    {   
+    {
         return items[items.Count - 1 - offset];
     }
 
@@ -57,14 +87,19 @@ public class ArrayStack<T> : IEnumerable<T>, IList<T>
         items.Add(it);
     }
 
+    public bool Remove(T item)
+    {
+        return items.Remove(item);
+    }
+
+    public void RemoveAt(int i)
+    {
+        items.RemoveAt(i);
+    }
+
     public void Reverse(int i, int n)
     {
         items.Reverse(i, n);
-    }
-
-    public void Set(int i, T value)
-    {
-        items[i] = value;
     }
 
     public override string ToString()
@@ -99,50 +134,5 @@ public class ArrayStack<T> : IEnumerable<T>, IList<T>
     public void Trunc(int n)
     {
         items.RemoveRange(n, items.Count - n);
-    }
-
-    public IEnumerator<T> GetEnumerator()
-    {
-        return items.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return items.GetEnumerator();
-    }
-
-    public int IndexOf(T it)
-    {
-        return items.IndexOf(it);
-    }
-
-    public void Insert(int i, T it)
-    {
-        items.Insert(i, it);
-    }
-
-    public void RemoveAt(int i)
-    {
-        items.RemoveAt(i);
-    }
-
-    public void Add(T item)
-    {
-        Push(item);
-    }
-
-    public bool Contains(T it)
-    {
-        return items.Contains(it);
-    }
-
-    public void CopyTo(T[] array, int arrayIndex)
-    {
-        items.CopyTo(array, arrayIndex);
-    }
-
-    public bool Remove(T item)
-    {
-        return items.Remove(item);
     }
 }

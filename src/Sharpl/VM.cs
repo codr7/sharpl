@@ -38,16 +38,16 @@ public class VM
     public PC PC = 0;
     public readonly Term Term = new Term();
 
-    private readonly ArrayStack<Call> calls;
-    private readonly ArrayStack<Op> code;
+    private readonly SList<Call> calls;
+    private readonly SList<Op> code;
     private int definitionCount = 0;
     private Env? env;
-    private readonly ArrayStack<(int, int)> frames;
+    private readonly SList<(int, int)> frames;
     private readonly List<Label> labels = new List<Label>();
     private string loadPath = "";
     private int nextRegisterIndex = 0;
     private Value[] registers;
-    private ArrayStack<int> splats;
+    private SList<int> splats;
     private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
 
     private Reader[] readers = [
@@ -70,11 +70,11 @@ public class VM
     public VM(C config)
     {
         Config = config;
-        calls = new ArrayStack<Call>(config.MaxCalls);
-        code = new ArrayStack<Op>(config.MaxOps);
-        frames = new ArrayStack<(int, int)>(config.MaxFrames);
+        calls = new SList<Call>(config.MaxCalls);
+        code = new SList<Op>(config.MaxOps);
+        frames = new SList<(int, int)>(config.MaxFrames);
         registers = new Value[config.MaxRegisters];
-        splats = new ArrayStack<int>(config.MaxSplats);
+        splats = new SList<int>(config.MaxSplats);
         nextRegisterIndex = 0;
 
         UserLib.Init(this);
