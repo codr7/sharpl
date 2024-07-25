@@ -19,19 +19,19 @@ public abstract class Form : Emitter
 
     public virtual void CollectIds(HashSet<string> result) { }
 
-    public abstract void Emit(VM vm, Form.Queue args, int quoted);
+    public abstract void Emit(VM vm, Queue args, int quoted);
 
-    public void Emit(VM vm, Form.Queue args)
+    public void Emit(VM vm, Queue args)
     {
         Emit(vm, args, 0);
     }
 
-    public virtual void EmitCall(VM vm, Form.Queue args)
+    public virtual void EmitCall(VM vm, Queue args, int quoted)
     {
         var arity = args.Count;
-        args.Emit(vm);
-        Emit(vm, new Form.Queue());
-        vm.Emit(Ops.CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
+        args.Emit(vm, quoted);
+        Emit(vm, new Queue());
+        vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public virtual Value? GetValue(VM vm)
@@ -70,13 +70,13 @@ public abstract class Form : Emitter
         public int Count { get { return items.Count; } }
 
 
-        public void Emit(VM vm)
+        public void Emit(VM vm, int quoted = 0)
         {
             while (Count > 0)
             {
                 if (TryPop() is Form v)
                 {
-                    v.Emit(vm, this);
+                    v.Emit(vm, this, quoted);
                 }
             }
         }

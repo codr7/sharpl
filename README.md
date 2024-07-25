@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v15
+sharpl v16
 
    1 (say 'hello)
    2 
@@ -185,6 +185,16 @@ Expressions may be quoted by prefixing with `'`.
 (let [bar 42]
   '[foo ,bar baz])
 ```
+
+#### splat
+Unquoting may be combined with splat to unquote sequences in place.
+
+```
+(let [bar 42 
+      baz "abc"]
+  '[foo ,[bar baz]* qux])
+```
+`['foo 42 "abc" 'qux]`
 
 ## value and identity
 `=` may be used to compare values deeply, while `is` compares identity.<br/>

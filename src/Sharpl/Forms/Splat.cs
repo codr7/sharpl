@@ -14,6 +14,7 @@ public class Splat : Form
         var targetArgs = new Form.Queue();
         targetArgs.Push(Target);
         targetArgs.Emit(vm);
+        
         vm.Emit(Ops.Splat.Make(Loc));
     }
 

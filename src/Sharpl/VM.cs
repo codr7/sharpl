@@ -19,7 +19,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 15;
+    public static readonly int VERSION = 16;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
@@ -305,25 +305,24 @@ public class VM
                     }
                 case Op.T.CallTail:
                     {
-                        var bindOp = (Ops.CallTail)op.Data;
-                        var arity = bindOp.Arity;
+                        var callOp = (Ops.CallTail)op.Data;
+                        var arity = callOp.Arity;
 
-                        if (bindOp.Splat)
+                        if (callOp.Splat)
                         {
                             arity += splats.Pop();
                         }
 
-                        if (arity < bindOp.Target.MinArgCount)
+                        if (arity < callOp.Target.MinArgCount)
                         {
-                            throw new EvalError(bindOp.Loc, $"Not enough arguments: {bindOp.Target} {arity}");
+                            throw new EvalError(callOp.Loc, $"Not enough arguments: {callOp.Target} {arity}");
                         }
 
-                        var frameCount = frames.Count - calls.Peek().FrameOffset;
                         var call = calls.Peek();
                         frames.Trunc(call.FrameOffset);
-                        bindOp.Target.BindArgs(this, bindOp.Arity, stack);
+                        callOp.Target.BindArgs(this, callOp.Arity, stack);
 #pragma warning disable CS8629
-                        PC = (int)bindOp.Target.StartPC;
+                        PC = (int)callOp.Target.StartPC;
 #pragma warning restore CS8629
                         break;
                     }

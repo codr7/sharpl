@@ -1,7 +1,6 @@
 namespace Sharpl.Forms;
 
 using System.Text;
-using Sharpl.Libs;
 
 public class Array : Form
 {
@@ -14,13 +13,10 @@ public class Array : Form
 
     public override void CollectIds(HashSet<string> result)
     {
-        foreach (var f in Items)
-        {
-            f.CollectIds(result);
-        }
+        foreach (var f in Items) { f.CollectIds(result); }
     }
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
+    public override void Emit(VM vm, Queue args, int quoted)
     {
         var splat = false;
 
@@ -35,15 +31,18 @@ public class Array : Form
 
         if (splat)
         {
-            args.PushFirst(new Call(Loc, new Id(Loc, "Array"), Items));
+            var its = Items;
+            if (quoted > 0) { its = its.Select(it => new Quote(Loc, it, quoted)).ToArray(); }
+            Form cf = new Call(Loc, new Id(Loc, "Array"), its);
+            args.PushFirst(cf);
         }
         else
         {
-            var itemArgs = new Form.Queue();
+            var itemArgs = new Queue();
 
             vm.Emit(Ops.CreateArray.Make(Items.Length));
             var i = 0;
-
+   
             foreach (var f in Items)
             {
                 f.Emit(vm, itemArgs, quoted);

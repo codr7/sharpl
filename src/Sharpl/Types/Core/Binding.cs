@@ -4,10 +4,10 @@ public class BindingType : Type<Register>
 {
     public BindingType(string name) : base(name) { }
     
-    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args) {
+    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args, int quoted) {
         var arity = args.Count;
         var splat = args.IsSplat;
-        args.Emit(vm);
+        args.Emit(vm, quoted);
         var v = target.Cast(this);
         vm.Emit(Ops.CallRegister.Make(loc, v, arity, splat, vm.NextRegisterIndex));
     }

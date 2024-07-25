@@ -12,3 +12,8 @@
 (check ['foo 42 'baz]
   (let [bar 42]
     '[foo ,bar baz]))
+
+(check ['foo 42 "abc" 'qux]
+  (let [bar 42 
+      baz "abc"]
+  '[foo ,[bar baz]* qux]))

@@ -9,14 +9,14 @@ public class Literal : Form
         Value = value;
     }
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
+    public override void Emit(VM vm, Queue args, int quoted)
     {
         Value.Emit(Loc, vm, args);
     }
 
-    public override void EmitCall(VM vm, Form.Queue args)
+    public override void EmitCall(VM vm, Queue args, int quoted)
     {
-        Value.EmitCall(Loc, vm, args);
+        Value.EmitCall(Loc, vm, args, quoted);
     }
 
     public override Value? GetValue(VM vm) { 

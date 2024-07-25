@@ -22,9 +22,9 @@ public class And : Form
         vm.Emit(Ops.Push.Make(vm.Compose(Loc, Left, Right, new Queue())));
     }
 
-    public override void EmitCall(VM vm, Queue args)
+    public override void EmitCall(VM vm, Queue args, int quoted)
     {
-        vm.Compose(Loc, Left, Right, args).EmitCall(Loc, vm, args);
+        vm.Compose(Loc, Left, Right, args).EmitCall(Loc, vm, args, quoted);
     }
 
     public override string ToString()

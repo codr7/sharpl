@@ -15,13 +15,15 @@ public class Unquote : Form
         Target.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
+    public override void Emit(VM vm, Queue args, int quoted)
     {
         Target.Emit(vm, args, quoted - 1);
     }
 
+    public override bool IsSplat => Target.IsSplat;
+
     public override string ToString()
     {
-        return $",{Target}";
+        return $",({Target})";
     }
 }
