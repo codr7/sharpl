@@ -68,7 +68,7 @@ New dynamically scoped bindings may be created using `var`.
 `if` may be used to conditionally evaluate a block of code.
 
 ```
-  (if T (say 'is-true))
+(if T (say 'is-true))
 ```
 ```
 is-true
@@ -77,7 +77,7 @@ is-true
 `else` may be used to specify an else-clause.
 
 ```
-  (else F 1 2)
+(else F 1 2)
 ```
 `2`
 
@@ -109,7 +109,7 @@ External bindings are captured at method definition time.
   (let [n max]
     (^[] (dec n))))
 
-(define foo (make-countdown 42))
+(var foo (make-countdown 42))
 
 (foo)
 ```
@@ -326,7 +326,7 @@ Or by calling the constructor explicitly.
 
 ```
 (lib foo
-  (define bar 42))
+  (var bar 42))
 
 foo/bar
 ```
@@ -336,7 +336,7 @@ When called with one argument, it specifies the current library for the entire f
 
 ```
 (lib foo)
-(define bar 42)
+(var bar 42)
 ```
 
 And when called without arguments, it returns the current library.
