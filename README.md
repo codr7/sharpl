@@ -186,7 +186,7 @@ Expressions may be quoted by prefixing with `'`.
 ```
 
 #### splat
-Unquoting may be combined with splat to unquote sequences in place.
+Unquoting may be combined with `*` to expand in place.
 
 ```
 (let [bar 42 
