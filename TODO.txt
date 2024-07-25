@@ -59,10 +59,7 @@ Foo/bar
 
 * rename length to len
 * rename Symbol to Sym
-* rename String to Str
-** including lib
 * rename benchmark to bench
-* bump version
 
 * --
 
