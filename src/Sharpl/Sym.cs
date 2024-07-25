@@ -2,10 +2,10 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Sharpl;
 
-public class Symbol {
+public class Sym {
     public readonly string Name;
 
-    public Symbol(string name) {
+    public Sym(string name) {
         Name = name;
     }
 

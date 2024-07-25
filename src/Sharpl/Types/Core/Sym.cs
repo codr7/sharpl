@@ -3,9 +3,9 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class SymbolType : Type<Symbol>, ComparableTrait
+public class SymType : Type<Sym>, ComparableTrait
 {
-    public SymbolType(string name) : base(name) { }
+    public SymType(string name) : base(name) { }
     
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {

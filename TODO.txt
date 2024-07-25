@@ -44,7 +44,6 @@ Foo/bar
 (Str Foo/bar)
 
 * rename length to len
-* rename Symbol to Sym
 * rename benchmark to bench
 
 * add span type

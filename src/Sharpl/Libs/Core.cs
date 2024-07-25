@@ -2,7 +2,6 @@ namespace Sharpl.Libs;
 
 using Sharpl.Types.Core;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -23,7 +22,7 @@ public class Core : Lib
     public static readonly NilType Nil = new NilType("Nil");
     public static readonly PairType Pair = new PairType("Pair");
     public static readonly StringType String = new StringType("String");
-    public static readonly SymbolType Symbol = new SymbolType("Symbol");
+    public static readonly SymType Sym = new SymType("Sym");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
 
     public Core() : base("core", null, [])
@@ -41,7 +40,7 @@ public class Core : Lib
         BindType(Method);
         BindType(Pair);
         BindType(String);
-        BindType(Symbol);
+        BindType(Sym);
         BindType(UserMethod);
 
         Bind("F", Value.F);
@@ -409,7 +408,7 @@ public class Core : Lib
 
         BindMacro("eval", [], (loc, target, vm, args) =>
         {
-            var stack = new Stack(vm.Config.MaxStackSize);
+            var stack = new Stack();
             vm.Eval(args, stack);
 
             foreach (var it in stack.Reverse())

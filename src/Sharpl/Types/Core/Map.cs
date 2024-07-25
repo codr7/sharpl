@@ -13,7 +13,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        var m = new OrderedMap<Value, Value>(arity / 2);
+        var m = new OrderedMap<Value, Value>();
 
         for (var i = 0; i < arity; i++)
         {

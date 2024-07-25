@@ -13,20 +13,14 @@ public class VM
 {
     public struct C
     {
-        public int MaxArgs = 16;
-        public int MaxCalls = 128;
         public int MaxDefinitions = 128;
-        public int MaxFrames = 248;
-        public int MaxOps = 2048;
         public int MaxRegisters = 1024;
-        public int MaxSplats = 16;
-        public int MaxStackSize = 64;
-
+ 
         public C() { }
     };
 
     public static readonly C DEFAULT_CONFIG = new C();
-    public static readonly int VERSION = 13;
+    public static readonly int VERSION = 14;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
@@ -38,17 +32,17 @@ public class VM
     public PC PC = 0;
     public readonly Term Term = new Term();
 
-    private readonly SList<Call> calls;
-    private readonly SList<Op> code;
+    private readonly SList<Call> calls = new SList<Call>();
+    private readonly SList<Op> code = new SList<Op>();
     private int definitionCount = 0;
     private Env? env;
-    private readonly SList<(int, int)> frames;
+    private readonly SList<(int, int)> frames = new SList<(int, int)>();
     private readonly List<Label> labels = new List<Label>();
     private string loadPath = "";
     private int nextRegisterIndex = 0;
     private Value[] registers;
-    private SList<int> splats;
-    private Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+    private SList<int> splats = new SList<int>();
+    private Dictionary<string, Sym> syms = new Dictionary<string, Sym>();
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -70,11 +64,7 @@ public class VM
     public VM(C config)
     {
         Config = config;
-        calls = new SList<Call>(config.MaxCalls);
-        code = new SList<Op>(config.MaxOps);
-        frames = new SList<(int, int)>(config.MaxFrames);
         registers = new Value[config.MaxRegisters];
-        splats = new SList<int>(config.MaxSplats);
         nextRegisterIndex = 0;
 
         UserLib.Init(this);
@@ -216,7 +206,7 @@ public class VM
                     {
                         var benchmarkOp = (Ops.Benchmark)op.Data;
                         var bodyPC = PC + 1;
-                        var s = new Stack(Config.MaxStackSize);
+                        var s = new Stack();
 
                         for (var i = 0; i < benchmarkOp.N; i++)
                         {
@@ -411,7 +401,7 @@ public class VM
                 case Op.T.CreateMap:
                     {
                         var createOp = (Ops.CreateMap)op.Data;
-                        stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>(createOp.Length)));
+                        stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>()));
                         PC++;
                         break;
                     }
@@ -634,7 +624,7 @@ public class VM
 
     public void Eval(PC startPC)
     {
-        Eval(startPC, new Stack(Config.MaxStackSize));
+        Eval(startPC, new Stack());
     }
 
     public void Eval(Emitter target, Form.Queue args, Stack stack)
@@ -650,7 +640,7 @@ public class VM
 
     public Value? Eval(Emitter target, Form.Queue args)
     {
-        var stack = new Stack(Config.MaxStackSize);
+        var stack = new Stack();
         Eval(target, args, stack);
         return (stack.Count == 0) ? null : stack.Pop();
     }
@@ -687,15 +677,15 @@ public class VM
         return registers[RegisterIndex(frameOffset, index)];
     }
 
-    public Symbol GetSymbol(string name)
+    public Sym GetSymbol(string name)
     {
-        if (symbols.ContainsKey(name))
+        if (syms.ContainsKey(name))
         {
-            return symbols[name];
+            return syms[name];
         }
 
-        var s = new Symbol(name);
-        symbols[name] = s;
+        var s = new Sym(name);
+        syms[name] = s;
         return s;
     }
 
@@ -815,7 +805,7 @@ public class VM
         Term.Reset();
 
         var buffer = new StringBuilder();
-        var stack = new Stack(32);
+        var stack = new Stack();
         var loc = new Loc("repl");
         var bufferLines = 0;
 

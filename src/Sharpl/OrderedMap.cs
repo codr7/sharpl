@@ -2,12 +2,7 @@ namespace Sharpl;
 
 public class OrderedMap<K, V> where K : IComparable<K>
 {
-    private readonly SList<(K, V)> items;
-
-    public OrderedMap(int capacity)
-    {
-        items = new SList<(K, V)>(capacity);
-    }
+    private readonly SList<(K, V)> items = new SList<(K, V)>();
 
     public V? this[K key]
     {

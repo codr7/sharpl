@@ -15,11 +15,6 @@ public class SList<T> : IEnumerable<T>, IList<T>
 
     public int Count { get { return items.Count; } }
 
-    public SList(int capacity)
-    {
-        items.EnsureCapacity(capacity);
-    }
-
     public void Add(T item)
     {
         items.Add(item);

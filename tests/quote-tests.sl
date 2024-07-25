@@ -1,5 +1,5 @@
 (check 'foo42
-  (Symbol "foo" 42))
+  (Sym "foo" 42))
 
 (check (= 'foo 'foo))
 
