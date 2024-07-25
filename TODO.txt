@@ -18,6 +18,8 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** add/mul/div
 ** like sub
 
+* add user macros
+
 * add iter macro
 ** define usermethod like VM.Compose
 ** call body while T
