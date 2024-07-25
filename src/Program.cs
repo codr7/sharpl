@@ -2,7 +2,7 @@
 using Sharpl.Libs;
 using Ops = Sharpl.Ops;
 
-var vm = new VM(VM.DEFAULT_CONFIG);
+var vm = new VM(VM.DEFAULT);
 
 if (args.Length == 0) {
     vm.REPL();

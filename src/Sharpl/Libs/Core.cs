@@ -292,7 +292,7 @@ public class Core : Lib
         BindMacro("check", ["x"], (loc, target, vm, args) =>
          {
              var ef = args.Pop();
-            var emptyArgs = true;
+             var emptyArgs = true;
 
              if (!args.Empty)
              {
@@ -344,43 +344,6 @@ public class Core : Lib
             else
             {
                 throw new EmitError(loc, "Invalid target");
-            }
-        });
-
-        BindMacro("define", ["id", "value"], (loc, target, vm, args) =>
-        {
-            while (true)
-            {
-                var id = args.TryPop();
-
-                if (id is null)
-                {
-                    break;
-                }
-
-                if (id is Forms.Id idf)
-                {
-                    if (args.TryPop() is Form f)
-                    {
-                        if (f is Forms.Literal lit)
-                        {
-                            vm.Env[idf.Name] = lit.Value;
-                        }
-
-                        var v = new Form.Queue();
-                        v.Push(f);
-                        v.Emit(vm, args);
-                        vm.Define(idf.Name);
-                    }
-                    else
-                    {
-                        throw new EmitError(loc, "Missing value");
-                    }
-                }
-                else
-                {
-                    throw new EmitError(loc, $"Invalid binding: {id}");
-                }
             }
         });
 
@@ -691,11 +654,13 @@ public class Core : Lib
              done.PC = vm.EmitPC;
          });
 
-        BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) => {
+        BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
+        {
             Value max = Value.Nil, min = Value.Nil, stride = Value.Nil;
             AnyType t = Nil;
 
-            switch (arity) {
+            switch (arity)
+            {
                 case 1:
                     min = stack.Pop();
                     t = (min.Type == Nil || t != Nil) ? t : min.Type;
@@ -710,9 +675,12 @@ public class Core : Lib
                     goto case 2;
             }
 
-            if (t is RangeTrait rt) {
+            if (t is RangeTrait rt)
+            {
                 stack.Push(Core.Iter, rt.CreateRange(loc, min, max, stride));
-            } else {
+            }
+            else
+            {
                 throw new EvalError(loc, $"Invalid range type: {t}");
             }
         });
@@ -826,6 +794,43 @@ public class Core : Lib
             }
 
             Console.WriteLine(res.ToString());
+        });
+
+        BindMacro("var", ["id", "value"], (loc, target, vm, args) =>
+        {
+            while (true)
+            {
+                var id = args.TryPop();
+
+                if (id is null)
+                {
+                    break;
+                }
+
+                if (id is Forms.Id idf)
+                {
+                    if (args.TryPop() is Form f)
+                    {
+                        if (f is Forms.Literal lit)
+                        {
+                            vm.Env[idf.Name] = lit.Value;
+                        }
+
+                        var v = new Form.Queue();
+                        v.Push(f);
+                        v.Emit(vm, args);
+                        vm.Define(idf.Name);
+                    }
+                    else
+                    {
+                        throw new EmitError(loc, "Missing value");
+                    }
+                }
+                else
+                {
+                    throw new EmitError(loc, $"Invalid binding: {id}");
+                }
+            }
         });
     }
 }

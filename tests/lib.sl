@@ -3,4 +3,4 @@
 (check test
   (lib))
 
-(define foo 35)
+(var foo 35)

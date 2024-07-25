@@ -15,19 +15,19 @@
 
 (check 42
   (let [foo 35])
-  (define foo 42)
+  (var foo 42)
   foo)
 
 (check 42
-  (define foo 42)
+  (var foo 42)
   foo)
 
 (check 42
-  (define foo (eval (+ 35 7)))
+  (var foo (eval (+ 35 7)))
   foo)
 
 (check 35
-  (define foo 35)
+  (var foo 35)
   
   (^bar []
     foo)

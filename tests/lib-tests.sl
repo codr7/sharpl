@@ -4,7 +4,7 @@
   (check test
     (lib))
     
-  (define bar (+ foo 7)))
+  (var bar (+ foo 7)))
 
 (check 42
   test/bar)

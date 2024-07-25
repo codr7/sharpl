@@ -51,10 +51,10 @@ New lexically scoped bindings may be created using `let`.
 `3`
 
 ### dynamic scope
-New dynamically scoped bindings may be created using `define`.
+New dynamically scoped bindings may be created using `var`.
 
 ```
-(define foo 35)
+(var foo 35)
   
 (^bar []
   foo)

@@ -13,13 +13,12 @@ public class VM
 {
     public struct C
     {
-        public int MaxDefinitions = 128;
         public int MaxRegisters = 1024;
- 
+        public int MaxVars = 128; 
         public C() { }
     };
 
-    public static readonly C DEFAULT_CONFIG = new C();
+    public static readonly C DEFAULT = new C();
     public static readonly int VERSION = 14;
 
     public readonly Core CoreLib = new Core();
@@ -70,7 +69,7 @@ public class VM
         UserLib.Init(this);
         UserLib.Import(CoreLib);
         Env = UserLib;
-        BeginFrame(config.MaxDefinitions);
+        BeginFrame(config.MaxVars);
 
         IOLib = new IO(this);
         IOLib.Init(this);
