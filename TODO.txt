@@ -43,8 +43,6 @@ Foo/bar
 (Int Foo/bar)
 (Str Foo/bar)
 
-* rename length to len
-
 * add span type
 ** Span<Value>
 ** use as result type for slice

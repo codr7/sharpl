@@ -510,7 +510,7 @@ public class Core : Lib
             stack.Push(Value.Make(Core.Bit, res));
         });
 
-        BindMethod("length", ["it"], (loc, target, vm, stack, arity) =>
+        BindMethod("len", ["it"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Pop();
 

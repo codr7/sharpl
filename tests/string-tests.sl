@@ -5,3 +5,6 @@
 
 (check "foo"
   (string/down "Foo"))
+
+(check 3
+  (len "foo"))
