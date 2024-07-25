@@ -9,7 +9,7 @@ sharpl v14
 hello
 ```
 
-## introduction
+## intro
 Sharpl is a custom Lisp interpreter implemented in C#.<br/>
 <br/>
 It's trivial to embed and comes with a simple REPL.<br/>
@@ -178,8 +178,8 @@ Methods may be composed using `&`.
 ## quoting
 Expressions may be quoted by prefixing with `'`.
 
-## value vs. identity
-`=` may be used to compare values deeply, while `is` compares identities.<br/>
+## value and identity
+`=` may be used to compare values deeply, while `is` compares identity.<br/>
 For some types they return the same result; integers, strings, pairs, methods etc.
 
 For others; like arrays and maps; two values may well be equal despite having different identities.
