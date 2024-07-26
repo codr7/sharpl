@@ -17,3 +17,6 @@
   (let [bar 42 
       baz "abc"]
   '[foo ,[bar baz]* qux]))
+
+(check '42
+  ,''42)

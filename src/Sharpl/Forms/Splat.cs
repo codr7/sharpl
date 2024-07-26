@@ -18,6 +18,11 @@ public class Splat : Form
         vm.Emit(Ops.Splat.Make(Loc));
     }
 
+    public override bool Equals(Form other)
+    {
+        return (other is Splat f) ? f.Target.Equals(Target) : false;
+    }
+
     public override bool IsSplat => true;
 
     public override string ToString() {

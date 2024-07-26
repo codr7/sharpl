@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Sharpl.Forms;
 
 public class Quote : Form
@@ -22,10 +24,23 @@ public class Quote : Form
         Target.Emit(vm, args, quoted + Depth);
     }
 
+    public override bool Equals(Form other)
+    {
+        return (other is Quote f) ? f.Depth == Depth : false;
+    }
+
     public override bool IsSplat => Target.IsSplat;
 
     public override string ToString()
     {
-        return $"'({Target})";
+        var buf = new StringBuilder();
+
+        for (var i = 0; i < Depth; i++)
+        {
+            buf.Append('\'');
+        }
+
+        buf.Append(Target);
+        return buf.ToString();
     }
 }

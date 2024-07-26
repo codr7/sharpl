@@ -6,6 +6,11 @@ public class Nil : Form
 
     public override void Emit(VM vm, Form.Queue args, int quoted) { }
 
+    public override bool Equals(Form other)
+    {
+        return other is Nil;
+    }
+
     public override bool IsSplat => true;
 
     public override string ToString()

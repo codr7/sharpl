@@ -20,10 +20,15 @@ public class Unquote : Form
         Target.Emit(vm, args, quoted - 1);
     }
 
+    public override bool Equals(Form other)
+    {
+        return (other is Unquote f) ? f.Target.Equals(Target) : false;
+    }
+
     public override bool IsSplat => Target.IsSplat;
 
     public override string ToString()
     {
-        return $",({Target})";
+        return $",{Target}";
     }
 }

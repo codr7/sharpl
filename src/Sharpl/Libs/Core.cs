@@ -12,6 +12,7 @@ public class Core : Lib
     public static readonly BitType Bit = new BitType("Bit");
     public static readonly ColorType Color = new ColorType("Color");
     public static readonly FixType Fix = new FixType("Fix");
+    public static readonly FormType Form = new FormType("Form");
     public static readonly IntType Int = new IntType("Int");
     public static readonly IterType Iter = new IterType("Iter");
     public static readonly LibType Lib = new LibType("Lib");

@@ -44,17 +44,37 @@ public class Map : Form
 
             foreach (var f in Items)
             {
-                if (f is Pair pf) {
+                if (f is Pair pf)
+                {
                     pf.Left.Emit(vm, itemArgs, quoted);
                     pf.Right.Emit(vm, itemArgs, quoted);
-                } else {
+                }
+                else
+                {
                     f.Emit(vm, itemArgs, quoted);
                 }
-                
+
                 vm.Emit(Ops.SetMapItem.Make());
                 i++;
             }
         }
+    }
+
+    public override bool Equals(Form other)
+    {
+        if (other is Map f)
+        {
+            if (Items.Length != f.Items.Length) { return false; }
+
+            for (var i = 0; i < Math.Min(Items.Length, f.Items.Length); i++)
+            {
+                if (!Items[i].Equals(f.Items[i])) { return false; }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public override string ToString()

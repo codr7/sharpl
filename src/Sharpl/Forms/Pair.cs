@@ -8,10 +8,10 @@ public class Pair : Form
     public readonly Form Left;
     public readonly Form Right;
 
-    public Pair(Loc loc, Form  left, Form right) : base(loc)
+    public Pair(Loc loc, Form left, Form right) : base(loc)
     {
-       Left = left;
-       Right = right;
+        Left = left;
+        Right = right;
     }
 
     public override void CollectIds(HashSet<string> result)
@@ -26,6 +26,12 @@ public class Pair : Form
         Left.Emit(vm, leftArgs);
         Right.Emit(vm, args);
         vm.Emit(Ops.CreatePair.Make(Loc));
+    }
+
+    public override bool Equals(Form other)
+    {
+        if (other is And f) { return f.Left.Equals(Left) && f.Right.Equals(Right); }
+        return false;
     }
 
     public override string ToString()

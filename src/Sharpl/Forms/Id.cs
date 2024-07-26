@@ -68,6 +68,11 @@ public class Id : Form
         }
     }
 
+    public override bool Equals(Form other)
+    {
+        return (other is Id f) ? f.Name.Equals(Name) : false;
+    }
+
     public override Value? GetValue(VM vm)
     {
         return GetId(Name, vm.Env, Loc);

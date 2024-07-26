@@ -34,6 +34,8 @@ public abstract class Form : Emitter
         vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
+    public abstract bool Equals(Form other);
+    
     public virtual Value? GetValue(VM vm)
     { 
         return null;

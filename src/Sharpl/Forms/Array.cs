@@ -1,5 +1,6 @@
 namespace Sharpl.Forms;
 
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 public class Array : Form
@@ -42,7 +43,7 @@ public class Array : Form
 
             vm.Emit(Ops.CreateArray.Make(Items.Length));
             var i = 0;
-   
+
             foreach (var f in Items)
             {
                 f.Emit(vm, itemArgs, quoted);
@@ -50,6 +51,23 @@ public class Array : Form
                 i++;
             }
         }
+    }
+
+    public override bool Equals(Form other)
+    {
+        if (other is Array f)
+        {
+            if (Items.Length != f.Items.Length) { return false; }
+
+            for (var i = 0; i < Math.Min(Items.Length, f.Items.Length); i++)
+            {
+                if (!Items[i].Equals(f.Items[i])) { return false; }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public override string ToString()

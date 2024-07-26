@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Sharpl.Forms;
 
 public class And : Form
@@ -25,6 +27,15 @@ public class And : Form
     public override void EmitCall(VM vm, Queue args, int quoted)
     {
         vm.Compose(Loc, Left, Right, args).EmitCall(Loc, vm, args, quoted);
+    }
+
+    public override bool Equals(Form other)
+    {
+        if (other is And f) {
+            return f.Left.Equals(Left) && f.Right.Equals(Right);
+        }
+
+        return false;
     }
 
     public override string ToString()

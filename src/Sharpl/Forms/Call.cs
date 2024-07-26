@@ -40,6 +40,22 @@ public class Call : Form
         foreach (var a in cas) { args.Push(a); }
     }
 
+    public override bool Equals(Form other)
+    {
+        if (other is Call f)
+        {
+            if (!Target.Equals(f.Target) || Args.Length != f.Args.Length) { return false; }
+            
+            for (var i = 0; i < Math.Min(Args.Length, f.Args.Length); i++) {
+                if (!Args[i].Equals(f.Args[i])) { return false; }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public override string ToString()
     {
         var b = new StringBuilder();
