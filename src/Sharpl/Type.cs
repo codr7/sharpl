@@ -41,7 +41,7 @@ public abstract class AnyType
         vm.Emit(Ops.Push.Make(value));
     }
 
-    public virtual void EmitCall(Loc loc, VM vm, Value target, Form.Queue args, int quoted)
+    public virtual void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var arity = args.Count;
         var splat = args.IsSplat;
@@ -51,7 +51,7 @@ public abstract class AnyType
             vm.Emit(Ops.PushSplat.Make());
         }
 
-        args.Emit(vm, quoted);
+        args.Emit(vm);
         vm.Emit(Ops.CallDirect.Make(loc, target, arity, splat, vm.NextRegisterIndex));
     }
 

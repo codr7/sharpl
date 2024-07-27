@@ -56,11 +56,11 @@ public class Id : Form
         }
     }
 
-    public override void EmitCall(VM vm, Form.Queue args, int quoted)
+    public override void EmitCall(VM vm, Form.Queue args)
     {
         if (GetId(Name, vm.Env, Loc) is Value v)
         {
-            v.EmitCall(Loc, vm, args, quoted);
+            v.EmitCall(Loc, vm, args);
         }
         else
         {

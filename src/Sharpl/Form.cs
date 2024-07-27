@@ -1,11 +1,7 @@
-using System.Reflection.Metadata.Ecma335;
-
 namespace Sharpl;
 
 using System.Collections;
-using System.Runtime;
 using System.Text;
-using Sharpl.Forms;
 using Sharpl.Ops;
 
 public abstract class Form : Emitter
@@ -26,18 +22,18 @@ public abstract class Form : Emitter
         Emit(vm, args, 0);
     }
 
-    public virtual void EmitCall(VM vm, Queue args, int quoted)
+    public virtual void EmitCall(VM vm, Queue args)
     {
         var arity = args.Count;
-        args.Emit(vm, quoted);
+        args.Emit(vm);
         Emit(vm, new Queue());
         vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public abstract bool Equals(Form other);
-    
+
     public virtual Value? GetValue(VM vm)
-    { 
+    {
         return null;
     }
 
@@ -69,10 +65,11 @@ public abstract class Form : Emitter
             return res;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             items.Clear();
         }
-        
+
         public int Count { get { return items.Count; } }
 
 

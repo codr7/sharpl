@@ -11,12 +11,9 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 * add user macros
-** implement Value/Type.Unquote()
+** implement Unquote()
 *** append forms to args
-** test
 ** commit
-
-** remove quoted-arg from EmitCall
 
 * add separate expand phase
 ** add Form.Expand

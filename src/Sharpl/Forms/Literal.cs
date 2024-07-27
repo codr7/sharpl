@@ -20,9 +20,9 @@ public class Literal : Form
         }
     }
 
-    public override void EmitCall(VM vm, Queue args, int quoted)
+    public override void EmitCall(VM vm, Queue args)
     {
-        Value.EmitCall(Loc, vm, args, quoted);
+        Value.EmitCall(Loc, vm, args);
     }
     public override bool Equals(Form other)
     {

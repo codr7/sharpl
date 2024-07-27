@@ -4,12 +4,12 @@ public class UserMacroType : Type<UserMethod>
 {
     public UserMacroType(string name) : base(name) { }
 
-    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args, int quoted)
+    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var stack = new Stack();
 
         foreach (var f in args) {
-            if (vm.Eval(f, quoted+1) is Value av) {
+            if (vm.Eval(f, 1) is Value av) {
                 stack.Push(av);
             }
         }

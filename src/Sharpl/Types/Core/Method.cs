@@ -8,7 +8,7 @@ public class MethodType : Type<Method>
         target.Cast(this).Call(loc, vm, stack, arity);
     }
 
-    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args, int quoted)
+    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var m = target.Cast(this);
         var arity = args.Count;
@@ -23,7 +23,7 @@ public class MethodType : Type<Method>
             vm.Emit(Ops.PushSplat.Make());
         }
 
-        args.Emit(vm, quoted);
+        args.Emit(vm);
         vm.Emit(Ops.CallMethod.Make(loc, m, arity, splat));
     }
 }

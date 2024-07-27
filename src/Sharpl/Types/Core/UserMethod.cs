@@ -9,7 +9,7 @@ public class UserMethodType : Type<UserMethod>
         vm.CallUserMethod(loc, stack, target.Cast(this), arity, registerCount);
     }
 
-    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args, int quoted)
+    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
         var m = target.Cast(this);
         var arity = args.Count;
@@ -24,7 +24,7 @@ public class UserMethodType : Type<UserMethod>
             vm.Emit(Ops.PushSplat.Make());
         }
 
-        args.Emit(vm, quoted);
+        args.Emit(vm);
         vm.Emit(Ops.CallUserMethod.Make(loc, m, arity, splat, vm.NextRegisterIndex));
     }
 }

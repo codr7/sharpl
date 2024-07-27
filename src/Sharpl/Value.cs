@@ -64,9 +64,9 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         Type.Emit(loc, vm, this, args);
     }
 
-    public void EmitCall(Loc loc, VM vm, Form.Queue args, int quoted)
+    public void EmitCall(Loc loc, VM vm, Form.Queue args)
     {
-        Type.EmitCall(loc, vm, this, args, quoted);
+        Type.EmitCall(loc, vm, this, args);
     }
 
     public void EmitId(Loc loc, VM vm, Form.Queue args)

@@ -39,7 +39,7 @@ public class Call : Form
 
             var cas =  new Queue(Args);
             if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-            Target.EmitCall(vm, cas, quoted);
+            Target.EmitCall(vm, cas);
             foreach (var a in cas) { args.Push(a); }
         } else {
             args.PushFirst(new Literal(Loc, Value.Make(Core.Form, (this, quoted))));
