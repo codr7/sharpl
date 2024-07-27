@@ -73,6 +73,17 @@ public class Id : Form
         return (other is Id f) ? f.Name.Equals(Name) : false;
     }
 
+    public override Form Expand(VM vm, int quoted)
+    {
+        if (quoted == 0)
+        {
+            if (GetId(Name, vm.Env, Loc) is Value v) { return new Literal(Loc, v); }
+            throw new EmitError(Loc, $"Unknown id: {Name}");
+        }
+
+        return this; 
+    }
+
     public override Value? GetValue(VM vm)
     {
         return GetId(Name, vm.Env, Loc);

@@ -29,6 +29,11 @@ public class Quote : Form
         return (other is Quote f) ? f.Depth == Depth : false;
     }
 
+    public override Form Expand(VM vm, int quoted)
+    {
+        return new Quote(Loc, Target.Expand(vm, quoted + Depth));
+    }
+
     public override bool IsSplat => Target.IsSplat;
 
     public override string ToString()

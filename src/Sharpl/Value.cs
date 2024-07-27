@@ -118,7 +118,7 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         return (T)Data;
     }
 
-    public void Unquote(Loc loc, VM vm, Form.Queue args) {
-        Type.Unquote(this, loc, vm, args);
+    public Form Unquote(Loc loc, VM vm) {
+        return Type.Unquote(this, loc, vm);
     }
 }

@@ -77,6 +77,11 @@ public class Map : Form
         return false;
     }
 
+    public override Form Expand(VM vm, int quoted)
+    {
+        return new Array(Loc, Items.Select((it) => it.Expand(vm, quoted)).ToArray());
+    }
+
     public override string ToString()
     {
         var b = new StringBuilder();

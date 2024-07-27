@@ -9,6 +9,7 @@ public class UserMacroType : Type<UserMethod>
         var stack = new Stack();
 
         foreach (var f in args) {
+            Console.WriteLine("EVAL MACRO ARG " + f);
             if (vm.Eval(f, 1) is Value av) {
                 stack.Push(av);
             }
@@ -21,7 +22,7 @@ public class UserMacroType : Type<UserMethod>
         args.Clear();
 
         if (stack.Pop() is Value rv) {
-            rv.Unquote(loc, vm, args);
+            args.PushFirst(rv.Unquote(loc, vm));
         }
 
 

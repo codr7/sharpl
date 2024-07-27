@@ -100,7 +100,7 @@ public class Core : Lib
                 parentEnv.Bind(name, v);
             }
 
-            args.Emit(vm);
+            args.Emit(vm, 0);
             vm.Emit(stopOp);
             skip.PC = vm.EmitPC;
 
@@ -292,7 +292,7 @@ public class Core : Lib
              if (args.TryPop() is Form f && vm.Eval(f, 0) is Value n)
              {
                  vm.Emit(Ops.Benchmark.Make(n.TryCast(loc, Core.Int)));
-                 args.Emit(vm);
+                 args.Emit(vm, 0);
                  vm.Emit(Ops.Stop.Make());
              }
              else
@@ -365,7 +365,7 @@ public class Core : Lib
 
             vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
             {
-                args.Emit(vm);
+                args.Emit(vm, 0);
             });
 
             vm.Emit(Ops.EndFrame.Make());
@@ -376,7 +376,7 @@ public class Core : Lib
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             var startPC = vm.EmitPC;
-            args.Emit(vm);
+            args.Emit(vm, 0);
             skip.PC = vm.EmitPC;
             vm.Decode(startPC);
         });
@@ -384,7 +384,7 @@ public class Core : Lib
         BindMacro("eval", [], (loc, target, vm, args) =>
         {
             var stack = new Stack();
-            vm.Eval(args, stack);
+            vm.Eval(args, stack, 0);
 
             foreach (var it in stack.Reverse())
             {
@@ -424,7 +424,7 @@ public class Core : Lib
 
                 var skip = new Label();
                 vm.Emit(Ops.Branch.Make(skip));
-                args.Emit(vm);
+                args.Emit(vm, 0);
                 skip.PC = vm.EmitPC;
                 vm.Emit(Ops.EndFrame.Make());
             });
@@ -457,7 +457,7 @@ public class Core : Lib
                  var skipEnd = new Label();
                  vm.Emit(Ops.Goto.Make(skipEnd));
                  skipElse.PC = vm.EmitPC;
-                 args.Emit(vm);
+                 args.Emit(vm, 0);
                  skipEnd.PC = vm.EmitPC;
                  vm.Emit(Ops.EndFrame.Make());
              });
@@ -603,10 +603,7 @@ public class Core : Lib
                 }
                 else
                 {
-                    vm.DoEnv(lib, () =>
-                    {
-                        args.Emit(vm);
-                    });
+                    vm.DoEnv(lib, () => args.Emit(vm, 0));
                 }
             }
             else
@@ -747,7 +744,7 @@ public class Core : Lib
 
             if (m is null)
             {
-                args.Emit(vm);
+                args.Emit(vm, 0);
                 vm.Emit(Ops.ExitMethod.Make());
             }
         });
@@ -830,7 +827,7 @@ public class Core : Lib
 
                         var v = new Form.Queue();
                         v.Push(f);
-                        v.Emit(vm, args);
+                        v.Emit(vm, args, 0);
                         vm.Define(idf.Name);
                     }
                     else

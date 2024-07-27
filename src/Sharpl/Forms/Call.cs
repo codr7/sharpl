@@ -25,9 +25,12 @@ public class Call : Form
 
     public override void Emit(VM vm, Queue args, int quoted)
     {
-        if (quoted == 0) {
+        Console.WriteLine("CALL FORM " + this + " " + quoted);
+
+        if (quoted == 0)
+        {
             var splat = false;
-            
+
             foreach (var f in Args)
             {
                 if (f.IsSplat)
@@ -37,13 +40,22 @@ public class Call : Form
                 }
             }
 
-            var cas =  new Queue(Args);
+            var cas = new Queue(Args);
             if (splat) { vm.Emit(Ops.PushSplat.Make()); }
             Target.EmitCall(vm, cas);
             foreach (var a in cas) { args.Push(a); }
-        } else {
+        }
+        else
+        {
             args.PushFirst(new Literal(Loc, Value.Make(Core.Form, (this, quoted))));
         }
+    }
+
+    public override Form Expand(VM vm, int quoted)
+    {
+        var et = Target.Expand(vm, quoted);
+        var eas = Args.Select(a => a.Expand(vm, quoted)).ToArray();
+        return new Call(Loc, et, eas);
     }
 
     public override bool Equals(Form other)
@@ -51,8 +63,9 @@ public class Call : Form
         if (other is Call f)
         {
             if (!Target.Equals(f.Target) || Args.Length != f.Args.Length) { return false; }
-            
-            for (var i = 0; i < Math.Min(Args.Length, f.Args.Length); i++) {
+
+            for (var i = 0; i < Math.Min(Args.Length, f.Args.Length); i++)
+            {
                 if (!Args[i].Equals(f.Args[i])) { return false; }
             }
 

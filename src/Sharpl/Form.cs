@@ -25,12 +25,17 @@ public abstract class Form : Emitter
     public virtual void EmitCall(VM vm, Queue args)
     {
         var arity = args.Count;
-        args.Emit(vm);
+        args.Emit(vm, 0);
         Emit(vm, new Queue());
         vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public abstract bool Equals(Form other);
+
+    public virtual Form Expand(VM vm, int quoted)
+    {
+        return this;
+    }
 
     public virtual Value? GetValue(VM vm)
     {
@@ -73,7 +78,7 @@ public abstract class Form : Emitter
         public int Count { get { return items.Count; } }
 
 
-        public void Emit(VM vm, int quoted = 0)
+        public void Emit(VM vm, int quoted)
         {
             while (Count > 0)
             {
@@ -84,9 +89,9 @@ public abstract class Form : Emitter
             }
         }
 
-        public void Emit(VM vm, Queue args)
+        public void Emit(VM vm, Queue args, int quoted)
         {
-            Emit(vm);
+            Emit(vm, quoted);
         }
 
         public bool Empty { get => items.Count == 0; }

@@ -164,8 +164,14 @@ public class VM
         return result;
     }
 
+    public void Emit(Form form, int quoted) {
+        var fs = new Form.Queue();
+        fs.Push(form);
+        fs.Emit(this, quoted);
+    }
+
     public void Emit(string code, Loc loc) {
-        ReadForms(new StringReader(code), ref loc).Emit(this);
+        ReadForms(new StringReader(code), ref loc).Emit(this, 0);
     }
 
     public PC EmitPC
@@ -626,12 +632,12 @@ public class VM
         Eval(startPC, new Stack());
     }
 
-    public void Eval(Emitter target, Form.Queue args, Stack stack)
+    public void Eval(Emitter target, Form.Queue args, Stack stack, int quoted)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        target.Emit(this, args);
+        target.Emit(this, args, quoted);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         Eval(startPC, stack);
@@ -640,13 +646,13 @@ public class VM
     public Value? Eval(Emitter target, Form.Queue args, int quoted)
     {
         var stack = new Stack();
-        Eval(target, args, stack);
+        Eval(target, args, stack, quoted);
         return (stack.Count == 0) ? null : stack.Pop();
     }
 
-    public void Eval(Emitter target, Stack stack)
+    public void Eval(Emitter target, Stack stack, int quoted)
     {
-        Eval(target, new Form.Queue(), stack);
+        Eval(target, new Form.Queue(), stack, quoted);
     }
 
     public Value? Eval(Emitter target, int quoted)
@@ -738,7 +744,7 @@ public class VM
 
                 var forms = ReadForms(source, ref loc);
                 Emit(Ops.SetLoadPath.Make(loadPath));
-                forms.Emit(this);
+                forms.Emit(this, 0);
                 Emit(Ops.SetLoadPath.Make(prevLoadPath));
             }
         }
@@ -828,7 +834,7 @@ public class VM
 
                 try
                 {
-                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this);
+                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, 0);
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
 

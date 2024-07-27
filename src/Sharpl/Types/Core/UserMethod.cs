@@ -24,7 +24,7 @@ public class UserMethodType : Type<UserMethod>
             vm.Emit(Ops.PushSplat.Make());
         }
 
-        args.Emit(vm);
+        args.Emit(vm, 0);
         vm.Emit(Ops.CallUserMethod.Make(loc, m, arity, splat, vm.NextRegisterIndex));
     }
 }

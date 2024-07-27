@@ -23,7 +23,7 @@ public class MethodType : Type<Method>
             vm.Emit(Ops.PushSplat.Make());
         }
 
-        args.Emit(vm);
+        args.Emit(vm, 0);
         vm.Emit(Ops.CallMethod.Make(loc, m, arity, splat));
     }
 }

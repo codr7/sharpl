@@ -51,7 +51,7 @@ public abstract class AnyType
             vm.Emit(Ops.PushSplat.Make());
         }
 
-        args.Emit(vm);
+        args.Emit(vm, 0);
         vm.Emit(Ops.CallDirect.Make(loc, target, arity, splat, vm.NextRegisterIndex));
     }
 
@@ -72,7 +72,7 @@ public abstract class AnyType
         return Name;
     }
 
-    public virtual void Unquote(Value value, Loc loc, VM vm, Form.Queue args) {
+    public virtual Form Unquote(Value value, Loc loc, VM vm) {
         throw new EvalError(loc, $"Not quoted: {value}");
     }
 

@@ -11,6 +11,11 @@ public class Nil : Form
         return other is Nil;
     }
 
+    public override Form Expand(VM vm, int quoted)
+    {
+        return this;
+    }
+
     public override bool IsSplat => true;
 
     public override string ToString()
