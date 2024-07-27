@@ -637,7 +637,7 @@ public class VM
         Eval(startPC, stack);
     }
 
-    public Value? Eval(Emitter target, Form.Queue args)
+    public Value? Eval(Emitter target, Form.Queue args, int quoted)
     {
         var stack = new Stack();
         Eval(target, args, stack);
@@ -649,16 +649,16 @@ public class VM
         Eval(target, new Form.Queue(), stack);
     }
 
-    public Value? Eval(Emitter target)
+    public Value? Eval(Emitter target, int quoted)
     {
-        return Eval(target, new Form.Queue());
+        return Eval(target, new Form.Queue(), quoted);
     }
 
     public Value? Eval(string code)
     {
         var loc = new Loc("Eval");
         var forms = ReadForms(new StringReader(code), ref loc);
-        return Eval(forms);
+        return Eval(forms, 0);
     }
 
     public int FrameCount

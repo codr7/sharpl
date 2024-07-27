@@ -69,6 +69,10 @@ public abstract class Form : Emitter
             return res;
         }
 
+        public void Clear() {
+            items.Clear();
+        }
+        
         public int Count { get { return items.Count; } }
 
 

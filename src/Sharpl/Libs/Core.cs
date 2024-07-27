@@ -24,7 +24,92 @@ public class Core : Lib
     public static readonly PairType Pair = new PairType("Pair");
     public static readonly StringType String = new StringType("String");
     public static readonly SymType Sym = new SymType("Sym");
+    public static readonly UserMacroType UserMacro = new UserMacroType("UserMacro");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
+
+    public static void DefineMethod(Loc loc, VM vm, Form.Queue args, Type<UserMethod> type, Op stopOp)
+    {
+        var name = "";
+        var f = args.TryPop();
+
+        if (f is Forms.Id id)
+        {
+            name = id.Name;
+            f = args.TryPop();
+        }
+
+        (string, int)[] fas;
+
+        var parentEnv = vm.Env;
+        var registerCount = vm.NextRegisterIndex;
+
+        var ids = args.CollectIds().Where(id =>
+           vm.Env[id] is Value v &&
+           v.Type == Binding &&
+           v.Cast(Binding).FrameOffset != -1).
+           ToHashSet<string>();
+
+        bool vararg = false;
+
+        vm.DoEnv(new Env(vm.Env, ids), () =>
+        {
+            if (f is Forms.Array af)
+            {
+                fas = af.Items.Select(f =>
+                {
+                    if (vararg)
+                    {
+                        throw new EmitError(f.Loc, "Vararg must be final param.");
+                    }
+
+                    if (f is Forms.Splat s)
+                    {
+                        f = s.Target;
+                        vararg = true;
+                    }
+
+                    if (f is Forms.Id id)
+                    {
+                        var r = vm.AllocRegister();
+                        vm.Env.Bind(id.Name, Value.Make(Binding, new Register(0, r)));
+                        return (id.Name, r);
+                    }
+
+                    throw new EmitError(f.Loc, $"Invalid method arg: {f}");
+                }).ToArray();
+            }
+            else
+            {
+                throw new EmitError(loc, "Invalid method args");
+            }
+
+            var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
+
+            if (ids.Count > 0)
+            {
+                vm.Emit(Ops.PrepareClosure.Make(m));
+            }
+
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            m.StartPC = vm.EmitPC;
+            var v = Value.Make(type, m);
+
+            if (name != "")
+            {
+                parentEnv.Bind(name, v);
+            }
+
+            args.Emit(vm);
+            vm.Emit(stopOp);
+            skip.PC = vm.EmitPC;
+
+            if (name == "")
+            {
+                v.Emit(loc, vm, args);
+            }
+        });
+    }
 
     public Core() : base("core", null, [])
     {
@@ -42,6 +127,7 @@ public class Core : Lib
         BindType(Pair);
         BindType(String);
         BindType(Sym);
+        BindType(UserMacro);
         BindType(UserMethod);
 
         Bind("F", Value.F);
@@ -50,87 +136,12 @@ public class Core : Lib
 
         BindMacro("^", [], (loc, target, vm, args) =>
          {
-             var name = "";
-             var f = args.TryPop();
+             DefineMethod(loc, vm, args, UserMethod, Ops.ExitMethod.Make());
+         });
 
-             if (f is Forms.Id id)
-             {
-                 name = id.Name;
-                 f = args.TryPop();
-             }
-
-             (string, int)[] fas;
-
-             var parentEnv = vm.Env;
-             var registerCount = vm.NextRegisterIndex;
-
-             var ids = args.CollectIds().Where(id =>
-                vm.Env[id] is Value v &&
-                v.Type == Core.Binding &&
-                v.Cast(Core.Binding).FrameOffset != -1).
-                ToHashSet<string>();
-
-             bool vararg = false;
-
-             vm.DoEnv(new Env(vm.Env, ids), () =>
-             {
-
-                 if (f is Forms.Array af)
-                 {
-                     fas = af.Items.Select(f =>
-                     {
-                         if (vararg)
-                         {
-                             throw new EmitError(f.Loc, "Vararg must be final param.");
-                         }
-
-                         if (f is Forms.Splat s)
-                         {
-                             f = s.Target;
-                             vararg = true;
-                         }
-
-                         if (f is Forms.Id id)
-                         {
-                             var r = vm.AllocRegister();
-                             vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Register(0, r)));
-                             return (id.Name, r);
-                         }
-
-                         throw new EmitError(f.Loc, $"Invalid method arg: {f}");
-                     }).ToArray();
-                 }
-                 else
-                 {
-                     throw new EmitError(loc, "Invalid method args");
-                 }
-
-                 var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
-
-                 if (ids.Count > 0)
-                 {
-                     vm.Emit(Ops.PrepareClosure.Make(m));
-                 }
-
-                 var skip = new Label();
-                 vm.Emit(Ops.Goto.Make(skip));
-                 m.StartPC = vm.EmitPC;
-                 var v = Value.Make(Core.UserMethod, m);
-
-                 if (name != "")
-                 {
-                     parentEnv.Bind(name, v);
-                 }
-
-                 args.Emit(vm);
-                 vm.Emit(Ops.ExitMethod.Make());
-                 skip.PC = vm.EmitPC;
-
-                 if (name == "")
-                 {
-                     v.Emit(loc, vm, args);
-                 }
-             });
+        BindMacro("macro", [], (loc, target, vm, args) =>
+         {
+             DefineMethod(loc, vm, args, UserMacro, Ops.Stop.Make());
          });
 
         BindMethod("=", ["x"], (loc, target, vm, stack, arity) =>
@@ -278,7 +289,7 @@ public class Core : Lib
 
         BindMacro("bench", ["n"], (loc, target, vm, args) =>
          {
-             if (args.TryPop() is Form f && vm.Eval(f) is Value n)
+             if (args.TryPop() is Form f && vm.Eval(f, 0) is Value n)
              {
                  vm.Emit(Ops.Benchmark.Make(n.TryCast(loc, Core.Int)));
                  args.Emit(vm);
@@ -610,7 +621,7 @@ public class Core : Lib
             {
                 if (args.TryPop() is Form pf)
                 {
-                    if (vm.Eval(pf, args) is Value p)
+                    if (vm.Eval(pf, args, 0) is Value p)
                     {
                         vm.Load(p.TryCast(pf.Loc, Core.String));
                     }

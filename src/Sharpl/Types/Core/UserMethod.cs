@@ -1,7 +1,5 @@
 namespace Sharpl.Types.Core;
 
-using Sharpl.Libs;
-
 public class UserMethodType : Type<UserMethod>
 {
     public UserMethodType(string name) : base(name) { }

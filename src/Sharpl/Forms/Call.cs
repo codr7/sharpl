@@ -1,6 +1,8 @@
 namespace Sharpl.Forms;
 
+using System.Net.Http.Headers;
 using System.Text;
+using Sharpl.Libs;
 
 public class Call : Form
 {
@@ -23,21 +25,25 @@ public class Call : Form
 
     public override void Emit(VM vm, Queue args, int quoted)
     {
-        var splat = false;
-        
-        foreach (var f in Args)
-        {
-            if (f.IsSplat)
+        if (quoted == 0) {
+            var splat = false;
+            
+            foreach (var f in Args)
             {
-                splat = true;
-                break;
+                if (f.IsSplat)
+                {
+                    splat = true;
+                    break;
+                }
             }
-        }
 
-        var cas =  new Queue(Args);
-        if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-        Target.EmitCall(vm, cas, quoted);
-        foreach (var a in cas) { args.Push(a); }
+            var cas =  new Queue(Args);
+            if (splat) { vm.Emit(Ops.PushSplat.Make()); }
+            Target.EmitCall(vm, cas, quoted);
+            foreach (var a in cas) { args.Push(a); }
+        } else {
+            args.PushFirst(new Literal(Loc, Value.Make(Core.Form, (this, quoted))));
+        }
     }
 
     public override bool Equals(Form other)

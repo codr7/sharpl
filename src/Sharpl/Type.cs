@@ -61,7 +61,7 @@ public abstract class AnyType
     }
 
     public abstract bool Equals(Value left, Value right);
-
+ 
     public virtual void Say(Value value, StringBuilder result)
     {
         Dump(value, result);
@@ -69,7 +69,11 @@ public abstract class AnyType
 
     public override string ToString()
     {
-        return $"(Type {Name})";
+        return Name;
+    }
+
+    public virtual void Unquote(Value value, Loc loc, VM vm, Form.Queue args) {
+        throw new EvalError(loc, $"Not quoted: {value}");
     }
 
     protected AnyType(string name)

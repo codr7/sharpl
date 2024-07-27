@@ -16,7 +16,7 @@ public class Literal : Form
         if (quoted == 0) {
             Value.Emit(Loc, vm, args);
         } else {
-            vm.Emit(Ops.Push.Make(Value.Make(Core.Form, new Quote(Loc, this, quoted))));
+            vm.Emit(Ops.Push.Make(Value.Make(Core.Form, (this, quoted))));
         }
     }
 
