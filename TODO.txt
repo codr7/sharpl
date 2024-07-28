@@ -10,9 +10,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* fix user macros
-** macro.sl
-
 * add gensym support
 ** use constructor
 ** add sym method to create syms

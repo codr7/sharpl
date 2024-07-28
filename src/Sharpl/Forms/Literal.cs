@@ -34,11 +34,6 @@ public class Literal : Form
         return false;
     }
 
-    public override Form Expand(VM vm, int quoted)
-    {
-        return this; 
-    }
-
     public override Value? GetValue(VM vm) { 
         return Value;
     }

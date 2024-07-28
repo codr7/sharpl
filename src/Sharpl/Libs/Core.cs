@@ -139,11 +139,6 @@ public class Core : Lib
              DefineMethod(loc, vm, args, UserMethod, Ops.ExitMethod.Make());
          });
 
-        BindMacro("macro", [], (loc, target, vm, args) =>
-         {
-             DefineMethod(loc, vm, args, UserMacro, Ops.Stop.Make());
-         });
-
         BindMethod("=", ["x"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Pop();

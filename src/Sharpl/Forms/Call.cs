@@ -49,13 +49,6 @@ public class Call : Form
         }
     }
 
-    public override Form Expand(VM vm, int quoted)
-    {
-        var et = Target.Expand(vm, quoted);
-        var eas = Args.Select(a => a.Expand(vm, quoted)).ToArray();
-        return new Call(Loc, et, eas);
-    }
-
     public override bool Equals(Form other)
     {
         if (other is Call f)

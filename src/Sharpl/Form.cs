@@ -32,11 +32,6 @@ public abstract class Form : Emitter
 
     public abstract bool Equals(Form other);
 
-    public virtual Form Expand(VM vm, int quoted)
-    {
-        return this;
-    }
-
     public virtual Value? GetValue(VM vm)
     {
         return null;

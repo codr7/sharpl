@@ -34,11 +34,6 @@ public class Pair : Form
         return false;
     }
 
-    public override Form Expand(VM vm, int quoted)
-    {
-        return new Pair(Loc, Left.Expand(vm, quoted), Right.Expand(vm, quoted));
-    }
-
     public override string ToString()
     {
         return $"{Left}:{Right}";

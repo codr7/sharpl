@@ -25,11 +25,6 @@ public class Unquote : Form
         return (other is Unquote f) ? f.Target.Equals(Target) : false;
     }
 
-    public override Form Expand(VM vm, int quoted)
-    {
-        return (quoted == 1) ? Target : new Quote(Loc, Target.Expand(vm, -1));
-    }
-
     public override bool IsSplat => Target.IsSplat;
 
     public override string ToString()
