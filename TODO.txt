@@ -10,29 +10,8 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* add user macros
-** return true from Expand if changed
-** implement user macro expand
-** add separate expand phase
-*** where?
-** debug why in-arg isn't found in macro.sl
-** move logic from FormType.Unquote() to Form.Unquote
-*** append forms to args
-** commit
-
-* add separate expand phase
-** add Form.Expand
-** move code from Emit
-
-(macro trace(in*)
-  '(do 
-     ,(say "Enter")
-     ,in*
-     ,(say "Exit")))
-
-* add expand macro
-** run all user macros
-
+* fix user macros
+** macro.sl
 
 * add gensym support
 ** use constructor
