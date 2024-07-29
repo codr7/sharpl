@@ -22,7 +22,7 @@ public class Env
 
                 if (p.bindings.ContainsKey(id) && p.bindings[id] is Value b && b.Type == Core.Binding)
                 {
-                    var v = b.Cast(Core.Binding);
+                    var v = b.CastUnbox(Core.Binding);
 
                     if (v.FrameOffset != -1)
                     {

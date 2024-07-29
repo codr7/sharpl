@@ -10,7 +10,7 @@ public class ColorType : Type<Color>
 
     public override void Dump(Value value, StringBuilder result)
     {
-        var c = value.Cast(this);
+        var c = value.CastUnbox(this);
         result.Append($"(Color {c.R} {c.G} {c.B} {c.A})");
     }
 }

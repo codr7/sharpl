@@ -2,12 +2,10 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class BitType : ComparableType<bool>
+public class BitType(string name) : ComparableType<bool>(name)
 {
-    public BitType(string name) : base(name) { }
-
     public override bool Bool(Value value) {
-        return value.Cast(this);
+        return value.CastUnbox(this);
     }
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity) {
@@ -15,6 +13,6 @@ public class BitType : ComparableType<bool>
     }
 
     public override void Dump(Value value, StringBuilder result) {
-        result.Append(value.Cast(this) ? 'T' : 'F');
+        result.Append(value.CastUnbox(this) ? 'T' : 'F');
     }
 }

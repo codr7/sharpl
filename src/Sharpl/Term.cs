@@ -15,6 +15,9 @@ public class Term
         Console.Write(buffer.ToString());
         buffer.Clear();
     }
+
+    // TODO: Switch to .NET 9 and replace with
+    // params ReadOnlySpan<object> args
     private void CSI(params object[] args)
     {
         buffer.Append((char)27);

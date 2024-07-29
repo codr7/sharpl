@@ -2,9 +2,9 @@ namespace Sharpl;
 
 using System.Text;
 
-public abstract class AnyType
+public abstract class AnyType(string name)
 {
-    public string Name { get; }
+    public string Name { get; } = name;
 
     public virtual bool Bool(Value value)
     {
@@ -75,19 +75,12 @@ public abstract class AnyType
     public virtual Form Unquote(Value value, Loc loc, VM vm) {
         throw new EvalError(loc, $"Not quoted: {value}");
     }
-
-    protected AnyType(string name)
-    {
-        Name = name;
-    }
 }
 
-public class Type<T> : AnyType
+public class Type<T>(string name) : AnyType(name)
 {
-    public Type(string name) : base(name) { }
-
     public override bool Equals(Value left, Value right)
     {
-        return left.Cast(this).Equals(right.Cast(this));
+        return left.CastSlow(this).Equals(right.CastSlow(this));
     }
 }

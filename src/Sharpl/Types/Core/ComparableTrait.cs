@@ -4,30 +4,22 @@ public interface ComparableTrait
 {
     static Order IntOrder(int value)
     {
-        if (value < 0)
+        return value switch
         {
-            return Order.LT;
-        }
-
-        if (value > 0)
-        {
-            return Order.GT;
-        }
-
-        return Order.EQ;
+            < 0 => Order.LT,
+            > 0 => Order.GT,
+            _ => Order.EQ
+        };
     }
 
     static int OrderInt(Order value)
     {
-        switch (value)
+        return value switch
         {
-            case Order.LT:
-                return -1;
-            case Order.GT:
-                return 1;
-        }
-
-        return 0;
+            Order.LT => -1,
+            Order.GT => 1,
+            _ => 0,
+        };
     }
 
     Order Compare(Value left, Value right);

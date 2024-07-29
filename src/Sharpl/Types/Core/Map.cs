@@ -17,7 +17,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
 
         for (var i = 0; i < arity; i++)
         {
-            var p = stack.Pop().TryCast(loc, Libs.Core.Pair);
+            var p = stack.Pop().CastUnbox(loc, Libs.Core.Pair);
             m[p.Item1] = p.Item2;
         }
 

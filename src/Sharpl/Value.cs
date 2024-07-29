@@ -1,5 +1,8 @@
 namespace Sharpl;
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Sharpl.Types.Core;
 
@@ -24,15 +27,20 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         Type.Call(loc, vm, stack, this, arity, registerCount);
     }
 
-    public T Cast<T>(Type<T> type)
-    {
-        if (Type != type)
-        {
-            throw new Exception($"Type mismatch: {Type}/{type}");
-        }
+    public T Cast<T>(Type<T> type) where T : class =>
+        Type == type ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);
 
-        return (T)Data;
-    }
+    public T Cast<T>(Loc loc, Type<T> type) where T : class =>
+        Type == type ? Unsafe.As<T>(Data) : TypeMismatch(loc, Type, type);
+
+    public T CastUnbox<T>(Type<T> type) where T : struct =>
+        Type == type ? Unsafe.Unbox<T>(Data) : TypeMismatch(Type, type);
+
+    public T CastUnbox<T>(Loc loc, Type<T> type) where T : struct =>
+        Type == type ? Unsafe.Unbox<T>(Data) : TypeMismatch(loc, Type, type);
+
+    public T CastSlow<T>(Type<T> type) =>
+        Type == type ? (T)Data : TypeMismatch(Type, type);
 
     public int CompareTo(Value other)
     {
@@ -103,22 +111,23 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         return res.ToString();
     }
 
-    public T? TryCast<T>(Type<T> type)
+    public T? TryCastUnbox<T>(Type<T> type) where T : struct =>
+        Type == type ? Unsafe.Unbox<T>(Data) : default(T?);
+
+    public Form Unquote(Loc loc, VM vm)
     {
-        return (Type == type) ? (T)Data : default;
-    }
-
-    public T TryCast<T>(Loc loc, Type<T> type)
-    {
-        if (Type != type)
-        {
-            throw new EvalError(loc, $"Type mismatch: {Type}/{type}");
-        }
-
-        return (T)Data;
-    }
-
-    public Form Unquote(Loc loc, VM vm) {
         return Type.Unquote(this, loc, vm);
+    }
+
+    [DoesNotReturn, StackTraceHidden]
+    static T TypeMismatch<T>(AnyType lhs, Type<T> rhs)
+    {
+        throw new Exception($"Type mismatch: {lhs}/{rhs}");
+    }
+
+    [DoesNotReturn, StackTraceHidden]
+    static T TypeMismatch<T>(Loc loc, AnyType lhs, Type<T> rhs)
+    {
+        throw new EvalError(loc, $"Type mismatch: {lhs}/{rhs}");
     }
 }

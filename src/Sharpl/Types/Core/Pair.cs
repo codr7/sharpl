@@ -9,14 +9,14 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
     public static Value Update(Loc loc, Value target, Value value, int i) {
         if (i == 0) {
             if (target.Type == Core.Pair) {
-                return Value.Make(Core.Pair, (value, target.Cast(Core.Pair).Item2));
+                return Value.Make(Core.Pair, (value, target.CastUnbox(Core.Pair).Item2));
             }
             
             return value;
         }
 
         if (target.Type == Core.Pair) {
-            var p = target.Cast(Core.Pair);
+            var p = target.CastUnbox(Core.Pair);
             return Value.Make(Core.Pair, (p.Item1, Update(loc, p.Item2, value, i-1)));
         }
 
@@ -26,7 +26,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
     public PairType(string name) : base(name) { }
 
     public override bool Bool(Value value) {
-        var p = value.Cast(this);
+        var p = value.CastUnbox(this);
         return (bool)p.Item1 && (bool)p.Item2;
     }
 
@@ -57,18 +57,18 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
                 {
                     var t = target;
 
-                    for (var i = stack.Pop().TryCast(loc, Core.Int); i >= 0; i--)
+                    for (var i = stack.Pop().CastUnbox(loc, Core.Int); i >= 0; i--)
                     {
                         switch (i)
                         {
                             case 0:
-                                stack.Push(target.TryCast(loc, this).Item1);
+                                stack.Push(target.CastUnbox(loc, this).Item1);
                                 break;
                             case 1:
-                                stack.Push(target.TryCast(loc, this).Item2);
+                                stack.Push(target.CastUnbox(loc, this).Item2);
                                 break;
                             default:
-                                t = target.TryCast(loc, this).Item2;
+                                t = target.CastUnbox(loc, this).Item2;
                                 break;
                         }
                     }
@@ -78,7 +78,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
             case 2:
                 {
                     var v = stack.Pop();
-                    var i = stack.Pop().TryCast(loc, Core.Int);
+                    var i = stack.Pop().CastUnbox(loc, Core.Int);
                     stack.Push(Update(loc, target, v, i));
                     break;
                 }
@@ -89,8 +89,8 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
 
     public Order Compare(Value left, Value right)
     {
-        var lp = left.Cast(this);
-        var rp = right.Cast(this);
+        var lp = left.CastUnbox(this);
+        var rp = right.CastUnbox(this);
 
         if (lp.Item1.Type is ComparableTrait t)
         {
@@ -109,7 +109,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
 
     public override void Dump(Value value, StringBuilder result)
     {
-        var p = value.Cast(this);
+        var p = value.CastUnbox(this);
         p.Item1.Dump(result);
         result.Append(':');
         p.Item2.Dump(result);
@@ -117,8 +117,8 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
 
     public override bool Equals(Value left, Value right)
     {
-        var lp = left.Cast(this);
-        var rp = right.Cast(this);
+        var lp = left.CastUnbox(this);
+        var rp = right.CastUnbox(this);
         return lp.Item1.Equals(rp.Item1) && lp.Item2.Equals(rp.Item2);
     }
 
@@ -129,7 +129,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
 
     public override void Say(Value value, StringBuilder result)
     {
-        var p = value.Cast(this);
+        var p = value.CastUnbox(this);
         p.Item1.Say(result);
         result.Append(':');
         p.Item2.Say(result);

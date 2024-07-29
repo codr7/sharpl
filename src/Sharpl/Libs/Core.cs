@@ -45,7 +45,7 @@ public class Core : Lib
         var ids = args.CollectIds().Where(id =>
            vm.Env[id] is Value v &&
            v.Type == Binding &&
-           v.Cast(Binding).FrameOffset != -1).
+           v.CastUnbox(Binding).FrameOffset != -1).
            ToHashSet<string>();
 
         bool vararg = false;
@@ -162,9 +162,8 @@ public class Core : Lib
             var lv = stack.Pop();
             arity--;
             var res = true;
-            var t = lv.Type as ComparableTrait;
 
-            if (t is null)
+            if (lv.Type is not ComparableTrait t)
             {
                 throw new EvalError(loc, $"Not comparable: {lv}");
             }
@@ -284,7 +283,7 @@ public class Core : Lib
          {
              if (args.TryPop() is Form f && vm.Eval(f, 0) is Value n)
              {
-                 vm.Emit(Ops.Benchmark.Make(n.TryCast(loc, Core.Int)));
+                 vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Core.Int)));
                  args.Emit(vm, 0);
                  vm.Emit(Ops.Stop.Make());
              }
@@ -337,7 +336,7 @@ public class Core : Lib
                 {
                     if (v.Type == Core.Binding)
                     {
-                        var b = v.Cast(Core.Binding);
+                        var b = v.CastUnbox(Core.Binding);
                         vm.Emit(Ops.Decrement.Make(b.FrameOffset, b.Index));
                     }
                 }
@@ -379,7 +378,8 @@ public class Core : Lib
             var stack = new Stack();
             vm.Eval(args, stack, 0);
 
-            foreach (var it in stack.Reverse())
+            stack.Reverse();
+            foreach (var it in stack)
             {
                 args.PushFirst(new Forms.Literal(loc, it));
             }
@@ -526,7 +526,7 @@ public class Core : Lib
                             if (vm.Env.Find(idf.Name) is Value v && v.Type == Core.Binding)
                             {
                                 var r = vm.AllocRegister();
-                                var b = v.Cast(Core.Binding);
+                                var b = v.CastUnbox(Core.Binding);
                                 brs.Add((r, b.FrameOffset, b.Index));
                                 vm.Emit(Ops.CopyRegister.Make(b.FrameOffset, b.Index, 0, r));
                                 vm.Emit(Ops.SetRegister.Make(b.FrameOffset, b.Index));
@@ -582,7 +582,7 @@ public class Core : Lib
 
                 if (vm.Env.Find(nf.Name) is Value v)
                 {
-                    lib = v.TryCast(loc, Core.Lib);
+                    lib = v.Cast(loc, Core.Lib);
                 }
                 else
                 {
@@ -613,7 +613,7 @@ public class Core : Lib
                 {
                     if (vm.Eval(pf, args, 0) is Value p)
                     {
-                        vm.Load(p.TryCast(pf.Loc, Core.String));
+                        vm.Load(p.Cast(pf.Loc, Core.String));
                     }
                     else
                     {
@@ -768,18 +768,18 @@ public class Core : Lib
 
         BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
         {
-            var n = stack.Pop().TryCast(loc, Core.String);
-            var o = stack.Pop().TryCast(loc, Core.String);
-            var i = stack.Pop().TryCast(loc, Core.String);
+            var n = stack.Pop().Cast(loc, Core.String);
+            var o = stack.Pop().Cast(loc, Core.String);
+            var i = stack.Pop().Cast(loc, Core.String);
             o = o.Replace(" ", "\\s*");
             stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
         });
 
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>
         {
-            int b = stack.Pop().Cast(Core.Int);
-            int g = stack.Pop().Cast(Core.Int);
-            int r = stack.Pop().Cast(Core.Int);
+            int b = stack.Pop().CastUnbox(Core.Int);
+            int g = stack.Pop().CastUnbox(Core.Int);
+            int r = stack.Pop().CastUnbox(Core.Int);
 
             stack.Push(Core.Color, System.Drawing.Color.FromArgb(255, r, g, b));
         });
