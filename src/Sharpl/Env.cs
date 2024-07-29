@@ -20,7 +20,7 @@ public class Env
                     continue;
                 }
 
-                if (p.bindings.ContainsKey(id) && p.bindings[id] is Value b && b.Type == Core.Binding)
+                if (p.bindings.TryGetValue(id, out var bval) && bval is Value b && b.Type == Core.Binding)
                 {
                     var v = b.CastUnbox(Core.Binding);
 
@@ -83,7 +83,7 @@ public class Env
 
     public Value? Find(string id)
     {
-        return bindings.ContainsKey(id) ? bindings[id] : Parent?.Find(id);
+        return bindings.TryGetValue(id, out var value) ? value : Parent?.Find(id);
     }
 
     public void Import(Env source)

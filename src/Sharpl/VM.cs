@@ -684,14 +684,12 @@ public class VM
 
     public Sym GetSymbol(string name)
     {
-        if (syms.ContainsKey(name))
+        if (syms.TryGetValue(name, out var sym))
         {
-            return syms[name];
+            return sym;
         }
 
-        var s = new Sym(name);
-        syms[name] = s;
-        return s;
+        return syms[name] = new Sym(name);
     }
 
     public Label Label(PC pc = -1)
