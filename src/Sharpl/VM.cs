@@ -36,12 +36,12 @@ public class VM
     private int definitionCount = 0;
     private Env? env;
     private readonly List<(int, int)> frames = [];
-    private readonly List<Label> labels = new List<Label>();
+    private readonly List<Label> labels = [];
     private string loadPath = "";
     private int nextRegisterIndex = 0;
-    private Value[] registers;
-    private List<int> splats = [];
-    private Dictionary<string, Sym> syms = new Dictionary<string, Sym>();
+    private readonly Value[] registers;
+    private readonly List<int> splats = [];
+    private readonly Dictionary<string, Sym> syms = [];
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -695,7 +695,7 @@ public class VM
     public Label Label(PC pc = -1)
     {
         var l = new Label(pc);
-        labels.Append(l);
+        labels.Add(l);
         return l;
     }
 
@@ -703,7 +703,7 @@ public class VM
     {
         get
         {
-            for (Env? e = Env; e is Env; e = e.Parent)
+            for (var e = Env; e != null; e = e.Parent)
             {
                 if (e is Lib l)
                 {
