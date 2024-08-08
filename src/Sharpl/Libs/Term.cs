@@ -39,8 +39,8 @@ public class Term : Lib
         BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var y = stack.Pop();
-            var x = stack.Pop().TryCast(loc, Core.Int);
-            vm.Term.MoveTo(x, (y == Value.Nil) ? null : y.TryCast(loc, Core.Int));
+            var x = stack.Pop().CastUnbox(loc, Core.Int);
+            vm.Term.MoveTo(x, (y == Value.Nil) ? null : y.CastUnbox(loc, Core.Int));
         });
 
         BindMethod("read-key", [], (loc, target, vm, stack, arity) =>
@@ -52,7 +52,7 @@ public class Term : Lib
 
             if (echo is Value e)
             {
-                if ((e.Type != Core.Bit) || e.Cast(Core.Bit))
+                if ((e.Type != Core.Bit) || e.CastUnbox(Core.Bit))
                 {
                     Console.Write((e.Type == Core.Bit) ? k.KeyChar : e.Say());
                 }
@@ -78,7 +78,7 @@ public class Term : Lib
 
                 if (echo is Value v)
                 {
-                    if ((v.Type != Core.Bit) || v.Cast(Core.Bit))
+                    if ((v.Type != Core.Bit) || v.CastUnbox(Core.Bit))
                     {
                         Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say());
                     }
@@ -116,14 +116,14 @@ public class Term : Lib
             var max = (vm.Term.Width, vm.Term.Height);
  
             if (arity > 0) {
-                var p = stack.Pop().TryCast(loc, Core.Pair);
-                min = (p.Item1.TryCast(loc, Core.Int), p.Item2.TryCast(loc, Core.Int));
+                var p = stack.Pop().CastUnbox(loc, Core.Pair);
+                min = (p.Item1.CastUnbox(loc, Core.Int), p.Item2.CastUnbox(loc, Core.Int));
                 arity--;
             }
 
             if (arity > 0) {
-                var p = stack.Pop().TryCast(loc, Core.Pair);
-                max = (p.Item1.TryCast(loc, Core.Int), p.Item2.TryCast(loc, Core.Int));
+                var p = stack.Pop().CastUnbox(loc, Core.Pair);
+                max = (p.Item1.CastUnbox(loc, Core.Int), p.Item2.CastUnbox(loc, Core.Int));
                 arity--;
             }
 
@@ -134,7 +134,7 @@ public class Term : Lib
             var lines = 1;
  
             if (arity > 0) {
-                lines = stack.Pop().TryCast(loc, Core.Int);
+                lines = stack.Pop().CastUnbox(loc, Core.Int);
                 arity--;
             }
 
@@ -145,7 +145,7 @@ public class Term : Lib
             var lines = 1;
  
             if (arity > 0) {
-                lines = stack.Pop().TryCast(loc, Core.Int);
+                lines = stack.Pop().CastUnbox(loc, Core.Int);
                 arity--;
             }
 
@@ -154,13 +154,13 @@ public class Term : Lib
 
         BindMethod("pick-back", ["color"], (loc, target, vm, stack, arity) =>
        {
-           var c = stack.Pop().TryCast(loc, Core.Color);
+           var c = stack.Pop().CastUnbox(loc, Core.Color);
            vm.Term.SetBg(c);
        });
 
         BindMethod("pick-front", ["color"], (loc, target, vm, stack, arity) =>
         {
-            var c = stack.Pop().TryCast(loc, Core.Color);
+            var c = stack.Pop().CastUnbox(loc, Core.Color);
             vm.Term.SetFg(c);
         });
 

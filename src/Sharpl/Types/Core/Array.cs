@@ -31,14 +31,14 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, SeqTrait
         {
             case 1:
                 {
-                    var i = stack.Pop().Cast(Core.Int);
+                    var i = stack.Pop().CastUnbox(Core.Int);
                     stack.Push(target.Cast(this)[i]);
                     break;
                 }
             case 2:
                 {
                     var v = stack.Pop();
-                    target.Cast(this)[stack.Pop().Cast(Core.Int)] = v;
+                    target.Cast(this)[stack.Pop().CastUnbox(Core.Int)] = v;
                     break;
                 }
             default:

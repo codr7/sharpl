@@ -9,20 +9,20 @@ public class FormType : Type<(Form, int)>
 
     public override void Dump(Value value, StringBuilder result)
     {
-        var (f, d) = value.Cast(this);
+        var (f, d) = value.CastUnbox(this);
         for (var i = 0; i < d; i++) { result.Append('\''); }
         result.Append(f);
     }
     public override bool Equals(Value left, Value right)
     {
-        var (lf, ld) = left.Cast(this);
-        var (rf, rd) = right.Cast(this);
+        var (lf, ld) = left.CastUnbox(this);
+        var (rf, rd) = right.CastUnbox(this);
         return lf.Equals(lf) && ld == rd;
     }
 
     public override Form Unquote(Value value, Loc loc, VM vm)
     {
-        var (f, d) = value.Cast(this);
+        var (f, d) = value.CastUnbox(this);
         Console.WriteLine("FORM UNQUOTE" + f + " " + d);
 
         if (d > 1) { return new Quote(loc, f, d - 1); }

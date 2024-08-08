@@ -3,10 +3,8 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class SymType : Type<Sym>, ComparableTrait
+public class SymType(string name) : Type<Sym>(name), ComparableTrait
 {
-    public SymType(string name) : base(name) { }
-    
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
         stack.Reverse(arity);

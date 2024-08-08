@@ -1,2 +1,2 @@
-dotnet publish -r linux-amd64 --self-contained true --use-current-runtime true
-sudo cp bin/Release/net8.0/linux-x64/publish/sharpl /usr/local/bin
+dotnet publish -o publish
+sudo cp publish/sharpl /usr/local/bin

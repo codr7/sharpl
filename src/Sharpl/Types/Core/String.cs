@@ -3,10 +3,8 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class StringType : ComparableType<string>, SeqTrait
+public class StringType(string name) : ComparableType<string>(name), SeqTrait
 {
-    public StringType(string name) : base(name) { }
-
     public override bool Bool(Value value)
     {
         return value.Cast(this).Length != 0;

@@ -16,7 +16,7 @@ public class KeyType : Type<ConsoleKeyInfo>
 
     public override void Say(Value value, StringBuilder result)
     {
-        var ki = value.Cast(this);
+        var ki = value.CastUnbox(this);
         
         if ((ki.Modifiers & ConsoleModifiers.Alt) != 0)
         {

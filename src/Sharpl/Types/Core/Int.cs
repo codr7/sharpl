@@ -1,19 +1,20 @@
 namespace Sharpl.Types.Core;
 
-public class IntType : ComparableType<int>, NumericTrait, RangeTrait
+public class IntType(string name) :
+    ComparableType<int>(name),
+    NumericTrait,
+    RangeTrait
 {
-    public IntType(string name) : base(name) { }
-
     public override bool Bool(Value value)
     {
-        return value.Cast(this) != 0;
+        return value.CastUnbox(this) != 0;
     }
 
     public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
     {
-        int minVal = (min.Type == Libs.Core.Nil) ? 0 : min.TryCast(loc, this);
-        int? maxVal = (max.Type == Libs.Core.Nil) ? null : max.TryCast(loc, this);
-        int strideVal = (stride.Type == Libs.Core.Nil) ? ((maxVal is int mv && maxVal < minVal) ? -1 : 1) : stride.TryCast(loc, this);
+        int minVal = (min.Type == Libs.Core.Nil) ? 0 : min.CastUnbox(loc, this);
+        int? maxVal = (max.Type == Libs.Core.Nil) ? null : max.CastUnbox(loc, this);
+        int strideVal = (stride.Type == Libs.Core.Nil) ? ((maxVal is int mv && maxVal < minVal) ? -1 : 1) : stride.CastUnbox(loc, this);
         return new Iters.Core.IntRange(minVal, maxVal, strideVal);
     }
 
@@ -23,7 +24,7 @@ public class IntType : ComparableType<int>, NumericTrait, RangeTrait
 
         while (arity > 0)
         {
-            res += stack.Pop().TryCast(loc, this);
+            res += stack.Pop().CastUnbox(loc, this);
             arity--;
         }
 
@@ -33,12 +34,12 @@ public class IntType : ComparableType<int>, NumericTrait, RangeTrait
     public void Divide(Loc loc, VM vm, Stack stack, int arity)
     {
         stack.Reverse(arity);
-        var res = stack.Pop().TryCast(loc, this);
+        var res = stack.Pop().CastUnbox(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res /= stack.Pop().TryCast(loc, this);
+            res /= stack.Pop().CastUnbox(loc, this);
             arity--;
         }
 
@@ -47,12 +48,12 @@ public class IntType : ComparableType<int>, NumericTrait, RangeTrait
 
     public void Multiply(Loc loc, VM vm, Stack stack, int arity)
     {
-        var res = stack.Pop().TryCast(loc, this);
+        var res = stack.Pop().CastUnbox(loc, this);
         arity--;
 
         while (arity > 0)
         {
-            res *= stack.Pop().TryCast(loc, this);
+            res *= stack.Pop().CastUnbox(loc, this);
             arity--;
         }
 
@@ -67,18 +68,18 @@ public class IntType : ComparableType<int>, NumericTrait, RangeTrait
         {
             if (arity == 1)
             {
-                res = -stack.Pop().TryCast(loc, this);
+                res = -stack.Pop().CastUnbox(loc, this);
 
             }
             else
             {
                 stack.Reverse(arity);
-                res = stack.Pop().TryCast(loc, this);
+                res = stack.Pop().CastUnbox(loc, this);
                 arity--;
 
                 while (arity > 0)
                 {
-                    res -= stack.Pop().TryCast(loc, this);
+                    res -= stack.Pop().CastUnbox(loc, this);
                     arity--;
                 }
             }

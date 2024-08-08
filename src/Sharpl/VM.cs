@@ -31,17 +31,17 @@ public class VM
     public PC PC = 0;
     public readonly Term Term = new Term();
 
-    private readonly SList<Call> calls = new SList<Call>();
-    private readonly SList<Op> code = new SList<Op>();
+    private readonly List<Call> calls = [];
+    private readonly List<Op> code = [];
     private int definitionCount = 0;
     private Env? env;
-    private readonly SList<(int, int)> frames = new SList<(int, int)>();
-    private readonly List<Label> labels = new List<Label>();
+    private readonly List<(int, int)> frames = [];
+    private readonly List<Label> labels = [];
     private string loadPath = "";
     private int nextRegisterIndex = 0;
-    private Value[] registers;
-    private SList<int> splats = new SList<int>();
-    private Dictionary<string, Sym> syms = new Dictionary<string, Sym>();
+    private readonly Value[] registers;
+    private readonly List<int> splats = [];
+    private readonly Dictionary<string, Sym> syms = [];
 
     private Reader[] readers = [
         Readers.WhiteSpace.Instance,
@@ -92,7 +92,7 @@ public class VM
     {
         var total = registerCount;
 
-        if (!frames.Empty)
+        if (frames.Count > 0)
         {
             total += frames[^1].Item2;
         }
@@ -253,7 +253,7 @@ public class VM
                 case Op.T.CallDirect:
                     {
                         var callOp = (Ops.CallDirect)op.Data;
-                        var recursive = !calls.Empty && calls.Peek().Target.Equals(callOp.Target);
+                        var recursive = calls.Count > 0 && calls.Peek().Target.Equals(callOp.Target);
                         var arity = callOp.Arity;
 
                         if (callOp.Splat)
@@ -423,7 +423,7 @@ public class VM
                     {
                         var decrementOp = (Ops.Decrement)op.Data;
                         var i = RegisterIndex(decrementOp.FrameOffset, decrementOp.Index);
-                        var v = Value.Make(Core.Int, registers[i].Cast(Core.Int) - 1);
+                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - 1);
                         registers[i] = v;
                         stack.Push(v);
                         PC++;
@@ -495,7 +495,7 @@ public class VM
 
                         if (stack.Pop() is Value p)
                         {
-                            sr = new StreamReader(Path.Combine(loadPath, p.TryCast(openOp.Loc, Core.String)));
+                            sr = new StreamReader(Path.Combine(loadPath, p.Cast(openOp.Loc, Core.String)));
                             SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.InputStream, sr));
                         }
                         else
@@ -684,20 +684,18 @@ public class VM
 
     public Sym GetSymbol(string name)
     {
-        if (syms.ContainsKey(name))
+        if (syms.TryGetValue(name, out var sym))
         {
-            return syms[name];
+            return sym;
         }
 
-        var s = new Sym(name);
-        syms[name] = s;
-        return s;
+        return syms[name] = new Sym(name);
     }
 
     public Label Label(PC pc = -1)
     {
         var l = new Label(pc);
-        labels.Append(l);
+        labels.Add(l);
         return l;
     }
 
@@ -705,7 +703,7 @@ public class VM
     {
         get
         {
-            for (Env? e = Env; e is Env; e = e.Parent)
+            for (var e = Env; e != null; e = e.Parent)
             {
                 if (e is Lib l)
                 {
@@ -839,7 +837,7 @@ public class VM
                     Eval(startPC, stack);
 
                     Term.SetFg(Color.FromArgb(255, 0, 255, 0));
-                    Term.WriteLine(stack.Empty ? Value.Nil : stack.Pop());
+                    Term.WriteLine(stack is [] ? Value.Nil : stack.Pop());
                     Term.Reset();
                 }
                 catch (Exception e)

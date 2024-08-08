@@ -6,6 +6,6 @@ public class MacroType : Type<Macro>
 
     public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
     {
-        target.Cast(this).Emit(loc, vm, args);
+        target.CastUnbox(this).Emit(loc, vm, args);
     }
 }

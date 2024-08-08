@@ -23,7 +23,7 @@ public class UserMethod
         Closure = ids.AsEnumerable().Select<string, (string, int, Register)>(id =>
         {
 #pragma warning disable CS8629
-            var b = ((Value)vm.Env[id]).Cast(Core.Binding);
+            var b = ((Value)vm.Env[id]).CastUnbox(Core.Binding);
 #pragma warning restore CS8629
             var r = vm.AllocRegister();
             vm.Env[id] = Value.Make(Core.Binding, new Register(0, r));
