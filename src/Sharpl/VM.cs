@@ -14,7 +14,7 @@ public class VM
     public struct C
     {
         public int MaxRegisters = 1024;
-        public int MaxVars = 128; 
+        public int MaxVars = 128;
         public C() { }
     };
 
@@ -164,13 +164,15 @@ public class VM
         return result;
     }
 
-    public void Emit(Form form, int quoted) {
+    public void Emit(Form form, int quoted)
+    {
         var fs = new Form.Queue();
         fs.Push(form);
         fs.Emit(this, quoted);
     }
 
-    public void Emit(string code, Loc loc) {
+    public void Emit(string code, Loc loc)
+    {
         ReadForms(new StringReader(code), ref loc).Emit(this, 0);
     }
 
@@ -547,6 +549,16 @@ public class VM
                 case Op.T.PushSplat:
                     {
                         splats.Push(0);
+                        PC++;
+                        break;
+                    }
+                case Op.T.QuoteCall:
+                    {
+                        var quoteOp = (Ops.QuoteCall)op.Data;
+                        var t = new Forms.Literal(quoteOp.Loc, stack.Pop());
+                        var args = new Form[quoteOp.Arity];
+                        for (int i = args.Length-1; i >= 0; i--) { args[i] = new Forms.Literal(quoteOp.Loc, stack.Pop()); }
+                        stack.Push(Value.Make(Core.Form, (new Forms.Call(quoteOp.Loc, t, args), 0)));
                         PC++;
                         break;
                     }

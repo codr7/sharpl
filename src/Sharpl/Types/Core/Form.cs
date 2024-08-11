@@ -23,8 +23,6 @@ public class FormType : Type<(Form, int)>
     public override Form Unquote(Value value, Loc loc, VM vm)
     {
         var (f, d) = value.CastUnbox(this);
-        Console.WriteLine("FORM UNQUOTE" + f + " " + d);
-
         if (d > 1) { return new Quote(loc, f, d - 1); }
 
         if (d == 1)

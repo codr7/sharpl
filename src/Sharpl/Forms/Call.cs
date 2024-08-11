@@ -45,7 +45,9 @@ public class Call : Form
         }
         else
         {
-            args.PushFirst(new Literal(Loc, Value.Make(Core.Form, (this, quoted))));
+            foreach (var a in Args) { a.Emit(vm, args, quoted); }
+            Target.Emit(vm, new Queue(), quoted);
+            vm.Emit(Ops.QuoteCall.Make(Loc, Args.Length));
         }
     }
 

@@ -20,3 +20,7 @@
 
 (check '42
   ,''42)
+
+(check '(foo 42) 
+  (let [bar 42] 
+    '(foo ,bar)))
