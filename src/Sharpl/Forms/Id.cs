@@ -52,7 +52,7 @@ public class Id : Form
         }
         else
         {
-            vm.Emit(Ops.Push.Make(Value.Make(Core.Sym, vm.GetSymbol(Name))));
+            vm.Emit(Ops.Push.Make(Value.Make(Core.Sym, vm.Intern(Name))));
         }
     }
 

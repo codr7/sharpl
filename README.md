@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v16
+sharpl v17
 
    1 (say 'hello)
    2 
@@ -223,9 +223,18 @@ The `Bit` type has two values, `T` and `F`.
 Symbols may be created by quoting identifiers.
 
 ```
-(= (Sym 'foo 42) 'foo42)
+(= (sym 'foo "bar") 'foobar)
 ```
 `T`
+
+#### unique
+Unique symbols may be created using the type constructor.
+
+```
+  (Sym 'foo)
+
+'foo7
+```
 
 ### strings
 Strings use double quotes.

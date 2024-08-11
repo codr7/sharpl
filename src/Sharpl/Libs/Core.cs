@@ -798,6 +798,20 @@ public class Core : Lib
             Console.WriteLine(res.ToString());
         });
 
+        BindMethod("sym", ["x"], (loc, target, vm, stack, arity) =>
+        {
+            stack.Reverse(arity);
+            var res = new StringBuilder();
+
+            while (arity > 0)
+            {
+                stack.Pop().Say(res);
+                arity--;
+            }
+
+            stack.Push(Value.Make(Sym, vm.Intern(res.ToString())));
+        });
+
         BindMacro("var", ["id", "value"], (loc, target, vm, args) =>
         {
             while (true)

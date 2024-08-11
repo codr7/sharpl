@@ -19,7 +19,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 16;
+    public static readonly int VERSION = 17;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
@@ -694,7 +694,7 @@ public class VM
         return registers[RegisterIndex(frameOffset, index)];
     }
 
-    public Sym GetSymbol(string name)
+    public Sym Intern(string name)
     {
         if (syms.TryGetValue(name, out var sym))
         {
@@ -702,6 +702,10 @@ public class VM
         }
 
         return syms[name] = new Sym(name);
+    }
+
+    public Sym Gensym(string prefix) {
+        return Intern($"{prefix}{syms.Count}");
     }
 
     public Label Label(PC pc = -1)

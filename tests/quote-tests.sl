@@ -1,5 +1,5 @@
 (check 'foo42
-  (Sym "foo" 42))
+  (sym "foo" 42))
 
 (check (= 'foo 'foo))
 
@@ -24,3 +24,6 @@
 (check '(foo 42) 
   (let [bar 42] 
     '(foo ,bar)))
+
+(check F
+  (= (Sym 'foo) (Sym 'foo)))
