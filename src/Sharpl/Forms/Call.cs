@@ -21,32 +21,23 @@ public class Call : Form
     }
 
 
-    public override void Emit(VM vm, Queue args, int quoted)
+    public override void Emit(VM vm, Queue args)
     {
-        if (quoted == 0)
-        {
-            var splat = false;
+        var splat = false;
 
-            foreach (var f in Args)
+        foreach (var f in Args)
+        {
+            if (f.IsSplat)
             {
-                if (f.IsSplat)
-                {
-                    splat = true;
-                    break;
-                }
+                splat = true;
+                break;
             }
+        }
 
-            var cas = new Queue(Args);
-            if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-            Target.EmitCall(vm, cas);
-            foreach (var a in cas) { args.Push(a); }
-        }
-        else
-        {
-            foreach (var a in Args) { a.Emit(vm, args, quoted); }
-            Target.Emit(vm, new Queue(), quoted);
-            vm.Emit(Ops.QuoteCall.Make(Loc, Args.Length));
-        }
+        var cas = new Queue(Args);
+        if (splat) { vm.Emit(Ops.PushSplat.Make()); }
+        Target.EmitCall(vm, cas);
+        foreach (var a in cas) { args.Push(a); }
     }
 
     public override bool Equals(Form other)
@@ -66,6 +57,9 @@ public class Call : Form
         return false;
     }
 
+    public override Form Quote(Loc loc, VM vm) =>
+        new Literal(Loc, Value.Make(Libs.Core.Form, new Call(loc, Target.Quote(loc, vm), Args.Select(a => a.Quote(loc, vm)).ToArray())));
+
     public override string ToString()
     {
         var b = new StringBuilder();
@@ -75,4 +69,7 @@ public class Call : Form
         b.Append(')');
         return b.ToString();
     }
+
+    public override Form Unquote(Loc loc, VM vm) =>
+        new Call(loc, Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray());
 }

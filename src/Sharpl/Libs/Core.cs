@@ -83,30 +83,16 @@ public class Core : Lib
             }
 
             var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
-
-            if (ids.Count > 0)
-            {
-                vm.Emit(Ops.PrepareClosure.Make(m));
-            }
-
+            if (ids.Count > 0) { vm.Emit(Ops.PrepareClosure.Make(m)); }
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             m.StartPC = vm.EmitPC;
             var v = Value.Make(type, m);
-
-            if (name != "")
-            {
-                parentEnv.Bind(name, v);
-            }
-
-            args.Emit(vm, 0);
+            if (name != "") { parentEnv.Bind(name, v); }
+            args.Emit(vm, new Form.Queue());
             vm.Emit(stopOp);
             skip.PC = vm.EmitPC;
-
-            if (name == "")
-            {
-                v.Emit(loc, vm, args);
-            }
+            if (name == "") { v.Emit(loc, vm, args); }
         });
     }
 
@@ -284,7 +270,7 @@ public class Core : Lib
              if (args.TryPop() is Form f && vm.Eval(f, 0) is Value n)
              {
                  vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Core.Int)));
-                 args.Emit(vm, 0);
+                 args.Emit(vm, new Form.Queue());
                  vm.Emit(Ops.Stop.Make());
              }
              else
@@ -323,7 +309,7 @@ public class Core : Lib
                  emptyArgs = false;
              }
 
-             ef.Emit(vm, new Form.Queue());
+             vm.Emit(ef);
              if (emptyArgs) { Value.T.Emit(loc, vm, new Form.Queue()); }
              vm.Emit(Ops.Check.Make(loc));
          });
@@ -357,7 +343,7 @@ public class Core : Lib
 
             vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
             {
-                args.Emit(vm, 0);
+                args.Emit(vm, new Form.Queue());
             });
 
             vm.Emit(Ops.EndFrame.Make());
@@ -368,7 +354,7 @@ public class Core : Lib
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             var startPC = vm.EmitPC;
-            args.Emit(vm, 0);
+            args.Emit(vm, new Form.Queue());
             skip.PC = vm.EmitPC;
             vm.Decode(startPC);
         });
@@ -417,7 +403,7 @@ public class Core : Lib
 
                 var skip = new Label();
                 vm.Emit(Ops.Branch.Make(skip));
-                args.Emit(vm, 0);
+                args.Emit(vm, new Form.Queue());
                 skip.PC = vm.EmitPC;
                 vm.Emit(Ops.EndFrame.Make());
             });
@@ -450,7 +436,7 @@ public class Core : Lib
                  var skipEnd = new Label();
                  vm.Emit(Ops.Goto.Make(skipEnd));
                  skipElse.PC = vm.EmitPC;
-                 args.Emit(vm, 0);
+                 args.Emit(vm, new Form.Queue());
                  skipEnd.PC = vm.EmitPC;
                  vm.Emit(Ops.EndFrame.Make());
              });
@@ -509,9 +495,9 @@ public class Core : Lib
                 }
 
                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+
                 vm.DoEnv(new Env(vm.Env, ids), () =>
                 {
-                    var valueArgs = new Form.Queue();
                     var brs = new List<(int, int, int)>();
 
                     for (var i = 0; i < bs.Length; i++)
@@ -521,8 +507,8 @@ public class Core : Lib
                         if (bf is Forms.Id idf)
                         {
                             i++;
-                            bs[i].Emit(vm, valueArgs);
-
+                            vm.Emit(bs[i]);
+                            
                             if (vm.Env.Find(idf.Name) is Value v && v.Type == Core.Binding)
                             {
                                 var r = vm.AllocRegister();
@@ -596,7 +582,7 @@ public class Core : Lib
                 }
                 else
                 {
-                    vm.DoEnv(lib, () => args.Emit(vm, 0));
+                    vm.DoEnv(lib, () => args.Emit(vm, new Form.Queue()));
                 }
             }
             else
@@ -611,7 +597,7 @@ public class Core : Lib
             {
                 if (args.TryPop() is Form pf)
                 {
-                    if (vm.Eval(pf, args, 0) is Value p)
+                    if (vm.Eval(pf, args) is Value p)
                     {
                         vm.Load(p.Cast(pf.Loc, Core.String));
                     }
@@ -737,7 +723,7 @@ public class Core : Lib
 
             if (m is null)
             {
-                args.Emit(vm, 0);
+                args.Emit(vm, new Form.Queue());
                 vm.Emit(Ops.ExitMethod.Make());
             }
         });
@@ -834,7 +820,7 @@ public class Core : Lib
 
                         var v = new Form.Queue();
                         v.Push(f);
-                        v.Emit(vm, args, 0);
+                        v.Emit(vm, args);
                         vm.Define(idf.Name);
                     }
                     else

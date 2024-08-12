@@ -1,5 +1,3 @@
-using Sharpl.Libs;
-
 namespace Sharpl.Forms;
 
 public class Literal : Form
@@ -11,16 +9,9 @@ public class Literal : Form
         Value = value;
     }
 
-    public override void Emit(VM vm, Queue args, int quoted) =>
-        Value.Emit(Loc, vm, args);
-
-    public override void EmitCall(VM vm, Queue args) =>
-        Value.EmitCall(Loc, vm, args);
-
-    public override bool Equals(Form other) => 
-        (other is Literal l) && l.Value.Equals(Value);
-
+    public override void Emit(VM vm, Queue args) => Value.Emit(Loc, vm, args);
+    public override void EmitCall(VM vm, Queue args) => Value.EmitCall(Loc, vm, args);
+    public override bool Equals(Form other) => (other is Literal l) && l.Value.Equals(Value);
     public override Value? GetValue(VM vm) => Value;
-
     public override string ToString() => Value.ToString();
 }

@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Sharpl.Forms;
 
 public class And : Form
@@ -19,27 +17,20 @@ public class And : Form
         Right.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Queue args, int quoted)
-    {
+    public override void Emit(VM vm, Queue args) =>
         vm.Emit(Ops.Push.Make(vm.Compose(Loc, Left, Right, new Queue())));
-    }
 
-    public override void EmitCall(VM vm, Queue args)
-    {
+    public override void EmitCall(VM vm, Queue args) =>
         vm.Compose(Loc, Left, Right, args).EmitCall(Loc, vm, args);
-    }
 
-    public override bool Equals(Form other)
-    {
-        if (other is And f) {
-            return f.Left.Equals(Left) && f.Right.Equals(Right);
-        }
+    public override bool Equals(Form other) =>
+        (other is And f) && f.Left.Equals(Left) && f.Right.Equals(Right);
 
-        return false;
-    }
+    public override Form Quote(Loc loc, VM vm) => 
+        new And(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
 
-    public override string ToString()
-    {
-        return $"{Left} & {Right}";
-    }
+    public override string ToString() => $"{Left} & {Right}";
+
+    public override Form Unquote(Loc loc, VM vm) => 
+        new And(loc, Left.Unquote(loc, vm), Right.Unquote(loc, vm));
 }

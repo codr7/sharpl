@@ -1,8 +1,5 @@
 namespace Sharpl.Forms;
 
-using System.Text;
-using Sharpl.Libs;
-
 public class Pair : Form
 {
     public readonly Form Left;
@@ -20,22 +17,21 @@ public class Pair : Form
         Right.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Form.Queue args, int quoted)
+    public override void Emit(VM vm, Form.Queue args)
     {
-        var leftArgs = new Form.Queue();
-        Left.Emit(vm, leftArgs);
-        Right.Emit(vm, args);
+        vm.Emit(Left);
+        vm.Emit(Right);
         vm.Emit(Ops.CreatePair.Make(Loc));
     }
 
-    public override bool Equals(Form other)
-    {
-        if (other is And f) { return f.Left.Equals(Left) && f.Right.Equals(Right); }
-        return false;
-    }
+    public override bool Equals(Form other) =>
+        (other is And f) ? f.Left.Equals(Left) && f.Right.Equals(Right) : false;
 
-    public override string ToString()
-    {
-        return $"{Left}:{Right}";
-    }
+    public override Form Quote(Loc loc, VM vm) => 
+        new Pair(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
+
+    public override string ToString() => $"{Left}:{Right}";
+
+    public override Form Unquote(Loc loc, VM vm) => 
+        new Pair(loc, Left.Unquote(loc, vm), Right.Unquote(loc, vm));
 }

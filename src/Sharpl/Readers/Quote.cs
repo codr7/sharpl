@@ -19,7 +19,7 @@ public struct Quote : Reader
 
         if (vm.ReadForm(source, ref loc, forms) && forms.TryPopLast() is Form f)
         {
-            forms.Push(new Forms.Quote(formLoc, f));
+            forms.Push(new Forms.QuoteForm(formLoc, f));
         }
         else
         {

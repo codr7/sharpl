@@ -1,6 +1,6 @@
-namespace Sharpl.Forms;
-
 using System.Text;
+
+namespace Sharpl.Forms;
 
 public class Array : Form
 {
@@ -16,7 +16,7 @@ public class Array : Form
         foreach (var f in Items) { f.CollectIds(result); }
     }
 
-    public override void Emit(VM vm, Queue args, int quoted)
+    public override void Emit(VM vm, Queue args)
     {
         var splat = false;
 
@@ -32,20 +32,17 @@ public class Array : Form
         if (splat)
         {
             var its = Items;
-            if (quoted > 0) { its = its.Select(it => new Quote(Loc, it, quoted)).ToArray(); }
             Form cf = new Call(Loc, new Id(Loc, "Array"), its);
             args.PushFirst(cf);
         }
         else
         {
-            var itemArgs = new Queue();
-
             vm.Emit(Ops.CreateArray.Make(Items.Length));
             var i = 0;
 
             foreach (var f in Items)
             {
-                f.Emit(vm, itemArgs, quoted);
+                vm.Emit(f);
                 vm.Emit(Ops.SetArrayItem.Make(i));
                 i++;
             }
@@ -69,6 +66,9 @@ public class Array : Form
         return false;
     }
 
+    public override Form Quote(Loc loc, VM vm) => 
+        new Array(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
+
     public override string ToString()
     {
         var b = new StringBuilder();
@@ -77,11 +77,7 @@ public class Array : Form
 
         foreach (var v in Items)
         {
-            if (i > 0)
-            {
-                b.Append(' ');
-            }
-
+            if (i > 0) { b.Append(' '); }
             b.Append(v);
             i++;
         }
@@ -89,4 +85,7 @@ public class Array : Form
         b.Append(']');
         return b.ToString();
     }
+
+    public override Form Unquote(Loc loc, VM vm) =>
+        new Array(loc, Items.Select(it => it.Unquote(loc, vm)).ToArray());
 }

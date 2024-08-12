@@ -1,8 +1,8 @@
-namespace Sharpl;
-
 using System.Collections;
 using System.Text;
 using Sharpl.Ops;
+
+namespace Sharpl;
 
 public abstract class Form : Emitter
 {
@@ -15,29 +15,22 @@ public abstract class Form : Emitter
 
     public virtual void CollectIds(HashSet<string> result) { }
 
-    public abstract void Emit(VM vm, Queue args, int quoted);
-
-    public void Emit(VM vm, Queue args)
-    {
-        Emit(vm, args, 0);
-    }
+    public abstract void Emit(VM vm, Queue args);
 
     public virtual void EmitCall(VM vm, Queue args)
     {
         var arity = args.Count;
-        args.Emit(vm, 0);
+        args.Emit(vm, new Queue());
         Emit(vm, new Queue());
         vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public abstract bool Equals(Form other);
-
-    public virtual Value? GetValue(VM vm)
-    {
-        return null;
-    }
-
+    public virtual Value? GetValue(VM vm) => null;
     public virtual bool IsSplat => false;
+    public virtual Form Quote(Loc loc, VM vm) => this;
+    public virtual Form Unquote(Loc loc, VM vm) => this;
+
 
     public class Queue : Emitter, IEnumerable<Form>
     {
@@ -73,20 +66,12 @@ public abstract class Form : Emitter
         public int Count { get { return items.Count; } }
 
 
-        public void Emit(VM vm, int quoted)
+        public void Emit(VM vm, Queue args)
         {
             while (Count > 0)
             {
-                if (TryPop() is Form v)
-                {
-                    v.Emit(vm, this, quoted);
-                }
+                if (TryPop() is Form v) { v.Emit(vm, this); }
             }
-        }
-
-        public void Emit(VM vm, Queue args, int quoted)
-        {
-            Emit(vm, quoted);
         }
 
         public bool Empty { get => items.Count == 0; }

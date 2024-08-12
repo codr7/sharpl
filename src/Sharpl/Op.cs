@@ -14,7 +14,6 @@ public readonly struct Op
         IterNext,
         OpenInputStream, Or, 
         PrepareClosure, Push, PushSplat,
-        QuoteCall,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
         Splat, Stop
     };

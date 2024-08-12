@@ -2,45 +2,29 @@ using System.Text;
 
 namespace Sharpl.Forms;
 
-public class Quote : Form
+public class QuoteForm : Form
 {
     public readonly Form Target;
     public readonly int Depth;
 
-
-    public Quote(Loc loc, Form target, int depth = 1) : base(loc)
+    public QuoteForm(Loc loc, Form target) : base(loc)
     {
         Target = target;
-        Depth = depth;
     }
 
-    public override void CollectIds(HashSet<string> result)
-    {
-        Target.CollectIds(result);
-    }
-
-    public override void Emit(VM vm, Queue args, int quoted)
-    {
-        Target.Emit(vm, args, quoted + Depth);
-    }
-
-    public override bool Equals(Form other)
-    {
-        return (other is Quote f) ? f.Depth == Depth : false;
-    }
-
+    public override void CollectIds(HashSet<string> result) => Target.CollectIds(result);
+    public override void Emit(VM vm, Queue args) => args.PushFirst(Target.Quote(Loc, vm));
+    public override bool Equals(Form other) => (other is QuoteForm f) && f.Target.Equals(Target);
     public override bool IsSplat => Target.IsSplat;
+    public override Form Quote(Loc loc, VM vm) => new QuoteForm(loc, this);
 
     public override string ToString()
     {
         var buf = new StringBuilder();
-
-        for (var i = 0; i < Depth; i++)
-        {
-            buf.Append('\'');
-        }
-
+        for (var i = 0; i < Depth; i++) { buf.Append('\''); }
         buf.Append(Target);
         return buf.ToString();
     }
+
+    public override Form Unquote(Loc loc, VM vm) => Target.Unquote(loc, vm);
 }

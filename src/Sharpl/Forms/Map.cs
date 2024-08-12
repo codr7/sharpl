@@ -13,13 +13,10 @@ public class Map : Form
 
     public override void CollectIds(HashSet<string> result)
     {
-        foreach (var f in Items)
-        {
-            f.CollectIds(result);
-        }
+        foreach (var f in Items) { f.CollectIds(result); }
     }
 
-    public override void Emit(VM vm, Queue args, int quoted)
+    public override void Emit(VM vm, Queue args)
     {
         var callConstructor = false;
 
@@ -38,7 +35,6 @@ public class Map : Form
         }
         else
         {
-            var itemArgs = new Queue();
             vm.Emit(Ops.CreateMap.Make(Items.Length));
             var i = 0;
 
@@ -46,12 +42,12 @@ public class Map : Form
             {
                 if (f is Pair pf)
                 {
-                    pf.Left.Emit(vm, itemArgs, quoted);
-                    pf.Right.Emit(vm, itemArgs, quoted);
+                    vm.Emit(pf.Left);
+                    vm.Emit(pf.Right);
                 }
                 else
                 {
-                    f.Emit(vm, itemArgs, quoted);
+                    vm.Emit(f);
                 }
 
                 vm.Emit(Ops.SetMapItem.Make());
@@ -77,6 +73,9 @@ public class Map : Form
         return false;
     }
 
+    public override Form Quote(Loc loc, VM vm) =>
+        new Map(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
+
     public override string ToString()
     {
         var b = new StringBuilder();
@@ -97,4 +96,7 @@ public class Map : Form
         b.Append('}');
         return b.ToString();
     }
+
+    public override Form Unquote(Loc loc, VM vm) =>
+        new Map(loc, Items.Select(it => it.Unquote(loc, vm)).ToArray());
 }

@@ -1,11 +1,10 @@
-namespace Sharpl;
-
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
 
+namespace Sharpl;
 
 using PC = int;
 
@@ -23,7 +22,7 @@ public class VM
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
-    public readonly String StringLib = new String();
+    public readonly Libs.String StringLib = new Libs.String();
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
 
@@ -91,12 +90,7 @@ public class VM
     public void BeginFrame(int registerCount)
     {
         var total = registerCount;
-
-        if (frames.Count > 0)
-        {
-            total += frames[^1].Item2;
-        }
-
+        if (frames.Count > 0) { total += frames[^1].Item2; }
         frames.Push((registerCount, total));
         nextRegisterIndex = 0;
     }
@@ -164,15 +158,15 @@ public class VM
         return result;
     }
 
-    public void Emit(Form form, int quoted)
+    public void Emit(Form form)
     {
         var fs = new Form.Queue();
         fs.Push(form);
-        fs.Emit(this, quoted);
+        fs.Emit(this, new Form.Queue());
     }
 
     public void Emit(string code, Loc loc) => 
-        ReadForms(new StringReader(code), ref loc).Emit(this, 0);
+        ReadForms(new StringReader(code), ref loc).Emit(this, new Form.Queue());
 
     public PC EmitPC => code.Count;
 
@@ -247,7 +241,6 @@ public class VM
                 case Op.T.CallDirect:
                     {
                         var callOp = (Ops.CallDirect)op.Data;
-                        var recursive = calls.Count > 0 && calls.Peek().Target.Equals(callOp.Target);
                         var arity = callOp.Arity;
 
                         if (callOp.Splat)
@@ -544,16 +537,6 @@ public class VM
                         PC++;
                         break;
                     }
-                case Op.T.QuoteCall:
-                    {
-                        var quoteOp = (Ops.QuoteCall)op.Data;
-                        var t = new Forms.Literal(quoteOp.Loc, stack.Pop());
-                        var args = new Form[quoteOp.Arity];
-                        for (int i = args.Length-1; i >= 0; i--) { args[i] = new Forms.Literal(quoteOp.Loc, stack.Pop()); }
-                        stack.Push(Value.Make(Core.Form, (new Forms.Call(quoteOp.Loc, t, args), 0)));
-                        PC++;
-                        break;
-                    }
                 case Op.T.SetArrayItem:
                     {
                         var setOp = (Ops.SetArrayItem)op.Data;
@@ -633,29 +616,29 @@ public class VM
 
     public void Eval(PC startPC) => Eval(startPC, new Stack());
 
-    public void Eval(Emitter target, Form.Queue args, Stack stack, int quoted)
+    public void Eval(Emitter target, Form.Queue args, Stack stack)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        target.Emit(this, args, quoted);
+        target.Emit(this, args);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         Eval(startPC, stack);
     }
 
-    public Value? Eval(Emitter target, Form.Queue args, int quoted)
+    public Value? Eval(Emitter target, Form.Queue args)
     {
         var stack = new Stack();
-        Eval(target, args, stack, quoted);
+        Eval(target, args, stack);
         return (stack.Count == 0) ? null : stack.Pop();
     }
 
     public void Eval(Emitter target, Stack stack, int quoted) => 
-        Eval(target, new Form.Queue(), stack, quoted);
+        Eval(target, new Form.Queue(), stack);
 
     public Value? Eval(Emitter target, int quoted) => 
-        Eval(target, new Form.Queue(), quoted);
+        Eval(target, new Form.Queue());
 
     public Value? Eval(string code)
     {
@@ -733,7 +716,7 @@ public class VM
 
                 var forms = ReadForms(source, ref loc);
                 Emit(Ops.SetLoadPath.Make(loadPath));
-                forms.Emit(this, 0);
+                forms.Emit(this, new Form.Queue());
                 Emit(Ops.SetLoadPath.Make(prevLoadPath));
             }
         }
@@ -810,7 +793,7 @@ public class VM
 
                 try
                 {
-                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, 0);
+                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, new Form.Queue());
                     Emit(Ops.Stop.Make());
                     Eval(startPC, stack);
 
