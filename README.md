@@ -233,7 +233,7 @@ Unique symbols may be created using the type constructor.
 ```
   (Sym 'foo)
 
-'foo7
+'7foo
 ```
 
 ### strings

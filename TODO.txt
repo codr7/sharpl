@@ -14,9 +14,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-* add gensym support
-** use constructor
-** add sym method to create syms
+(let [c '(foo 42)] '[1 ,c 2])
 
 * implement all fix fast paths
 ** add/mul/div

@@ -1,8 +1,6 @@
 namespace Sharpl.Forms;
 
-using System.Net.Http.Headers;
 using System.Text;
-using Sharpl.Libs;
 
 public class Call : Form
 {
@@ -25,6 +23,8 @@ public class Call : Form
 
     public override void Emit(VM vm, Queue args, int quoted)
     {
+        Console.WriteLine("CALL EMIT " + Target + " " + quoted);
+        
         if (quoted == 0)
         {
             var splat = false;

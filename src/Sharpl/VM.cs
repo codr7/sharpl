@@ -171,20 +171,12 @@ public class VM
         fs.Emit(this, quoted);
     }
 
-    public void Emit(string code, Loc loc)
-    {
+    public void Emit(string code, Loc loc) => 
         ReadForms(new StringReader(code), ref loc).Emit(this, 0);
-    }
 
-    public PC EmitPC
-    {
-        get { return code.Count; }
-    }
+    public PC EmitPC => code.Count;
 
-    public (int, int) EndFrame()
-    {
-        return frames.Pop();
-    }
+    public (int, int) EndFrame() => frames.Pop();
 
     public Env Env
     {
@@ -639,10 +631,7 @@ public class VM
         }
     }
 
-    public void Eval(PC startPC)
-    {
-        Eval(startPC, new Stack());
-    }
+    public void Eval(PC startPC) => Eval(startPC, new Stack());
 
     public void Eval(Emitter target, Form.Queue args, Stack stack, int quoted)
     {
@@ -662,15 +651,11 @@ public class VM
         return (stack.Count == 0) ? null : stack.Pop();
     }
 
-    public void Eval(Emitter target, Stack stack, int quoted)
-    {
+    public void Eval(Emitter target, Stack stack, int quoted) => 
         Eval(target, new Form.Queue(), stack, quoted);
-    }
 
-    public Value? Eval(Emitter target, int quoted)
-    {
-        return Eval(target, new Form.Queue(), quoted);
-    }
+    public Value? Eval(Emitter target, int quoted) => 
+        Eval(target, new Form.Queue(), quoted);
 
     public Value? Eval(string code)
     {
@@ -679,20 +664,12 @@ public class VM
         return Eval(forms, 0);
     }
 
-    public int FrameCount
-    {
-        get => frames.Count;
-    }
+    public int FrameCount => frames.Count;
 
-    public Value Get(Register register)
-    {
-        return GetRegister(register.FrameOffset, register.Index);
-    }
+    public Value Get(Register register) => GetRegister(register.FrameOffset, register.Index);
 
-    public Value GetRegister(int frameOffset, int index)
-    {
-        return registers[RegisterIndex(frameOffset, index)];
-    }
+    public Value GetRegister(int frameOffset, int index) => 
+        registers[RegisterIndex(frameOffset, index)];
 
     public Sym Intern(string name)
     {
@@ -704,9 +681,7 @@ public class VM
         return syms[name] = new Sym(name);
     }
 
-    public Sym Gensym(string prefix) {
-        return Intern($"{prefix}{syms.Count}");
-    }
+    public Sym Gensym(string suffix) => Intern($"{syms.Count}{suffix}");
 
     public Label Label(PC pc = -1)
     {
@@ -770,19 +745,13 @@ public class VM
 
     }
 
-    public int NextRegisterIndex
-    {
-        get => nextRegisterIndex;
-    }
+    public int NextRegisterIndex => nextRegisterIndex;
 
     public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
     {
         foreach (var r in readers)
         {
-            if (r.Read(source, this, ref loc, forms))
-            {
-                return true;
-            }
+            if (r.Read(source, this, ref loc, forms)) { return true; }
         }
 
         return false;
@@ -807,15 +776,8 @@ public class VM
         return forms;
     }
 
-    public int RegisterIndex(int frameOffset, int index)
-    {
-        if (frameOffset == -1)
-        {
-            return index;
-        }
-
-        return index + frames.Peek(frameOffset).Item2;
-    }
+    public int RegisterIndex(int frameOffset, int index) => 
+        (frameOffset == -1) ? index : index + frames.Peek(frameOffset).Item2;
 
     public void REPL()
     {
@@ -879,13 +841,9 @@ public class VM
         }
     }
 
-    public void SetRegister(int frameOffset, int index, Value value)
-    {
+    public void SetRegister(int frameOffset, int index, Value value) =>
         registers[RegisterIndex(frameOffset, index)] = value;
-    }
 
-    public void Set(Register register, Value value)
-    {
+    public void Set(Register register, Value value) =>
         SetRegister(register.FrameOffset, register.Index, value);
-    }
 }

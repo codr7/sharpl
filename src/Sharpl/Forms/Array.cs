@@ -1,6 +1,5 @@
 namespace Sharpl.Forms;
 
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 public class Array : Form
