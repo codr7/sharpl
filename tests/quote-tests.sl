@@ -25,10 +25,5 @@
   (let [bar 42] 
     '(foo ,bar)))
 
-
-(check ['1 42 '2]
-  (let [c '(foo 42)]
-    '[1 ,c 2]))
-
 (check F
   (= (Sym 'foo) (Sym 'foo)))

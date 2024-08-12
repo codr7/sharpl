@@ -16,6 +16,10 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 (let [c '(foo 42)] '[1 ,c 2])
 
+(check ['1 42 '2]
+  (let [c '(foo 42)]
+    '[1 ,c 2]))
+
 * implement all fix fast paths
 ** add/mul/div
 ** like sub

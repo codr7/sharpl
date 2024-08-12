@@ -23,8 +23,6 @@ public class Call : Form
 
     public override void Emit(VM vm, Queue args, int quoted)
     {
-        Console.WriteLine("CALL EMIT " + Target + " " + quoted);
-        
         if (quoted == 0)
         {
             var splat = false;
