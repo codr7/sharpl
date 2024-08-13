@@ -710,7 +710,8 @@ public class Core : Lib
 
                     foreach (var f in c.Args)
                     {
-                        if (f.GetValue(vm) is Value v && v.Type != Binding) { argMask[i] = v; }
+                        /* Referring to the previous frame's bindings is tricky when we're not creating new frames.*/
+                        if (f.GetValue(vm) is Value v && (v.Type != Binding || v.CastUnbox(Binding).FrameOffset != 1)) { argMask[i] = v; }
                         else { vm.Emit(f); }
                         i++;
                     }

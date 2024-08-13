@@ -64,13 +64,11 @@ public class UserMethod
 
                         if (r.FrameOffset != 0 || r.Index != ar)
                         {
-                            //Console.WriteLine("PEEP BINDING " + this + " " + i + " " + Args[i].Item1 + " " + StackExtensions.ToString(stack) + " " + r + " " + vm.Get(r));
                             vm.SetRegister(0, ar, vm.Get(r));
                         }
                     }
                     else
                     {
-                        //Console.WriteLine("PEEP VaLUE " + this + " " + i + " " + ar + " " + v + " " + v.Type + " " + StackExtensions.ToString(stack));
                         vm.SetRegister(0, ar, v);
                     }
                 }
