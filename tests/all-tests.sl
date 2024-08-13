@@ -40,6 +40,7 @@
 
 (load "array-tests.sl")
 (load "fib-tests.sl")
+(load "fix-tests.sl")
 (load "int-tests.sl")
 (load "io-tests.sl")  
 (load "iter-tests.sl")

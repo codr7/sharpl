@@ -6,6 +6,10 @@
 125
 317
 
+249
+121
+322
+
 * VC
 ** Reformat - Ctrl+Shift+I
 
@@ -14,26 +18,49 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
+* commit fix cleaning / add fast path / scale lookup table/ hook in tests
+
+* debug '+ unquote
+* add Value.Eval(vm, stack)
+** call from UnquoteRegister instead of .Unquote
+** push value by default
+** override on FormType/Sym
+*** eval form
+
 (let [c '(+ 35 7)] '[1 ,c 2])
 
 (check '[1 42 2]
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
 
-* implement all fix fast paths
-** add/mul/div
-** like sub
+* add for loop
+** multiple bindings
+** iterate until any eof
+** don't iterate var if expr contains previous vars
+*** evaluate and bind per iteration instead
+
+(let [n 0]
+  (for [i [1 2 3] 
+        j [4 5 6]]
+    (inc n (* i j)))
+  n)
+
+* add while lop
+** iterate while condition is true
+
+(let [n 1]
+  (while (< n 10)
+    (set n (* n n)))
+  n)
 
 * add iter macro
 ** define usermethod like VM.Compose
 ** call body while T
 
-(let [i 3]
-  (iter 
-    (say i)
-    (> (dec i) 0)
-    
-  (say 'boom)))
+(let [i 3 n 0]
+  [(iter 
+    (ind n i)
+    (> (dec i) 0))*])
 
 * add enums
 
@@ -44,11 +71,6 @@ Foo/bar
 (Foo 'baz)
 (Int Foo/bar)
 (Str Foo/bar)
-
-* add span type
-** Span<Value>
-** use as result type for slice
-** support reslicing/getting values by calling like array
 
 * investigate compiling linq expressions
 ** https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-8.0
@@ -80,22 +102,6 @@ Foo/bar
 ** add io/string
 ** add StackTrait with push
 *** implement for Array
-
-* oop.sl
-
-* add map support
-
-* add for loop
-** multiple bindings
-** iterate until any eof
-** don't iterate var if expr contains previous vars
-*** evaluate and bind per iteration instead
-
-(let [n 0]
-  (for [i [1 2 3] 
-        j [4 5 6]]
-    (inc n (* i j)))
-  n)
 
 * add OutputStream type
 ** bind OUT
