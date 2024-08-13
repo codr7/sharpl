@@ -15,7 +15,8 @@ public readonly struct Op
         OpenInputStream, Or, 
         PrepareClosure, Push, PushSplat,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
-        Splat, Stop
+        Splat, Stop,
+        UnquoteRegister
     };
 
     public readonly object Data;

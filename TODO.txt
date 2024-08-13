@@ -14,9 +14,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-(check '(foo 42) 
-  (let [bar 42] 
-    '(foo ,bar)))
+(let [c '(+ 35 7)] '[1 ,c 2])
 
 (check '[1 42 2]
   (let [c '(+ 35 7)]

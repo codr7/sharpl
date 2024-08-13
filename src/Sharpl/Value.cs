@@ -77,6 +77,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public T? TryCastUnbox<T>(Type<T> type) where T : struct =>
         Type == type ? Unsafe.Unbox<T>(Data) : default(T?);
 
+    public Form Unquote(Loc loc, VM vm) => Type.Unquote(loc, vm, this);
+
     [DoesNotReturn, StackTraceHidden]
     static T TypeMismatch<T>(AnyType lhs, Type<T> rhs) =>
         throw new Exception($"Type mismatch: {lhs}/{rhs}");

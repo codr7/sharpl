@@ -67,5 +67,5 @@ public class Id : Form
     public override string ToString() => Name;
 
     public override Form Unquote(Loc loc, VM vm) =>
-        new Literal(loc, GetId(Name, vm.Env, loc));
+        GetId(Name, vm.Env, loc).Unquote(loc, vm);
 }

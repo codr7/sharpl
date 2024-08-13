@@ -610,6 +610,14 @@ public class VM
                         PC++;
                         return;
                     }
+                case Op.T.UnquoteRegister:
+                    {
+                        var unquoteOp = (Ops.UnquoteRegister)op.Data;
+                        var f = Get(unquoteOp.Register).Unquote(unquoteOp.Loc, this);
+                        Eval(f, stack);
+                        PC++;
+                        break;
+                    }
             }
         }
     }
@@ -624,7 +632,9 @@ public class VM
         target.Emit(this, args);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
+        var prevPC = PC;
         Eval(startPC, stack);
+        PC = prevPC;
     }
 
     public Value? Eval(Emitter target, Form.Queue args)
@@ -634,25 +644,23 @@ public class VM
         return (stack.Count == 0) ? null : stack.Pop();
     }
 
-    public void Eval(Emitter target, Stack stack, int quoted) => 
+    public void Eval(Emitter target, Stack stack) => 
         Eval(target, new Form.Queue(), stack);
 
-    public Value? Eval(Emitter target, int quoted) => 
+    public Value? Eval(Emitter target) => 
         Eval(target, new Form.Queue());
 
     public Value? Eval(string code)
     {
         var loc = new Loc("Eval");
         var forms = ReadForms(new StringReader(code), ref loc);
-        return Eval(forms, 0);
+        return Eval(forms);
     }
 
     public int FrameCount => frames.Count;
 
     public Value Get(Register register) => GetRegister(register.FrameOffset, register.Index);
-
-    public Value GetRegister(int frameOffset, int index) => 
-        registers[RegisterIndex(frameOffset, index)];
+    public Value GetRegister(int frameOffset, int index) => registers[RegisterIndex(frameOffset, index)];
 
     public Sym Intern(string name)
     {

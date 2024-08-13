@@ -1,4 +1,5 @@
 using System.Text;
+using Sharpl.Forms;
 
 namespace Sharpl;
 
@@ -36,6 +37,7 @@ public abstract class AnyType(string name)
     public abstract bool Equals(Value left, Value right);
     public virtual void Say(Value value, StringBuilder result) => Dump(value, result);
     public override string ToString() => Name;
+    public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(loc,  value);
 }
 
 public class Type<T>(string name) : AnyType(name)

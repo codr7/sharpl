@@ -267,7 +267,7 @@ public class Core : Lib
 
         BindMacro("bench", ["n"], (loc, target, vm, args) =>
          {
-             if (args.TryPop() is Form f && vm.Eval(f, 0) is Value n)
+             if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
                  vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Core.Int)));
                  args.Emit(vm, new Form.Queue());
@@ -362,7 +362,7 @@ public class Core : Lib
         BindMacro("eval", [], (loc, target, vm, args) =>
         {
             var stack = new Stack();
-            vm.Eval(args, stack, 0);
+            vm.Eval(args, stack);
 
             stack.Reverse();
             foreach (var it in stack)
