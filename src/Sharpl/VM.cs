@@ -95,11 +95,11 @@ public class VM
         nextRegisterIndex = 0;
     }
 
-    public void CallUserMethod(Loc loc, Stack stack, UserMethod target, int arity, int registerCount)
+    public void CallUserMethod(Loc loc, Stack stack, UserMethod target, Value?[] argMask, int registerCount)
     {
         BeginFrame(registerCount);
         calls.Push(new Call(loc, target, PC, frames.Count));
-        target.BindArgs(this, arity, stack);
+        target.BindArgs(this, argMask, stack);
 #pragma warning disable CS8629
         PC = (PC)target.StartPC;
 #pragma warning restore CS8629
@@ -124,6 +124,8 @@ public class VM
             Term.SetFg(Color.FromArgb(255, 128, 128, 255));
             Term.Write($"{pc - startPC + 1,-4} {code[pc]}\n");
         }
+
+        Term.Flush();
     }
 
     public void Define(string name)
@@ -299,7 +301,7 @@ public class VM
                 case Op.T.CallTail:
                     {
                         var callOp = (Ops.CallTail)op.Data;
-                        var arity = callOp.Arity;
+                        var arity = callOp.ArgMask.Length;
 
                         if (callOp.Splat)
                         {
@@ -313,7 +315,7 @@ public class VM
 
                         var call = calls.Peek();
                         frames.Trunc(call.FrameOffset);
-                        callOp.Target.BindArgs(this, callOp.Arity, stack);
+                        callOp.Target.BindArgs(this, callOp.ArgMask, stack);
 #pragma warning disable CS8629
                         PC = (int)callOp.Target.StartPC;
 #pragma warning restore CS8629
@@ -322,7 +324,7 @@ public class VM
                 case Op.T.CallUserMethod:
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
-                        var arity = callOp.Arity;
+                        var arity = callOp.ArgMask.Length;
 
                         if (callOp.Splat)
                         {
@@ -330,7 +332,7 @@ public class VM
                         }
 
                         PC++;
-                        CallUserMethod(callOp.Loc, stack, callOp.Target, arity, callOp.RegisterCount);
+                        CallUserMethod(callOp.Loc, stack, callOp.Target, callOp.ArgMask, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.Check:

@@ -10,6 +10,10 @@
 121
 322
 
+242
+120
+303
+
 * VC
 ** Reformat - Ctrl+Shift+I
 
@@ -17,8 +21,6 @@
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
-
-* commit fix cleaning / add fast path / scale lookup table/ hook in tests
 
 * debug '+ unquote
 * add Value.Eval(vm, stack)

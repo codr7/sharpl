@@ -35,23 +35,49 @@ public class UserMethod
         Vararg = vararg;
     }
 
-    public void BindArgs(VM vm, int arity, Stack stack)
+    public void BindArgs(VM vm, Value?[] argMask, Stack stack)
     {
         for (var i = Args.Length - 1; i >= 0; i--)
         {
-            if (i >= arity) { break; }
-            if (Args[i].Item2 == -1) { continue; }
+            if (i >= argMask.Length) { break; }
+            var ar = Args[i].Item2;
+            if (ar == -1) { continue; }
 
             if (Vararg && i == Args.Length - 1)
             {
-                var n = arity - Args.Length + 1;
+                var n = argMask.Length - Args.Length + 1;
                 var vs = new Value[n];
-                for (var j = n - 1; j >= 0; j--) { vs[j] = stack.Pop(); }
-                vm.SetRegister(0, Args[i].Item2, Value.Make(Core.Array, vs));
+                
+                for (var j = n - 1; j >= 0; j--) { 
+                    vs[j] = (argMask[n+j-2] is Value v) ? v : stack.Pop(); 
+                }
+
+                vm.SetRegister(0, ar, Value.Make(Core.Array, vs));
             }
             else
             {
-                vm.SetRegister(0, Args[i].Item2, stack.Pop());
+                if (argMask[i] is Value v)
+                {
+                    if (v.Type == Core.Binding)
+                    {
+                        var r = v.CastUnbox(Core.Binding);
+
+                        if (r.FrameOffset != 0 || r.Index != ar)
+                        {
+                            //Console.WriteLine("PEEP BINDING " + this + " " + i + " " + Args[i].Item1 + " " + StackExtensions.ToString(stack) + " " + r + " " + vm.Get(r));
+                            vm.SetRegister(0, ar, vm.Get(r));
+                        }
+                    }
+                    else
+                    {
+                        //Console.WriteLine("PEEP VaLUE " + this + " " + i + " " + ar + " " + v + " " + v.Type + " " + StackExtensions.ToString(stack));
+                        vm.SetRegister(0, ar, v);
+                    }
+                }
+                else
+                {
+                    vm.SetRegister(0, ar, stack.Pop());
+                }
             }
         }
 

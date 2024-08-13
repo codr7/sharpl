@@ -508,7 +508,7 @@ public class Core : Lib
                         {
                             i++;
                             vm.Emit(bs[i]);
-                            
+
                             if (vm.Env.Find(idf.Name) is Value v && v.Type == Core.Binding)
                             {
                                 var r = vm.AllocRegister();
@@ -691,11 +691,7 @@ public class Core : Lib
 
                 if (m is UserMethod)
                 {
-                    if (!args.Empty)
-                    {
-                        throw new EmitError(loc, "Too many args in tail call");
-                    }
-
+                    if (!args.Empty) { throw new EmitError(loc, "Too many args in tail call"); }
                     var emptyArgs = new Form.Queue();
                     var splat = false;
 
@@ -704,20 +700,22 @@ public class Core : Lib
                         if (f.IsSplat)
                         {
                             splat = true;
+                            break;
                         }
                     }
 
-                    if (!splat && c.Args.Length < m.MinArgCount)
-                    {
-                        throw new EmitError(loc, $"Not enough arguments: {m}");
-                    }
+                    if (!splat && c.Args.Length < m.MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {m}"); }
+                    var argMask = new Value?[c.Args.Length];
+                    var i = 0;
 
                     foreach (var f in c.Args)
                     {
-                        f.Emit(vm, emptyArgs);
+                        if (f.GetValue(vm) is Value v && v.Type != Binding) { argMask[i] = v; }
+                        else { vm.Emit(f); }
+                        i++;
                     }
 
-                    vm.Emit(Ops.CallTail.Make(loc, m, c.Args.Length, splat));
+                    vm.Emit(Ops.CallTail.Make(loc, m, argMask, splat));
                 }
             }
 
