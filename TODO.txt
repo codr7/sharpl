@@ -18,6 +18,10 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 (let [c '(+ 35 7)] '[1 ,c 2])
 
+* make macros composeable
+** create user method like VM.Compose
+*** one for each arity
+
 (check '[1 42 2]
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
