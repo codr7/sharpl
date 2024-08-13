@@ -421,6 +421,19 @@ Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/
 dotnet run -c Release benchmarks.sl
 ```
 
+## building
+Standalone executables may be built using `dotnet publish`.
+
+```
+$ dotnet publish
+MSBuild version 17.9.8+b34f75857 for .NET
+  Determining projects to restore...
+  Restored /home/andreas/Code/sharpl/sharpl.csproj (in 324 ms).
+  sharpl -> /home/andreas/Code/sharpl/bin/Release/net8.0/linux-x64/sharpl.dll
+  Generating native code
+  sharpl -> ~/Code/sharpl/bin/Release/net8.0/linux-x64/publish/
+```
+
 ## debugging
 `emit` may be used to display the VM operations emitted for an expression.
 
