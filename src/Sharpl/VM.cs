@@ -122,7 +122,7 @@ public class VM
         for (var pc = startPC; pc < code.Count; pc++)
         {
             Term.SetFg(Color.FromArgb(255, 128, 128, 255));
-            Term.Write($"{pc - startPC + 1,-4} {code[pc]}\n");
+            Term.Write($"{pc,-4} {code[pc]}\n");
         }
 
         Term.Flush();
