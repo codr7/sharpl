@@ -14,19 +14,12 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
-(let [bar 42] '[foo ,bar baz])
-
-(let [c '(42)] c)
-(let [c '42] c)
-
-'{foo:1 {bar:2}* baz:3}
-
 (check '(foo 42) 
   (let [bar 42] 
     '(foo ,bar)))
 
 (check '[1 42 2]
-  (let [c '(foo 42)]
+  (let [c '(+ 35 7)]
     '[1 ,c 2]))
 
 * implement all fix fast paths

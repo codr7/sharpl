@@ -26,5 +26,5 @@ public class QuoteForm : Form
         return buf.ToString();
     }
 
-    public override Form Unquote(Loc loc, VM vm) => Target.Unquote(loc, vm);
+    public override Form Unquote(Loc loc, VM vm) => Target;
 }
