@@ -1,2 +1,0 @@
-dotnet publish -o publish
-sudo cp publish/sharpl /usr/local/bin
