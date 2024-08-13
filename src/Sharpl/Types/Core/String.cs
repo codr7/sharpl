@@ -5,10 +5,7 @@ using System.Text;
 
 public class StringType(string name) : ComparableType<string>(name), SeqTrait
 {
-    public override bool Bool(Value value)
-    {
-        return value.Cast(this).Length != 0;
-    }
+    public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
@@ -31,12 +28,6 @@ public class StringType(string name) : ComparableType<string>(name), SeqTrait
         result.Append('"');
     }
 
-    public int Length(Value target) {
-        return target.Cast(this).Length;
-    }
-
-    public override void Say(Value value, StringBuilder result)
-    {
-        result.Append(value.Data);
-    }
+    public int Length(Value target) => target.Cast(this).Length;
+    public override void Say(Value value, StringBuilder result) => result.Append(value.Data);
 }

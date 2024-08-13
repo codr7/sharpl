@@ -5,10 +5,7 @@ public class IntType(string name) :
     NumericTrait,
     RangeTrait
 {
-    public override bool Bool(Value value)
-    {
-        return value.CastUnbox(this) != 0;
-    }
+    public override bool Bool(Value value) => value.CastUnbox(this) != 0;
 
     public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
     {

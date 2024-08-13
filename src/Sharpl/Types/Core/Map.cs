@@ -1,15 +1,12 @@
-namespace Sharpl.Types.Core;
-
 using System.Text;
+
+namespace Sharpl.Types.Core;
 
 public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrait, SeqTrait
 {
     public MapType(string name) : base(name) { }
 
-    public override bool Bool(Value value)
-    {
-        return value.Cast(this).Count != 0;
-    }
+    public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
@@ -32,13 +29,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                 {
                     var m = target.Cast(this);
                     var k = stack.Pop();
-                    
-                    if (m.ContainsKey(k)) {
-                        stack.Push(m[k]);
-                    } else {
-                        stack.Push(Value.Nil);
-                    }
-
+                    stack.Push(m.ContainsKey(k) ? m[k] : Value.Nil);
                     break;
                 }
             case 2:
@@ -46,11 +37,8 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                     var m = target.Cast(this);
                     var v = stack.Pop();
                     
-                    if (v.Equals(Value.Nil)) {
-                        m.Remove(stack.Pop());
-                    } else {
-                        m.Set(stack.Pop(), v);
-                    }
+                    if (v.Equals(Value.Nil)) { m.Remove(stack.Pop()); } 
+                    else { m.Set(stack.Pop(), v); }
 
                     break;
                 }
@@ -70,20 +58,9 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
         {
             var lv = lm.Items[i].Item1;
             var rv = rm.Items[i].Item1;
-
-            if (lv.Type != rv.Type)
-            {
-                throw new Exception($"Type mismatch: {lv} {rv}");
-            }
-
-            if (lv.Type is ComparableTrait t && rv.Type is ComparableTrait)
-            {
-                res = t.Compare(lv, rv);
-            }
-            else
-            {
-                throw new Exception($"Not comparable: {lv} {rv}");
-            }
+            if (lv.Type != rv.Type) { throw new Exception($"Type mismatch: {lv} {rv}"); }
+            if (lv.Type is ComparableTrait t && rv.Type is ComparableTrait) { res = t.Compare(lv, rv); }
+            else { throw new Exception($"Not comparable: {lv} {rv}"); }
         }
 
         return res;
@@ -103,11 +80,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
 
         foreach (var v in value.Cast(this))
         {
-            if (i > 0)
-            {
-                result.Append(' ');
-            }
-
+            if (i > 0) { result.Append(' '); }
             v.Item1.Dump(result);
             result.Append(':');
             v.Item2.Dump(result);
@@ -121,26 +94,17 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
     {
         var lv = left.Cast(this);
         var rv = right.Cast(this);
-
-        if (lv.Count != rv.Count)
-        {
-            return false;
-        }
+        if (lv.Count != rv.Count) { return false; }
 
         for (var i = 0; i < lv.Count; i++)
         {
-            if (!lv.Items[i].Equals(rv.Items[i]))
-            {
-                return false;
-            }
+            if (!lv.Items[i].Equals(rv.Items[i])) { return false; }
         }
 
         return true;
     }
 
-    public int Length(Value target) {
-        return target.Cast(this).Count;
-    }
+    public int Length(Value target) => target.Cast(this).Count;
 
     public override void Say(Value value, StringBuilder result)
     {
@@ -149,11 +113,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
 
         foreach (var v in value.Cast(this))
         {
-            if (i > 0)
-            {
-                result.Append(' ');
-            }
-
+            if (i > 0) { result.Append(' '); }
             v.Item1.Say(result);
             result.Append(':');
             v.Item2.Say(result);

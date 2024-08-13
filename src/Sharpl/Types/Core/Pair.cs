@@ -1,46 +1,46 @@
-namespace Sharpl.Types.Core;
-
 using Sharpl.Iters.Core;
-using Sharpl.Libs;
 using System.Text;
 
+namespace Sharpl.Types.Core;
+
+using Sharpl.Libs;
+
 public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
-{    
-    public static Value Update(Loc loc, Value target, Value value, int i) {
-        if (i == 0) {
-            if (target.Type == Core.Pair) {
-                return Value.Make(Core.Pair, (value, target.CastUnbox(Core.Pair).Item2));
-            }
-            
-            return value;
+{
+    public static Value Update(Loc loc, Value target, Value value, int i)
+    {
+        if (i == 0)
+        {
+            return (target.Type == Core.Pair)
+                ? Value.Make(Core.Pair, (value, target.CastUnbox(Core.Pair).Item2))
+                : value;
         }
 
-        if (target.Type == Core.Pair) {
+        if (target.Type == Core.Pair)
+        {
             var p = target.CastUnbox(Core.Pair);
-            return Value.Make(Core.Pair, (p.Item1, Update(loc, p.Item2, value, i-1)));
+            return Value.Make(Core.Pair, (p.Item1, Update(loc, p.Item2, value, i - 1)));
         }
 
         throw new EvalError(loc, "Index out of bounds");
     }
-    
+
     public PairType(string name) : base(name) { }
 
-    public override bool Bool(Value value) {
+    public override bool Bool(Value value)
+    {
         var p = value.CastUnbox(this);
         return (bool)p.Item1 && (bool)p.Item2;
     }
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        if (arity < 2)
-        {
-            throw new EvalError(loc, "Wrong number of arguments");
-        }
-
+        if (arity < 2) { throw new EvalError(loc, "Wrong number of arguments"); }
         var r = stack.Pop();
         arity--;
 
-        while (arity > 0) {
+        while (arity > 0)
+        {
             var l = stack.Pop();
             r = Value.Make(Core.Pair, (l, r));
             arity--;
@@ -95,13 +95,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
         if (lp.Item1.Type is ComparableTrait t)
         {
             var res = t.Compare(lp.Item1, rp.Item1);
-
-            if (res != Order.EQ)
-            {
-                return res;
-            }
-
-            return t.Compare(lp.Item2, rp.Item2);
+            return (res == Order.EQ) ? t.Compare(lp.Item2, rp.Item2) : res;
         }
 
         return Order.EQ;
@@ -122,10 +116,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
         return lp.Item1.Equals(rp.Item1) && lp.Item2.Equals(rp.Item2);
     }
 
-    public Iter CreateIter(Value target)
-    {
-        return new PairItems(target);
-    }
+    public Iter CreateIter(Value target) => new PairItems(target);
 
     public override void Say(Value value, StringBuilder result)
     {

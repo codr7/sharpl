@@ -1,7 +1,7 @@
-namespace Sharpl.Types.Core;
-
 using System.Drawing;
 using System.Text;
+
+namespace Sharpl.Types.Core;
 
 public class ColorType : Type<Color>
 {

@@ -1,8 +1,8 @@
 
-namespace Sharpl.Types.Core;
-
 using System.Text;
 using Sharpl.Forms;
+
+namespace Sharpl.Types.Core;
 
 public class SymType(string name) : Type<Sym>(name), ComparableTrait
 {
@@ -28,15 +28,8 @@ public class SymType(string name) : Type<Sym>(name), ComparableTrait
         return ComparableTrait.IntOrder(lv.Name.CompareTo(rv.Name));
     }
 
-    public override bool Equals(Value left, Value right)
-    {
-        return left.Cast(this) == right.Cast(this);
-    }
-
-    public override void Say(Value value, StringBuilder result)
-    {
-        result.Append(value.Cast(this).Name);
-    }
+    public override bool Equals(Value left, Value right) => left.Cast(this) == right.Cast(this);
+    public override void Say(Value value, StringBuilder result) => result.Append(value.Cast(this).Name);
 
     public override Form Unquote(Loc loc, VM vm, Value value) {
         var id = value.Cast(this).Name;
