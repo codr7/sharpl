@@ -15,11 +15,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 * debug '+ unquote
-* add Value.Eval(vm, stack)
-** call from UnquoteRegister instead of .Unquote
-** push value by default
-** override on FormType/Sym
-*** eval form
 
 (let [c '(+ 35 7)] '[1 ,c 2])
 
@@ -31,7 +26,7 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 ** multiple bindings
 ** iterate until any eof
 ** don't iterate var if expr contains previous vars
-*** evaluate and bind per iteration instead
+*** evaluate and bind per iteration
 
 (let [n 0]
   (for [i [1 2 3] 
@@ -105,14 +100,6 @@ Foo/bar
 
 * add iter support to string
 ** add char type
-
-* figure out how to get args directly into registers when calling user methods
-** value for literals
-*** rename SetRegister to SetRegisterIndirect
-**** add SetRegisterDirect with value
-***** clone
-** copy register for bindings
-** arrays
 
 * add object string calling
 ** like array
