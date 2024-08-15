@@ -22,10 +22,6 @@
   (var foo 42)
   foo)
 
-(check 42
-  (var foo (eval (+ 35 7)))
-  foo)
-
 (check 35
   (var foo 35)
   

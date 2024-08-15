@@ -29,7 +29,7 @@ All features described in this document are part of the [test suite](https://git
 - Zeros and empty strings, arrays and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
 - Lambdas actually look like anonymous methods.
-- `eval` evaluates its arguments at emit time.
+- `eval` evaluates once at emit time.
 - Explicit tail calls using `return`.
 - Parens are used for calls only.
 - Most things are callable, simlar to Clojure.
@@ -384,15 +384,12 @@ Sharpl.EvalError: repl@1:2 bummer
 ```
 
 ## evaluation
-`eval` may be used to evaluate a block of code at emit time.
+`eval` may be used to evaluate code at emit time.
 
 ```
-(eval (say 'emitting) 42)
+(eval '(+ 1 2))
 ```
-```
-emitting
-```
-`42`
+`3`
 
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
@@ -422,25 +419,26 @@ dotnet run -c Release benchmarks.sl
 ```
 
 ## building
-Standalone executables may be built using `dotnet publish`.
+`dotnet publish` may be used to build a standalone executable.
 
 ```
 $ dotnet publish
 MSBuild version 17.9.8+b34f75857 for .NET
   Determining projects to restore...
-  Restored /home/andreas/Code/sharpl/sharpl.csproj (in 324 ms).
-  sharpl -> /home/andreas/Code/sharpl/bin/Release/net8.0/linux-x64/sharpl.dll
+  Restored ~/sharpl/sharpl.csproj (in 324 ms).
+  sharpl -> ~/sharpl/bin/Release/net8.0/linux-x64/sharpl.dll
   Generating native code
-  sharpl -> ~/Code/sharpl/bin/Release/net8.0/linux-x64/publish/
+  sharpl -> ~/sharpl/bin/Release/net8.0/linux-x64/publish/
 ```
 
 ## debugging
-`emit` may be used to display the VM operations emitted for an expression.
+`demit` may be used to display the VM operations emitted for an expression.
 
 ```
-(emit (+ 1 2))
- 
-1    Push 1
-2    Push 2
-3    CallMethod (+ []) 2 False
+(demit '(+ 1 2))
+```
+```
+9    Push 1
+10   Push 2
+11   CallMethod (Method + []) 2 False
 ```

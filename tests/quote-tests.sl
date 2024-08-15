@@ -19,3 +19,6 @@
   (let [bar 42 
         baz "abc"]
   '[foo ,[bar baz]* qux]))
+
+(check 3
+  (eval '(+ 1 2)))

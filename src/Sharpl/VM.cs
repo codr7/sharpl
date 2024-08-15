@@ -117,7 +117,15 @@ public class VM
         return Value.Make(Libs.Core.UserMethod, m);
     }
 
-    public void Decode(PC startPC)
+    public void Define(string name)
+    {
+        var i = definitionCount;
+        Env[name] = Value.Make(Core.Binding, new Register(-1, i));
+        Emit(Ops.SetRegister.Make(-1, i));
+        definitionCount++;
+    }
+
+    public void Demit(PC startPC)
     {
         for (var pc = startPC; pc < code.Count; pc++)
         {
@@ -126,14 +134,6 @@ public class VM
         }
 
         Term.Flush();
-    }
-
-    public void Define(string name)
-    {
-        var i = definitionCount;
-        Env[name] = Value.Make(Core.Binding, new Register(-1, i));
-        Emit(Ops.SetRegister.Make(-1, i));
-        definitionCount++;
     }
 
     public void DoEnv(Env env, Action action)
@@ -167,7 +167,7 @@ public class VM
         fs.Emit(this, new Form.Queue());
     }
 
-    public void Emit(string code, Loc loc) => 
+    public void Emit(string code, Loc loc) =>
         ReadForms(new StringReader(code), ref loc).Emit(this, new Form.Queue());
 
     public PC EmitPC => code.Count;
@@ -646,10 +646,10 @@ public class VM
         return (stack.Count == 0) ? null : stack.Pop();
     }
 
-    public void Eval(Emitter target, Stack stack) => 
+    public void Eval(Emitter target, Stack stack) =>
         Eval(target, new Form.Queue(), stack);
 
-    public Value? Eval(Emitter target) => 
+    public Value? Eval(Emitter target) =>
         Eval(target, new Form.Queue());
 
     public Value? Eval(string code)
@@ -769,7 +769,7 @@ public class VM
         return forms;
     }
 
-    public int RegisterIndex(int frameOffset, int index) => 
+    public int RegisterIndex(int frameOffset, int index) =>
         (frameOffset == -1) ? index : index + frames.Peek(frameOffset).Item2;
 
     public void REPL()

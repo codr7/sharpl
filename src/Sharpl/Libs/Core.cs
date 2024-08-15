@@ -337,6 +337,18 @@ public class Core : Lib
             }
         });
 
+        BindMacro("demit", [], (loc, target, vm, args) =>
+        {
+            var skip = new Label();
+            vm.Emit(Ops.Goto.Make(skip));
+            var startPC = vm.EmitPC;
+            foreach (var a in args) { vm.Emit(a.Unquote(loc, vm)); }
+            args.Clear();
+            skip.PC = vm.EmitPC;
+            vm.Emit(Ops.Stop.Make());
+            vm.Demit(startPC);
+        });
+
         BindMacro("do", [], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
@@ -349,26 +361,20 @@ public class Core : Lib
             vm.Emit(Ops.EndFrame.Make());
         });
 
-        BindMacro("emit", [], (loc, target, vm, args) =>
+        BindMacro("eval", [], (loc, target, vm, args) =>
         {
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             var startPC = vm.EmitPC;
-            args.Emit(vm, new Form.Queue());
+            foreach (var a in args) { vm.Emit(a.Unquote(loc, vm)); }
+            args.Clear();
             skip.PC = vm.EmitPC;
-            vm.Decode(startPC);
-        });
+            vm.Emit(Ops.Stop.Make());
 
-        BindMacro("eval", [], (loc, target, vm, args) =>
-        {
             var stack = new Stack();
-            vm.Eval(args, stack);
-
+            vm.Eval(startPC, stack);
             stack.Reverse();
-            foreach (var it in stack)
-            {
-                args.PushFirst(new Forms.Literal(loc, it));
-            }
+            foreach (var it in stack) { args.PushFirst(new Forms.Literal(loc, it)); }
         });
 
         BindMethod("fail", [], (loc, target, vm, stack, arity) =>

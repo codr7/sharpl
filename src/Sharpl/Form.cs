@@ -40,31 +40,18 @@ public abstract class Form : Emitter
 
         public Queue(Form[] items)
         {
-            foreach (var it in items)
-            {
-                Push(it);
-            }
+            foreach (var it in items) { Push(it); }
         }
 
         public HashSet<string> CollectIds()
         {
             var res = new HashSet<string>();
-
-            foreach (var it in items)
-            {
-                it.CollectIds(res);
-            }
-
+            foreach (var it in items) { it.CollectIds(res); }
             return res;
         }
 
-        public void Clear()
-        {
-            items.Clear();
-        }
-
-        public int Count { get { return items.Count; } }
-
+        public void Clear() => items.Clear();
+        public int Count => items.Count;
 
         public void Emit(VM vm, Queue args)
         {
@@ -73,6 +60,8 @@ public abstract class Form : Emitter
                 if (TryPop() is Form v) { v.Emit(vm, this); }
             }
         }
+
+        public void Emit(VM vm) => Emit(vm, new Form.Queue());
 
         public bool Empty { get => items.Count == 0; }
 
@@ -93,15 +82,7 @@ public abstract class Form : Emitter
             }
         }
 
-        public Form? Peek()
-        {
-            if (items.First?.Value is Form f)
-            {
-                return f;
-            }
-
-            return null;
-        }
+        public Form? Peek() => (items.First?.Value is Form f) ? f : null;
 
         public Form? TryPop()
         {
@@ -114,12 +95,9 @@ public abstract class Form : Emitter
             return null;
         }
 
-        public Form Pop()
-        {
-#pragma warning disable CS8603 // Possible null reference return.
-            return TryPop();
-#pragma warning restore CS8603 // Possible null reference return.
-        }
+#pragma warning disable CS8603
+        public Form Pop() =>  TryPop();
+#pragma warning restore CS8603
 
         public Form? TryPopLast()
         {
@@ -132,38 +110,16 @@ public abstract class Form : Emitter
             return null;
         }
 
-        public Form PopLast()
-        {
-#pragma warning disable CS8603 // Possible null reference return.
-            return TryPopLast();
-#pragma warning restore CS8603 // Possible null reference return.
-        }
+#pragma warning disable CS8603
+        public Form PopLast() => TryPopLast();
+#pragma warning restore CS8603
+ 
+        public void Push(Form form) => items.AddLast(form);
+        public void PushFirst(Form form) => items.AddFirst(form);
 
-        public void Push(Form form)
-        {
-            items.AddLast(form);
-        }
-
-        public void PushFirst(Form form)
-        {
-            items.AddFirst(form);
-        }
-
-        public bool IsSplat
-        {
-            get
-            {
-                foreach (var f in items)
-                {
-                    if (f.IsSplat)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
+#pragma warning disable CS8602
+        public bool IsSplat => items.FirstOrDefault(f => f.IsSplat, null) != null;
+#pragma warning restore CS8602
 
         public override string ToString()
         {
@@ -172,11 +128,7 @@ public abstract class Form : Emitter
 
             foreach (var f in items)
             {
-                if (i > 0)
-                {
-                    res.Append(' ');
-                }
-
+                if (i > 0) { res.Append(' ');}
                 res.Append(f.ToString());
                 i++;
             }
@@ -184,14 +136,7 @@ public abstract class Form : Emitter
             return res.ToString();
         }
 
-        public IEnumerator<Form> GetEnumerator()
-        {
-            return items.AsEnumerable().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return items.GetEnumerator();
-        }
+        public IEnumerator<Form> GetEnumerator() => items.AsEnumerable().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
 }
