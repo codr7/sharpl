@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v17
+sharpl v18
 
    1 (say 'hello)
    2 
@@ -173,6 +173,18 @@ Methods may be composed using `&`.
 (foo & bar [values*])
 ```
 `42`
+
+## loops
+`for` may be used to iterate any number of sequences.
+
+```
+(let [result {}]
+  (for [i [1 2 3] 
+        j [4 5 6 7]]
+    (result i j))
+  result)
+```
+`{1:4 2:5 3:6}`
 
 ## quoting
 Expressions may be quoted by prefixing with `'`.
