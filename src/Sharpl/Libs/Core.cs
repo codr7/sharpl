@@ -131,7 +131,7 @@ public class Core : Lib
                 arity--;
             }
 
-            stack.Push(Value.Make(Core.Bit, res));
+            stack.Push(Value.Make(Bit, res));
         });
 
         BindMethod("<", ["x", "y"], (loc, target, vm, stack, arity) =>
@@ -155,7 +155,7 @@ public class Core : Lib
                 arity--;
             }
 
-            stack.Push(Value.Make(Core.Bit, res));
+            stack.Push(Value.Make(Bit, res));
         });
 
         BindMethod(">", ["x", "y"], (loc, target, vm, stack, arity) =>
@@ -180,40 +180,40 @@ public class Core : Lib
                 arity--;
             }
 
-            stack.Push(Value.Make(Core.Bit, res));
+            stack.Push(Value.Make(Bit, res));
         });
 
 
         BindMethod("+", [], (loc, target, vm, stack, arity) =>
         {
             if (stack.Peek().Type is NumericTrait nt) { nt.Add(loc, vm, stack, arity); }
-            else { throw new EvalError(loc, $"Expected numeric value: {v}"); }
+            else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 
         BindMethod("-", [], (loc, target, vm, stack, arity) =>
         {
             if (stack.Peek().Type is NumericTrait nt) { nt.Subtract(loc, vm, stack, arity); }
-            else { throw new EvalError(loc, $"Expected numeric value: {v}"); }
+            else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 
         BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
          {
              if (stack.Peek().Type is NumericTrait nt)
              { nt.Multiply(loc, vm, stack, arity); }
-             else { throw new EvalError(loc, $"Expected numeric value: {v}"); }
+             else { throw new EvalError(loc, $"Expected numeric value"); }
          });
 
         BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             if (stack.Peek().Type is NumericTrait nt) { nt.Divide(loc, vm, stack, arity); }
-            else { throw new EvalError(loc, $"Expected numeric value: {v}"); }
+            else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 
         BindMacro("bench", ["n"], (loc, target, vm, args) =>
          {
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
-                 vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Core.Int)));
+                 vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Int)));
                  args.Emit(vm, new Form.Queue());
                  vm.Emit(Ops.Stop.Make());
              }
@@ -254,9 +254,9 @@ public class Core : Lib
             {
                 if (vm.Env[id.Name] is Value v)
                 {
-                    if (v.Type == Core.Binding)
+                    if (v.Type == Binding)
                     {
-                        var b = v.CastUnbox(Core.Binding);
+                        var b = v.CastUnbox(Binding);
                         vm.Emit(Ops.Decrement.Make(b.FrameOffset, b.Index));
                     }
                 }
@@ -370,14 +370,14 @@ public class Core : Lib
                 arity--;
             }
 
-            stack.Push(Value.Make(Core.Bit, res));
+            stack.Push(Value.Make(Bit, res));
         });
 
         BindMethod("len", ["it"], (loc, target, vm, stack, arity) =>
         {
             var v = stack.Pop();
 
-            if (v.Type is SeqTrait st) { stack.Push(Core.Int, st.Length(v)); }
+            if (v.Type is SeqTrait st) { stack.Push(Int, st.Length(v)); }
             else { throw new EvalError(loc, $"Expected sequence: {v}"); }
         });
 
@@ -409,10 +409,10 @@ public class Core : Lib
                             i++;
                             vm.Emit(bs[i]);
 
-                            if (vm.Env.Find(idf.Name) is Value v && v.Type == Core.Binding)
+                            if (vm.Env.Find(idf.Name) is Value v && v.Type == Binding)
                             {
                                 var r = vm.AllocRegister();
-                                var b = v.CastUnbox(Core.Binding);
+                                var b = v.CastUnbox(Binding);
                                 brs.Add((r, b.FrameOffset, b.Index));
                                 vm.Emit(Ops.CopyRegister.Make(b.FrameOffset, b.Index, 0, r));
                                 vm.Emit(Ops.SetRegister.Make(b.FrameOffset, b.Index));
@@ -421,7 +421,7 @@ public class Core : Lib
                             {
                                 var r = vm.AllocRegister();
                                 vm.Emit(Ops.SetRegister.Make(0, r));
-                                vm.Env[idf.Name] = Value.Make(Core.Binding, new Register(0, r));
+                                vm.Env[idf.Name] = Value.Make(Binding, new Register(0, r));
                             }
                         }
                         else { throw new EmitError(bf.Loc, $"Invalid method arg: {bf}"); }
@@ -446,13 +446,13 @@ public class Core : Lib
 
         BindMacro("lib", [], (loc, target, vm, args) =>
         {
-            if (args.Count == 0) { vm.Emit(Ops.Push.Make(Value.Make(Core.Lib, vm.Lib))); }
+            if (args.Count == 0) { vm.Emit(Ops.Push.Make(Value.Make(Lib, vm.Lib))); }
 
             else if (args.TryPop() is Forms.Id nf)
             {
                 Lib? lib = null;
 
-                if (vm.Env.Find(nf.Name) is Value v) { lib = v.Cast(loc, Core.Lib); }
+                if (vm.Env.Find(nf.Name) is Value v) { lib = v.Cast(loc, Lib); }
                 else
                 {
                     lib = new Lib(nf.Name, vm.Env, args.CollectIds());
@@ -471,14 +471,14 @@ public class Core : Lib
             {
                 if (args.TryPop() is Form pf)
                 {
-                    if (vm.Eval(pf, args) is Value p) { vm.Load(p.Cast(pf.Loc, Core.String)); }
+                    if (vm.Eval(pf, args) is Value p) { vm.Load(p.Cast(pf.Loc, String)); }
                     else { throw new EvalError(pf.Loc, "Missing path"); }
                 }
                 else { break; }
             }
         });
 
-        BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Core.Bit, !(bool)stack.Pop()));
+        BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Bit, !(bool)stack.Pop()));
 
         BindMacro("or", ["value1"], (loc, target, vm, args) =>
          {
@@ -599,20 +599,20 @@ public class Core : Lib
 
         BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
         {
-            var n = stack.Pop().Cast(loc, Core.String);
-            var o = stack.Pop().Cast(loc, Core.String);
-            var i = stack.Pop().Cast(loc, Core.String);
+            var n = stack.Pop().Cast(loc, String);
+            var o = stack.Pop().Cast(loc, String);
+            var i = stack.Pop().Cast(loc, String);
             o = o.Replace(" ", "\\s*");
-            stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
+            stack.Push(Value.Make(String, Regex.Replace(i, o, n)));
         });
 
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>
         {
-            int b = stack.Pop().CastUnbox(Core.Int);
-            int g = stack.Pop().CastUnbox(Core.Int);
-            int r = stack.Pop().CastUnbox(Core.Int);
+            int b = stack.Pop().CastUnbox(Int);
+            int g = stack.Pop().CastUnbox(Int);
+            int r = stack.Pop().CastUnbox(Int);
 
-            stack.Push(Core.Color, System.Drawing.Color.FromArgb(255, r, g, b));
+            stack.Push(Color, System.Drawing.Color.FromArgb(255, r, g, b));
         });
 
         BindMethod("say", [], (loc, target, vm, stack, arity) =>
