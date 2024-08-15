@@ -6,13 +6,8 @@
 124
 294
 
-* VC
-** Reformat - Ctrl+Shift+I
-
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
-
-cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 * debug '+ unquote
 
