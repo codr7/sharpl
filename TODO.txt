@@ -16,7 +16,7 @@ cat src/Sharpl/Loc.cs | dotnet run trex xx.trex
 
 * debug '+ unquote
 
-(let [c '(+ 35 7)] '[1 ,c 2])
+(let [c '(+ 35 7)] '[1 ,c 2])(int)(int)(int)(int)
 
 * make macros composeable
 ** create user method like VM.Compose

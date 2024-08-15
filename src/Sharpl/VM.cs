@@ -95,11 +95,11 @@ public class VM
         nextRegisterIndex = 0;
     }
 
-    public void CallUserMethod(Loc loc, Stack stack, UserMethod target, Value?[] argMask, int registerCount)
+    public void CallUserMethod(Loc loc, Stack stack, UserMethod target, Value?[] argMask, int arity, int registerCount)
     {
         BeginFrame(registerCount);
         calls.Push(new Call(loc, target, PC, frames.Count));
-        target.BindArgs(this, argMask, stack);
+        target.BindArgs(this, argMask, arity, stack);
 #pragma warning disable CS8629
         PC = (PC)target.StartPC;
 #pragma warning restore CS8629
@@ -127,12 +127,8 @@ public class VM
 
     public void Demit(PC startPC)
     {
-        for (var pc = startPC; pc < code.Count; pc++)
-        {
-            Term.SetFg(Color.FromArgb(255, 128, 128, 255));
-            Term.Write($"{pc,-4} {code[pc]}\n");
-        }
-
+        Term.SetFg(Color.FromArgb(255, 128, 128, 255));
+        for (var pc = startPC; pc < code.Count; pc++) { Term.Write($"{pc,-4} {code[pc]}\n"); }
         Term.Flush();
     }
 
@@ -142,10 +138,7 @@ public class VM
         Env = env;
         BeginFrame(nextRegisterIndex);
 
-        try
-        {
-            action();
-        }
+        try { action(); }
         finally
         {
             Env = prevEnv;
@@ -227,16 +220,10 @@ public class VM
                     {
                         var branchOp = (Ops.Branch)op.Data;
 
-                        if ((bool)stack.Pop())
-                        {
-                            PC++;
-                        }
-                        else
-                        {
+                        if ((bool)stack.Pop()) { PC++; }
 #pragma warning disable CS8629
-                            PC = (PC)branchOp.Right.PC;
+                        else { PC = (PC)branchOp.Right.PC; }
 #pragma warning restore CS8629
-                        }
 
                         break;
                     }
@@ -244,12 +231,7 @@ public class VM
                     {
                         var callOp = (Ops.CallDirect)op.Data;
                         var arity = callOp.Arity;
-
-                        if (callOp.Splat)
-                        {
-                            arity = arity + splats.Pop() - 1;
-                        }
-
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         callOp.Target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
@@ -258,12 +240,7 @@ public class VM
                     {
                         var callOp = (Ops.CallMethod)op.Data;
                         var arity = callOp.Arity;
-
-                        if (callOp.Splat)
-                        {
-                            arity = arity + splats.Pop() - 1;
-                        }
-
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         callOp.Target.Call(callOp.Loc, this, stack, arity);
                         break;
@@ -272,12 +249,7 @@ public class VM
                     {
                         var callOp = (Ops.CallRegister)op.Data;
                         var arity = callOp.Arity;
-
-                        if (callOp.Splat)
-                        {
-                            arity = arity + splats.Pop() - 1;
-                        }
-
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         var target = Get(callOp.Target);
                         target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
@@ -288,12 +260,7 @@ public class VM
                         var target = stack.Pop();
                         var callOp = (Ops.CallStack)op.Data;
                         var arity = callOp.Arity;
-
-                        if (callOp.Splat)
-                        {
-                            arity = arity + splats.Pop() - 1;
-                        }
-
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         target.Call(callOp.Loc, this, stack, arity, callOp.RegisterCount);
                         break;
@@ -302,11 +269,7 @@ public class VM
                     {
                         var callOp = (Ops.CallTail)op.Data;
                         var arity = callOp.ArgMask.Length;
-
-                        if (callOp.Splat)
-                        {
-                            arity += splats.Pop();
-                        }
+                        if (callOp.Splat) { arity += splats.Pop(); }
 
                         if (arity < callOp.Target.MinArgCount)
                         {
@@ -315,7 +278,7 @@ public class VM
 
                         var call = calls.Peek();
                         frames.Trunc(call.FrameOffset);
-                        callOp.Target.BindArgs(this, callOp.ArgMask, stack);
+                        callOp.Target.BindArgs(this, callOp.ArgMask, arity, stack);
 #pragma warning disable CS8629
                         PC = (int)callOp.Target.StartPC;
 #pragma warning restore CS8629
@@ -325,14 +288,10 @@ public class VM
                     {
                         var callOp = (Ops.CallUserMethod)op.Data;
                         var arity = callOp.ArgMask.Length;
-
-                        if (callOp.Splat)
-                        {
-                            arity = arity + splats.Pop() - 1;
-                        }
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
 
                         PC++;
-                        CallUserMethod(callOp.Loc, stack, callOp.Target, callOp.ArgMask, callOp.RegisterCount);
+                        CallUserMethod(callOp.Loc, stack, callOp.Target, callOp.ArgMask, arity, callOp.RegisterCount);
                         break;
                     }
                 case Op.T.Check:
@@ -401,7 +360,6 @@ public class VM
                     }
                 case Op.T.CreatePair:
                     {
-                        var createOp = (Ops.CreatePair)op.Data;
                         var r = stack.Pop();
                         var l = stack.Pop();
                         stack.Push(Value.Make(Core.Pair, (l, r)));
@@ -470,9 +428,9 @@ public class VM
                         }
                         else
                         {
-#pragma warning disable CS8629 // Nullable value type may be null.
+#pragma warning disable CS8629
                             PC = (int)iterOp.Done.PC;
-#pragma warning restore CS8629 // Nullable value type may be null.
+#pragma warning restore CS8629
                         }
 
                         break;

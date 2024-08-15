@@ -35,7 +35,7 @@ public class UserMethod
         Vararg = vararg;
     }
 
-    public void BindArgs(VM vm, Value?[] argMask, Stack stack)
+    public void BindArgs(VM vm, Value?[] argMask, int arity, Stack stack)
     {
         for (var i = Args.Length - 1; i >= 0; i--)
         {
@@ -45,7 +45,7 @@ public class UserMethod
 
             if (Vararg && i == Args.Length - 1)
             {
-                var n = argMask.Length - Args.Length + 1;
+                var n = arity - Args.Length + 1;
                 var vs = new Value[n];
                 
                 for (var j = n - 1; j >= 0; j--) { 
@@ -61,21 +61,11 @@ public class UserMethod
                     if (v.Type == Core.Binding)
                     {
                         var r = v.CastUnbox(Core.Binding);
-
-                        if (r.FrameOffset != 0 || r.Index != ar)
-                        {
-                            vm.SetRegister(0, ar, vm.Get(r));
-                        }
+                        if (r.FrameOffset != 0 || r.Index != ar) { vm.SetRegister(0, ar, vm.Get(r)); }
                     }
-                    else
-                    {
-                        vm.SetRegister(0, ar, v);
-                    }
+                    else { vm.SetRegister(0, ar, v); }
                 }
-                else
-                {
-                    vm.SetRegister(0, ar, stack.Pop());
-                }
+                else { vm.SetRegister(0, ar, stack.Pop()); }
             }
         }
 
