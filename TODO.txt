@@ -10,7 +10,14 @@
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * debug '+ unquote
-* don't bind _-args/allocate registers
+
+(check '[1 42 2]
+  (let [c '(+ 35 7)]
+    '[1 ,c 2]))
+
+* track repetitions in demit
+** add flag
+** display frame graph
 
 * add char reader
 ** \
@@ -22,10 +29,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * make macros composeable
 ** create user method like VM.Compose
 *** one for each arity
-
-(check '[1 42 2]
-  (let [c '(+ 35 7)]
-    '[1 ,c 2]))
 
 * add while lop
 ** iterate while condition is true

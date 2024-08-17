@@ -72,6 +72,10 @@ public class Core : Lib
                         return (id.Name, r);
                     }
 
+                    if (f is Forms.Nil) {
+                        return ("_", -1);
+                    }
+
                     throw new EmitError(f.Loc, $"Invalid method arg: {f}");
                 }).ToArray();
             }
