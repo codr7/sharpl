@@ -11,7 +11,7 @@ public readonly struct Op
         Decrement, Drop,
         EndFrame, ExitMethod,
         GetRegister, Goto,
-        IterNext,
+        Increment, IterNext,
         OpenInputStream, Or, 
         PrepareClosure, Push, PushSplat,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 

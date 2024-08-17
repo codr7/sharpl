@@ -3,9 +3,11 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
+using System.Data;
+using Microsoft.VisualBasic;
 using Sharpl.Libs;
 
-public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, SeqTrait
+public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait, StackTrait
 {
     public ArrayType(string name) : base(name) { }
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
@@ -93,6 +95,13 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, SeqTrait
     }
 
     public int Length(Value target) => target.Cast(this).Length;
+
+    public Value Push(Loc loc, Value dst, Value val) {
+        var lst = new List<Value>();
+        lst.AddRange(dst.Cast(this));
+        lst.Add(val);
+        return Value.Make(Core.List, lst);
+    }
 
     public override void Say(Value value, StringBuilder result)
     {

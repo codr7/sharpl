@@ -27,12 +27,6 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
 
     public PairType(string name) : base(name) { }
 
-    public override bool Bool(Value value)
-    {
-        var p = value.CastUnbox(this);
-        return (bool)p.Item1 && (bool)p.Item2;
-    }
-
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
         if (arity < 2) { throw new EvalError(loc, "Wrong number of arguments"); }

@@ -1,13 +1,7 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Decrement(int FrameOffset, int Index)
+public readonly record struct Decrement(Register Target)
 {
-    public static Op Make(int frameOffset, int index)
-    {
-        return new Op(Op.T.Decrement, new Decrement(frameOffset, index));
-    }
-
-    public override string ToString() {
-        return $"Decrement {FrameOffset}:{Index}";
-    }
+    public static Op Make(Register target) => new Op(Op.T.Decrement, new Decrement(target));
+    public override string ToString() => $"Decrement {Target}";
 }

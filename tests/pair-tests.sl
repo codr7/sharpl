@@ -1,10 +1,5 @@
-(check F
-  (Bit T:F))
-
-(check F
-  (Bit F:T))
-
-(check (Bit T:T))
+(check T
+  (Bit F:F))
 
 (check 1:4:3
   (let [foo 1:2:3]

@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v18
+sharpl v19
 
    1 (say 'hello)
    2 
@@ -174,7 +174,22 @@ Methods may be composed using `&`.
 ```
 `42`
 
-## loops
+## looping
+### loop
+`loop` does exactly what it says, and nothing more.
+
+```
+(^enumerate [n]
+  (let [result (List) i 0]
+    (loop
+      (push result i)
+      (if (is (inc i) n) (return result)))))
+
+(enumerate 3)
+```
+`[0 1 2]`
+
+### for
 `for` may be used to iterate any number of sequences.
 
 ```

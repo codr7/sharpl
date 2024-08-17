@@ -18,7 +18,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 18;
+    public static readonly int VERSION = 19;
 
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
@@ -369,7 +369,7 @@ public class VM
                 case Op.T.Decrement:
                     {
                         var decrementOp = (Ops.Decrement)op.Data;
-                        var i = RegisterIndex(decrementOp.FrameOffset, decrementOp.Index);
+                        var i = Index(decrementOp.Target);
                         var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - 1);
                         registers[i] = v;
                         stack.Push(v);
@@ -415,6 +415,16 @@ public class VM
 #pragma warning disable CS8629
                         PC = (PC)gotoOp.Target.PC;
 #pragma warning restore CS8629
+                        break;
+                    }
+                case Op.T.Increment:
+                    {
+                        var incrementOp = (Ops.Increment)op.Data;
+                        var i = Index(incrementOp.Target);
+                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + 1);
+                        registers[i] = v;
+                        stack.Push(v);
+                        PC++;
                         break;
                     }
                 case Op.T.IterNext:
@@ -730,6 +740,8 @@ public class VM
     public int RegisterIndex(int frameOffset, int index) =>
         (frameOffset == -1) ? index : index + frames.Peek(frameOffset).Item2;
 
+    public int Index(Register reg) => RegisterIndex(reg.FrameOffset, reg.Index);
+    
     public void REPL()
     {
         Term.SetFg(Color.FromArgb(255, 252, 173, 3));

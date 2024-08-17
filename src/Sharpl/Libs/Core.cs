@@ -9,12 +9,14 @@ public class Core : Lib
     public static readonly ArrayType Array = new ArrayType("Array");
     public static readonly BindingType Binding = new BindingType("Binding");
     public static readonly BitType Bit = new BitType("Bit");
+    public static readonly CharType Char = new CharType("Char");
     public static readonly ColorType Color = new ColorType("Color");
     public static readonly FixType Fix = new FixType("Fix");
     public static readonly FormType Form = new FormType("Form");
     public static readonly IntType Int = new IntType("Int");
     public static readonly IterType Iter = new IterType("Iter");
     public static readonly LibType Lib = new LibType("Lib");
+    public static readonly ListType List = new ListType("List");
     public static readonly MacroType Macro = new MacroType("Macro");
     public static readonly MapType Map = new MapType("Map");
     public static readonly MetaType Meta = new MetaType("Meta");
@@ -94,10 +96,12 @@ public class Core : Lib
         BindType(Array);
         BindType(Binding);
         BindType(Bit);
+        BindType(Char);
         BindType(Color);
         BindType(Fix);
         BindType(Int);
         BindType(Lib);
+        BindType(List);
         BindType(Macro);
         BindType(Map);
         BindType(Meta);
@@ -248,20 +252,9 @@ public class Core : Lib
              vm.Emit(Ops.Check.Make(loc));
          });
 
-        BindMacro("dec", [], (loc, target, vm, args) =>
+         BindMacro("dec", [], (loc, target, vm, args) =>
         {
-            if (args.TryPop() is Forms.Id id)
-            {
-                if (vm.Env[id.Name] is Value v)
-                {
-                    if (v.Type == Binding)
-                    {
-                        var b = v.CastUnbox(Binding);
-                        vm.Emit(Ops.Decrement.Make(b.FrameOffset, b.Index));
-                    }
-                }
-                else { throw new EmitError(id.Loc, "Invalid target"); }
-            }
+            if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding) { vm.Emit(Ops.Decrement.Make(v.CastUnbox(Binding))); }
             else { throw new EmitError(loc, "Invalid target"); }
         });
 
@@ -283,6 +276,26 @@ public class Core : Lib
             vm.DoEnv(new Env(vm.Env, args.CollectIds()), () => args.Emit(vm, new Form.Queue()));
             vm.Emit(Ops.EndFrame.Make());
         });
+
+        BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
+             {
+                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+
+                 vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
+                  {
+                      if (args.TryPop() is Form cf) { cf.Emit(vm, args); }
+                      else { throw new EmitError(loc, "Missing condition"); }
+                      var skipElse = new Label();
+                      vm.Emit(Ops.Branch.Make(skipElse));
+                      if (args.TryPop() is Form tf) { tf.Emit(vm, args); }
+                      var skipEnd = new Label();
+                      vm.Emit(Ops.Goto.Make(skipEnd));
+                      skipElse.PC = vm.EmitPC;
+                      args.Emit(vm, new Form.Queue());
+                      skipEnd.PC = vm.EmitPC;
+                      vm.Emit(Ops.EndFrame.Make());
+                  });
+             });
 
         BindMacro("eval", [], (loc, target, vm, args) =>
         {
@@ -341,10 +354,11 @@ public class Core : Lib
 
                  var end = new Label();
                  var start = new Label(vm.EmitPC);
-                 
-                 foreach (var (seqReg, itReg) in bindings) {
-                    vm.Emit(Ops.IterNext.Make(loc, new Register(0, seqReg), end));
-                    vm.Emit(Ops.SetRegister.Make(0, itReg));
+
+                 foreach (var (seqReg, itReg) in bindings)
+                 {
+                     vm.Emit(Ops.IterNext.Make(loc, new Register(0, seqReg), end));
+                     vm.Emit(Ops.SetRegister.Make(0, itReg));
                  }
 
                  args.Emit(vm);
@@ -371,25 +385,11 @@ public class Core : Lib
                  });
             });
 
-        BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
-             {
-                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-
-                 vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
-                  {
-                      if (args.TryPop() is Form cf) { cf.Emit(vm, args); }
-                      else { throw new EmitError(loc, "Missing condition"); }
-                      var skipElse = new Label();
-                      vm.Emit(Ops.Branch.Make(skipElse));
-                      if (args.TryPop() is Form tf) { tf.Emit(vm, args); }
-                      var skipEnd = new Label();
-                      vm.Emit(Ops.Goto.Make(skipEnd));
-                      skipElse.PC = vm.EmitPC;
-                      args.Emit(vm, new Form.Queue());
-                      skipEnd.PC = vm.EmitPC;
-                      vm.Emit(Ops.EndFrame.Make());
-                  });
-             });
+        BindMacro("inc", [], (loc, target, vm, args) =>
+        {
+            if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding) { vm.Emit(Ops.Increment.Make(v.CastUnbox(Binding))); }
+            else { throw new EmitError(loc, "Invalid target"); }
+        });
 
         BindMethod("is", ["x"], (loc, target, vm, stack, arity) =>
             {
@@ -417,7 +417,7 @@ public class Core : Lib
             {
                 var v = stack.Pop();
 
-                if (v.Type is SeqTrait st) { stack.Push(Int, st.Length(v)); }
+                if (v.Type is LengthTrait st) { stack.Push(Int, st.Length(v)); }
                 else { throw new EvalError(loc, $"Expected sequence: {v}"); }
             });
 
@@ -518,6 +518,22 @@ public class Core : Lib
                 }
             });
 
+        BindMacro("loop", ["body?"], (loc, target, vm, args) =>
+        {
+            vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+
+            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
+             {
+                 var end = new Label();
+                 var start = new Label(vm.EmitPC);
+                 args.Emit(vm);
+                 vm.Emit(Ops.Goto.Make(start));
+                 end.PC = vm.EmitPC;
+                 vm.Emit(Ops.EndFrame.Make());
+             });
+        });
+
+
         BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Bit, !(bool)stack.Pop()));
 
         BindMacro("or", ["value1"], (loc, target, vm, args) =>
@@ -539,6 +555,14 @@ public class Core : Lib
 
                  done.PC = vm.EmitPC;
              });
+
+       BindMethod("push", ["dst", "val"], (loc, target, vm, stack, arity) =>
+        {
+            var val = stack.Pop();
+            var dst = stack.Pop();
+            if (dst.Type is StackTrait st) { stack.Push(st.Push(loc, dst, val)); }
+            else { throw new EvalError(loc, $"Invalid push destination: {val}"); }
+        });
 
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
             {
@@ -612,7 +636,7 @@ public class Core : Lib
                     vm.Emit(Ops.ExitMethod.Make());
                 }
             });
-
+    
         BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
               {
                   var iter = new Register(0, vm.AllocRegister());

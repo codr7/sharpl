@@ -3,7 +3,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class StringType(string name) : ComparableType<string>(name), SeqTrait
+public class StringType(string name) : ComparableType<string>(name), LengthTrait, StackTrait
 {
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
@@ -29,5 +29,9 @@ public class StringType(string name) : ComparableType<string>(name), SeqTrait
     }
 
     public int Length(Value target) => target.Cast(this).Length;
+
+    public Value Push(Loc loc, Value dst, Value val) =>
+        Value.Make(this, dst.Cast(this) + val.CastUnbox(Libs.Core.Char));
+
     public override void Say(Value value, StringBuilder result) => result.Append(value.Data);
 }

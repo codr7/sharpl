@@ -10,8 +10,14 @@
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * debug '+ unquote
+* don't bind _-args/allocate registers
 
-(let [c '(+ 35 7)] '[1 ,c 2])(int)(int)(int)(int)
+* add char reader
+** \
+** add \\n
+** readme
+
+* add string/array in place reverse
 
 * make macros composeable
 ** create user method like VM.Compose
