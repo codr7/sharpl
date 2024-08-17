@@ -16,6 +16,20 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
 
+* add aoc1
+** add map macro
+*** jalang
+** add find-first macro
+*** jalang
+** add call target unification
+*** only pairs/nil
+** add parse-int
+** add char/(is-)digit
+** add io/read-lines
+
+* add iter benchmark
+** fib-tail but use loop instead of tail call
+
 * port list benchmark to python
 
 * track repetitions in demit
@@ -35,11 +49,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add while lop
 ** iterate while condition is true
-
-(let [n 1]
-  (while (< n 10)
-    (set n (* n n)))
-  n)
 
 * add iter macro
 ** define usermethod like VM.Compose
