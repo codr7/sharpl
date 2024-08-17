@@ -3,7 +3,7 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class StringType(string name) : ComparableType<string>(name), LengthTrait, StackTrait
+public class StringType(string name) : ComparableType<string>(name), IterTrait, LengthTrait, StackTrait
 {
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
@@ -20,6 +20,9 @@ public class StringType(string name) : ComparableType<string>(name), LengthTrait
 
         stack.Push(Value.Make(this, res.ToString()));
     }
+
+    public Iter CreateIter(Value target) =>
+        new Iters.Core.EnumeratorItems(target.Cast(this).Select(c => Value.Make(Libs.Core.Char, c)).GetEnumerator());
 
     public override void Dump(Value value, StringBuilder result)
     {

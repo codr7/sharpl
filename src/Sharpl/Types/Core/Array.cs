@@ -3,8 +3,6 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-using System.Data;
-using Microsoft.VisualBasic;
 using Sharpl.Libs;
 
 public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait, StackTrait
@@ -59,11 +57,8 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
         return res;
     }
 
-    public Iter CreateIter(Value target)
-    {
-        var t = target.Cast(this);
-        return new ArrayItems(t, 0, t.Length);
-    }
+    public Iter CreateIter(Value target) =>
+        new EnumeratorItems(((IEnumerable<Value>)target.Cast(this)).GetEnumerator());
 
     public override void Dump(Value value, StringBuilder result)
     {
