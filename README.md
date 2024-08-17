@@ -442,7 +442,7 @@ Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/
 `bench`may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
 
 ```
-dotnet run -c Release benchmarks.sl
+dotnet run -c=release benchmarks/fib.sl
 ```
 
 ## building

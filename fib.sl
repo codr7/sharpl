@@ -4,6 +4,14 @@
 (^fib-tail [n a b]
   (else (> n 1) (return (fib-tail (dec n) b (+ a b))) (else (is n 0) a b)))
 
+(^ fib-list [n l]
+  (else (< n (len l))
+    (l n)
+    (let [result (else (< n 2) n (+ (fib-list (- n 1) l)
+                                    (fib-list (- n 2) l)))] 
+      (push l result)
+	    result)))
+
 (^ fib-map [n m]
   (or (m n)
       (else (< n 2) 

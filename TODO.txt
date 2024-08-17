@@ -2,9 +2,10 @@
 144
 347
 
-251
-124
-294
+242
+119
+330
+314
 
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
@@ -14,6 +15,8 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 (check '[1 42 2]
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
+
+* port list benchmark to python
 
 * track repetitions in demit
 ** add flag
