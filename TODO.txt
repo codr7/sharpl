@@ -23,7 +23,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 *** jalang
 ** add call target unification
 *** only pairs/nil
-** add parse-int
 ** add char/(is-)digit
 ** add io/read-lines
 

@@ -560,6 +560,21 @@ public class Core : Lib
                  done.PC = vm.EmitPC;
              });
 
+        BindMethod("parse-int", ["val"], (loc, target, vm, stack, arity) =>
+        {
+            int v = 0;
+            var i = 0;
+            
+            foreach (char c in stack.Pop().Cast(String)) {
+                
+                if (!char.IsDigit(c)) { break; }
+                v = v * 10 + c - '0';
+                i++;
+            }
+
+            stack.Push(Pair, (Value.Make(Int, v), Value.Make(Int, i)));
+        });
+
        BindMethod("push", ["dst", "val"], (loc, target, vm, stack, arity) =>
         {
             var val = stack.Pop();

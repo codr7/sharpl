@@ -34,6 +34,9 @@
       
   (bar))
 
+(check 42:2
+  (parse-int "42foo"))
+
 (load "array-tests.sl")
 (load "fib-tests.sl")
 (load "fix-tests.sl")

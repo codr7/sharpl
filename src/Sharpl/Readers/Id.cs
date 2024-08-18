@@ -19,7 +19,7 @@ public struct Id : Reader
         var c = source.Peek();
         if (c == -1) { return false; }
         var cc = Convert.ToChar(c);
-        if (!Valid(cc) || Char.IsDigit(cc)) { return false; }
+        if (!Valid(cc) || char.IsDigit(cc)) { return false; }
 
         var formLoc = loc;
         var buffer = new StringBuilder();

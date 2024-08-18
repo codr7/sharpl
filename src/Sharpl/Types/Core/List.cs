@@ -63,7 +63,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
 
     public override void Dump(Value value, StringBuilder result)
     {
-        result.Append('[');
+        result.Append('<');
         var i = 0;
 
         foreach (var v in value.Cast(this))
@@ -73,7 +73,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
             i++;
         }
 
-        result.Append(']');
+        result.Append('>');
     }
 
     public override bool Equals(Value left, Value right)
@@ -99,7 +99,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
 
     public override void Say(Value value, StringBuilder result)
     {
-        result.Append('[');
+        result.Append('<');
         var i = 0;
 
         foreach (var v in value.Cast(this))
@@ -109,6 +109,6 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
             i++;
         }
 
-        result.Append(']');
+        result.Append('>');
     }
 }

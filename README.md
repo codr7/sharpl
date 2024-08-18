@@ -293,6 +293,13 @@ Negative integers lack syntax, and must be created by way of subtraction.
 ```
 `[1 3 5 7 9]`
 
+`parse-int` may be used to parse integers from strings, it returns the parsed value and the next index in the string.
+
+```
+(parse-int "42foo")
+```
+`42:2`
+
 ### fixpoints
 Decimal expressions are read as fixpoint values with specified number of decimals.<br/>
 Like integers, fixpoints support the regular arithmetic operations.
