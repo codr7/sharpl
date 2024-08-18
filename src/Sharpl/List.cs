@@ -66,6 +66,8 @@ public static class List
         return res.ToString();
     }
 
+    public static T? TryPop<T>(this List<T> items) => (items.Count == 0) ? default : Pop(items);
+
     public static void Trunc<T>(this List<T> items, int n)
     {
         items.RemoveRange(n, items.Count - n);

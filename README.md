@@ -389,6 +389,16 @@ Or by calling the constructor explicitly.
 `{'bar:2 'baz:3 'foo:1}`
 
 ## iterators
+
+### map
+`map` may be used to map a method over one or more sequences.
+
+```
+(map Pair '[foo bar baz] [1 2 3 4])
+```
+`(List 'foo:1 'bar:2 'baz:3)`
+
+### reduce
 `reduce` may be used to transform any iterable into a single value.
 
 ```

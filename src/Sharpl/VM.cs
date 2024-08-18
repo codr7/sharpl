@@ -72,13 +72,13 @@ public class VM
         UserLib.Import(CoreLib);
         Env = UserLib;
         BeginFrame(config.MaxVars);
-        
+
         IOLib = new IO(this);
         IOLib.Init(this);
 
         CharLib = new Libs.Char();
         CharLib.Init(this);
-        
+
         StringLib = new Libs.String();
         StringLib.Init(this);
 
@@ -357,6 +357,13 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.CreateList:
+                    {
+                        var createOp = (Ops.CreateList)op.Data;
+                        Set(createOp.Target, Value.Make(Core.List, new List<Value>()));
+                        PC++;
+                        break;
+                    }
                 case Op.T.CreateMap:
                     {
                         var createOp = (Ops.CreateMap)op.Data;
@@ -411,7 +418,7 @@ public class VM
                 case Op.T.GetRegister:
                     {
                         var getOp = (Ops.GetRegister)op.Data;
-                        stack.Push(GetRegister(getOp.FrameOffset, getOp.Index));
+                        stack.Push(Get(getOp.Target));
                         PC++;
                         break;
                     }
@@ -504,6 +511,14 @@ public class VM
                     {
                         var pushOp = (Ops.Push)op.Data;
                         stack.Push(pushOp.Value.Copy());
+                        PC++;
+                        break;
+                    }
+                case Op.T.PushListItem:
+                    {
+                        var pushOp = (Ops.PushListItem)op.Data;
+                        if (stack.TryPop() is Value v) { Get(pushOp.Target).Cast(pushOp.Loc, Core.List).Add(v); }
+                        else { throw new EvalError(pushOp.Loc, "Missing target"); }
                         PC++;
                         break;
                     }
@@ -747,7 +762,7 @@ public class VM
         (frameOffset == -1) ? index : index + frames.Peek(frameOffset).Item2;
 
     public int Index(Register reg) => RegisterIndex(reg.FrameOffset, reg.Index);
-    
+
     public void REPL()
     {
         Term.SetFg(Color.FromArgb(255, 252, 173, 3));

@@ -72,7 +72,8 @@ public class Core : Lib
                         return (id.Name, r);
                     }
 
-                    if (f is Forms.Nil) {
+                    if (f is Forms.Nil)
+                    {
                         return ("_", -1);
                     }
 
@@ -256,11 +257,11 @@ public class Core : Lib
              vm.Emit(Ops.Check.Make(loc));
          });
 
-         BindMacro("dec", [], (loc, target, vm, args) =>
-        {
-            if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding) { vm.Emit(Ops.Decrement.Make(v.CastUnbox(Binding))); }
-            else { throw new EmitError(loc, "Invalid target"); }
-        });
+        BindMacro("dec", [], (loc, target, vm, args) =>
+       {
+           if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding) { vm.Emit(Ops.Decrement.Make(v.CastUnbox(Binding))); }
+           else { throw new EmitError(loc, "Invalid target"); }
+       });
 
         BindMacro("demit", [], (loc, target, vm, args) =>
         {
@@ -537,6 +538,29 @@ public class Core : Lib
              });
         });
 
+        BindMacro("map", ["method", "sequence1"], (loc, target, vm, args) =>
+              {
+                  var result = new Register(0, vm.AllocRegister());
+                  vm.Emit(Ops.CreateList.Make(result));
+                  var methodForm = args.Pop();
+                  var iters = args.Select(a => (a, new Register(0, vm.AllocRegister()))).ToArray();
+
+                  foreach (var (a, it) in iters)
+                  {
+                      vm.Emit(a);
+                      vm.Emit(Ops.CreateIter.Make(loc, it));
+                  }
+                  var start = new Label(vm.EmitPC);
+                  var end = new Label();
+                  foreach (var (a, it) in iters) { vm.Emit(Ops.IterNext.Make(loc, it, end)); }
+                  vm.Emit(methodForm);
+                  vm.Emit(Ops.CallStack.Make(loc, args.Count, args.IsSplat, vm.NextRegisterIndex));
+                  vm.Emit(Ops.PushListItem.Make(loc, result));
+                  vm.Emit(Ops.Goto.Make(start));
+                  end.PC = vm.EmitPC;
+                  vm.Emit(Ops.GetRegister.Make(result));
+                  args.Clear();
+              });
 
         BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Bit, !(bool)stack.Pop()));
 
@@ -564,9 +588,10 @@ public class Core : Lib
         {
             int v = 0;
             var i = 0;
-            
-            foreach (char c in stack.Pop().Cast(String)) {
-                
+
+            foreach (char c in stack.Pop().Cast(String))
+            {
+
                 if (!char.IsDigit(c)) { break; }
                 v = v * 10 + c - '0';
                 i++;
@@ -575,13 +600,13 @@ public class Core : Lib
             stack.Push(Pair, (Value.Make(Int, v), Value.Make(Int, i)));
         });
 
-       BindMethod("push", ["dst", "val"], (loc, target, vm, stack, arity) =>
-        {
-            var val = stack.Pop();
-            var dst = stack.Pop();
-            if (dst.Type is StackTrait st) { stack.Push(st.Push(loc, dst, val)); }
-            else { throw new EvalError(loc, $"Invalid push destination: {val}"); }
-        });
+        BindMethod("push", ["dst", "val"], (loc, target, vm, stack, arity) =>
+         {
+             var val = stack.Pop();
+             var dst = stack.Pop();
+             if (dst.Type is StackTrait st) { stack.Push(st.Push(loc, dst, val)); }
+             else { throw new EvalError(loc, $"Invalid push destination: {val}"); }
+         });
 
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
             {
@@ -655,7 +680,7 @@ public class Core : Lib
                     vm.Emit(Ops.ExitMethod.Make());
                 }
             });
-    
+
         BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
               {
                   var iter = new Register(0, vm.AllocRegister());

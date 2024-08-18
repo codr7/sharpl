@@ -17,12 +17,10 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
     '[1 ,c 2]))
 
 * add aoc1
-** add map macro
-*** jalang
 ** add find-first macro
 *** jalang
 ** add call target unification
-*** only pairs/nil
+*** pairs/_
 
 * add iter benchmark
 ** fib-tail but use loop instead of tail call
