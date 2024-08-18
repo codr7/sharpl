@@ -18,18 +18,11 @@ public struct Char : Reader
         if (c == -1) { throw new ReadError(loc, "Invalid char literal"); }
         
         if (c == '\\') {
-            c = source.Read();
-
-            switch (c) {
-                case 'n':
-                    c = '\n';
-                    break;
-                case 'r':
-                    c = '\r';
-                    break;
-                default: 
-                    throw new ReadError(loc, $"Invalid char meta literal: {c}");
-            }
+            c = source.Read() switch {
+                'n' => '\n',
+                'r' => '\r',
+                var e =>  throw new ReadError(loc, $"Invalid special char literal: {e}")
+            };
         }
 
         var cc = Convert.ToChar(c);
