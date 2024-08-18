@@ -38,6 +38,7 @@
   (parse-int "42foo"))
 
 (load "array-tests.sl")
+(load "char-tests.sl")
 (load "fib-tests.sl")
 (load "fix-tests.sl")
 (load "int-tests.sl")

@@ -7,7 +7,7 @@ public struct Id : Reader
     public static readonly Id Instance = new Id();
 
     public static bool Valid(char c) =>
-        !(Char.IsWhiteSpace(c) || Char.IsControl(c) ||
+        !(char.IsWhiteSpace(c) || char.IsControl(c) ||
             c == '(' || c == ')' ||
             c == '[' || c == ']' ||
             c == '{' || c == '}' ||

@@ -31,7 +31,7 @@ public struct Fix : Reader
 
             var cc = Convert.ToChar(c);
 
-            if (!Char.IsAsciiDigit(cc))
+            if (!char.IsAsciiDigit(cc))
             {
                 break;
             }

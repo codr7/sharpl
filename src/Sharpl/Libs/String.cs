@@ -1,8 +1,6 @@
-namespace Sharpl.Libs;
-
-using Sharpl.Types.Term;
-
 using System.Text;
+
+namespace Sharpl.Libs;
 
 public class String : Lib
 {
@@ -22,10 +20,7 @@ public class String : Lib
             arity--;
 
             while (arity > 0) {
-                if (sep.Type != Core.Nil && res.Length > 0) {
-                    sep.Say(res);
-                }
-
+                if (sep.Type != Core.Nil && res.Length > 0) { sep.Say(res); }
                 stack.Pop().Say(res);
                 arity--;
             }

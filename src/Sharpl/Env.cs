@@ -57,10 +57,7 @@ public class Env
         bindings[id] = value;
     }
 
-    public void BindLib(Lib lib)
-    {
-        Bind(lib.Name, Value.Make(Core.Lib, lib));
-    }
+    public void BindLib(Lib lib) => Bind(lib.Name, Value.Make(Core.Lib, lib));
 
     public Macro BindMacro(string name, string[] args, Macro.BodyType body)
     {

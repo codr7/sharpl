@@ -20,9 +20,10 @@ public class VM
     public static readonly C DEFAULT = new C();
     public static readonly int VERSION = 19;
 
+    public readonly Libs.Char CharLib;
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
-    public readonly Libs.String StringLib = new Libs.String();
+    public readonly Libs.String StringLib;
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
 
@@ -48,6 +49,7 @@ public class VM
         Readers.And.Instance,
         Readers.Array.Instance,
         Readers.Call.Instance,
+        Readers.Char.Instance,
         Readers.Fix.Instance,
         Readers.Int.Instance,
         Readers.Map.Instance,
@@ -70,10 +72,14 @@ public class VM
         UserLib.Import(CoreLib);
         Env = UserLib;
         BeginFrame(config.MaxVars);
-
+        
         IOLib = new IO(this);
         IOLib.Init(this);
 
+        CharLib = new Libs.Char();
+        CharLib.Init(this);
+        
+        StringLib = new Libs.String();
         StringLib.Init(this);
 
         TermLib = new Libs.Term(this);

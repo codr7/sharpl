@@ -28,7 +28,7 @@ public struct Int : Reader
 
             var cc = Convert.ToChar(c);
 
-            if (!Char.IsAsciiDigit(cc))
+            if (!char.IsAsciiDigit(cc))
             {
                 break;
             }

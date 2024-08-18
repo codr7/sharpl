@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 
 namespace Sharpl.Types.Core;
@@ -16,6 +17,20 @@ public class CharType(string name) :
         return new Iters.Core.CharRange(minVal, maxVal, strideVal);
     }
 
-    public override void Dump(Value value, StringBuilder result) => 
-        result.Append($"\\{value.CastUnbox(this)}");
+    public override void Dump(Value value, StringBuilder result) {
+        var c = value.CastUnbox(this);
+        result.Append('\\');
+
+        switch (c) {
+            case '\n':
+                result.Append("\\n");
+                break;
+            case '\r':
+                result.Append("\\r");
+                break;
+            default:
+                result.Append(c);
+                break;
+        }
+    }
 }

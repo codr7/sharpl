@@ -264,12 +264,27 @@ Unique symbols may be created using the type constructor.
 ```
 
 ### strings
-Strings use double quotes.
+String literals may be defined using double quotes.
 
 ```
 (string/up "Foo")
 ```
 `"FOO"`
+
+### characters
+Character literals may be defined using `\`.
+
+```
+(char/is-digit \7)
+```
+`T`
+
+Special characters require one more escape.
+
+```
+\\n
+```
+`\\n`
 
 ### integers
 Integers support the regular arithmetic operations.
