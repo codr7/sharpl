@@ -332,47 +332,6 @@ public class Core : Lib
             throw new EvalError(loc, res.ToString());
         });
 
-        BindMacro("for", ["vars", "body?"], (loc, target, vm, args) =>
-        {
-            vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-
-            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
-             {
-                 var bindings = new List<(int, int)>();
-
-                 if (args.Pop() is Forms.Array vfs)
-                 {
-                     for (var i = 0; i < vfs.Items.Length; i += 2)
-                     {
-                         var idForm = vfs.Items[i];
-                         var valForm = vfs.Items[i + 1];
-                         var seqReg = vm.AllocRegister();
-                         vm.Emit(valForm);
-                         vm.Emit(Ops.CreateIter.Make(loc, new Register(0, seqReg)));
-                         var itReg = vm.AllocRegister();
-                         bindings.Add((seqReg, itReg));
-                         if (idForm is Forms.Id idf) { vm.Env.Bind(idf.Name, Value.Make(Binding, new Register(0, itReg))); }
-                         else { throw new EmitError(loc, "Expected id: " + idForm); }
-                     }
-                 }
-                 else { throw new EmitError(loc, "Invalid loop bindings"); }
-
-                 var end = new Label();
-                 var start = new Label(vm.EmitPC);
-
-                 foreach (var (seqReg, itReg) in bindings)
-                 {
-                     vm.Emit(Ops.IterNext.Make(loc, new Register(0, seqReg), end));
-                     vm.Emit(Ops.SetRegister.Make(0, itReg));
-                 }
-
-                 args.Emit(vm);
-                 vm.Emit(Ops.Goto.Make(start));
-                 end.PC = vm.EmitPC;
-                 vm.Emit(Ops.EndFrame.Make());
-             });
-        });
-
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
             {
                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
@@ -460,13 +419,13 @@ public class Core : Lib
                                      var b = v.CastUnbox(Binding);
                                      brs.Add((r, b.FrameOffset, b.Index));
                                      vm.Emit(Ops.CopyRegister.Make(b.FrameOffset, b.Index, 0, r));
-                                     vm.Emit(Ops.SetRegister.Make(b.FrameOffset, b.Index));
+                                     vm.Emit(Ops.SetRegister.Make(b));
                                  }
                                  else
                                  {
-                                     var r = vm.AllocRegister();
-                                     vm.Emit(Ops.SetRegister.Make(0, r));
-                                     vm.Env[idf.Name] = Value.Make(Binding, new Register(0, r));
+                                     var r = new Register(0, vm.AllocRegister());
+                                     vm.Emit(Ops.SetRegister.Make(r));
+                                     vm.Env[idf.Name] = Value.Make(Binding, r);
                                  }
                              }
                              else { throw new EmitError(bf.Loc, $"Invalid method arg: {bf}"); }
@@ -537,30 +496,6 @@ public class Core : Lib
                  vm.Emit(Ops.EndFrame.Make());
              });
         });
-
-        BindMacro("map", ["method", "sequence1"], (loc, target, vm, args) =>
-              {
-                  var result = new Register(0, vm.AllocRegister());
-                  vm.Emit(Ops.CreateList.Make(result));
-                  var methodForm = args.Pop();
-                  var iters = args.Select(a => (a, new Register(0, vm.AllocRegister()))).ToArray();
-
-                  foreach (var (a, it) in iters)
-                  {
-                      vm.Emit(a);
-                      vm.Emit(Ops.CreateIter.Make(loc, it));
-                  }
-                  var start = new Label(vm.EmitPC);
-                  var end = new Label();
-                  foreach (var (a, it) in iters) { vm.Emit(Ops.IterNext.Make(loc, it, end)); }
-                  vm.Emit(methodForm);
-                  vm.Emit(Ops.CallStack.Make(loc, args.Count, args.IsSplat, vm.NextRegisterIndex));
-                  vm.Emit(Ops.PushListItem.Make(loc, result));
-                  vm.Emit(Ops.Goto.Make(start));
-                  end.PC = vm.EmitPC;
-                  vm.Emit(Ops.GetRegister.Make(result));
-                  args.Clear();
-              });
 
         BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Bit, !(bool)stack.Pop()));
 
@@ -680,30 +615,6 @@ public class Core : Lib
                     vm.Emit(Ops.ExitMethod.Make());
                 }
             });
-
-        BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
-              {
-                  var iter = new Register(0, vm.AllocRegister());
-                  var methodForm = args.Pop();
-                  var sequenceForm = args.Pop();
-                  var seedForm = args.Pop();
-                  var emptyArgs = new Form.Queue();
-
-                  var method = new Register(0, vm.AllocRegister());
-                  methodForm.Emit(vm, emptyArgs);
-                  vm.Emit(Ops.SetRegister.Make(method.FrameOffset, method.Index));
-
-                  sequenceForm.Emit(vm, emptyArgs);
-                  vm.Emit(Ops.CreateIter.Make(loc, iter));
-                  seedForm.Emit(vm, emptyArgs);
-
-                  var start = new Label(vm.EmitPC);
-                  var done = new Label();
-                  vm.Emit(Ops.IterNext.Make(loc, iter, done));
-                  vm.Emit(Ops.CallRegister.Make(loc, method, 2, false, vm.NextRegisterIndex));
-                  vm.Emit(Ops.Goto.Make(start));
-                  done.PC = vm.EmitPC;
-              });
 
         BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
             {

@@ -58,7 +58,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
         return res;
     }
 
-    public Iter CreateIter(Value target) =>
+    public Sharpl.Iter CreateIter(Value target) =>
         new EnumeratorItems(target.Cast(this).GetEnumerator());
 
     public override void Dump(Value value, StringBuilder result)

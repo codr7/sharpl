@@ -110,7 +110,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
         return lp.Item1.Equals(rp.Item1) && lp.Item2.Equals(rp.Item2);
     }
 
-    public Iter CreateIter(Value target) => new PairItems(target);
+    public Sharpl.Iter CreateIter(Value target) => new PairItems(target);
 
     public override void Say(Value value, StringBuilder result)
     {

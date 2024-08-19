@@ -406,6 +406,14 @@ Or by calling the constructor explicitly.
 ```
 `6`
 
+### find
+`find-first` may be used to find the first value in a sequence matching the specified predicate, along with its index; or `_` if not found.
+
+```
+(find-first (^[x] (> x 3)) [1 3 5 7 9])
+```
+`5:2`
+
 ## libraries
 `lib` may be used to define/extend libraries.
 

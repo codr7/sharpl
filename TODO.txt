@@ -10,17 +10,15 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* add aoc1
+** add call target unification
+*** pairs/_
+
 * debug '+ unquote
 
 (check '[1 42 2]
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
-
-* add aoc1
-** add find-first macro
-*** jalang
-** add call target unification
-*** pairs/_
 
 * add iter benchmark
 ** fib-tail but use loop instead of tail call

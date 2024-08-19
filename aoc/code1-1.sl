@@ -9,5 +9,6 @@
 (^calibrate [input]
   (reduce + (map decode-line (io/read-lines input)) 0))
 
-(check 55108
-  (calibrate (path "input1")))
+(^solve []
+  (check 55108
+    (calibrate (path "input1"))))

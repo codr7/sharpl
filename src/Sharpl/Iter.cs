@@ -1,5 +1,6 @@
+namespace Sharpl;
+
 using System.Collections;
-using Sharpl;
 
 public interface Iter : IEnumerable<Value>
 {
@@ -19,17 +20,13 @@ public interface Iter : IEnumerable<Value>
         }
 
         public void Dispose() { }
-
         public bool MoveNext()
         {
             current = Source.Next();
             return current != null;
         }
 
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
+        public void Reset() => throw new NotImplementedException();
     }
 
     Value? Next();
@@ -37,15 +34,7 @@ public interface Iter : IEnumerable<Value>
 
 public abstract class BasicIter : Iter
 {
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return new Iter.E(this);
-    }
-
-    public IEnumerator<Value> GetEnumerator()
-    {
-        return new Iter.E(this);
-    }
-
+    IEnumerator IEnumerable.GetEnumerator() => new Iter.E(this);
+    public IEnumerator<Value> GetEnumerator() => new Iter.E(this);
     public abstract Value? Next();
 }

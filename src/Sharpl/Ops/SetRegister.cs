@@ -1,9 +1,9 @@
 namespace Sharpl.Ops;
 
-public readonly record struct SetRegister(int FrameOffset, int Index)
+public readonly record struct SetRegister(Register Target)
 {
-    public static Op Make(int frameOffset, int index) =>
-        new Op(Op.T.SetRegister, new SetRegister(frameOffset, index));
+    public static Op Make(Register target) =>
+        new Op(Op.T.SetRegister, new SetRegister(target));
 
-    public override string ToString() => $"SetRegister {FrameOffset}:{Index}";
+    public override string ToString() => $"SetRegister {Target}";
 }

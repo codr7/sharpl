@@ -23,6 +23,7 @@ public class VM
     public readonly Libs.Char CharLib;
     public readonly Core CoreLib = new Core();
     public readonly IO IOLib;
+    public readonly Libs.Iter IterLib;
     public readonly Libs.String StringLib;
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
@@ -73,14 +74,18 @@ public class VM
         Env = UserLib;
         BeginFrame(config.MaxVars);
 
-        IOLib = new IO(this);
-        IOLib.Init(this);
+        IterLib = new Libs.Iter();
+        IterLib.Init(this);
+        UserLib.Import(IterLib);
 
         CharLib = new Libs.Char();
         CharLib.Init(this);
 
         StringLib = new Libs.String();
         StringLib.Init(this);
+
+        IOLib = new IO(this);
+        IOLib.Init(this);
 
         TermLib = new Libs.Term(this);
         TermLib.Init(this);
@@ -127,7 +132,7 @@ public class VM
     {
         var i = definitionCount;
         Env[name] = Value.Make(Core.Binding, new Register(-1, i));
-        Emit(Ops.SetRegister.Make(-1, i));
+        Emit(Ops.SetRegister.Make(new Register(-1, i)));
         definitionCount++;
     }
 
@@ -528,6 +533,14 @@ public class VM
                         PC++;
                         break;
                     }
+                case Op.T.Repush:
+                    {
+                        var pushOp = (Ops.Repush)op.Data;
+                        var v = stack.Peek();
+                        for (var i = 0; i < pushOp.N; i++) { stack.Push(v); }
+                        PC++;
+                        break;
+                    }
                 case Op.T.SetArrayItem:
                     {
                         var setOp = (Ops.SetArrayItem)op.Data;
@@ -554,7 +567,7 @@ public class VM
                 case Op.T.SetRegister:
                     {
                         var setOp = (Ops.SetRegister)op.Data;
-                        SetRegister(setOp.FrameOffset, setOp.Index, stack.Pop());
+                        Set(setOp.Target, stack.Pop());
                         PC++;
                         break;
                     }

@@ -14,6 +14,7 @@ public readonly struct Op
         Increment, IterNext,
         OpenInputStream, Or, 
         PrepareClosure, Push, PushListItem, PushSplat,
+        Repush,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
         Splat, Stop,
         UnquoteRegister
