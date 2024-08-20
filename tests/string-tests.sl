@@ -8,3 +8,6 @@
 
 (check 3
   (len "foo"))
+
+(check "cba"
+  (string/reverse "abc"))
