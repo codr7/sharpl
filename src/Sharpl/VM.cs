@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
@@ -614,11 +615,36 @@ public class VM
                         PC++;
                         return;
                     }
+                case Op.T.Swap:
+                    {
+                        var swapOp = (Ops.Swap)op.Data;
+                        var x = (stack.Pop() is Value xv) ? xv : throw new EvalError(swapOp.Loc, "Missing left arg");
+                        var y = (stack.Pop() is Value yv) ? yv : throw new EvalError(swapOp.Loc, "Missing right arg");
+                        stack.Push(x);
+                        stack.Push(y);
+                        PC++;
+                        break;
+                    }
                 case Op.T.UnquoteRegister:
                     {
                         var unquoteOp = (Ops.UnquoteRegister)op.Data;
                         var f = Get(unquoteOp.Register).Unquote(unquoteOp.Loc, this);
                         Eval(f, stack);
+                        PC++;
+                        break;
+                    }
+                case Op.T.Unzip:
+                    {
+                        var unzipOp = (Ops.Unzip)op.Data;
+                        
+                        if (stack.TryPop() is Value p)
+                        {
+                            var pv = p.CastUnbox(Core.Pair);
+                            stack.Push(pv.Item1);
+                            stack.Push(pv.Item2);
+                        }
+                        else { throw new EvalError(unzipOp.Loc, "Missing target"); }
+
                         PC++;
                         break;
                     }

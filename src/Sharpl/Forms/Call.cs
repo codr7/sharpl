@@ -36,8 +36,40 @@ public class Call : Form
 
         var cas = new Queue(Args);
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-        Target.EmitCall(vm, cas);
+
+        var t = Target;
+
+        while (t is Pair pf)
+        {
+            if (pf.Right is Nil)
+            {
+                t = pf.Left;
+            }
+            else if (pf.Left is Nil) { t = pf.Right; }
+            else { throw new EvalError(Loc, $"Invalid call target: {pf}"); }
+        }
+
+        t.EmitCall(vm, cas);
         foreach (var a in cas) { args.Push(a); }
+
+        t = Target;
+
+        while (t is Pair pf)
+        {
+            vm.Emit(Ops.Unzip.Make(Loc));
+
+            if (pf.Right is Nil)
+            {
+                t = pf.Left;
+            }
+            else if (pf.Left is Nil)
+            {
+                t = pf.Right;
+                vm.Emit(Ops.Swap.Make(Loc));
+            }
+
+            vm.Emit(Ops.Drop.Make(1));
+        }
     }
 
     public override bool Equals(Form other)

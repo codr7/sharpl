@@ -49,3 +49,11 @@
     (- bar*))
   
   (foo 42 7))
+
+(check 1
+  (^foo [] 1:2)
+  (foo:_))
+
+(check 2
+  (^foo [] 1:2)
+  (_:foo))

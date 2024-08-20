@@ -1,7 +1,7 @@
 (lib aoc-1-1)
 
 (^find-digit [line]
-  (digit (find-first:_ char/is-digit line)))
+  (char/digit (find-first:_ char/is-digit line)))
 
 (^decode-line [line]
   (parse-int:_ (String (find-digit line) (find-digit (string/reverse line)))))

@@ -16,8 +16,9 @@ public readonly struct Op
         PrepareClosure, Push, PushListItem, PushSplat,
         Repush,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
-        Splat, Stop,
-        UnquoteRegister
+        Splat, Stop, Swap,
+        UnquoteRegister,
+        Unzip
     };
 
     public readonly object Data;

@@ -117,7 +117,6 @@ public class Core : Lib
         BindType(UserMethod);
 
         Bind("F", Value.F);
-        Bind("_", Value.Nil);
         Bind("T", Value.T);
 
         BindMacro("^", [], (loc, target, vm, args) =>

@@ -11,8 +11,7 @@
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add aoc1
-** add call target unification
-*** pairs/_
+** add string/reverse
 
 * debug '+ unquote
 

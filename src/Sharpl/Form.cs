@@ -31,7 +31,6 @@ public abstract class Form : Emitter
     public virtual Form Quote(Loc loc, VM vm) => this;
     public virtual Form Unquote(Loc loc, VM vm) => this;
 
-
     public class Queue : Emitter, IEnumerable<Form>
     {
         private LinkedList<Form> items = new LinkedList<Form>();

@@ -37,7 +37,8 @@ public struct Id : Reader
         }
 
         if (buffer.Length == 0) { return false; }
-        forms.Push(new Forms.Id(formLoc, buffer.ToString()));
+        var s = buffer.ToString();
+        forms.Push(s.Equals("_") ? new Forms.Nil(loc) : new Forms.Id(formLoc, buffer.ToString()));
         return true;
     }
 }
