@@ -1,8 +1,17 @@
+using System.Security.Cryptography;
+
 namespace Sharpl;
 
 public class OrderedMap<K, V> where K : IComparable<K>
 {
-    private readonly List<(K, V)> items = [];
+    private readonly List<(K, V)> items;
+
+    public OrderedMap((K, V)[] items)
+    {
+        this.items = new List<(K, V)>(items);
+    }
+
+    public OrderedMap() : this([]) { }
 
     public V? this[K key]
     {
@@ -10,17 +19,15 @@ public class OrderedMap<K, V> where K : IComparable<K>
         set => Set(key, value);
     }
 
-    public bool ContainsKey(K key) {
+    public bool ContainsKey(K key)
+    {
         var (_, ok) = Find(key);
         return ok;
     }
-    
+
     public int Count { get => items.Count; }
 
-    public void Delete(int i)
-    {
-        items.RemoveAt(i);
-    }
+    public void Delete(int i) => items.RemoveAt(i);
 
     public (int, bool) Find(K key)
     {
@@ -31,21 +38,11 @@ public class OrderedMap<K, V> where K : IComparable<K>
         {
             var i = (min + max) / 2;
             var it = items[i];
-
             var cres = key.CompareTo(it.Item1);
 
-            if (cres < 0)
-            {
-                max = i;
-            }
-            else if (cres > 0)
-            {
-                min = i + 1;
-            }
-            else
-            {
-                return (i, true);
-            }
+            if (cres < 0) { max = i; }
+            else if (cres > 0) { min = i + 1; }
+            else { return (i, true); }
         }
 
         return (max, false);
@@ -54,34 +51,24 @@ public class OrderedMap<K, V> where K : IComparable<K>
     public V? Get(K key)
     {
         var (i, ok) = Find(key);
-
-        if (!ok)
-        {
-            return default;
-        }
-
-        return items[i].Item2;
+        return ok ? items[i].Item2 : default;
     }
 
-    public IEnumerator<(K, V)> GetEnumerator()
+    public IEnumerator<(K, V)> GetEnumerator() => items.AsEnumerable().GetEnumerator();
+
+    public int IndexOf(K key)
     {
-        return items.AsEnumerable().GetEnumerator();
-    }
-
-    public void Insert(int i, K key, V value)
-    {
-        items.Insert(i, (key, value));
-    }
-
-    public (K, V)[] Items { get => items.ToArray(); }
-
-    public V? Remove(K key) {
         var (i, ok) = Find(key);
+        return ok ? i : -1;
+    }
 
-        if (!ok) {
-            return default;
-        }
+    public void Insert(int i, K key, V value) => items.Insert(i, (key, value));
+    public (K, V)[] Items => items.ToArray();
 
+    public V? Remove(K key)
+    {
+        var (i, ok) = Find(key);
+        if (!ok) { return default; }
         var v = items[i].Item2;
         Delete(i);
         return v;

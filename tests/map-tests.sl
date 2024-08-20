@@ -13,3 +13,6 @@
 (let [m1 '{foo:1 bar:2} m2 (Map m1*)]
   (check (not (is m1 m2)))
   (check (= m1 m2)))
+
+(check {'b:2 'c:3}
+  ({'a:1 'b:2 'c:3 'd:4} 'b:'c))

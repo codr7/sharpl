@@ -28,8 +28,19 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
             case 1:
                 {
                     var m = target.Cast(this);
-                    var k = stack.Pop();
-                    stack.Push(m.ContainsKey(k) ? m[k] : Value.Nil);
+                    var kv = stack.Pop();
+                    
+                    if (kv.Type == Libs.Core.Pair) {
+                        var p = kv.CastUnbox(Libs.Core.Pair);
+                        var i = m.IndexOf(p.Item1);
+                        if (i == -1) { throw new EvalError(loc, $"Key not found: {p.Item1}"); }
+                        var j = m.IndexOf(p.Item2);
+                        if (j == -1) { throw new EvalError(loc, $"Key not found: {p.Item2}"); }
+                        stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j+1)]));
+                    } else {
+                        stack.Push(m.ContainsKey(kv) ? m[kv] : Value.Nil);
+                    }
+
                     break;
                 }
             case 2:

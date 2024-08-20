@@ -29,10 +29,7 @@ public class Map : Form
             }
         }
 
-        if (callConstructor)
-        {
-            args.PushFirst(new Call(Loc, new Id(Loc, "Map"), Items));
-        }
+        if (callConstructor) { args.PushFirst(new Call(Loc, new Id(Loc, "Map"), Items)); }
         else
         {
             vm.Emit(Ops.CreateMap.Make(Items.Length));
@@ -45,10 +42,7 @@ public class Map : Form
                     vm.Emit(pf.Left);
                     vm.Emit(pf.Right);
                 }
-                else
-                {
-                    vm.Emit(f);
-                }
+                else { vm.Emit(f); }
 
                 vm.Emit(Ops.SetMapItem.Make());
                 i++;
@@ -84,11 +78,7 @@ public class Map : Form
 
         foreach (var f in Items)
         {
-            if (i > 0)
-            {
-                b.Append(' ');
-            }
-
+            if (i > 0) { b.Append(' '); }
             b.Append(f);
             i++;
         }
