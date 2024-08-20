@@ -2,7 +2,7 @@
 
 (^ decode-color [in out]
   (let [n:i (parse-int in)
-        c (Sym (slice in (+ i 1)))]
+        c (Sym (in (+ i 1):_))]
     (out c (max (or (out c) 0) n))))
   
 (^ decode-game [in out]
@@ -10,7 +10,7 @@
     (decode-color c out)))
   
 (^ decode-line [in]
-  (let [games (split (slice in (+ (_:find-first (^[c] (is c \:)) in))) \;)]
+  (let [games (split (in (+ (_:find-first (^[c] (is c \:)) in)):_) \;)]
     (reduce decode-game games {})))
 	
 (^ read-games [path]

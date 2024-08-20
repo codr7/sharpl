@@ -1,6 +1,7 @@
 
 namespace Sharpl.Types.Core;
 
+using System.Runtime.InteropServices;
 using System.Text;
 
 public class StringType(string name) : ComparableType<string>(name), IterTrait, LengthTrait, StackTrait
@@ -19,6 +20,41 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
         }
 
         stack.Push(Value.Make(this, res.ToString()));
+    }
+
+    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    {
+        switch (arity)
+        {
+            case 1:
+                {
+                    var iv = stack.Pop();
+                    
+                    if (iv.Type == Libs.Core.Pair) {
+                        var p = iv.CastUnbox(Libs.Core.Pair);
+                        var i = p.Item1.CastUnbox(loc, Libs.Core.Int);
+                        var n = p.Item2.CastUnbox(loc, Libs.Core.Int);
+                        stack.Push(Libs.Core.String, target.Cast(this)[i..(i+n)]);
+                    } else {
+                        var i = iv.CastUnbox(loc, Libs.Core.Int);
+                        stack.Push(Libs.Core.Char, target.Cast(this)[i]);
+                    }
+
+                    break;
+                }
+            case 2:
+                {
+                    var v = stack.Pop().CastUnbox(loc, Libs.Core.Char);
+                    var s = target.Cast(this);
+                    var cs = s.ToCharArray();
+                    var i = stack.Pop().CastUnbox(loc, Libs.Core.Int);
+                    cs[i] = v;
+                    break;
+                }
+            default:
+                throw new EvalError(loc, $"Wrong number of arguments: {arity}");
+
+        }
     }
 
     public Iter CreateIter(Value target) =>
