@@ -521,7 +521,7 @@ public class VM
                 case Op.T.PushListItem:
                     {
                         var pushOp = (Ops.PushListItem)op.Data;
-                        if (stack.TryPop() is Value v) { Get(pushOp.Target).Cast(pushOp.Loc, Core.List).Add(v); }
+                        if (stack.TryPop(out var v)) { Get(pushOp.Target).Cast(pushOp.Loc, Core.List).Add(v); }
                         else { throw new EvalError(pushOp.Loc, "Missing target"); }
                         PC++;
                         break;
@@ -635,7 +635,7 @@ public class VM
                     {
                         var unzipOp = (Ops.Unzip)op.Data;
                         
-                        if (stack.TryPop() is Value p)
+                        if (stack.TryPop(out var p))
                         {
                             var pv = p.CastUnbox(Core.Pair);
                             stack.Push(pv.Item1);

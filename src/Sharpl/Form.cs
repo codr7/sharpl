@@ -1,17 +1,11 @@
 using System.Collections;
-using System.Text;
 using Sharpl.Ops;
 
 namespace Sharpl;
 
-public abstract class Form : Emitter
+public abstract class Form(Loc loc) : Emitter
 {
-    public readonly Loc Loc;
-
-    protected Form(Loc loc)
-    {
-        Loc = loc;
-    }
+    public readonly Loc Loc = loc;
 
     public virtual void CollectIds(HashSet<string> result) { }
 
@@ -83,9 +77,12 @@ public abstract class Form : Emitter
 
         public Form? Peek() => (items.First?.Value is Form f) ? f : null;
 
+        // TODO: Idealy, this needs to match List.TryPop for consistency and to
+        // avoid accidental expensive type tests where null checks were supposed to go.
         public Form? TryPop()
         {
-            if (items.First?.Value is Form f)
+            var f = items.First?.Value;
+            if (f != null)
             {
                 items.RemoveFirst();
                 return f;
@@ -94,13 +91,12 @@ public abstract class Form : Emitter
             return null;
         }
 
-#pragma warning disable CS8603
-        public Form Pop() =>  TryPop();
-#pragma warning restore CS8603
+        public Form Pop() => TryPop() ?? throw new InvalidOperationException("There is no first element");
 
         public Form? TryPopLast()
         {
-            if (items.Last?.Value is Form f)
+            var f = items.Last?.Value;
+            if (f != null)
             {
                 items.RemoveLast();
                 return f;
@@ -109,31 +105,14 @@ public abstract class Form : Emitter
             return null;
         }
 
-#pragma warning disable CS8603
-        public Form PopLast() => TryPopLast();
-#pragma warning restore CS8603
+        public Form PopLast() => TryPopLast() ?? throw new InvalidOperationException("There is no last element");
  
         public void Push(Form form) => items.AddLast(form);
         public void PushFirst(Form form) => items.AddFirst(form);
 
-#pragma warning disable CS8602
-        public bool IsSplat => items.FirstOrDefault(f => f.IsSplat, null) != null;
-#pragma warning restore CS8602
+        public bool IsSplat => items.Any(f => f.IsSplat);
 
-        public override string ToString()
-        {
-            var res = new StringBuilder();
-            var i = 0;
-
-            foreach (var f in items)
-            {
-                if (i > 0) { res.Append(' ');}
-                res.Append(f.ToString());
-                i++;
-            }
-
-            return res.ToString();
-        }
+        public override string ToString() => string.Join(' ', items);
 
         public IEnumerator<Form> GetEnumerator() => items.AsEnumerable().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
