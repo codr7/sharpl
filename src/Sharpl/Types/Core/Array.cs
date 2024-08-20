@@ -23,8 +23,20 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
         {
             case 1:
                 {
-                    var i = stack.Pop().CastUnbox(Core.Int);
-                    stack.Push(target.Cast(this)[i]);
+                    var iv = stack.Pop();
+
+                    if (iv.Type == Core.Pair)
+                    {
+                        var p = iv.CastUnbox(Core.Pair);
+                        var i = p.Item1.CastUnbox(loc, Core.Int);
+                        var n = p.Item2.CastUnbox(loc, Core.Int);
+                        stack.Push(Core.Array, target.Cast(this)[i..(i + n)]);
+                    }
+                    else
+                    {
+                        stack.Push(target.Cast(this)[iv.CastUnbox(Core.Int)]);
+                    }
+    
                     break;
                 }
             case 2:
@@ -91,7 +103,8 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
 
     public int Length(Value target) => target.Cast(this).Length;
 
-    public Value Push(Loc loc, Value dst, Value val) {
+    public Value Push(Loc loc, Value dst, Value val)
+    {
         var lst = new List<Value>();
         lst.AddRange(dst.Cast(this));
         lst.Add(val);

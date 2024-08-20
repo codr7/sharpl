@@ -17,6 +17,9 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
     '[1 ,c 2]))
 
 * aoc2
+** add map slice
+** add string/array/map slice assign
+** add string/split
 
 * add iter benchmark
 ** fib-tail but use loop instead of tail call
