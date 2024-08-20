@@ -215,8 +215,7 @@ public class VM
                             s.Clear();
                         }
 
-                        var t = new Stopwatch();
-                        t.Start();
+                        var t = Stopwatch.GetTimestamp();
 
                         for (var i = 0; i < benchmarkOp.N; i++)
                         {
@@ -224,8 +223,8 @@ public class VM
                             s.Clear();
                         }
 
-                        t.Stop();
-                        stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
+                        var e = Stopwatch.GetElapsedTime(t).TotalMilliseconds;
+                        stack.Push(Value.Make(Core.Int, (int)e));
                         break;
                     }
                 case Op.T.Branch:
