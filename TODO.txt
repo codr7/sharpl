@@ -16,6 +16,8 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
 
+* aoc2
+
 * add iter benchmark
 ** fib-tail but use loop instead of tail call
 
