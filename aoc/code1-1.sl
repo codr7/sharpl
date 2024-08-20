@@ -1,4 +1,4 @@
-(lib aoc-1-1)
+(lib aoc-23-1-1)
 
 (^find-digit [line]
   (char/digit (find-first:_ char/is-digit line)))
@@ -9,6 +9,5 @@
 (^calibrate [input]
   (reduce + (map decode-line (io/read-lines input)) 0))
 
-(^solve []
-  (check 55108
-    (calibrate (path "input1"))))
+(check 55108
+  (calibrate "input1"))

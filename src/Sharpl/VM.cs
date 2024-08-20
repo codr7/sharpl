@@ -391,7 +391,6 @@ public class VM
                         var i = Index(decrementOp.Target);
                         var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - 1);
                         registers[i] = v;
-                        stack.Push(v);
                         PC++;
                         break;
                     }
@@ -442,7 +441,6 @@ public class VM
                         var i = Index(incrementOp.Target);
                         var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + 1);
                         registers[i] = v;
-                        stack.Push(v);
                         PC++;
                         break;
                     }

@@ -258,7 +258,12 @@ public class Core : Lib
 
         BindMacro("dec", [], (loc, target, vm, args) =>
        {
-           if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding) { vm.Emit(Ops.Decrement.Make(v.CastUnbox(Binding))); }
+           if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
+           {
+               var r = v.CastUnbox(Binding);
+               vm.Emit(Ops.Decrement.Make(r));
+               vm.Emit(Ops.GetRegister.Make(r));
+           }
            else { throw new EmitError(loc, "Invalid target"); }
        });
 
@@ -350,7 +355,12 @@ public class Core : Lib
 
         BindMacro("inc", [], (loc, target, vm, args) =>
         {
-            if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding) { vm.Emit(Ops.Increment.Make(v.CastUnbox(Binding))); }
+            if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
+            {
+                var r = v.CastUnbox(Binding);
+                vm.Emit(Ops.Increment.Make(r));
+                vm.Emit(Ops.GetRegister.Make(r));
+            }
             else { throw new EmitError(loc, "Invalid target"); }
         });
 

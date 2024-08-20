@@ -10,9 +10,6 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add aoc1
-** add string/reverse
-
 * debug '+ unquote
 
 (check '[1 42 2]
