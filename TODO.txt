@@ -7,11 +7,15 @@
 330
 314
 
-('{a:1 b:2 c:3 d:4} 'b:'c)   
-({'a:1 'b:2 'c:3 'd:4} 'b:'c)   
-
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
+
+* make StackTrait.push operate on bindings like inc/dec
+** don't push target
+
+* add List slice
+
+* add slice/splice to readme
 
 * debug '+ unquote
 
