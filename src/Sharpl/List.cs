@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Sharpl;
@@ -35,7 +36,7 @@ public static class List
     public static void Reverse(this Stack items, int n)
     {
         items.Reverse(items.Count - n, n);
-    }    
+    }
 
     public static string ToString<T>(List<T> items)
     {
@@ -66,7 +67,19 @@ public static class List
         return res.ToString();
     }
 
-    public static T? TryPop<T>(this List<T> items) => (items.Count == 0) ? default : Pop(items);
+    public static bool TryPop<T>(this List<T> items, [MaybeNullWhen(false)] out T? value)
+    {
+        if (items.Count > 0)
+        {
+            var i = items.Count - 1;
+            value = items[i];
+            items.RemoveAt(i);
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
 
     public static void Trunc<T>(this List<T> items, int n)
     {

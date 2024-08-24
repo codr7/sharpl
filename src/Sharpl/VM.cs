@@ -204,8 +204,8 @@ public class VM
                         break;
                     }
                 case Op.T.Benchmark:
-                        BENCHMARK(op, stack);
-                        break;
+                    BENCHMARK(op, stack);
+                    break;
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
@@ -285,8 +285,8 @@ public class VM
                         break;
                     }
                 case Op.T.Check:
-                        CHECK(op, stack);
-                        break;
+                    CHECK(op, stack);
+                    break;
                 case Op.T.CopyRegister:
                     {
                         var copyOp = (Ops.CopyRegister)op.Data;
@@ -419,8 +419,8 @@ public class VM
                         break;
                     }
                 case Op.T.OpenInputStream:
-                        OPEN_INPUT_STREAM(op, stack);
-                        break;
+                    OPEN_INPUT_STREAM(op, stack);
+                    break;
                 case Op.T.Or:
                     {
                         var orOp = (Ops.Or)op.Data;
@@ -462,7 +462,7 @@ public class VM
                 case Op.T.PushListItem:
                     {
                         var pushOp = (Ops.PushListItem)op.Data;
-                        if (stack.TryPop() is Value v) { Get(pushOp.Target).Cast(pushOp.Loc, Core.List).Add(v); }
+                        if (stack.TryPop(out var v)) { Get(pushOp.Target).Cast(pushOp.Loc, Core.List).Add(v); }
                         else { throw new EvalError(pushOp.Loc, "Missing target"); }
                         PC++;
                         break;
@@ -574,9 +574,8 @@ public class VM
                     }
                 case Op.T.Unzip:
                     {
-                        var unzipOp = (Ops.Unzip)op.Data;
-
-                        if (stack.TryPop() is Value p)
+                        var unzipOp = (Ops.Unzip)op.Data;                       
+                        if (stack.TryPop(out var p))
                         {
                             var pv = p.CastUnbox(Core.Pair);
                             stack.Push(pv.Item1);
@@ -821,8 +820,7 @@ public class VM
             s.Clear();
         }
 
-        var t = new Stopwatch();
-        t.Start();
+        var t = Stopwatch.GetTimestamp();
 
         for (var i = 0; i < benchmarkOp.N; i++)
         {
@@ -830,8 +828,8 @@ public class VM
             s.Clear();
         }
 
-        t.Stop();
-        stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
+        var e = Stopwatch.GetElapsedTime(t).TotalMilliseconds;
+        stack.Push(Value.Make(Core.Int, (int)e));
     }
 
     private void CHECK(Op op, Stack stack)
