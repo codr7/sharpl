@@ -47,10 +47,8 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                 {
                     var m = target.Cast(this);
                     var v = stack.Pop();
-                    
                     if (v.Equals(Value.Nil)) { m.Remove(stack.Pop()); } 
                     else { m.Set(stack.Pop(), v); }
-
                     break;
                 }
             default:
