@@ -10,11 +10,16 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add List slice
-** add slicing to readme
-
 * make StackTrait.push operate on bindings like inc/dec
 ** don't push target
+** convert to macro
+*** benchmark
+
+* add pop to stack trait
+** add push/pop to readme
+
+* add List slice
+** add slicing to readme
 
 * debug '+ unquote
 
