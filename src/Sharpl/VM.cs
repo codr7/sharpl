@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
@@ -15,6 +14,25 @@ public class VM
     {
         public int MaxRegisters = 1024;
         public int MaxVars = 128;
+        public Reader Reader = new Readers.OneOf([
+            Readers.WhiteSpace.Instance,
+
+            Readers.And.Instance,
+            Readers.Array.Instance,
+            Readers.Call.Instance,
+            Readers.Char.Instance,
+            Readers.Fix.Instance,
+            Readers.Int.Instance,
+            Readers.Map.Instance,
+            Readers.Pair.Instance,
+            Readers.Quote.Instance,
+            Readers.Splat.Instance,
+            Readers.String.Instance,
+            Readers.Unquote.Instance,
+
+            Readers.Id.Instance
+        ]);
+
         public C() { }
     };
 
@@ -46,22 +64,7 @@ public class VM
     private readonly Dictionary<string, Sym> syms = [];
 
     private Reader[] readers = [
-        Readers.WhiteSpace.Instance,
 
-        Readers.And.Instance,
-        Readers.Array.Instance,
-        Readers.Call.Instance,
-        Readers.Char.Instance,
-        Readers.Fix.Instance,
-        Readers.Int.Instance,
-        Readers.Map.Instance,
-        Readers.Pair.Instance,
-        Readers.Quote.Instance,
-        Readers.Splat.Instance,
-        Readers.String.Instance,
-        Readers.Unquote.Instance,
-
-        Readers.Id.Instance
     ];
 
     public VM(C config)
@@ -210,11 +213,13 @@ public class VM
                     {
                         var branchOp = (Ops.Branch)op.Data;
 
-                        if (stack.TryPop(out var v)) {
+                        if (stack.TryPop(out var v))
+                        {
                             if ((bool)v) { PC++; }
                             else { PC = branchOp.Right.PC; }
-                        } else { throw new EvalError(branchOp.Loc, "Missing condition"); }
-                        
+                        }
+                        else { throw new EvalError(branchOp.Loc, "Missing condition"); }
+
                         break;
                     }
                 case Op.T.CallDirect:
@@ -653,15 +658,8 @@ public class VM
 
     public int NextRegisterIndex => nextRegisterIndex;
 
-    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
-    {
-        foreach (var r in readers)
-        {
-            if (r.Read(source, this, ref loc, forms)) { return true; }
-        }
-
-        return false;
-    }
+    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms) => 
+        Config.Reader.Read(source, this, ref loc, forms);
 
     public Form? ReadForm(TextReader source, ref Loc loc)
     {

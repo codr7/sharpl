@@ -10,16 +10,11 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* use TryPop in Eval loop
-
-* reorganize readers
+* add List slice
+** add slicing to readme
 
 * make StackTrait.push operate on bindings like inc/dec
 ** don't push target
-
-* add List slice
-
-* add slice/splice to readme
 
 * debug '+ unquote
 

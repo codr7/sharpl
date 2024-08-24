@@ -1,6 +1,6 @@
-namespace Sharpl.Readers;
-
 using System.Text;
+
+namespace Sharpl.Readers;
 
 public struct Id : Reader
 {

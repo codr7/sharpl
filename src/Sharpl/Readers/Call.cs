@@ -7,11 +7,7 @@ public struct Call : Reader
     public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var c = source.Peek();
-
-        if (c == -1 || c != '(')
-        {
-            return false;
-        }
+        if (c == -1 || c != '(') { return false; }
 
         var formLoc = loc;
         loc.Column++;
@@ -23,10 +19,7 @@ public struct Call : Reader
             WhiteSpace.Instance.Read(source, vm, ref loc, args);
             c = source.Peek();
 
-            if (c == -1)
-            {
-                throw new ReadError(loc, "Unexpected end of call");
-            }
+            if (c == -1) { throw new ReadError(loc, "Unexpected end of call"); }
 
             if (c == ')')
             {
@@ -35,17 +28,10 @@ public struct Call : Reader
                 break;
             }
 
-            if (!vm.ReadForm(source, ref loc, args))
-            {
-                throw new ReadError(loc, "Unexpected end of call " + forms);
-            }
+            if (!vm.ReadForm(source, ref loc, args)) { throw new ReadError(loc, "Unexpected end of call " + forms); }
         }
 
-        if (args.Empty)
-        {
-            throw new ReadError(loc, "Missing call target");
-        }
-
+        if (args.Empty) { throw new ReadError(loc, "Missing call target"); }
         var target = args.Pop();
         forms.Push(new Forms.Call(formLoc, (Form)target, args.Items));
         return true;

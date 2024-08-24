@@ -1,7 +1,7 @@
-namespace Sharpl.Readers;
-
 using System.Text;
 using Sharpl.Libs;
+
+namespace Sharpl.Readers;
 
 public struct String : Reader
 {
@@ -10,12 +10,7 @@ public struct String : Reader
     public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var c = source.Peek();
-
-        if (c == -1 || c != '"')
-        {
-            return false;
-        }
-
+        if (c == -1 || c != '"') { return false; }
         source.Read();
         var formLoc = loc;
         var s = new StringBuilder();
@@ -23,19 +18,9 @@ public struct String : Reader
         while (true)
         {
             c = source.Peek();
-
-            if (c == -1)
-            {
-                throw new ReadError(loc, "Invalid string");
-            }
-
+            if (c == -1) { throw new ReadError(loc, "Invalid string"); }
             source.Read();
-
-            if (c == '"')
-            {
-                break;
-            }
-
+            if (c == '"') { break; }
             s.Append(Convert.ToChar(c));
             loc.Column++;
         }
