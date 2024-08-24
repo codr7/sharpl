@@ -209,7 +209,7 @@ public class VM
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
-                        
+
                         if (stack.TryPop(out var v)) {
                             if ((bool)v) { PC++; }
                             else { PC = branchOp.Right.PC; }
@@ -314,7 +314,6 @@ public class VM
                     }
                 case Op.T.CreateMap:
                     {
-                        var createOp = (Ops.CreateMap)op.Data;
                         stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>()));
                         PC++;
                         break;
@@ -352,7 +351,7 @@ public class VM
                 case Op.T.ExitMethod:
                     {
                         var c = calls.Pop();
-                        foreach (var (id, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
+                        foreach (var (_, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
                         EndFrame();
                         PC = c.ReturnPC;
                         break;
@@ -367,7 +366,7 @@ public class VM
                 case Op.T.Goto:
                     {
                         var gotoOp = (Ops.Goto)op.Data;
-                        PC = (PC)gotoOp.Target.PC;
+                        PC = gotoOp.Target.PC;
                         break;
                     }
                 case Op.T.Increment:
@@ -388,7 +387,7 @@ public class VM
                             stack.Push(v);
                             PC++;
                         }
-                        else { PC = (int)iterOp.Done.PC; }
+                        else { PC = iterOp.Done.PC; }
 
                         break;
                     }
@@ -398,7 +397,7 @@ public class VM
                 case Op.T.Or:
                     {
                         var orOp = (Ops.Or)op.Data;
-                        if ((bool)stack.Peek()) { PC = (PC)orOp.Done.PC; }
+                        if ((bool)stack.Peek()) { PC = orOp.Done.PC; }
                         else { PC++; }
                         break;
                     }
@@ -406,8 +405,8 @@ public class VM
                     {
                         var closureOp = (Ops.PrepareClosure)op.Data;
                         var m = closureOp.Target;
-                        foreach (var (id, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
-                        PC = (PC)closureOp.Skip.PC;
+                        foreach (var (_, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
+                        PC = closureOp.Skip.PC;
                         break;
                     }
                 case Op.T.Push:
@@ -473,21 +472,14 @@ public class VM
                     {
                         var splatOp = (Ops.Splat)op.Data;
 
-                        if (stack.Count == 0)
-                        {
-                            throw new EvalError(splatOp.Loc, "Missing splat target");
-                        }
+                        if (stack.Count == 0) { throw new EvalError(splatOp.Loc, "Missing splat target"); }
                         else
                         {
                             var tv = stack.Pop();
 
                             if (tv.Type is Types.Core.IterTrait tt)
                             {
-                                if (splats.Count == 0)
-                                {
-                                    throw new EvalError(splatOp.Loc, "Splat outside context");
-                                }
-
+                                if (splats.Count == 0) { throw new EvalError(splatOp.Loc, "Splat outside context"); }
                                 var arity = splats.Pop();
 
                                 foreach (var v in tt.CreateIter(tv))
@@ -498,10 +490,7 @@ public class VM
 
                                 splats.Push(arity);
                             }
-                            else
-                            {
-                                throw new EvalError(splatOp.Loc, $"Invalid splat target: {tv}");
-                            }
+                            else { throw new EvalError(splatOp.Loc, $"Invalid splat target: {tv}"); }
                         }
 
                         PC++;
@@ -514,9 +503,8 @@ public class VM
                     }
                 case Op.T.Swap:
                     {
-                        var swapOp = (Ops.Swap)op.Data;
-                        var x = (stack.Pop() is Value xv) ? xv : throw new EvalError(swapOp.Loc, "Missing left arg");
-                        var y = (stack.Pop() is Value yv) ? yv : throw new EvalError(swapOp.Loc, "Missing right arg");
+                        var x = stack.Pop();
+                        var y = stack.Pop();
                         stack.Push(x);
                         stack.Push(y);
                         PC++;
@@ -533,6 +521,7 @@ public class VM
                 case Op.T.Unzip:
                     {
                         var unzipOp = (Ops.Unzip)op.Data;
+
                         if (stack.TryPop(out var p))
                         {
                             var pv = p.CastUnbox(Core.Pair);
