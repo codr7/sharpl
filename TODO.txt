@@ -42,8 +42,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** add flag
 ** display frame graph
 
-* add string/array in place reverse
-
 * make macros composeable
 ** create user method like VM.Compose
 *** one for each arity
