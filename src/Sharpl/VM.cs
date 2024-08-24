@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
@@ -15,6 +14,25 @@ public class VM
     {
         public int MaxRegisters = 1024;
         public int MaxVars = 128;
+        public Reader Reader = new Readers.OneOf([
+            Readers.WhiteSpace.Instance,
+
+            Readers.And.Instance,
+            Readers.Array.Instance,
+            Readers.Call.Instance,
+            Readers.Char.Instance,
+            Readers.Fix.Instance,
+            Readers.Int.Instance,
+            Readers.Map.Instance,
+            Readers.Pair.Instance,
+            Readers.Quote.Instance,
+            Readers.Splat.Instance,
+            Readers.String.Instance,
+            Readers.Unquote.Instance,
+
+            Readers.Id.Instance
+        ]);
+
         public C() { }
     };
 
@@ -46,22 +64,7 @@ public class VM
     private readonly Dictionary<string, Sym> syms = [];
 
     private Reader[] readers = [
-        Readers.WhiteSpace.Instance,
 
-        Readers.And.Instance,
-        Readers.Array.Instance,
-        Readers.Call.Instance,
-        Readers.Char.Instance,
-        Readers.Fix.Instance,
-        Readers.Int.Instance,
-        Readers.Map.Instance,
-        Readers.Pair.Instance,
-        Readers.Quote.Instance,
-        Readers.Splat.Instance,
-        Readers.String.Instance,
-        Readers.Unquote.Instance,
-
-        Readers.Id.Instance
     ];
 
     public VM(C config)
@@ -209,12 +212,14 @@ public class VM
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
-                        
-                        if (stack.TryPop(out var v)) {
+
+                        if (stack.TryPop(out var v))
+                        {
                             if ((bool)v) { PC++; }
                             else { PC = branchOp.Right.PC; }
-                        } else { throw new EvalError(branchOp.Loc, "Missing condition"); }
-                        
+                        }
+                        else { throw new EvalError(branchOp.Loc, "Missing condition"); }
+
                         break;
                     }
                 case Op.T.CallDirect:
@@ -314,7 +319,6 @@ public class VM
                     }
                 case Op.T.CreateMap:
                     {
-                        var createOp = (Ops.CreateMap)op.Data;
                         stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>()));
                         PC++;
                         break;
@@ -352,7 +356,7 @@ public class VM
                 case Op.T.ExitMethod:
                     {
                         var c = calls.Pop();
-                        foreach (var (id, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
+                        foreach (var (_, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
                         EndFrame();
                         PC = c.ReturnPC;
                         break;
@@ -367,7 +371,7 @@ public class VM
                 case Op.T.Goto:
                     {
                         var gotoOp = (Ops.Goto)op.Data;
-                        PC = (PC)gotoOp.Target.PC;
+                        PC = gotoOp.Target.PC;
                         break;
                     }
                 case Op.T.Increment:
@@ -388,7 +392,7 @@ public class VM
                             stack.Push(v);
                             PC++;
                         }
-                        else { PC = (int)iterOp.Done.PC; }
+                        else { PC = iterOp.Done.PC; }
 
                         break;
                     }
@@ -398,7 +402,7 @@ public class VM
                 case Op.T.Or:
                     {
                         var orOp = (Ops.Or)op.Data;
-                        if ((bool)stack.Peek()) { PC = (PC)orOp.Done.PC; }
+                        if ((bool)stack.Peek()) { PC = orOp.Done.PC; }
                         else { PC++; }
                         break;
                     }
@@ -406,8 +410,8 @@ public class VM
                     {
                         var closureOp = (Ops.PrepareClosure)op.Data;
                         var m = closureOp.Target;
-                        foreach (var (id, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
-                        PC = (PC)closureOp.Skip.PC;
+                        foreach (var (_, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
+                        PC = closureOp.Skip.PC;
                         break;
                     }
                 case Op.T.Push:
@@ -473,21 +477,14 @@ public class VM
                     {
                         var splatOp = (Ops.Splat)op.Data;
 
-                        if (stack.Count == 0)
-                        {
-                            throw new EvalError(splatOp.Loc, "Missing splat target");
-                        }
+                        if (stack.Count == 0) { throw new EvalError(splatOp.Loc, "Missing splat target"); }
                         else
                         {
                             var tv = stack.Pop();
 
                             if (tv.Type is Types.Core.IterTrait tt)
                             {
-                                if (splats.Count == 0)
-                                {
-                                    throw new EvalError(splatOp.Loc, "Splat outside context");
-                                }
-
+                                if (splats.Count == 0) { throw new EvalError(splatOp.Loc, "Splat outside context"); }
                                 var arity = splats.Pop();
 
                                 foreach (var v in tt.CreateIter(tv))
@@ -498,10 +495,7 @@ public class VM
 
                                 splats.Push(arity);
                             }
-                            else
-                            {
-                                throw new EvalError(splatOp.Loc, $"Invalid splat target: {tv}");
-                            }
+                            else { throw new EvalError(splatOp.Loc, $"Invalid splat target: {tv}"); }
                         }
 
                         PC++;
@@ -514,9 +508,8 @@ public class VM
                     }
                 case Op.T.Swap:
                     {
-                        var swapOp = (Ops.Swap)op.Data;
-                        var x = (stack.Pop() is Value xv) ? xv : throw new EvalError(swapOp.Loc, "Missing left arg");
-                        var y = (stack.Pop() is Value yv) ? yv : throw new EvalError(swapOp.Loc, "Missing right arg");
+                        var x = stack.Pop();
+                        var y = stack.Pop();
                         stack.Push(x);
                         stack.Push(y);
                         PC++;
@@ -533,6 +526,7 @@ public class VM
                 case Op.T.Unzip:
                     {
                         var unzipOp = (Ops.Unzip)op.Data;
+
                         if (stack.TryPop(out var p))
                         {
                             var pv = p.CastUnbox(Core.Pair);
@@ -664,15 +658,8 @@ public class VM
 
     public int NextRegisterIndex => nextRegisterIndex;
 
-    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms)
-    {
-        foreach (var r in readers)
-        {
-            if (r.Read(source, this, ref loc, forms)) { return true; }
-        }
-
-        return false;
-    }
+    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms) => 
+        Config.Reader.Read(source, this, ref loc, forms);
 
     public Form? ReadForm(TextReader source, ref Loc loc)
     {

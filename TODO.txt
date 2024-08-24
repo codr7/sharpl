@@ -10,16 +10,18 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* use TryPop in Eval loop
-
-* reorganize readers
-
 * make StackTrait.push operate on bindings like inc/dec
 ** don't push target
+** convert to macro
+*** benchmark
+*** convert 'is' too?
+**** simplify to 2-arg
+
+* add pop to stack trait
+** add push/pop to readme
 
 * add List slice
-
-* add slice/splice to readme
+** add slicing to readme
 
 * debug '+ unquote
 
@@ -39,8 +41,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * track repetitions in demit
 ** add flag
 ** display frame graph
-
-* add string/array in place reverse
 
 * make macros composeable
 ** create user method like VM.Compose

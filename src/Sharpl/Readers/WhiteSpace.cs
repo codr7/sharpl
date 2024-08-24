@@ -1,7 +1,5 @@
 namespace Sharpl.Readers;
 
-using System.Text;
-
 public struct WhiteSpace : Reader
 {
     public static readonly WhiteSpace Instance = new WhiteSpace();
@@ -13,11 +11,7 @@ public struct WhiteSpace : Reader
         while (!done)
         {
             var c = source.Peek();
- 
-            if (c == -1)
-            {
-                break;
-            }
+            if (c == -1) { break; }
             
             switch (c)
             {

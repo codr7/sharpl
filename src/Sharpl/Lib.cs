@@ -21,10 +21,7 @@ public class Lib : Env
 
     public string Name { get; }
 
-    public override string ToString()
-    {
-        return $"(Lib {Name})";
-    }
+    public override string ToString() => $"(Lib {Name})";
 
     protected virtual void OnInit(VM vm) { }
 }

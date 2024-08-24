@@ -63,11 +63,7 @@ public class IntType(string name) :
 
         if (arity > 0)
         {
-            if (arity == 1)
-            {
-                res = -stack.Pop().CastUnbox(loc, this);
-
-            }
+            if (arity == 1) { res = -stack.Pop().CastUnbox(loc, this); }
             else
             {
                 stack.Reverse(arity);

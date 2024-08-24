@@ -17,20 +17,16 @@ public class CharType(string name) :
         return new Iters.Core.CharRange(minVal, maxVal, strideVal);
     }
 
-    public override void Dump(Value value, StringBuilder result) {
+    public override void Dump(Value value, StringBuilder result)
+    {
         var c = value.CastUnbox(this);
         result.Append('\\');
 
-        switch (c) {
-            case '\n':
-                result.Append("\\n");
-                break;
-            case '\r':
-                result.Append("\\r");
-                break;
-            default:
-                result.Append(c);
-                break;
-        }
+        result.Append(c switch
+        {
+            '\n' => "\\n",
+            '\r' => "\\r",
+            _ => c
+        });
     }
 }

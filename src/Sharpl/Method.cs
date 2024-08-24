@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Sharpl;
 
 public readonly struct Method
@@ -22,29 +20,10 @@ public readonly struct Method
 
     public void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        if (arity < MinArgCount) {
-            throw new EvalError(loc, $"Not enough arguments: {this}");
-        }
-        
+        if (arity < MinArgCount) { throw new EvalError(loc, $"Not enough arguments: {this}"); }
         Body(loc, this, vm, stack, arity);
     }
 
-    public override string ToString()
-    {
-        var result = new StringBuilder();
-        result.Append($"(Method {Name} [");
-
-        for (var i = 0; i < Args.Length; i++)
-        {
-            if (i > 0)
-            {
-                result.Append(' ');
-            }
-
-            result.Append(Args[i]);
-        }
-
-        result.Append("])");
-        return result.ToString();
-    }
+    public override string ToString() =>
+        $"(Method {Name} [{string.Join(' ', Args)}])";
 }

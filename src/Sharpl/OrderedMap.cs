@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace Sharpl;
 
 public class OrderedMap<K, V> where K : IComparable<K>
@@ -39,7 +37,6 @@ public class OrderedMap<K, V> where K : IComparable<K>
             var i = (min + max) / 2;
             var it = items[i];
             var cres = key.CompareTo(it.Item1);
-
             if (cres < 0) { max = i; }
             else if (cres > 0) { min = i + 1; }
             else { return (i, true); }
