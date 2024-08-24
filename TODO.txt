@@ -14,6 +14,8 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** don't push target
 ** convert to macro
 *** benchmark
+*** convert 'is' too?
+**** simplify to 2-arg
 
 * add pop to stack trait
 ** add push/pop to readme
