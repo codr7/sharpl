@@ -10,9 +10,6 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add SkipLabel in PrepareClosure
-** replaces goto
-
 * use TryPop in Eval loop
 
 * reorganize readers

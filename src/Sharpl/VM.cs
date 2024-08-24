@@ -209,8 +209,12 @@ public class VM
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
-                        if ((bool)stack.Pop()) { PC++; }
-                        else { PC = (PC)branchOp.Right.PC; }
+                        
+                        if (stack.TryPop(out var v)) {
+                            if ((bool)v) { PC++; }
+                            else { PC = branchOp.Right.PC; }
+                        } else { throw new EvalError(branchOp.Loc, "Missing condition"); }
+                        
                         break;
                     }
                 case Op.T.CallDirect:

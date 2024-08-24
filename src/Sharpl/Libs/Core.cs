@@ -39,7 +39,6 @@ public class Core : Lib
         }
 
         (string, int)[] fas;
-
         var parentEnv = vm.Env;
         var registerCount = vm.NextRegisterIndex;
 
@@ -295,7 +294,7 @@ public class Core : Lib
                       if (args.TryPop() is Form cf) { cf.Emit(vm, args); }
                       else { throw new EmitError(loc, "Missing condition"); }
                       var skipElse = new Label();
-                      vm.Emit(Ops.Branch.Make(skipElse));
+                      vm.Emit(Ops.Branch.Make(loc, skipElse));
                       if (args.TryPop() is Form tf) { tf.Emit(vm, args); }
                       var skipEnd = new Label();
                       vm.Emit(Ops.Goto.Make(skipEnd));
@@ -346,7 +345,7 @@ public class Core : Lib
                      else { throw new EmitError(loc, "Missing condition"); }
 
                      var skip = new Label();
-                     vm.Emit(Ops.Branch.Make(skip));
+                     vm.Emit(Ops.Branch.Make(loc, skip));
                      args.Emit(vm, new Form.Queue());
                      skip.PC = vm.EmitPC;
                      vm.Emit(Ops.EndFrame.Make());

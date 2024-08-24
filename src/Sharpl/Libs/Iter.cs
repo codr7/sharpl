@@ -25,7 +25,7 @@ public class Iter : Lib
             vm.Emit(Ops.Repush.Make(1));
             vm.Emit(Ops.CallRegister.Make(loc, pred, 1, false, vm.NextRegisterIndex));
             var next = new Label();
-            vm.Emit(Ops.Branch.Make(next));
+            vm.Emit(Ops.Branch.Make(loc, next));
             vm.Emit(Ops.GetRegister.Make(index));
             vm.Emit(Ops.CreatePair.Make(loc));
             vm.Emit(Ops.Goto.Make(ok));
