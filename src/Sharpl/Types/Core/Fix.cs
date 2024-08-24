@@ -21,7 +21,6 @@ public class FixType(string name) :
         ulong? minVal = min.TryCastUnbox(this);
         ulong? maxVal = max.TryCastUnbox(this);
         ulong strideVal = stride.CastUnbox(this);
-
         return new Iters.Core.FixRange(minVal ?? Fix.Make(1, 0), maxVal, strideVal);
     }
 

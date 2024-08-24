@@ -32,10 +32,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
                         var n = p.Item2.CastUnbox(loc, Core.Int);
                         stack.Push(Core.Array, target.Cast(this)[i..(i + n)]);
                     }
-                    else
-                    {
-                        stack.Push(target.Cast(this)[iv.CastUnbox(Core.Int)]);
-                    }
+                    else { stack.Push(target.Cast(this)[iv.CastUnbox(Core.Int)]); }
     
                     break;
                 }
@@ -118,11 +115,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
 
         foreach (var v in value.Cast(this))
         {
-            if (i > 0)
-            {
-                result.Append(' ');
-            }
-
+            if (i > 0) { result.Append(' '); }
             v.Say(result);
             i++;
         }
