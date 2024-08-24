@@ -31,11 +31,7 @@ public readonly struct Op
     }
 
     public override string ToString() {
-        if (Data is null) {
-            return $"{Type}";
-            
-        }
-
+        if (Data is null) { return $"{Type}";  }
 #pragma warning disable CS8603 // Possible null reference return.
         return Data.ToString();
 #pragma warning restore CS8603 // Possible null reference return.

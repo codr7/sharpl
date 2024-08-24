@@ -15,20 +15,12 @@ public class Env
         {
             foreach (var id in ids)
             {
-                if (uids.Contains(id))
-                {
-                    continue;
-                }
+                if (uids.Contains(id)) { continue; }
 
                 if (p.bindings.TryGetValue(id, out var bval) && bval is Value b && b.Type == Core.Binding)
                 {
                     var v = b.CastUnbox(Core.Binding);
-
-                    if (v.FrameOffset != -1)
-                    {
-                        Bind(id, Value.Make(Core.Binding, new Register(v.FrameOffset + 1, v.Index)));
-                    }
-
+                    if (v.FrameOffset != -1) { Bind(id, Value.Make(Core.Binding, new Register(v.FrameOffset + 1, v.Index))); }
                     uids.Add(id);
                 }
             }
@@ -41,21 +33,13 @@ public class Env
 
         set
         {
-            if (value == null)
-            {
-                Unbind(id);
-            }
-            else
-            {
-                Bind(id, (Value)value);
-            }
+            if (value == null) { Unbind(id); }
+            else { Bind(id, (Value)value); }
         }
     }
 
-    public void Bind(string id, Value value)
-    {
+    public void Bind(string id, Value value) =>
         bindings[id] = value;
-    }
 
     public void BindLib(Lib lib) => Bind(lib.Name, Value.Make(Core.Lib, lib));
 
@@ -73,28 +57,17 @@ public class Env
         return m;
     }
 
-    public void BindType(AnyType t)
-    {
-        Bind(t.Name, Value.Make(Core.Meta, t));
-    }
+    public void BindType(AnyType t) => Bind(t.Name, Value.Make(Core.Meta, t));
 
-    public Value? Find(string id)
-    {
-        return bindings.TryGetValue(id, out var value) ? value : Parent?.Find(id);
-    }
+    public Value? Find(string id) =>
+        bindings.TryGetValue(id, out var value) ? value : Parent?.Find(id);
 
     public void Import(Env source)
     {
-        foreach (var (id, v) in source.bindings)
-        {
-            Bind(id, v);
-        }
+        foreach (var (id, v) in source.bindings) { Bind(id, v); }
     }
 
     public Env? Parent { get; }
 
-    public bool Unbind(string id)
-    {
-        return bindings.Remove(id);
-    }
+    public bool Unbind(string id) => bindings.Remove(id);
 }
