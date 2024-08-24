@@ -15,10 +15,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public static readonly Value Nil = Make(Libs.Core.Nil, false);
     public static readonly Value T = Make(Libs.Core.Bit, true);
 
-    public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount)
-    {
+    public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount) =>
         Type.Call(loc, vm, stack, this, arity, registerCount);
-    }
 
     public T Cast<T>(Type<T> type) where T : class =>
         Type == type ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);

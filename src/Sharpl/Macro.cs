@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Sharpl;
 
 public readonly struct Macro
@@ -21,29 +19,10 @@ public readonly struct Macro
 
     public void Emit(Loc loc, VM vm, Form.Queue args)
     {
-        if (args.Count < MinArgCount) {
-            throw new EmitError(loc, $"Not enough arguments: {this}");
-        }
-        
+        if (args.Count < MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {this}"); }
         Body(loc, this, vm, args);
     }
 
-    public override string ToString()
-    {
-        var result = new StringBuilder();
-        result.Append($"(Macro {Name} [");
-
-        for (var i = 0; i < Args.Length; i++)
-        {
-            if (i > 0)
-            {
-                result.Append(' ');
-            }
-
-            result.Append(Args[i]);
-        }
-
-        result.Append("])");
-        return result.ToString();
-    }
+    public override string ToString() =>
+        $"(Macro {Name} [{string.Join(' ', Args)}])";
 }

@@ -12,11 +12,7 @@ public abstract class AnyType(string name)
 
     public virtual void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
     {
-        if (arity != 0)
-        {
-            throw new EvalError(loc, "Wrong number of arguments");
-        }
-
+        if (arity != 0) { throw new EvalError(loc, "Wrong number of arguments"); }
         stack.Push(target);
     }
 
