@@ -100,12 +100,10 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
 
     public int Length(Value target) => target.Cast(this).Length;
 
-    public Value Push(Loc loc, Value dst, Value val)
+    public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val)
     {
-        var lst = new List<Value>();
-        lst.AddRange(dst.Cast(this));
-        lst.Add(val);
-        return Value.Make(Core.List, lst);
+        var lst = new List<Value>(dstVal.Cast(this)) { val };
+        vm.Set(dst, Value.Make(Core.List, lst));
     }
 
     public override void Say(Value value, StringBuilder result)

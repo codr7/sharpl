@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Xml.Linq;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
 
@@ -418,6 +419,20 @@ public class VM
                     {
                         var pushOp = (Ops.Push)op.Data;
                         stack.Push(pushOp.Value.Copy());
+                        PC++;
+                        break;
+                    }
+                case Op.T.PushItem:
+                    {
+                        var pushOp = (Ops.PushItem)op.Data;
+                        
+                        if (stack.TryPop(out var v)) { 
+                            var t = Get(pushOp.Target); 
+                            if (t.Type is StackTrait st) { st.Push(pushOp.Loc, this, pushOp.Target, t, v); }
+                            else { throw new EvalError(pushOp.Loc, $"Invalid target: {t}"); }
+                        }
+                        else { throw new EvalError(pushOp.Loc, "Missing value"); }
+
                         PC++;
                         break;
                     }

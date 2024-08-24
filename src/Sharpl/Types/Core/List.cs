@@ -90,10 +90,8 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
 
     public int Length(Value target) => target.Cast(this).Count;
 
-    public Value Push(Loc loc, Value dst, Value val) {
-        dst.Cast(this).Add(val);
-        return dst;
-    }
+    public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
+        dstVal.Cast(this).Add(val);
 
     public override void Say(Value value, StringBuilder result)
     {

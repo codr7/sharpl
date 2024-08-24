@@ -69,8 +69,8 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
     public int Length(Value target) => target.Cast(this).Length;
 
-    public Value Push(Loc loc, Value dst, Value val) =>
-        Value.Make(this, dst.Cast(this) + val.CastUnbox(Libs.Core.Char));
+    public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
+        vm.Set(dst, Value.Make(this, dstVal.Cast(this) + val.CastUnbox(Libs.Core.Char)));
 
     public override void Say(Value value, StringBuilder result) => result.Append(value.Data);
 }

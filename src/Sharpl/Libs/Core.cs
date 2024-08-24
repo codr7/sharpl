@@ -543,12 +543,19 @@ public class Core : Lib
             stack.Push(Pair, (Value.Make(Int, v), Value.Make(Int, i)));
         });
 
-        BindMethod("push", ["dst", "val"], (loc, target, vm, stack, arity) =>
+        BindMacro("push", ["dst", "val"], (loc, target, vm, args) =>
          {
-             var val = stack.Pop();
-             var dst = stack.Pop();
-             if (dst.Type is StackTrait st) { stack.Push(st.Push(loc, dst, val)); }
-             else { throw new EvalError(loc, $"Invalid push destination: {val}"); }
+             var dst = args.Pop();
+
+             if (dst is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
+             {
+                 foreach (var a in args)
+                 {
+                     vm.Emit(a);
+                     vm.Emit(Ops.PushItem.Make(loc, v.CastUnbox(Binding)));
+                 }
+             }
+             else { throw new EmitError(loc, $"Invalid push destination: {dst}"); }
          });
 
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
@@ -578,11 +585,11 @@ public class Core : Lib
 
         BindMacro("return", [], (loc, target, vm, args) =>
             {
+                var vf = args.Pop();
                 UserMethod? m = null;
 
-                if (args.TryPop() is Forms.Call c)
+                if (vf is Forms.Call c)
                 {
-
                     if (c.Target is Forms.Literal lt && lt.Value is var lv && lv.Type == UserMethod) { m = lv.Cast(UserMethod); }
                     else if (c.Target is Forms.Id it && vm.Env[it.Name] is Value iv && iv.Type == UserMethod) { m = iv.Cast(UserMethod); }
 
@@ -616,10 +623,10 @@ public class Core : Lib
                         vm.Emit(Ops.CallTail.Make(loc, m, argMask, splat));
                     }
                 }
-
+                
                 if (m is null)
                 {
-                    args.Emit(vm, new Form.Queue());
+                    vm.Emit(vf);
                     vm.Emit(Ops.ExitMethod.Make());
                 }
             });

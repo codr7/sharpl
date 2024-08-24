@@ -1,7 +1,5 @@
-using Sharpl.Ops;
-
 namespace Sharpl.Types.Core;
 
 public interface StackTrait {
-    Value Push(Loc loc, Value dst, Value val);
+    void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val);
 };
