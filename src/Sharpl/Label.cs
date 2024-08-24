@@ -4,14 +4,20 @@ using PC = int;
 
 public class Label
 {
-    public PC? PC;
+    public PC PC
+    {
+#pragma warning disable CS8629
+        get => (PC)pc;
+#pragma warning restore CS8629
+        set => pc = value;
+    }
 
     public Label(PC? pc = null)
     {
-        PC = pc;
+        if (pc != null) { PC = (PC)pc; }
     }
 
-    public override string ToString() {
-        return $"{PC}";
-    }
+    public override string ToString() => $"@{PC}";
+
+    private PC? pc;
 }

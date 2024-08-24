@@ -209,12 +209,8 @@ public class VM
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
-
                         if ((bool)stack.Pop()) { PC++; }
-#pragma warning disable CS8629
                         else { PC = (PC)branchOp.Right.PC; }
-#pragma warning restore CS8629
-
                         break;
                     }
                 case Op.T.CallDirect:
@@ -260,16 +256,11 @@ public class VM
                         var callOp = (Ops.CallTail)op.Data;
                         var arity = callOp.ArgMask.Length;
                         if (callOp.Splat) { arity += splats.Pop(); }
-
-                        if (arity < callOp.Target.MinArgCount)
-                        {
-                            throw new EvalError(callOp.Loc, $"Not enough arguments: {callOp.Target} {arity}");
-                        }
-
+                        if (arity < callOp.Target.MinArgCount) { throw new EvalError(callOp.Loc, $"Not enough arguments: {callOp.Target} {arity}"); }
                         var call = calls.Peek();
                         frames.Trunc(call.FrameOffset);
                         callOp.Target.BindArgs(this, callOp.ArgMask, arity, stack);
-#pragma warning disable CS8629
+#pragma warning disable CS8629 
                         PC = (int)callOp.Target.StartPC;
 #pragma warning restore CS8629
                         break;
@@ -279,7 +270,6 @@ public class VM
                         var callOp = (Ops.CallUserMethod)op.Data;
                         var arity = callOp.ArgMask.Length;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
-
                         PC++;
                         CallUserMethod(callOp.Loc, stack, callOp.Target, callOp.ArgMask, arity, callOp.RegisterCount);
                         break;
@@ -306,16 +296,8 @@ public class VM
                     {
                         var createOp = (Ops.CreateIter)op.Data;
                         var v = stack.Pop();
-
-                        if (v.Type is IterTrait it)
-                        {
-                            Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v)));
-                        }
-                        else
-                        {
-                            throw new EvalError(createOp.Loc, $"Not iterable: {v}");
-                        }
-
+                        if (v.Type is IterTrait it) { Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v))); }
+                        else { throw new EvalError(createOp.Loc, $"Not iterable: {v}"); }
                         PC++;
                         break;
                     }
@@ -366,12 +348,7 @@ public class VM
                 case Op.T.ExitMethod:
                     {
                         var c = calls.Pop();
-
-                        foreach (var (id, s, _) in c.Target.Closure)
-                        {
-                            c.Target.ClosureValues[s] = GetRegister(0, s);
-                        }
-
+                        foreach (var (id, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
                         EndFrame();
                         PC = c.ReturnPC;
                         break;
@@ -386,9 +363,7 @@ public class VM
                 case Op.T.Goto:
                     {
                         var gotoOp = (Ops.Goto)op.Data;
-#pragma warning disable CS8629
                         PC = (PC)gotoOp.Target.PC;
-#pragma warning restore CS8629
                         break;
                     }
                 case Op.T.Increment:
@@ -409,12 +384,7 @@ public class VM
                             stack.Push(v);
                             PC++;
                         }
-                        else
-                        {
-#pragma warning disable CS8629
-                            PC = (int)iterOp.Done.PC;
-#pragma warning restore CS8629
-                        }
+                        else { PC = (int)iterOp.Done.PC; }
 
                         break;
                     }
@@ -424,34 +394,18 @@ public class VM
                 case Op.T.Or:
                     {
                         var orOp = (Ops.Or)op.Data;
-
-                        if ((bool)stack.Peek())
-                        {
-#pragma warning disable CS8629
-                            PC = (PC)orOp.Done.PC;
-#pragma warning restore CS8629
-                        }
-                        else
-                        {
-                            PC++;
-                        }
-
+                        if ((bool)stack.Peek()) { PC = (PC)orOp.Done.PC; }
+                        else { PC++; }
                         break;
                     }
                 case Op.T.PrepareClosure:
                     {
                         var closureOp = (Ops.PrepareClosure)op.Data;
                         var m = closureOp.Target;
-
-                        foreach (var (id, d, s) in m.Closure)
-                        {
-                            m.ClosureValues[d] = Get(s);
-                        }
-
-                        PC++;
+                        foreach (var (id, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
+                        PC = (PC)closureOp.Skip.PC;
                         break;
                     }
-
                 case Op.T.Push:
                     {
                         var pushOp = (Ops.Push)op.Data;
@@ -574,7 +528,7 @@ public class VM
                     }
                 case Op.T.Unzip:
                     {
-                        var unzipOp = (Ops.Unzip)op.Data;                       
+                        var unzipOp = (Ops.Unzip)op.Data;
                         if (stack.TryPop(out var p))
                         {
                             var pv = p.CastUnbox(Core.Pair);

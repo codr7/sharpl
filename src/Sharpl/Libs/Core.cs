@@ -83,9 +83,9 @@ public class Core : Lib
             else { throw new EmitError(loc, "Invalid method args"); }
 
             var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
-            if (ids.Count > 0) { vm.Emit(Ops.PrepareClosure.Make(m)); }
             var skip = new Label();
-            vm.Emit(Ops.Goto.Make(skip));
+            if (ids.Count > 0) { vm.Emit(Ops.PrepareClosure.Make(m, skip)); }
+            else { vm.Emit(Ops.Goto.Make(skip)); }
             m.StartPC = vm.EmitPC;
             var v = Value.Make(type, m);
             if (name != "") { parentEnv.Bind(name, v); }
