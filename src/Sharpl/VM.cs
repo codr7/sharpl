@@ -204,30 +204,8 @@ public class VM
                         break;
                     }
                 case Op.T.Benchmark:
-                    {
-                        var benchmarkOp = (Ops.Benchmark)op.Data;
-                        var bodyPC = PC + 1;
-                        var s = new Stack();
-
-                        for (var i = 0; i < benchmarkOp.N; i++)
-                        {
-                            Eval(bodyPC, s);
-                            s.Clear();
-                        }
-
-                        var t = new Stopwatch();
-                        t.Start();
-
-                        for (var i = 0; i < benchmarkOp.N; i++)
-                        {
-                            Eval(bodyPC, s);
-                            s.Clear();
-                        }
-
-                        t.Stop();
-                        stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
+                        BENCHMARK(op, stack);
                         break;
-                    }
                 case Op.T.Branch:
                     {
                         var branchOp = (Ops.Branch)op.Data;
@@ -307,30 +285,8 @@ public class VM
                         break;
                     }
                 case Op.T.Check:
-                    {
-                        var checkOp = (Ops.Check)op.Data;
-
-                        if (stack.Pop() is Value ev)
-                        {
-                            if (stack.Pop() is Value av)
-                            {
-                                var dav = av;
-                                if (ev.Type == Core.Bit && av.Type != Core.Bit) { av = Value.Make(Core.Bit, (bool)av); }
-                                if (!av.Equals(ev)) { throw new EvalError(checkOp.Loc, $"Check failed: expected {ev}, actual {dav}!"); }
-                            }
-                            else
-                            {
-                                throw new EvalError(checkOp.Loc, "Missing actual value");
-                            }
-                        }
-                        else
-                        {
-                            throw new EvalError(checkOp.Loc, "Missing expected value");
-                        }
-
-                        PC++;
+                        CHECK(op, stack);
                         break;
-                    }
                 case Op.T.CopyRegister:
                     {
                         var copyOp = (Ops.CopyRegister)op.Data;
@@ -463,23 +419,8 @@ public class VM
                         break;
                     }
                 case Op.T.OpenInputStream:
-                    {
-                        var openOp = (Ops.OpenInputStream)op.Data;
-                        StreamReader sr;
-
-                        if (stack.Pop() is Value p)
-                        {
-                            sr = new StreamReader(Path.Combine(loadPath, p.Cast(openOp.Loc, Core.String)));
-                            SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.InputStream, sr));
-                        }
-                        else
-                        {
-                            throw new EvalError(openOp.Loc, "Missing path");
-                        }
-
-                        PC++;
+                        OPEN_INPUT_STREAM(op, stack);
                         break;
-                    }
                 case Op.T.Or:
                     {
                         var orOp = (Ops.Or)op.Data;
@@ -634,7 +575,7 @@ public class VM
                 case Op.T.Unzip:
                     {
                         var unzipOp = (Ops.Unzip)op.Data;
-                        
+
                         if (stack.TryPop() is Value p)
                         {
                             var pv = p.CastUnbox(Core.Pair);
@@ -867,4 +808,72 @@ public class VM
 
     public void Set(Register register, Value value) =>
         SetRegister(register.FrameOffset, register.Index, value);
+
+    private void BENCHMARK(Op op, Stack stack)
+    {
+        var benchmarkOp = (Ops.Benchmark)op.Data;
+        var bodyPC = PC + 1;
+        var s = new Stack();
+
+        for (var i = 0; i < benchmarkOp.N; i++)
+        {
+            Eval(bodyPC, s);
+            s.Clear();
+        }
+
+        var t = new Stopwatch();
+        t.Start();
+
+        for (var i = 0; i < benchmarkOp.N; i++)
+        {
+            Eval(bodyPC, s);
+            s.Clear();
+        }
+
+        t.Stop();
+        stack.Push(Value.Make(Core.Int, (int)t.ElapsedMilliseconds));
+    }
+
+    private void CHECK(Op op, Stack stack)
+    {
+        var checkOp = (Ops.Check)op.Data;
+
+        if (stack.Pop() is Value ev)
+        {
+            if (stack.Pop() is Value av)
+            {
+                var dav = av;
+                if (ev.Type == Core.Bit && av.Type != Core.Bit) { av = Value.Make(Core.Bit, (bool)av); }
+                if (!av.Equals(ev)) { throw new EvalError(checkOp.Loc, $"Check failed: expected {ev}, actual {dav}!"); }
+            }
+            else
+            {
+                throw new EvalError(checkOp.Loc, "Missing actual value");
+            }
+        }
+        else
+        {
+            throw new EvalError(checkOp.Loc, "Missing expected value");
+        }
+
+        PC++;
+    }
+
+    private void OPEN_INPUT_STREAM(Op op, Stack stack)
+    {
+        var openOp = (Ops.OpenInputStream)op.Data;
+        StreamReader sr;
+
+        if (stack.Pop() is Value p)
+        {
+            sr = new StreamReader(Path.Combine(loadPath, p.Cast(openOp.Loc, Core.String)));
+            SetRegister(openOp.FrameOffset, openOp.Index, Value.Make(IO.InputStream, sr));
+        }
+        else
+        {
+            throw new EvalError(openOp.Loc, "Missing path");
+        }
+
+        PC++;
+    }
 }
