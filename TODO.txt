@@ -32,6 +32,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** add min/max methods
 *** require comparable trait
 ** implement pair unification in let macro
+** add support for _ slicing (array/string/list/map)
 
 ** add string/array/map/list slice assign
 
