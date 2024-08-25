@@ -15,6 +15,7 @@ public class VM
     {
         public int MaxRegisters = 1024;
         public int MaxVars = 128;
+
         public Reader Reader = new Readers.OneOf([
             Readers.WhiteSpace.Instance,
 

@@ -12,8 +12,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add Pair slice support
 
-* investigate why tests fail when frame is removed in else/(if)
-
 * debug '+ unquote
 
 (check '[1 42 2]

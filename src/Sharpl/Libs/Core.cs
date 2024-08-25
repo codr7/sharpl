@@ -88,7 +88,7 @@ public class Core : Lib
             m.StartPC = vm.EmitPC;
             var v = Value.Make(type, m);
             if (name != "") { parentEnv.Bind(name, v); }
-            args.Emit(vm, new Form.Queue());
+            args.Emit(vm);
             vm.Emit(stopOp);
             skip.PC = vm.EmitPC;
             if (name == "") { v.Emit(loc, vm, args); }
@@ -287,22 +287,16 @@ public class Core : Lib
 
         BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
              {
-                 vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-
-                 vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
-                  {
-                      if (args.TryPop() is Form cf) { cf.Emit(vm, args); }
-                      else { throw new EmitError(loc, "Missing condition"); }
-                      var skipElse = new Label();
-                      vm.Emit(Ops.Branch.Make(loc, skipElse));
-                      if (args.TryPop() is Form tf) { tf.Emit(vm, args); }
-                      var skipEnd = new Label();
-                      vm.Emit(Ops.Goto.Make(skipEnd));
-                      skipElse.PC = vm.EmitPC;
-                      args.Emit(vm, new Form.Queue());
-                      skipEnd.PC = vm.EmitPC;
-                      vm.Emit(Ops.EndFrame.Make());
-                  });
+                 if (args.TryPop() is Form cf) { cf.Emit(vm, args); }
+                 else { throw new EmitError(loc, "Missing condition"); }
+                 var skipElse = new Label();
+                 vm.Emit(Ops.Branch.Make(loc, skipElse));
+                 if (args.TryPop() is Form tf) { tf.Emit(vm, args); }
+                 var skipEnd = new Label();
+                 vm.Emit(Ops.Goto.Make(skipEnd));
+                 skipElse.PC = vm.EmitPC;
+                 args.Emit(vm, new Form.Queue());
+                 skipEnd.PC = vm.EmitPC;
              });
 
         BindMacro("eval", [], (loc, target, vm, args) =>
@@ -337,19 +331,13 @@ public class Core : Lib
 
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
             {
-                vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
+                if (args.TryPop() is Form f) { f.Emit(vm, args); }
+                else { throw new EmitError(loc, "Missing condition"); }
 
-                vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
-                 {
-                     if (args.TryPop() is Form f) { f.Emit(vm, args); }
-                     else { throw new EmitError(loc, "Missing condition"); }
-
-                     var skip = new Label();
-                     vm.Emit(Ops.Branch.Make(loc, skip));
-                     args.Emit(vm, new Form.Queue());
-                     skip.PC = vm.EmitPC;
-                     vm.Emit(Ops.EndFrame.Make());
-                 });
+                var skip = new Label();
+                vm.Emit(Ops.Branch.Make(loc, skip));
+                args.Emit(vm, new Form.Queue());
+                skip.PC = vm.EmitPC;
             });
 
         BindMacro("inc", [], (loc, target, vm, args) =>
@@ -542,9 +530,10 @@ public class Core : Lib
             stack.Push(Pair, (Value.Make(Int, v), Value.Make(Int, i)));
         });
 
-        BindMethod("peek", ["src"], (loc, target, vm, stack, arity) => {
+        BindMethod("peek", ["src"], (loc, target, vm, stack, arity) =>
+        {
             var src = stack.Pop();
-            if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); } 
+            if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); }
             else { throw new EvalError(loc, "Invalid peek target: {src}"); }
         });
 
@@ -631,7 +620,7 @@ public class Core : Lib
                         foreach (var f in c.Args)
                         {
                             /* Referring to the previous frame's bindings is tricky when we're not creating new frames.*/
-                            if (f.GetValue(vm) is Value v && (v.Type != Binding || v.CastUnbox(Binding).FrameOffset != 1)) { argMask[i] = v; }
+                            if (f.GetValue(vm) is Value v && (v.Type != Binding || v.CastUnbox(Binding).FrameOffset != 0)) { argMask[i] = v; }
                             else { vm.Emit(f); }
                             i++;
                         }
