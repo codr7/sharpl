@@ -388,9 +388,8 @@ public class Core : Lib
         BindMethod("len", ["it"], (loc, target, vm, stack, arity) =>
             {
                 var v = stack.Pop();
-
                 if (v.Type is LengthTrait st) { stack.Push(Int, st.Length(v)); }
-                else { throw new EvalError(loc, $"Expected sequence: {v}"); }
+                else { throw new EvalError(loc, $"Not supported: {v}"); }
             });
 
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>

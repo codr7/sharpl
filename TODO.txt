@@ -10,11 +10,6 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* implement stack trait in pair
-** implement length for pair
-** add tests
-** add stacking to readme
-
 * add List slice
 ** add slicing to readme
 

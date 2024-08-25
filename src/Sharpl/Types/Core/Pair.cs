@@ -5,7 +5,7 @@ namespace Sharpl.Types.Core;
 
 using Sharpl.Libs;
 
-public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
+public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, LengthTrait, StackTrait
 {
     public static Value Update(Loc loc, Value target, Value value, int i)
     {
@@ -95,6 +95,8 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
         return Order.EQ;
     }
 
+    public Sharpl.Iter CreateIter(Value target) => new PairItems(target);
+
     public override void Dump(Value value, StringBuilder result)
     {
         var p = value.CastUnbox(this);
@@ -110,7 +112,29 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait
         return lp.Item1.Equals(rp.Item1) && lp.Item2.Equals(rp.Item2);
     }
 
-    public Sharpl.Iter CreateIter(Value target) => new PairItems(target);
+    public int Length(Value target) {
+        var v = target;
+        var result = 1;
+
+        while (v.Type == this) {
+            var p = v.CastUnbox(this);
+            v = p.Item2;
+            result++;
+        }
+
+        return result;
+    }
+
+    public Value Peek(Loc loc, VM vm, Value srcVal) => srcVal.CastUnbox(this).Item1;
+
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+        var sv = srcVal.CastUnbox(this);
+        vm.Set(src, sv.Item2);
+        return sv.Item1;
+    }
+
+    public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
+        vm.Set(dst, Value.Make(this, (val, dstVal)));
 
     public override void Say(Value value, StringBuilder result)
     {

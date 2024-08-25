@@ -24,7 +24,7 @@ All features described in this document are part of the [test suite](https://git
 - Splatting is supported using `*`, simlar to Python.
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
-- Nil is called `_`.
+- Nil is called `_`."abc"
 - Both true (`T`) and false (`F`) are defined.
 - Zeros and empty strings, arrays and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
@@ -263,14 +263,6 @@ Unique symbols may be created using the type constructor.
 '7foo
 ```
 
-### strings
-String literals may be defined using double quotes.
-
-```
-(string/up "Foo")
-```
-`"FOO"`
-
 ### characters
 Character literals may be defined using `\`.
 
@@ -374,6 +366,44 @@ Or by calling the constructor explicitly.
 (Array 1:2:3*)
 ```
 `[1 2 3]`
+
+### strings
+String literals may be defined using double quotes.
+
+```
+(string/up "Foo")
+```
+`"FOO"`
+
+### stacks
+Pairs, arrays, lists and strings all implement the stack trait.
+
+#### push
+`push` may be used to push a new item to a stack; for pairs it's added to the front, for others to the back.
+
+```
+(let [s 2:3]
+  (push s 1)
+  s)
+```
+`1:2:3`
+
+#### peek
+`peek` may be used to get the top item in a stack.
+
+```
+(peek "abc")
+```
+`\a`
+
+#### pop
+`pop` may be used to remove the top item from a stack.
+
+```
+(let [s [1 2 3]]
+  (pop s):s)
+```
+`3:[1 2]`
 
 ### maps
 Maps are ordered mappings from keys to values.<br/>
