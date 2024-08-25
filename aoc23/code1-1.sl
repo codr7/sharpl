@@ -1,4 +1,4 @@
-(lib aoc-23-1-1)
+(lib aoc23-1-1)
 
 (^find-digit [line]
   (char/digit (find-first:_ char/is-digit line)))

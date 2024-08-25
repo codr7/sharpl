@@ -1,4 +1,4 @@
-(lib aoc-23-2-1)
+(lib aoc23-2-1)
 
 (^ decode-color [in out]
   (let [n:i (parse-int in)
@@ -22,7 +22,7 @@
            (> (game 'blue) 14))))
 
 (^ sum-games [path]
-  (reduce + (map peek (filter is-possible (map peek (read-games path)))) 0))
+  (reduce + (map 0 (filter 1 & is-possible (read-games path))) 0))
     
 (check 2268
   (sum-games "input2"))

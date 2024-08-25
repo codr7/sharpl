@@ -10,9 +10,8 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-** implement stack trait in pair
-
-** add push/peek/pop to readme
+* implement stack trait in pair
+** add to readme
 
 * add List slice
 ** add slicing to readme
@@ -33,6 +32,8 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 *** require comparable trait
 ** implement pair unification in let macro
 ** add support for _ slicing (array/string/list/map)
+** make values callable
+*** change into (arg v)
 
 ** add string/array/map/list slice assign
 
