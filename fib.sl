@@ -4,19 +4,19 @@
 (^fib-tail [n a b]
   (else (> n 1) (return (fib-tail (dec n) b (+ a b))) (else (is n 0) a b)))
 
-(^ fib-list [n l]
-  (else (< n (len l))
-    (l n)
-    (let [result (else (< n 2) n (+ (fib-list (dec n) l)
-                                    (fib-list (dec n) l)))] 
-      (push l result)
+(^ fib-list [n cache]
+  (else (< n (len cache))
+    (cache n)
+    (let [result (else (< n 2) n (+ (fib-list (dec n) cache)
+                                    (fib-list (dec n) cache)))] 
+      (push cache result)
 	    result)))
 
-(^ fib-map [n m]
-  (or (m n)
+(^ fib-map [n cache]
+  (or (cache n)
       (else (< n 2) 
         n 
-        (let [result (+ (fib-map (- n 1) m)
-                        (fib-map (- n 2) m))] 
-          (m n result)
+        (let [result (+ (fib-map (- n 1) cache)
+                        (fib-map (- n 2) cache))] 
+          (cache n result)
 	        result))))

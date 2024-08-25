@@ -15,7 +15,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add #-reader
 ** rename len to length
-** update tests/readme
+** update tests/benchmarks/aoc/readme
 
 * add Pair slice support
 
