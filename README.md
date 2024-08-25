@@ -19,22 +19,23 @@ All features described in this document are part of the [test suite](https://git
 
 ## novelties
 
-- Pairs, arrays, maps and method compositions have dedicated syntax.
+- Pairs (`a:b`) are used everywhere, all the time.
+- Maps (`{k1:v1...kN:vN}`) are ordered.
+- Methods may be composed using `&`.
 - Varargs use `*`, similar to Python.
-- Splatting is supported using `*`, simlar to Python.
+- Splatting is also performed using `*`, simlar to Python.
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
 - Nil is called `_`."abc"
 - Both true (`T`) and false (`F`) are defined.
 - Zeros and empty strings, arrays and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
-- Lambdas actually look like anonymous methods.
-- `eval` evaluates once at emit time.
+- Lambdas look like anonymous methods.
+- `eval` evaluates once, at emit time.
 - Explicit tail calls using `return`.
 - Parens are used for calls only.
 - Most things are callable, simlar to Clojure.
-- Maps are ordered, not hashed.
-- Errors include line numbers, even inside the REPL.
+- Line numbers are a thing.
 
 ## bindings
 Bindings come in two flavors, with lexical or dynamic scope.
