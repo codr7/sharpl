@@ -26,9 +26,9 @@ All features described in this document are part of the [test suite](https://git
 - Splatting is also performed using `*`, simlar to Python.
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
-- Nil is called `_`."abc"
-- Both true (`T`) and false (`F`) are defined.
-- Zeros and empty strings, arrays and maps are considered false.
+- Nil is written `_`.
+- Both `T` and `F` are defined.
+- Zeros and empty strings, arrays, lists and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
 - Lambdas look like anonymous methods.
 - `eval` evaluates once, at emit time.
