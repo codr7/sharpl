@@ -446,14 +446,6 @@ public class VM
                         PC++;
                         break;
                     }
-                case Op.T.PushListItem:
-                    {
-                        var pushOp = (Ops.PushListItem)op.Data;
-                        if (stack.TryPop(out var v)) { Get(pushOp.Target).Cast(pushOp.Loc, Core.List).Add(v); }
-                        else { throw new EvalError(pushOp.Loc, "Missing target"); }
-                        PC++;
-                        break;
-                    }
                 case Op.T.PushSplat:
                     {
                         splats.Push(0);

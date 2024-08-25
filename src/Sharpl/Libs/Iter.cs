@@ -96,7 +96,7 @@ public class Iter : Lib
                           foreach (var (a, it) in iters) { vm.Emit(Ops.IterNext.Make(loc, it, end)); }
                           vm.Emit(methodForm);
                           vm.Emit(Ops.CallStack.Make(loc, args.Count, args.IsSplat, vm.NextRegisterIndex));
-                          vm.Emit(Ops.PushListItem.Make(loc, result));
+                          vm.Emit(Ops.PushItem.Make(loc, result));
                           vm.Emit(Ops.Goto.Make(start));
                           end.PC = vm.EmitPC;
                           vm.Emit(Ops.GetRegister.Make(result));
