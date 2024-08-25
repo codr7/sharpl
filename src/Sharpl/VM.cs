@@ -407,6 +407,15 @@ public class VM
                         else { PC++; }
                         break;
                     }
+                case Op.T.PopItem:
+                    {
+                        var popOp = (Ops.PopItem)op.Data;
+                        var t = Get(popOp.Target);
+                        if (t.Type is StackTrait st) { stack.Push(st.Pop(popOp.Loc, this, popOp.Target, t)); }
+                        else { throw new EvalError(popOp.Loc, $"Invalid target: {t}"); }
+                        PC++;
+                        break;
+                    }
                 case Op.T.PrepareClosure:
                     {
                         var closureOp = (Ops.PrepareClosure)op.Data;
@@ -425,9 +434,10 @@ public class VM
                 case Op.T.PushItem:
                     {
                         var pushOp = (Ops.PushItem)op.Data;
-                        
-                        if (stack.TryPop(out var v)) { 
-                            var t = Get(pushOp.Target); 
+
+                        if (stack.TryPop(out var v))
+                        {
+                            var t = Get(pushOp.Target);
                             if (t.Type is StackTrait st) { st.Push(pushOp.Loc, this, pushOp.Target, t, v); }
                             else { throw new EvalError(pushOp.Loc, $"Invalid target: {t}"); }
                         }
@@ -673,7 +683,7 @@ public class VM
 
     public int NextRegisterIndex => nextRegisterIndex;
 
-    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms) => 
+    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms) =>
         Config.Reader.Read(source, this, ref loc, forms);
 
     public Form? ReadForm(TextReader source, ref Loc loc)

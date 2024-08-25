@@ -45,6 +45,7 @@
 (load "io-tests.sl")  
 (load "iter-tests.sl")
 (load "lib-tests.sl")
+(load "list-tests.sl")
 (load "logic-tests.sl")
 (load "loop-tests.sl")
 (load "map-tests.sl")

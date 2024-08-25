@@ -10,8 +10,9 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add pop to stack trait
-** add push/pop to readme
+** implement stack trait in pair
+
+** add push/peek/pop to readme
 
 * add List slice
 ** add slicing to readme

@@ -17,3 +17,15 @@
 
 (check "bar"
   ("foobarbaz" 3:3))
+
+(check "abc"
+  (let [foo "ab"] 
+    (push foo \c)
+    foo))
+
+(check \c
+  (peek "abc")) 
+
+(check \c:"ab"
+  (let [foo "abc"] 
+    (pop foo):foo))

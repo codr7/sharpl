@@ -13,7 +13,7 @@ public readonly struct Op
         GetRegister, Goto,
         Increment, IterNext,
         OpenInputStream, Or, 
-        PrepareClosure, Push, PushItem, PushListItem, PushSplat,
+        PopItem, PrepareClosure, Push, PushItem, PushListItem, PushSplat,
         Repush,
         SetArrayItem, SetLoadPath, SetMapItem, SetRegister, 
         Splat, Stop, Swap,

@@ -543,6 +543,23 @@ public class Core : Lib
             stack.Push(Pair, (Value.Make(Int, v), Value.Make(Int, i)));
         });
 
+        BindMethod("peek", ["src"], (loc, target, vm, stack, arity) => {
+            var src = stack.Pop();
+            if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); } 
+            else { throw new EvalError(loc, "Invalid peek target: {src}"); }
+        });
+
+        BindMacro("pop", ["src"], (loc, target, vm, args) =>
+         {
+             var src = args.Pop();
+
+             if (src is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
+             {
+                 vm.Emit(Ops.PopItem.Make(loc, v.CastUnbox(Binding)));
+             }
+             else { throw new EmitError(loc, $"Invalid push destination: {src}"); }
+         });
+
         BindMacro("push", ["dst", "val"], (loc, target, vm, args) =>
          {
              var dst = args.Pop();
@@ -623,7 +640,7 @@ public class Core : Lib
                         vm.Emit(Ops.CallTail.Make(loc, m, argMask, splat));
                     }
                 }
-                
+
                 if (m is null)
                 {
                     vm.Emit(vf);

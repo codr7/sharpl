@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
+using Microsoft.VisualBasic;
 using Sharpl.Libs;
 
 public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait, StackTrait
@@ -99,6 +100,20 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
     }
 
     public int Length(Value target) => target.Cast(this).Length;
+
+    public Value Peek(Loc loc, VM vm, Value srcVal) {
+        var src = srcVal.Cast(this);
+        return (src.Length == 0) ? Value.Nil : src[^1];
+    }
+
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+        var sv = srcVal.Cast(this);
+        if (sv.Length == 0) { return Value.Nil; }
+        var v = sv[^1]; 
+        var lst = new List<Value>(sv[0..^1]);
+        vm.Set(src, Value.Make(Core.List, lst));
+        return v;
+    }
 
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val)
     {

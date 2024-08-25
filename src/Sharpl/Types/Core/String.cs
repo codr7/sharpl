@@ -69,6 +69,19 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
     public int Length(Value target) => target.Cast(this).Length;
 
+    public Value Peek(Loc loc, VM vm, Value srcVal) {
+        var src = srcVal.Cast(this);
+        return (src.Length == 0) ? Value.Nil : Value.Make(Libs.Core.Char, src[^1]);
+    }
+
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+        var sv = srcVal.Cast(this);
+        if (sv.Length == 0) { return Value.Nil; }
+        var c = sv[^1];
+        vm.Set(src, Value.Make(this, sv[0..^1]));
+        return Value.Make(Libs.Core.Char, c);
+    }
+
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         vm.Set(dst, Value.Make(this, dstVal.Cast(this) + val.CastUnbox(Libs.Core.Char)));
 
