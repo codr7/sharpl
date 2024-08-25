@@ -693,6 +693,9 @@ public class Core : Lib
                 stack.Push(Value.Make(Sym, vm.Intern(res.ToString())));
             });
 
+        BindMethod("type-of", ["x"], (loc, target, vm, stack, arity) =>
+            stack.Push(Meta, stack.Pop().Type));
+
         BindMacro("var", ["id", "value"], (loc, target, vm, args) =>
             {
                 while (true)

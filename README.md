@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v20
+sharpl v21
 
    1 (say 'hello)
    2 
@@ -417,6 +417,14 @@ Or by calling the constructor explicitly.
 (Map '[foo:1 bar:2 baz:3]*)
 ```
 `{'bar:2 'baz:3 'foo:1}`
+
+### slices
+All composite types may be sliced by indexing using a pair.
+
+```
+('{a:1 b:2 c:3 d:4} 'b:'c)
+```
+`{'b:2 'c:3}`
 
 ## iterators
 

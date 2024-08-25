@@ -10,11 +10,9 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add List slice
-** add slicing to readme
+* add Pair slice support
 
-* add range type
-** change slice imps to return ranges
+* investigate why tests fail when frame is removed in else/(if)
 
 * debug '+ unquote
 

@@ -9,3 +9,6 @@
 (check 3:(List 1 2)
   (let [foo (List 1 2 3)] 
     (pop foo):foo))
+
+(check (List 2 3)
+  ((List 1 2 3 4) 1:2))

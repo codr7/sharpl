@@ -3,7 +3,6 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-using Microsoft.VisualBasic;
 using Sharpl.Libs;
 
 public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait, StackTrait

@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
+using System.Reflection.PortableExecutable;
 using Sharpl.Libs;
 
 public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTrait, StackTrait
@@ -24,8 +25,17 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
         {
             case 1:
                 {
-                    var i = stack.Pop().CastUnbox(Core.Int);
-                    stack.Push(target.Cast(this)[i]);
+                    var t = target.Cast(this);
+                    var iv = stack.Pop();
+                    
+                    if (iv.Type == Core.Pair) {
+                        var p = iv.CastUnbox(Core.Pair);
+                        stack.Push(Core.List, t[p.Item1.CastUnbox(loc, Core.Int)..(p.Item2.CastUnbox(loc, Core.Int)+1)]);
+                    } else {
+                        var i = iv.CastUnbox(Core.Int);
+                        stack.Push(t[i]);
+                    }
+
                     break;
                 }
             case 2:
