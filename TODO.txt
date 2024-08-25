@@ -24,8 +24,16 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
     '[1 ,c 2]))
 
 * aoc2
-** add string/array/map/list slice assign
+** add filter macro
+*** jalang
 ** add string/split
+** add iter/enum
+*** src & start index (default 0)
+** make 1 callable
+*** turn into (arg 1) call
+*** implement as default for values
+
+** add string/array/map/list slice assign
 
 * add iter benchmark
 ** fib-tail but use loop instead of tail call

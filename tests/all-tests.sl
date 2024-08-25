@@ -55,4 +55,4 @@
 (load "rx-tests.sl")
 (load "string-tests.sl")
 
-(load "../aoc/code1-1.sl")
+(load "../aoc23/code1-1.sl")
