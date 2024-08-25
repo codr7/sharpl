@@ -16,6 +16,9 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * add List slice
 ** add slicing to readme
 
+* add range type
+** change slice imps to return ranges
+
 * debug '+ unquote
 
 (check '[1 42 2]
