@@ -30,7 +30,7 @@
 (check [2 3]
   ([1 2 3 4] 1:2))
 
-(check (List 1 2)
+(check [1 2]
   (let [foo [1]] 
     (push foo 2)
     foo))
@@ -38,6 +38,6 @@
 (check 3
   (peek [1 2 3]))
 
-(check 3:(List 1 2)
+(check 3:[1 2]
   (let [foo [1 2 3]] 
     (pop foo):foo))

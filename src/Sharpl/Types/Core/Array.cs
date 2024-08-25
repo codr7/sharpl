@@ -109,16 +109,18 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
     public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
         var sv = srcVal.Cast(this);
         if (sv.Length == 0) { return Value.Nil; }
-        var v = sv[^1]; 
-        var lst = new List<Value>(sv[0..^1]);
-        vm.Set(src, Value.Make(Core.List, lst));
+        var v = sv[^1];
+        vm.Set(src, Value.Make(this, sv[0..^1]));
         return v;
     }
 
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val)
     {
-        var lst = new List<Value>(dstVal.Cast(this)) { val };
-        vm.Set(dst, Value.Make(Core.List, lst));
+        var dv = dstVal.Cast(this);
+        var i = dv.Length;
+        Array.Resize(ref dv, i+1); 
+        dv[i] = val;
+        vm.Set(dst, Value.Make(this, dv));
     }
 
     public override void Say(Value value, StringBuilder result)
