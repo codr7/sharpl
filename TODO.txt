@@ -10,11 +10,8 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* debug '+ unquote
-
-(check '[1 42 2]
-  (let [c '(+ 35 7)]
-    '[1 ,c 2]))
+* change Sym/gsym
+** update readme/tests
 
 * add #-reader
 ** rename len to length
