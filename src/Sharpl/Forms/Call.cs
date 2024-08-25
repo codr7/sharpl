@@ -102,6 +102,8 @@ public class Call : Form
         return b.ToString();
     }
 
-    public override Form Unquote(Loc loc, VM vm) =>
-        new Call(loc, Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray());
+    public override Form Unquote(Loc loc, VM vm) {
+        Console.WriteLine("CALL UNQUOTE " + Target);
+        return new Call(loc, Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray());
+    }
 }

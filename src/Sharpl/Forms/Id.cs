@@ -34,26 +34,14 @@ public class Id : Form
 
     public override void Emit(VM vm, Form.Queue args)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v)
-        {
-            v.EmitId(Loc, vm, args);
-        }
-        else
-        {
-            throw new EmitError(Loc, $"Unknown id: {Name}");
-        }
+        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitId(Loc, vm, args); }
+        else { throw new EmitError(Loc, $"Unknown id: {Name}"); }
     }
 
     public override void EmitCall(VM vm, Form.Queue args)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v)
-        {
-            v.EmitCall(Loc, vm, args);
-        }
-        else
-        {
-            throw new EmitError(Loc, $"Unknown id: {Name}");
-        }
+        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(Loc, vm, args); }
+        else { throw new EmitError(Loc, $"Unknown id: {Name}"); }
     }
 
     public override bool Equals(Form other) =>
@@ -65,7 +53,5 @@ public class Id : Form
         new Literal(loc, Value.Make(Core.Sym, vm.Intern(Name)));
 
     public override string ToString() => Name;
-
-    public override Form Unquote(Loc loc, VM vm) =>
-        GetId(Name, vm.Env, loc).Unquote(loc, vm);
+    public override Form Unquote(Loc loc, VM vm) => GetId(Name, vm.Env, loc).Unquote(loc, vm);
 }

@@ -16,6 +16,10 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
 
+* add #-reader
+** rename len to length
+** update tests/readme
+
 * add Pair slice support
 
 * aoc2

@@ -22,3 +22,7 @@
 
 (check 3
   (eval '(+ 1 2)))
+
+(check '[foo 42 bar]
+  (let [c '(+ 35 7)]
+    '[foo ,c bar]))
