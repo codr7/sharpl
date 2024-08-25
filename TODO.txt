@@ -10,13 +10,13 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add Pair slice support
-
 * debug '+ unquote
 
 (check '[1 42 2]
   (let [c '(+ 35 7)]
     '[1 ,c 2]))
+
+* add Pair slice support
 
 * aoc2
 ** add filter macro
