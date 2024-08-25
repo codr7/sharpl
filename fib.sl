@@ -7,8 +7,8 @@
 (^ fib-list [n l]
   (else (< n (len l))
     (l n)
-    (let [result (else (< n 2) n (+ (fib-list (- n 1) l)
-                                    (fib-list (- n 2) l)))] 
+    (let [result (else (< n 2) n (+ (fib-list (dec n) l)
+                                    (fib-list (dec n) l)))] 
       (push l result)
 	    result)))
 
