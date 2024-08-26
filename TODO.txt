@@ -48,7 +48,16 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 *** one for each arity
 
 * add ports
-** custom protocol
+** add port type
+** port/send/recv methods
+** port/spawn
+*** start thread
+**** separate vm
+*** channels from nets project
+** tcp
+*** port/connect/listen/
+** udp
+*** port/send-to/recv-from
 
 JsonSerializer serializer = new JsonSerializer();
 MyObject o;
@@ -65,19 +74,6 @@ using (JsonReader reader = new JsonTextReader(sr))
         }
     }
 }
-
-** add port type
-*** support push/pop
-** port/spawn
-*** start thread
-**** separate vm
-*** channels from nets project
-** tcp
-*** port/connect 
-*** port/listen
-** udp
-*** port/send
-*** port/recv
 
 * add while lop
 ** iterate while condition is true
