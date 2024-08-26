@@ -1,11 +1,7 @@
-257
-144
-347
-
-246
-114
-328
-304
+399
+168
+483
+523
 
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
@@ -46,6 +42,11 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * make macros composeable
 ** create user method like VM.Compose
 *** one for each arity
+
+* add Com type
+** Channels from nets project
+** Add threads
+*** separate VMs
 
 * add while lop
 ** iterate while condition is true
