@@ -47,10 +47,37 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** create user method like VM.Compose
 *** one for each arity
 
-* add Com type
-** Channels from nets project
-** Add threads
-*** separate VMs
+* add ports
+** custom protocol
+
+JsonSerializer serializer = new JsonSerializer();
+MyObject o;
+using (FileStream s = File.Open("bigfile.json", FileMode.Open))
+using (StreamReader sr = new StreamReader(s))
+using (JsonReader reader = new JsonTextReader(sr))
+{
+    while (reader.Read())
+    {
+        // deserialize only when there's "{" character in the stream
+        if (reader.TokenType == JsonToken.StartObject)
+        {
+            o = serializer.Deserialize<MyObject>(reader);
+        }
+    }
+}
+
+** add port type
+*** support push/pop
+** port/spawn
+*** start thread
+**** separate vm
+*** channels from nets project
+** tcp
+*** port/connect 
+*** port/listen
+** udp
+*** port/send
+*** port/recv
 
 * add while lop
 ** iterate while condition is true
