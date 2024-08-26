@@ -6,7 +6,7 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* change Sym/gsym
+* change Sym/gensym
 ** update readme/tests
 
 * add #-reader
@@ -14,6 +14,10 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** update tests/benchmarks/aoc/readme
 
 * add Pair slice support
+
+* rename eval to emit
+** add proper eval
+** update readme
 
 * aoc2
 ** add filter macro
