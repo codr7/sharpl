@@ -37,6 +37,9 @@
 (check 42:2
   (parse-int "42foo"))
 
+(check T
+  (= (emit '(+ 1 2)) (eval '(+ 1 2))))
+
 (load "array-tests.sl")
 (load "char-tests.sl")
 (load "fib-tests.sl")

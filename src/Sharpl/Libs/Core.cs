@@ -298,21 +298,27 @@ public class Core : Lib
                  args.Emit(vm, new Form.Queue());
                  skipEnd.PC = vm.EmitPC;
              });
-
-        BindMacro("eval", [], (loc, target, vm, args) =>
+ 
+        BindMacro("emit", ["code?"], (loc, target, vm, args) =>
         {
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             var startPC = vm.EmitPC;
             foreach (var a in args) { vm.Emit(a.Unquote(loc, vm)); }
             args.Clear();
-            skip.PC = vm.EmitPC;
             vm.Emit(Ops.Stop.Make());
-
+            skip.PC = vm.EmitPC;
+            
             var stack = new Stack();
             vm.Eval(startPC, stack);
             stack.Reverse();
+
             foreach (var it in stack) { args.PushFirst(new Forms.Literal(loc, it)); }
+        });
+
+        BindMethod("eval", ["code?"], (loc, target, vm, stack, arity) => {
+            var f = stack.Pop().Unquote(loc, vm);
+            vm.Eval(f, stack);
         });
 
         BindMethod("fail", [], (loc, target, vm, stack, arity) =>
@@ -328,6 +334,20 @@ public class Core : Lib
 
             throw new EvalError(loc, res.ToString());
         });
+
+        BindMethod("gensym", ["name"], (loc, target, vm, stack, arity) =>
+            {
+                stack.Reverse(arity);
+                var res = new StringBuilder();
+
+                while (arity > 0)
+                {
+                    stack.Pop().Say(res);
+                    arity--;
+                }
+
+                stack.Push(Value.Make(Sym, vm.Gensym(res.ToString())));
+            });
 
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
             {
@@ -666,20 +686,6 @@ public class Core : Lib
                 }
 
                 Console.WriteLine(res.ToString());
-            });
-
-        BindMethod("sym", ["x"], (loc, target, vm, stack, arity) =>
-            {
-                stack.Reverse(arity);
-                var res = new StringBuilder();
-
-                while (arity > 0)
-                {
-                    stack.Pop().Say(res);
-                    arity--;
-                }
-
-                stack.Push(Value.Make(Sym, vm.Intern(res.ToString())));
             });
 
         BindMethod("type-of", ["x"], (loc, target, vm, stack, arity) =>

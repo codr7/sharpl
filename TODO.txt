@@ -1,3 +1,5 @@
+April 29th
+
 399
 168
 483
@@ -6,18 +8,11 @@
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* change Sym/gensym
-** update readme/tests
-
 * add #-reader
 ** rename len to length
 ** update tests/benchmarks/aoc/readme
 
 * add Pair slice support
-
-* rename eval to emit
-** add proper eval
-** update readme
 
 * aoc2
 ** add filter macro
@@ -72,6 +67,15 @@ using (JsonReader reader = new JsonTextReader(sr))
         {
             o = serializer.Deserialize<MyObject>(reader);
         }
+    }
+}
+
+using (FileStream? fileStream = new FileStream("hugefile.json", FileMode.Open))
+{
+    IAsyncEnumerable<Person?> people = JsonSerializer.DeserializeAsyncEnumerable<Person?>(fileStream);
+    await foreach (Person? person in people)
+    {
+        Console.WriteLine($"Hello, my name is {person.Name}!");
     }
 }
 

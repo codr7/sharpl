@@ -1,12 +1,12 @@
 (check 'foo42
-  (sym "foo" 42))
+  (Sym "foo" 42))
 
 (check (= 'foo 'foo))
 
 (check F (= 'foo 'bar))
 
 (check F
-  (= (Sym 'foo) (Sym 'foo)))
+  (= (gensym 'foo) (gensym 'foo)))
 
 (check ['foo 'bar 'baz]
   '[foo bar baz])

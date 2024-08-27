@@ -248,15 +248,15 @@ The `Nil` type has one value, `_`; which really represents the absence of a valu
 The `Bit` type has two values, `T` and `F`.
 
 ### symbols
-Symbols may be created by quoting identifiers.
+Symbols may be created by quoting identifiers or using the type constructor.
 
 ```
-(= (sym 'foo "bar") 'foobar)
+(= (Sym 'foo "bar") 'foobar)
 ```
 `T`
 
 #### unique
-Unique symbols may be created using the type constructor.
+`gensym` may be used to create unique symbols.
 
 ```
   (Sym 'foo)
@@ -490,10 +490,20 @@ Sharpl.EvalError: repl@1:2 bummer
 ```
 
 ## evaluation
-`eval` may be used to evaluate code at emit time.
+
+### dynamic
+`eval` may be used to dynamically evaluate code at runtime.
 
 ```
 (eval '(+ 1 2))
+```
+`3`
+
+### static
+`emit` may be used to evaluate code once as it is emitted.
+
+```
+(emit '(+ 1 2))
 ```
 `3`
 

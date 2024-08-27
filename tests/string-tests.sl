@@ -13,9 +13,6 @@
   (string/reverse "abc"))
 
 (check "bar"
-  ("foobarbaz" 2:3))
-
-(check "bar"
   ("foobarbaz" 3:3))
 
 (check "abc"

@@ -103,7 +103,6 @@ public class Call : Form
     }
 
     public override Form Unquote(Loc loc, VM vm) {
-        Console.WriteLine("CALL UNQUOTE " + Target);
         return new Call(loc, Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray());
     }
 }
