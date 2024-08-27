@@ -14,7 +14,7 @@
     (reduce decode-game games {})))
 	
 (^read-games [path]
-  (iter/enum (map decode-line (read-lines path)) 1))
+  (enumerate (map decode-line (read-lines path)) 1))
 
 (^is-possible [game]
   (not (or (> (game 'red) 12)
@@ -22,7 +22,7 @@
            (> (game 'blue) 14))))
 
 (^sum-games [path]
-  (reduce + (map 0 (filter 1 & is-possible (read-games path))) 0))
+  (sum (map 0 (filter 1 & is-possible (read-games path)))))
     
 (check 2268
   (sum-games "input2"))

@@ -7,7 +7,7 @@
   (parse-int:_ (String (find-digit line) (find-digit (string/reverse line)))))
 
 (^calibrate [input]
-  (reduce + (map decode-line (io/read-lines input)) 0))
+  (sum (map decode-line (io/read-lines input))))
 
 (check 55108
   (calibrate "input1"))

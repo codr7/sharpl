@@ -127,4 +127,14 @@ public class Iter : Lib
                   done.PC = vm.EmitPC;
               });
     }
+
+    protected override void OnInit(VM vm)
+    {
+        Import(vm.CoreLib);
+
+        vm.Eval("""
+          (^sum [in]
+            (reduce + in 0))
+        """);
+    }
 }

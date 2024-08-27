@@ -8,18 +8,24 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add prefix reader
+* add net/listen/connect
+** add net lib
+** add port lib
+** return Port
+*** produce NetworkStream:s
+
+* add min/max methods
+** require comparable trait
+
+* add string/split
 
 * add Pair slice support
 
 * aoc2
 ** add filter macro
 *** jalang
-** add string/split
-** add iter/enum
+** add iter/enumerate
 *** src & start index (default 0)
-** add min/max methods
-*** require comparable trait
 ** implement pair unification in let macro
 ** add support for _ slicing (array/string/list/map)
 ** make values callable
