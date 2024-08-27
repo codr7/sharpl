@@ -25,6 +25,7 @@ public class VM
             Readers.Char.Instance,
             Readers.Fix.Instance,
             Readers.Int.Instance,
+            Readers.Length.Instance,
             Readers.Map.Instance,
             Readers.Pair.Instance,
             Readers.Quote.Instance,
@@ -39,7 +40,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 21;
+    public static readonly int VERSION = 22;
 
     public readonly Libs.Char CharLib;
     public readonly Core CoreLib = new Core();

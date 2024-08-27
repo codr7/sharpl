@@ -393,7 +393,7 @@ public class Core : Lib
                 stack.Push(Value.Make(Bit, res));
             });
 
-        BindMethod("len", ["it"], (loc, target, vm, stack, arity) =>
+        BindMethod("length", ["it"], (loc, target, vm, stack, arity) =>
             {
                 var v = stack.Pop();
                 if (v.Type is LengthTrait st) { stack.Push(Int, st.Length(v)); }

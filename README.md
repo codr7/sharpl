@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v21
+sharpl v22
 
    1 (say 'hello)
    2 
@@ -375,6 +375,14 @@ String literals may be defined using double quotes.
 (string/up "Foo")
 ```
 `"FOO"`
+
+### lengths
+`#` or `length` may be used to get the length of any composite value.
+
+```
+(= #[1 2 3] (length "foo"))
+```
+`T`
 
 ### stacks
 Pairs, arrays, lists and strings all implement the stack trait.

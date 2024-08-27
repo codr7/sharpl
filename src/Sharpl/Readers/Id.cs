@@ -11,7 +11,7 @@ public struct Id : Reader
             c == '(' || c == ')' ||
             c == '[' || c == ']' ||
             c == '{' || c == '}' ||
-            c == '\'' || c == ',' || c == '"' || c == ':' || c == '&');
+            c == '\'' || c == ',' || c == '"' || c == ':' || c == '&' || c == '#');
 
 
     public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)

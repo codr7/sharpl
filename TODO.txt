@@ -8,9 +8,7 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add #-reader
-** rename len to length
-** update tests/benchmarks/aoc/readme
+* add prefix reader
 
 * add Pair slice support
 

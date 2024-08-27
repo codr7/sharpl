@@ -12,7 +12,7 @@
   (Pair [1 2 3]*))
 
 (check 3
-  (len 1:2:3))
+  (length 1:2:3))
 
 (check 1:2:3
   (let [foo 2:3] 

@@ -5,7 +5,7 @@
   (else (> n 1) (return (fib-tail (dec n) b (+ a b))) (else (is n 0) a b)))
 
 (^ fib-list [n cache]
-  (else (< n (len cache))
+  (else (< n #cache)
     (cache n)
     (let [result (else (< n 2) n (+ (fib-list (dec n) cache)
                                     (fib-list (dec n) cache)))] 

@@ -12,3 +12,6 @@
 
 (check (List 2 3)
   ((List 1 2 3 4) 1:2))
+
+(check 3
+  #(List 1 2 3))

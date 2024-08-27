@@ -7,7 +7,7 @@
   (string/down "Foo"))
 
 (check 3
-  (len "foo"))
+  #"foo")
 
 (check "cba"
   (string/reverse "abc"))

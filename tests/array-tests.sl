@@ -41,3 +41,6 @@
 (check 3:[1 2]
   (let [foo [1 2 3]] 
     (pop foo):foo))
+
+(check 3
+  #[1 2 3])
