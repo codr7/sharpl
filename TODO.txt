@@ -14,9 +14,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** return Port
 *** produce NetworkStream:s
 
-* add min/max methods
-** require comparable trait
-
 * add string/split
 
 * add Pair slice support

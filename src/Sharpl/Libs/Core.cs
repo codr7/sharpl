@@ -512,6 +512,38 @@ public class Core : Lib
              });
         });
 
+        BindMethod("max", ["x", "y?"], (loc, target, vm, stack, arity) => {
+            var v = stack.Pop();
+            var t = v.Type as ComparableTrait;
+            arity--;
+
+            while (arity > 0)
+            {
+                var sv = stack.Pop();
+                if (sv.Type != t) { throw new EvalError(loc, "Wrong type: {sv.Type}/{t}"); }
+                if (t.Compare(sv, v) != Order.LT) { v = sv; }
+                arity--;
+            }
+
+            stack.Push(v);
+        });
+
+        BindMethod("min", ["x", "y?"], (loc, target, vm, stack, arity) => {
+            var v = stack.Pop();
+            var t = v.Type as ComparableTrait;
+            arity--;
+
+            while (arity > 0)
+            {
+                var sv = stack.Pop();
+                if (sv.Type != t) { throw new EvalError(loc, "Wrong type: {sv.Type}/{t}"); }
+                if (t.Compare(sv, v) != Order.GT) { v = sv; }
+                arity--;
+            }
+
+            stack.Push(v);
+        });
+
         BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Bit, !(bool)stack.Pop()));
 
         BindMacro("or", ["value1"], (loc, target, vm, args) =>

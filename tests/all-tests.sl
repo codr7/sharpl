@@ -40,6 +40,12 @@
 (check T
   (= (emit '(+ 1 2)) (eval '(+ 1 2))))
 
+(check 1
+  (min 3 1 2))
+
+(check 3
+  (max 1 3 2))
+
 (load "array-tests.sl")
 (load "char-tests.sl")
 (load "fib-tests.sl")
