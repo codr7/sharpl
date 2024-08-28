@@ -8,17 +8,19 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* Solve async iter
-
-* Fix object ids
-** Core/Pipe
-** Net/Stream
-** Net/Server
-** IO/InputStream
+* add json support
 
 * add Port type
 ** add Port interface
 *** port/get/put methods
+*** send json
+
+* Fix object ids
+** core/Pipe
+** net/Stream
+** net/Server
+** io/InputStream
+** always include lib name in type names
 
 * add string/split
 
