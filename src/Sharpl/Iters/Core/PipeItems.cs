@@ -12,7 +12,7 @@ public class PipeItems : BasicIter
     }
 
     public override Value? Next() {
-
-        return Source.ReadAsync();
+        var task = Task.Run<Value?>(async () => await Source.ReadAsync());
+        return task.Result;
     }
 }

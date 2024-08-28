@@ -18,7 +18,7 @@ public class ServerType : Type<TcpListener>, CloseTrait, IterTrait
 
         Task.Run(async () =>
         {
-            if (await s.AcceptTcpClientAsync() is TcpClient tc)
+            while (await s.AcceptTcpClientAsync() is TcpClient tc)
             {
                 await c.Writer.WriteAsync(Value.Make(Libs.Net.Stream, tc.GetStream()));
             }

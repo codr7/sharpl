@@ -17,9 +17,10 @@ public class Net : Lib
 
         BindMethod("connect", ["addr"], (loc, target, vm, stack, arity) =>
         {
-            var a = stack.Pop().CastUnbox(loc, Core.Pair);
+            var v = stack.Pop().CastUnbox(loc, Core.Pair);
+            var a = IPAddress.Parse(v.Item1.Cast(loc, Core.String));
             var c = new TcpClient();
-            c.Connect(a.Item1.Cast(loc, Core.String), a.Item2.CastUnbox(loc, Core.Int));
+            c.Connect(a, v.Item2.CastUnbox(loc, Core.Int));
             stack.Push(Stream, c.GetStream());
         });
 
@@ -30,7 +31,7 @@ public class Net : Lib
 
             Task.Run(async () =>
             {
-                if (await s.AcceptTcpClientAsync() is TcpClient tc)
+                while (await s.AcceptTcpClientAsync() is TcpClient tc)
                 {
                     await c.Writer.WriteAsync(Value.Make(Stream, tc.GetStream()));
                 }
@@ -41,8 +42,10 @@ public class Net : Lib
 
         BindMethod("listen", ["addr"], (loc, target, vm, stack, arity) =>
         {
-            var a = stack.Pop().CastUnbox(loc, Core.Pair);
-            var s = new TcpListener(IPAddress.Parse(a.Item1.Cast(loc, Core.String)), a.Item2.CastUnbox(loc, Core.Int));
+            var v = stack.Pop().CastUnbox(loc, Core.Pair);
+            var a = IPAddress.Parse(v.Item1.Cast(loc, Core.String));
+            var s = new TcpListener(a, v.Item2.CastUnbox(loc, Core.Int));
+            s.Start();
             stack.Push(Server, s);
         });
     }
