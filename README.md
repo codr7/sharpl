@@ -242,7 +242,7 @@ For others; like arrays and maps; two values may well be equal despite having di
 ## types
 
 ### nil
-The `Nil` type has one value, `_`; which really represents the absence of a value.
+The `Nil` type has one value (`_`), which represents the absence of a value.
 
 ### bits
 The `Bit` type has two values, `T` and `F`.
@@ -265,7 +265,7 @@ Symbols may be created by quoting identifiers or using the type constructor.
 ```
 
 ### characters
-Character literals may be defined using `\`.
+Character literals may be defined by prefixing with `\`.
 
 ```
 (char/is-digit \7)
