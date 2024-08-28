@@ -22,8 +22,8 @@ All features described in this document are part of the [test suite](https://git
 - Pairs (`a:b`) are used everywhere, all the time.
 - Maps (`{k1:v1...kN:vN}`) are ordered.
 - Methods may be composed using `&`.
-- Varargs use `*`, similar to Python.
-- Splatting is also performed using `*`, simlar to Python.
+- Varargs (`foo*`) are similar to Python.
+- Splatting (`[1 2 3]*`) is simlar to Python.
 - Unified, deeply integrated iterator protocol.
 - Default decimal type is fixpoint.
 - Nil is written `_`.
@@ -31,10 +31,10 @@ All features described in this document are part of the [test suite](https://git
 - Zeros and empty strings, arrays, lists and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
 - Lambdas look like anonymous methods.
-- `eval` evaluates once, at emit time.
+- Compile time eval (called `emit`), similar to Zig's comptime.
 - Explicit tail calls using `return`.
 - Parens are used for calls only.
-- Most things are callable, simlar to Clojure.
+- Many things are callable, simlar to Clojure.
 - Line numbers are a thing.
 
 ## bindings
