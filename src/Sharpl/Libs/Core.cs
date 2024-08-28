@@ -23,6 +23,7 @@ public class Core : Lib
     public static readonly MethodType Method = new MethodType("Method");
     public static readonly NilType Nil = new NilType("Nil");
     public static readonly PairType Pair = new PairType("Pair");
+    public static readonly PipeType Pipe = new PipeType("Pipe");
     public static readonly StringType String = new StringType("String");
     public static readonly SymType Sym = new SymType("Sym");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
@@ -111,6 +112,7 @@ public class Core : Lib
         BindType(Meta);
         BindType(Method);
         BindType(Pair);
+        BindType(Pipe);
         BindType(String);
         BindType(Sym);
         BindType(UserMethod);
@@ -255,16 +257,23 @@ public class Core : Lib
              vm.Emit(Ops.Check.Make(loc));
          });
 
+        BindMethod("close", ["it"], (loc, target, vm, stack, arity) =>
+        {
+            var it = stack.Pop();
+            if (it.Type is CloseTrait ct) { ct.Close(it); }
+            else { throw new EvalError(loc, $"Not supported: {it}"); }
+        });
+
         BindMacro("dec", [], (loc, target, vm, args) =>
-       {
-           if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
-           {
-               var r = v.CastUnbox(Binding);
-               vm.Emit(Ops.Decrement.Make(r));
-               vm.Emit(Ops.GetRegister.Make(r));
-           }
-           else { throw new EmitError(loc, "Invalid target"); }
-       });
+        {
+            if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
+            {
+                var r = v.CastUnbox(Binding);
+                vm.Emit(Ops.Decrement.Make(r));
+                vm.Emit(Ops.GetRegister.Make(r));
+            }
+            else { throw new EmitError(loc, "Invalid target"); }
+        });
 
         BindMacro("demit", [], (loc, target, vm, args) =>
         {
@@ -298,7 +307,7 @@ public class Core : Lib
                  args.Emit(vm, new Form.Queue());
                  skipEnd.PC = vm.EmitPC;
              });
- 
+
         BindMacro("emit", ["code?"], (loc, target, vm, args) =>
         {
             var skip = new Label();
@@ -308,7 +317,7 @@ public class Core : Lib
             args.Clear();
             vm.Emit(Ops.Stop.Make());
             skip.PC = vm.EmitPC;
-            
+
             var stack = new Stack();
             vm.Eval(startPC, stack);
             stack.Reverse();
@@ -316,7 +325,8 @@ public class Core : Lib
             foreach (var it in stack) { args.PushFirst(new Forms.Literal(loc, it)); }
         });
 
-        BindMethod("eval", ["code?"], (loc, target, vm, stack, arity) => {
+        BindMethod("eval", ["code?"], (loc, target, vm, stack, arity) =>
+        {
             var f = stack.Pop().Unquote(loc, vm);
             vm.Eval(f, stack);
         });
@@ -512,7 +522,8 @@ public class Core : Lib
              });
         });
 
-        BindMethod("max", ["x", "y?"], (loc, target, vm, stack, arity) => {
+        BindMethod("max", ["x", "y?"], (loc, target, vm, stack, arity) =>
+        {
             var v = stack.Pop();
             var t = v.Type as ComparableTrait;
             arity--;
@@ -528,7 +539,8 @@ public class Core : Lib
             stack.Push(v);
         });
 
-        BindMethod("min", ["x", "y?"], (loc, target, vm, stack, arity) => {
+        BindMethod("min", ["x", "y?"], (loc, target, vm, stack, arity) =>
+        {
             var v = stack.Pop();
             var t = v.Type as ComparableTrait;
             arity--;

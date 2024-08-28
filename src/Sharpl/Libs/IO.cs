@@ -1,7 +1,7 @@
-namespace Sharpl.Libs;
-
 using Sharpl.Iters.IO;
 using Sharpl.Types.IO;
+
+namespace Sharpl.Libs;
 
 public class IO : Lib
 {

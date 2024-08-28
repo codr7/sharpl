@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
-using System.Xml.Linq;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
 
@@ -43,9 +42,10 @@ public class VM
     public static readonly int VERSION = 22;
 
     public readonly Libs.Char CharLib;
-    public readonly Core CoreLib = new Core();
-    public readonly IO IOLib;
+    public readonly Libs.Core CoreLib = new Libs.Core();
+    public readonly Libs.IO IOLib;
     public readonly Libs.Iter IterLib;
+    public readonly Libs.Net NetLib;
     public readonly Libs.String StringLib;
     public readonly Libs.Term TermLib;
     public readonly Lib UserLib = new Lib("user", null, []);
@@ -91,8 +91,11 @@ public class VM
         StringLib = new Libs.String();
         StringLib.Init(this);
 
-        IOLib = new IO(this);
+        IOLib = new Libs.IO(this);
         IOLib.Init(this);
+
+        NetLib = new Libs.Net();
+        NetLib.Init(this);
 
         TermLib = new Libs.Term(this);
         TermLib.Init(this);

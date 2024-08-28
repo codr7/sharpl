@@ -8,11 +8,17 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add net/listen/connect
-** add net lib
-** add port lib
-** return Port
-*** produce NetworkStream:s
+* Solve async iter
+
+* Fix object ids
+** Core/Pipe
+** Net/Stream
+** Net/Server
+** IO/InputStream
+
+* add Port type
+** add Port interface
+*** port/get/put methods
 
 * add string/split
 
