@@ -6,7 +6,7 @@ namespace Sharpl;
 
 public static class Json
 {
-    public static Value? ReadArray(TextReader source, ref Loc loc)
+    public static Value? ReadArray(VM vm, TextReader source, ref Loc loc)
     {
         var c = source.Peek();
         if (c == -1 || c != '[') { return null; }
@@ -36,7 +36,7 @@ public static class Json
                     }
             }
 
-            if (ReadValue(source, ref loc) is Value it) { items.Add(it); }
+            if (ReadValue(vm, source, ref loc) is Value it) { items.Add(it); }
             else { throw new ReadError(loc, "Unexpected end of array"); }
         }
 
@@ -65,8 +65,7 @@ public static class Json
             loc.Column++;
         }
 
-        if (startLoc.Column == loc.Column) { return null; }
-        return Value.Make(Core.Fix, Fix.Make(e, value));
+        return (startLoc.Column == loc.Column) ? null : Value.Make(Core.Fix, Fix.Make(e, value));
     }
 
     public static Value? ReadId(TextReader source, ref Loc loc)
@@ -98,7 +97,52 @@ public static class Json
         };
     }
 
-    public static Value? ReadMap(TextReader source, ref Loc loc) => Value.Nil;
+    public static Value? ReadMap(VM vm, TextReader source, ref Loc loc)
+    {
+        var c = source.Peek();
+        if (c == -1 || c != '{') { return null; }
+        loc.Column++;
+        source.Read();
+        var m = new OrderedMap<Value, Value>();
+
+        while (true)
+        {
+            ReadWhitespace(source, ref loc);
+            switch (source.Peek())
+            {
+                case -1: throw new ReadError(loc, "Unexpected end of map");
+
+                case '}':
+                    {
+                        loc.Column++;
+                        source.Read();
+                        goto EXIT;
+                    }
+
+                case ',':
+                    {
+                        loc.Column++;
+                        source.Read();
+                        break;
+                    }
+            }
+
+            if (ReadString(source, ref loc) is Value k)
+            {
+                ReadWhitespace(source, ref loc);
+                c = source.Peek();
+                if (c != ':') { throw new ReadError(loc, $"Invalid map: {c}"); }
+                loc.Column++;
+                source.Read();
+                if (ReadValue(vm, source, ref loc) is Value v) { m[Value.Make(Core.Sym, vm.Intern(k.Cast(Core.String)))] = v; }
+                else { throw new ReadError(loc, "Unexpected end of map"); }
+            }
+            else { throw new ReadError(loc, "Unexpected end of map"); }
+        }
+
+    EXIT:
+        return Value.Make(Core.Map, m);
+    }
     public static Value? ReadNumber(TextReader source, ref Loc loc)
     {
         var v = 0;
@@ -116,8 +160,7 @@ public static class Json
             loc.Column++;
         }
 
-        if (startLoc.Column == loc.Column) { return null; }
-        return Value.Make(Core.Int, v);
+        return (startLoc.Column == loc.Column) ? null : Value.Make(Core.Int, v);
     }
 
     public static Value? ReadString(TextReader source, ref Loc loc)
@@ -156,14 +199,14 @@ public static class Json
         return (s == "") ? null : Value.Make(Core.String, s);
     }
 
-    public static Value? ReadValue(TextReader source, ref Loc loc)
+    public static Value? ReadValue(VM vm, TextReader source, ref Loc loc)
     {
     START:
         switch (source.Peek())
         {
             case -1: return null;
-            case '[': return ReadArray(source, ref loc);
-            case '{': return ReadMap(source, ref loc);
+            case '[': return ReadArray(vm, source, ref loc);
+            case '{': return ReadMap(vm, source, ref loc);
             case '"': return ReadString(source, ref loc);
 
             case var c:

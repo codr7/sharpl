@@ -133,5 +133,5 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
     }
 
     public override string ToJson(Loc loc, Value value) =>
-        $"{{{string.Join(',', value.Cast(this).Items.Select(it => $"{it.Item1.ToJson(loc)}: {it.Item2.ToJson(loc)}").ToArray())}}}";
+        $"{{{string.Join(',', value.Cast(this).Items.Select(it => $"{it.Item1.ToJson(loc)}:{it.Item2.ToJson(loc)}").ToArray())}}}";
 }

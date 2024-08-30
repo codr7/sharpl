@@ -11,7 +11,7 @@ public class Json : Lib
         BindMethod("decode", ["value"], (loc, target, vm, stack, arity) =>
         {
             var jsLoc = new Loc("json");
-            var v = Sharpl.Json.ReadValue(new StringReader(stack.Pop().Cast(Core.String)), ref jsLoc);
+            var v = Sharpl.Json.ReadValue(vm, new StringReader(stack.Pop().Cast(Core.String)), ref jsLoc);
             stack.Push((v is null) ? Value.Nil : (Value)v);
         });
 

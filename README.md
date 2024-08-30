@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v22
+sharpl v23
 
    1 (say 'hello)
    2 
@@ -514,6 +514,16 @@ Sharpl.EvalError: repl@1:2 bummer
 (emit '(+ 1 2))
 ```
 `3`
+
+## json
+`json/encode` and `json/decode` may be used to convert values to/from [JSON](https://www.json.org/json-en.html).
+
+```
+(let [dv {'foo:42 'bar:.5 'baz:"abc" 'qux:[T F _]}
+      ev (json/encode dv)]
+  ev:(= (json/decode ev) dv))
+```
+`"{"bar":0.5,"baz":"abc","foo":42,"qux":[true,false,null]}":T`
 
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
