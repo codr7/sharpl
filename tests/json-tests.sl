@@ -18,3 +18,6 @@
 
 (check _
   (json/decode "null"))
+
+(check "foo"
+  (json/decode "\"foo\""))

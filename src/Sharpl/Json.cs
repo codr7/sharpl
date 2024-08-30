@@ -84,7 +84,41 @@ public static class Json
         return Value.Make(Core.Int, v);
     }
 
-    public static Value? ReadString(TextReader source, ref Loc loc) => Value.Nil;
+    public static Value? ReadString(TextReader source, ref Loc loc)
+    {
+        var c = source.Peek();
+        if (c == -1 || c != '"') { return null; }
+        source.Read();
+        var sb = new StringBuilder();
+
+        while (true)
+        {
+            c = source.Peek();
+            if (c == -1) { throw new ReadError(loc, "Invalid string"); }
+            source.Read();
+            if (c == '"') { break; }
+
+            if (c == '\\')
+            {
+                loc.Column++;
+
+                c = source.Read() switch
+                {
+                    'r' => '\r',
+                    'n' => '\n',
+                    '\\' => '\\',
+                    '"' => '"',
+                    var v => throw new ReadError(loc, $"Invalid escape: {Convert.ToChar(v)}")
+                };
+            }
+
+            sb.Append(Convert.ToChar(c));
+            loc.Column++;
+        }
+
+        var s = sb.ToString();
+        return (s == "") ? null : Value.Make(Core.String, s);
+    }
 
     public static Value? ReadValue(TextReader source, ref Loc loc)
     {
