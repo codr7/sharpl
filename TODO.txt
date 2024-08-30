@@ -8,8 +8,7 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add json/decode
-** claes
+* finish json/decode
 
 * add quote args
 ** pass form/env
