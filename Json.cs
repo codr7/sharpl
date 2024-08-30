@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using Sharpl.Libs;
 
 namespace Sharpl;
@@ -32,7 +33,34 @@ public static class Json
         return Value.Make(Core.Fix, Fix.Make(e, value));
     }
 
-    public static Value? ReadId(TextReader source, ref Loc loc) => Value.Nil;
+    public static Value? ReadId(TextReader source, ref Loc loc)
+    {
+        var c = source.Peek();
+        if (c == -1) { return null; }
+        var cc = Convert.ToChar(c);
+        if (!char.IsAscii(cc)) { return null; }
+        var buffer = new StringBuilder();
+
+        while (true)
+        {
+            c = source.Peek();
+            if (c == -1) { break; }
+            cc = Convert.ToChar(c);
+            if (!char.IsAscii(cc)) { break; }
+            source.Read();
+            buffer.Append(cc);
+            loc.Column++;
+        }
+
+        return buffer.ToString() switch {
+            "" => null,
+            "null" => Value.Nil,
+            "true" => Value.T,
+            "false" => Value.F,
+            var id => throw new ReadError(loc, $"Unknown id: {id}")
+        };
+    }
+
     public static Value? ReadMap(TextReader source, ref Loc loc) => Value.Nil;
     public static Value? ReadNumber(TextReader source, ref Loc loc)
     {
@@ -59,7 +87,7 @@ public static class Json
 
     public static Value? ReadValue(TextReader source, ref Loc loc)
     {
-        START:
+    START:
         switch (source.Peek())
         {
             case -1: return null;
@@ -70,9 +98,10 @@ public static class Json
             case var c:
                 {
                     var cc = Convert.ToChar(c);
-                    
-                    if (char.IsWhiteSpace(cc)) { 
-                        ReadWhitespace(source, ref loc); 
+
+                    if (char.IsWhiteSpace(cc))
+                    {
+                        ReadWhitespace(source, ref loc);
                         goto START;
                     }
 
