@@ -59,6 +59,7 @@ public static class Json
 
     public static Value? ReadValue(TextReader source, ref Loc loc)
     {
+        START:
         switch (source.Peek())
         {
             case -1: return null;
@@ -69,7 +70,12 @@ public static class Json
             case var c:
                 {
                     var cc = Convert.ToChar(c);
-                    if (char.IsWhiteSpace(cc)) { return ReadWhitespace(source, ref loc); }
+                    
+                    if (char.IsWhiteSpace(cc)) { 
+                        ReadWhitespace(source, ref loc); 
+                        goto START;
+                    }
+
                     if (char.IsDigit(cc)) { return ReadNumber(source, ref loc); }
                     if (char.IsAscii(cc)) { return ReadId(source, ref loc); }
                     return null;
@@ -77,5 +83,24 @@ public static class Json
         }
     }
 
-    public static Value? ReadWhitespace(TextReader source, ref Loc loc) => Value.Nil;
+    public static void ReadWhitespace(TextReader source, ref Loc loc)
+    {
+        var c = source.Peek();
+
+        switch (c)
+        {
+            case ' ':
+            case '\t':
+                loc.Column++;
+                source.Read();
+                break;
+            case '\r':
+            case '\n':
+                loc.NewLine();
+                source.Read();
+                break;
+            default:
+                break;
+        }
+    }
 }
