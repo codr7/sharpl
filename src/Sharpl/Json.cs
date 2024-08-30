@@ -52,7 +52,8 @@ public static class Json
             loc.Column++;
         }
 
-        return buffer.ToString() switch {
+        return buffer.ToString() switch
+        {
             "" => null,
             "null" => Value.Nil,
             "true" => Value.T,
@@ -114,22 +115,23 @@ public static class Json
 
     public static void ReadWhitespace(TextReader source, ref Loc loc)
     {
-        var c = source.Peek();
-
-        switch (c)
+        while (true)
         {
-            case ' ':
-            case '\t':
-                loc.Column++;
-                source.Read();
-                break;
-            case '\r':
-            case '\n':
-                loc.NewLine();
-                source.Read();
-                break;
-            default:
-                break;
+            switch (source.Peek())
+            {
+                case ' ':
+                case '\t':
+                    loc.Column++;
+                    source.Read();
+                    break;
+                case '\r':
+                case '\n':
+                    loc.NewLine();
+                    source.Read();
+                    break;
+                default:
+                    return;
+            }
         }
     }
 }
