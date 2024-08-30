@@ -21,3 +21,6 @@
 
 (check "foo"
   (json/decode "\"foo\""))
+
+(check [T F _]
+  (json/decode "[true,false,null]"))

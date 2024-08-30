@@ -6,7 +6,43 @@ namespace Sharpl;
 
 public static class Json
 {
-    public static Value? ReadArray(TextReader source, ref Loc loc) => Value.Nil;
+    public static Value? ReadArray(TextReader source, ref Loc loc)
+    {
+        var c = source.Peek();
+        if (c == -1 || c != '[') { return null; }
+        loc.Column++;
+        source.Read();
+        var items = new List<Value>();
+
+        while (true)
+        {
+            ReadWhitespace(source, ref loc);
+            switch (source.Peek())
+            {
+                case -1: throw new ReadError(loc, "Unexpected end of array");
+
+                case ']':
+                    {
+                        loc.Column++;
+                        source.Read();
+                        goto EXIT;
+                    }
+
+                case ',':
+                    {
+                        loc.Column++;
+                        source.Read();
+                        break;
+                    }
+            }
+
+            if (ReadValue(source, ref loc) is Value it) { items.Add(it); }
+            else { throw new ReadError(loc, "Unexpected end of array"); }
+        }
+
+    EXIT:
+        return Value.Make(Core.Array, items.ToArray());
+    }
 
     public static Value? ReadDecimal(TextReader source, ref Loc loc, int value)
     {
@@ -44,7 +80,7 @@ public static class Json
         while (true)
         {
             c = source.Peek();
-            if (c == -1) { break; }
+            if (c == -1 || c == ',' || c == '[' || c == ']' || c == '{' || c == '}' || c == '"') { break; }
             cc = Convert.ToChar(c);
             if (!char.IsAscii(cc)) { break; }
             source.Read();
