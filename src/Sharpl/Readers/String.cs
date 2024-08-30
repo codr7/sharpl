@@ -21,6 +21,19 @@ public struct String : Reader
             if (c == -1) { throw new ReadError(loc, "Invalid string"); }
             source.Read();
             if (c == '"') { break; }
+            
+            if (c == '\\') {
+                loc.Column++;
+
+                c = source.Read() switch {
+                    'r' => '\r',
+                    'n' => '\n',
+                    '\\' => '\\',
+                    '"' => '"',
+                    var v => throw new ReadError(loc, $"Invalid escape: {Convert.ToChar(v)}")
+                };
+            }
+
             s.Append(Convert.ToChar(c));
             loc.Column++;
         }

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using Sharpl.Types.Core;
 
 namespace Sharpl;
@@ -64,6 +65,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         Say(result);
         return result.ToString();
     }
+
+    public string ToJson(Loc loc) => Type.ToJson(loc, this);
 
     public override string ToString()
     {

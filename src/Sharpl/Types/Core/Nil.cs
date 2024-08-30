@@ -8,4 +8,5 @@ public class NilType : Type<bool>, IterTrait
     public override bool Bool(Value value) => false;
     public Iter CreateIter(Value target) => Iters.Core.Nil.Instance;
     public override void Dump(Value value, StringBuilder result) =>  result.Append('_');
+    public override string ToJson(Loc loc, Value value) => "null";
 }

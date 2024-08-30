@@ -103,4 +103,6 @@ public class FixType(string name) :
 
         stack.Push(this, res);
     }
+
+    public override string ToJson(Loc loc, Value value) => Fix.ToString(value.CastUnbox(this), true);
 }

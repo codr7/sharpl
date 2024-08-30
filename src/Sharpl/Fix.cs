@@ -93,12 +93,12 @@ public static class Fix
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Frac(UT it) => Val(it) % Scale(Exp(it));
 
-    public static string ToString(UT it)
+    public static string ToString(UT it, bool forceZero = false)
     {
         var result = new StringBuilder();
         if (Negative(it)) { result.Append('-'); }
         var t = Math.Abs(Trunc(it));
-        if (t > 0) { result.Append(t); }
+        if (t > 0 || forceZero) { result.Append(t); }
         result.Append('.');
         result.Append(Math.Abs(Frac(it)));
         return result.ToString();

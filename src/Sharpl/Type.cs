@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using Sharpl.Forms;
 
 namespace Sharpl;
@@ -32,8 +33,9 @@ public abstract class AnyType(string name)
     public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args) => Emit(loc, vm, value, args);
     public abstract bool Equals(Value left, Value right);
     public virtual void Say(Value value, StringBuilder result) => Dump(value, result);
+    public virtual string ToJson(Loc loc, Value value) => throw new EvalError(loc, $"Not supported: {value}");
     public override string ToString() => Name;
-    public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(loc,  value);
+    public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(loc, value);
 }
 
 public class Type<T>(string name) : AnyType(name)

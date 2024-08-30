@@ -1,7 +1,6 @@
 
 namespace Sharpl.Types.Core;
 
-using System.Runtime.InteropServices;
 using System.Text;
 
 public class StringType(string name) : ComparableType<string>(name), IterTrait, LengthTrait, StackTrait
@@ -29,13 +28,16 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
             case 1:
                 {
                     var iv = stack.Pop();
-                    
-                    if (iv.Type == Libs.Core.Pair) {
+
+                    if (iv.Type == Libs.Core.Pair)
+                    {
                         var p = iv.CastUnbox(Libs.Core.Pair);
                         var i = p.Item1.CastUnbox(loc, Libs.Core.Int);
                         var n = p.Item2.CastUnbox(loc, Libs.Core.Int);
-                        stack.Push(Libs.Core.String, target.Cast(this)[i..(i+n)]);
-                    } else {
+                        stack.Push(Libs.Core.String, target.Cast(this)[i..(i + n)]);
+                    }
+                    else
+                    {
                         var i = iv.CastUnbox(loc, Libs.Core.Int);
                         stack.Push(Libs.Core.Char, target.Cast(this)[i]);
                     }
@@ -69,12 +71,14 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
     public int Length(Value target) => target.Cast(this).Length;
 
-    public Value Peek(Loc loc, VM vm, Value srcVal) {
+    public Value Peek(Loc loc, VM vm, Value srcVal)
+    {
         var src = srcVal.Cast(this);
         return (src.Length == 0) ? Value.Nil : Value.Make(Libs.Core.Char, src[^1]);
     }
 
-    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal)
+    {
         var sv = srcVal.Cast(this);
         if (sv.Length == 0) { return Value.Nil; }
         var c = sv[^1];
@@ -86,4 +90,6 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
         vm.Set(dst, Value.Make(this, dstVal.Cast(this) + val.CastUnbox(Libs.Core.Char)));
 
     public override void Say(Value value, StringBuilder result) => result.Append(value.Data);
+
+    public override string ToJson(Loc loc, Value value) => $"\"{value.Cast(this)}\"";
 }

@@ -130,4 +130,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
 
         result.Append(')');
     }
+
+    public override string ToJson(Loc loc, Value value) => 
+        $"[{string.Join(',', value.Cast(this).Select(it => it.ToJson(loc)).ToArray())}]";
 }

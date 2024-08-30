@@ -29,15 +29,18 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                 {
                     var m = target.Cast(this);
                     var kv = stack.Pop();
-                    
-                    if (kv.Type == Libs.Core.Pair) {
+
+                    if (kv.Type == Libs.Core.Pair)
+                    {
                         var p = kv.CastUnbox(Libs.Core.Pair);
                         var i = m.IndexOf(p.Item1);
                         if (i == -1) { throw new EvalError(loc, $"Key not found: {p.Item1}"); }
                         var j = m.IndexOf(p.Item2);
                         if (j == -1) { throw new EvalError(loc, $"Key not found: {p.Item2}"); }
-                        stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j+1)]));
-                    } else {
+                        stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j + 1)]));
+                    }
+                    else
+                    {
                         stack.Push(m.ContainsKey(kv) ? m[kv] : Value.Nil);
                     }
 
@@ -47,7 +50,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                 {
                     var m = target.Cast(this);
                     var v = stack.Pop();
-                    if (v.Equals(Value.Nil)) { m.Remove(stack.Pop()); } 
+                    if (v.Equals(Value.Nil)) { m.Remove(stack.Pop()); }
                     else { m.Set(stack.Pop(), v); }
                     break;
                 }
@@ -75,7 +78,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
         return res;
     }
 
-    
+
     public Iter CreateIter(Value target) =>
         new Iters.Core.EnumeratorItems(target.Cast(this).Items.Select(v => Value.Make(Libs.Core.Pair, v)).GetEnumerator());
 
@@ -128,4 +131,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
 
         result.Append('}');
     }
+
+    public override string ToJson(Loc loc, Value value) =>
+        $"{{{string.Join(',', value.Cast(this).Items.Select(it => $"{it.Item1.ToJson(loc)}: {it.Item2.ToJson(loc)}").ToArray())}}}";
 }

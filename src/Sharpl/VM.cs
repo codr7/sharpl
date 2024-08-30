@@ -35,7 +35,7 @@ public class VM
             Readers.Id.Instance
         ]);
 
-        public C() { }
+        public C() {}
     };
 
     public static readonly C DEFAULT = new C();
@@ -45,6 +45,7 @@ public class VM
     public readonly Libs.Core CoreLib = new Libs.Core();
     public readonly Libs.IO IOLib;
     public readonly Libs.Iter IterLib;
+    public readonly Libs.Json JsonLib;
     public readonly Libs.Net NetLib;
     public readonly Libs.String StringLib;
     public readonly Libs.Term TermLib;
@@ -90,6 +91,9 @@ public class VM
 
         StringLib = new Libs.String();
         StringLib.Init(this);
+
+        JsonLib = new Libs.Json();
+        JsonLib.Init(this);
 
         IOLib = new Libs.IO(this);
         IOLib.Init(this);

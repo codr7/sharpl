@@ -28,5 +28,5 @@ public class CharType(string name) :
             '\r' => "\\r",
             _ => c
         });
-    }
+    }    
 }

@@ -53,6 +53,7 @@
 (load "int-tests.sl")
 (load "io-tests.sl")  
 (load "iter-tests.sl")
+(load "json-tests.sl")
 (load "lib-tests.sl")
 (load "list-tests.sl")
 (load "logic-tests.sl")

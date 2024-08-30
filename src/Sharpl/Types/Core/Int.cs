@@ -80,4 +80,6 @@ public class IntType(string name) :
 
         stack.Push(this, res);
     }
+
+    public override string ToJson(Loc loc, Value value) => $"{value.CastUnbox(this)}";
 }

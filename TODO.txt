@@ -8,7 +8,13 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add json support
+* add json/decode
+** claes
+
+* add quote args
+** pass form/env
+*** add FExpr type
+** unquote inside method
 
 * add Port type
 ** add Port interface
