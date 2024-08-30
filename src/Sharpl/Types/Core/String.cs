@@ -5,6 +5,11 @@ using System.Text;
 
 public class StringType(string name) : ComparableType<string>(name), IterTrait, LengthTrait, StackTrait
 {
+    static string Escape(string value) => value
+        .Replace("\"", "\\\"")
+        .Replace("\r", "\\r")
+        .Replace("\n", "\\n");
+
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
@@ -65,7 +70,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
     public override void Dump(Value value, StringBuilder result)
     {
         result.Append('"');
-        result.Append(value.Data);
+        result.Append(Escape(value.Cast(this)));
         result.Append('"');
     }
 
@@ -91,5 +96,5 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
     public override void Say(Value value, StringBuilder result) => result.Append(value.Data);
 
-    public override string ToJson(Loc loc, Value value) => $"\"{value.Cast(this)}\"";
+    public override string ToJson(Loc loc, Value value) => $"\"{Escape(value.Cast(this))}\"";
 }

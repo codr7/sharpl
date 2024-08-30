@@ -523,7 +523,7 @@ Sharpl.EvalError: repl@1:2 bummer
       ev (json/encode dv)]
   ev:(= (json/decode ev) dv))
 ```
-`"{"bar":0.5,"baz":"abc","foo":42,"qux":[true,false,null]}":T`
+`"{\"bar\":0.5,\"baz\":\"abc\",\"foo\":42,\"qux\":[true,false,null]}":T`
 
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.
