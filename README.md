@@ -371,10 +371,19 @@ Or by calling the constructor explicitly.
 ### strings
 String literals may be defined using double quotes.
 
+`up` and `down` may be used to change case.
+
 ```
 (string/up "Foo")
 ```
 `"FOO"`
+
+`replace` may be used to replace all occurrences of a pattern.
+
+```
+(string/replace "foo bar baz" " ba" "")
+```
+`"foorz"`
 
 ### lengths
 `#` or `length` may be used to get the length of any composite value.
