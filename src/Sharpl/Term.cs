@@ -7,10 +7,11 @@ public class Term
 {
     private readonly StringBuilder buffer = new StringBuilder();
 
-    public void Flush()
+    public Term Flush()
     {
         Console.Write(buffer.ToString());
         buffer.Clear();
+        return this;
     }
 
     // TODO: Switch to .NET 9 and replace with
@@ -27,13 +28,19 @@ public class Term
     public int Height { get => Console.BufferHeight; }
 
 
-    public void MoveTo(int x, int? y = null)
+    public Term MoveTo(int x, int? y = null)
     {
         if (y == null) { CSI(x, 'G'); }
         else { CSI(y, ';', x, 'H'); }
+        return this;
     }
 
-    public void Reset() => CSI("0m");
+    public Term Reset()
+    {
+        CSI("0m");
+        return this;
+    }
+
     public void Restore() => CSI('u');
     public void Save() => CSI('s');
 
@@ -47,10 +54,23 @@ public class Term
     public void SetBg(Color color) =>
         CSI("48;2;", color.R, ';', color.G, ';', color.B, 'm');
 
-    public void SetFg(Color color) =>
+    public Term SetFg(Color color)
+    {
         CSI("38;2;", color.R, ';', color.G, ';', color.B, 'm');
+        return this;
+    }
 
     public int Width => Console.BufferWidth;
-    public void Write(object value) => buffer.Append(value);
-    public void WriteLine(object value) => Write($"{value}\n");
+
+    public Term Write(object value)
+    {
+        buffer.Append(value);
+        return this;
+    }
+
+    public Term WriteLine(object value)
+    {
+        Write($"{value}\n");
+        return this;
+    }
 }

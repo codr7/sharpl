@@ -13,6 +13,6 @@ public class Literal : Form
     public override void EmitCall(VM vm, Queue args) => Value.EmitCall(Loc, vm, args);
     public override bool Equals(Form other) => (other is Literal l) && l.Value.Equals(Value);
     public override Value? GetValue(VM vm) => Value;
-    public override string ToString() => Value.ToString();
+    public override string Dump(VM vm) => Value.Dump(vm);
     public override Form Unquote(Loc loc, VM vm) => Value.Unquote(loc, vm);
 }

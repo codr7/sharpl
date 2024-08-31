@@ -38,6 +38,16 @@ public class String : Lib
             stack.Push(Core.String, new string(cs));
         });
 
+        BindMethod("split", ["in", "sep"], (loc, target, vm, stack, arity) =>
+        {
+            var sep = stack.Pop().Cast(loc, Core.String);
+            var res = new Regex(sep).
+                Split(stack.Pop().Cast(loc, Core.String)).
+                Select(s => Value.Make(Core.String, s)).
+                ToArray();
+            stack.Push(Core.Array, res);
+        });
+
         BindMethod("up", ["in"], (loc, target, vm, stack, arity) =>
         {
             var s = stack.Pop().Cast(Core.String);

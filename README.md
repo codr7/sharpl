@@ -378,6 +378,12 @@ String literals may be defined using double quotes.
 ```
 `"FOO"`
 
+`split` may be used to split a string on a pattern.
+
+```
+(string/split "foo bar" " ")
+```
+
 `reverse` may be used to reverse a string.
 
 ```

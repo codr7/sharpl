@@ -14,6 +14,6 @@ public class UnquoteForm : Form
     public override bool Equals(Form other) => (other is UnquoteForm f) ? f.Target.Equals(Target) : false;
     public override bool IsSplat => Target.IsSplat;
     public override Form Quote(Loc loc, VM vm) => Target.Unquote(loc, vm);
-    public override string ToString() => $",{Target}";
+    public override string Dump(VM vm) => $",{Target.Dump(vm)}";
     public override Form Unquote(Loc loc, VM vm) => new UnquoteForm(loc, this);
 }

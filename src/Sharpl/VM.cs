@@ -129,11 +129,11 @@ public class VM
 
     public Value Compose(Loc loc, Form left, Form right, Form.Queue args)
     {
-        var m = new UserMethod(loc, this, $"{left} & {right}", [], [("values*", -1)], false);
+        var m = new UserMethod(loc, this, $"{left.Dump(this)} & {right.Dump(this)}", [], [("values*", -1)], false);
         var skip = new Label();
         Emit(Ops.Goto.Make(skip));
         m.StartPC = EmitPC;
-        Emit($"(return ({right} ({left} {args})))", loc);
+        Emit($"(return ({right.Dump(this)} ({left.Dump(this)} {args.Dump(this)})))", loc);
         Emit(Ops.ExitMethod.Make());
         skip.PC = EmitPC;
         return Value.Make(Libs.Core.UserMethod, m);
@@ -718,68 +718,6 @@ public class VM
         (frameOffset == -1) ? index : index + frames.Peek(frameOffset).Item2;
 
     public int Index(Register reg) => RegisterIndex(reg.FrameOffset, reg.Index);
-
-    public void REPL()
-    {
-        Term.SetFg(Color.FromArgb(255, 252, 173, 3));
-        Term.Write($"sharpl v{VERSION}\n\n");
-        Term.Reset();
-
-        var buffer = new StringBuilder();
-        var stack = new Stack();
-        var loc = new Loc("repl");
-        var bufferLines = 0;
-
-        while (true)
-        {
-            Term.SetFg(Color.FromArgb(255, 128, 128, 128));
-            Term.Write($"{(loc.Line + bufferLines),4} ");
-            Term.Reset();
-            Term.Flush();
-
-            var line = Console.In.ReadLine();
-
-            if (line is null)
-            {
-                break;
-            }
-
-            if (line == "")
-            {
-                var startPC = EmitPC;
-
-                try
-                {
-                    ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(this, new Form.Queue());
-                    Emit(Ops.Stop.Make());
-                    Eval(startPC, stack);
-
-                    Term.SetFg(Color.FromArgb(255, 0, 255, 0));
-                    Term.WriteLine(stack is [] ? Value.Nil : stack.Pop());
-                    Term.Reset();
-                }
-                catch (Exception e)
-                {
-                    Term.SetFg(Color.FromArgb(255, 255, 0, 0));
-                    Term.WriteLine(e);
-                    Term.Reset();
-                }
-                finally
-                {
-                    buffer.Clear();
-                    bufferLines = 0;
-                }
-
-                Term.Write("\n");
-            }
-            else
-            {
-                buffer.Append(line);
-                buffer.AppendLine();
-                bufferLines++;
-            }
-        }
-    }
 
     public void SetRegister(int frameOffset, int index, Value value) =>
         registers[RegisterIndex(frameOffset, index)] = value;

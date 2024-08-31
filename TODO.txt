@@ -8,8 +8,6 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add string/split
-
 * add quote args
 ** pass form/env
 *** add FExpr type

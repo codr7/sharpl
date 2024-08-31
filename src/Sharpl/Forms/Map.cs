@@ -70,7 +70,7 @@ public class Map : Form
     public override Form Quote(Loc loc, VM vm) =>
         new Map(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
 
-    public override string ToString()
+    public override string Dump(VM vm)
     {
         var b = new StringBuilder();
         b.Append('{');
@@ -79,7 +79,7 @@ public class Map : Form
         foreach (var f in Items)
         {
             if (i > 0) { b.Append(' '); }
-            b.Append(f);
+            b.Append(f.Dump(vm));
             i++;
         }
 

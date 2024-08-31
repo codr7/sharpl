@@ -32,3 +32,6 @@
 
 (check "foo-bar"
   (string/replace "foo  bar" "(\w+) (\w+)" "$1-$2"))
+
+(check ["foo" "bar"]
+  (string/split "foo bar" " "))

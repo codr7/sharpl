@@ -9,6 +9,7 @@ public abstract class Form(Loc loc) : Emitter
 
     public virtual void CollectIds(HashSet<string> result) { }
 
+    public abstract string Dump(VM vm);
     public abstract void Emit(VM vm, Queue args);
 
     public virtual void EmitCall(VM vm, Queue args)
@@ -112,7 +113,7 @@ public abstract class Form(Loc loc) : Emitter
 
         public bool IsSplat => items.Any(f => f.IsSplat);
 
-        public override string ToString() => string.Join(' ', items);
+        public string Dump(VM vm) => string.Join(' ', items.Select(it => it.Dump(vm)));
 
         public IEnumerator<Form> GetEnumerator() => items.AsEnumerable().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();

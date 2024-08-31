@@ -69,7 +69,7 @@ public class Array : Form
     public override Form Quote(Loc loc, VM vm) => 
         new Array(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
 
-    public override string ToString()
+    public override string Dump(VM vm)
     {
         var b = new StringBuilder();
         b.Append('[');
@@ -78,7 +78,7 @@ public class Array : Form
         foreach (var v in Items)
         {
             if (i > 0) { b.Append(' '); }
-            b.Append(v);
+            b.Append(v.Dump(vm));
             i++;
         }
 

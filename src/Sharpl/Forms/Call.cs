@@ -92,12 +92,12 @@ public class Call : Form
     public override Form Quote(Loc loc, VM vm) =>
         new Literal(Loc, Value.Make(Libs.Core.Form, new Call(loc, Target.Quote(loc, vm), Args.Select(a => a.Quote(loc, vm)).ToArray())));
 
-    public override string ToString()
+    public override string Dump(VM vm)
     {
         var b = new StringBuilder();
         b.Append('(');
-        b.Append(Target);
-        foreach (var a in Args) { b.Append($" {a}"); }
+        b.Append(Target.Dump(vm));
+        foreach (var a in Args) { b.Append($" {a.Dump(vm)}"); }
         b.Append(')');
         return b.ToString();
     }

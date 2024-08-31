@@ -12,5 +12,5 @@ public class Binding : Form
         vm.Emit(Ops.UnquoteRegister.Make(Loc, Register));
 
     public override bool Equals(Form other) => other is Binding b && b.Register.Equals(Register);
-    public override string ToString() => $"{Register}";
+    public override string Dump(VM vm) => $"{Register}";
 }

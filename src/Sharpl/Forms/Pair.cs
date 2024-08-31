@@ -30,7 +30,7 @@ public class Pair : Form
     public override Form Quote(Loc loc, VM vm) => 
         new Pair(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
 
-    public override string ToString() => $"{Left}:{Right}";
+    public override string Dump(VM vm) => $"{Left.Dump(vm)}:{Right.Dump(vm)}";
 
     public override Form Unquote(Loc loc, VM vm) => 
         new Pair(loc, Left.Unquote(loc, vm), Right.Unquote(loc, vm));

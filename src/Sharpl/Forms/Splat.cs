@@ -18,6 +18,6 @@ public class Splat : Form
     public override bool Equals(Form other) => (other is Splat f) ? f.Target.Equals(Target) : false;
     public override bool IsSplat => true;
     public override Form Quote(Loc loc, VM vm) => new Splat(loc, Target.Quote(loc, vm));
-    public override string ToString() => $"{Target}*";
+    public override string Dump(VM vm) => $"{Target.Dump(vm)}*";
     public override Form Unquote(Loc loc, VM vm) => new Splat(loc, Target);
 }

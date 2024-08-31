@@ -6,5 +6,5 @@ public class Nil : Form
     public override void Emit(VM vm, Queue args) => args.PushFirst(new Literal(Loc, Value.Nil));
     public override bool Equals(Form other) => other is Nil;
     public override bool IsSplat => false;
-    public override string ToString() => "_";
+    public override string Dump(VM vm) => "_";
 }

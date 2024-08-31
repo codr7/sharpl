@@ -4,7 +4,7 @@ namespace Sharpl.Forms;
 
 public class Id : Form
 {
-    public static Value GetId(string name, Env env, Loc loc)
+    public static Value? FindId(string name, Env env, Loc loc)
     {
         while (true)
         {
@@ -12,14 +12,18 @@ public class Id : Form
             if (i <= 0) { break; }
             var ln = name.Substring(0, i);
             var lv = env[ln];
-            if (lv is null) { throw new EmitError(loc, $"Unknown id: {ln}"); }
+            if (lv is null) { return null; }
             env = ((Value)lv).Cast(loc, Core.Lib);
             name = name.Substring(i + 1);
         }
 
-        var v = env[name];
-        if (v is null) { throw new EmitError(loc, $"Unknown id: {name}"); }
-        return (Value)v;
+        return env[name];
+    }
+
+    public static Value GetId(string name, Env env, Loc loc)
+    {
+        if (FindId(name, env, loc) is Value v) { return v; }
+        throw new EmitError(loc, $"Unknown id: {name}");
     }
 
     public readonly string Name;
@@ -47,11 +51,11 @@ public class Id : Form
     public override bool Equals(Form other) =>
         (other is Id f) ? f.Name.Equals(Name) : false;
 
-    public override Value? GetValue(VM vm) => GetId(Name, vm.Env, Loc);
+    public override Value? GetValue(VM vm) => FindId(Name, vm.Env, Loc);
 
     public override Form Quote(Loc loc, VM vm) =>
         new Literal(loc, Value.Make(Core.Sym, vm.Intern(Name)));
 
-    public override string ToString() => Name;
+    public override string Dump(VM vm) => Name;
     public override Form Unquote(Loc loc, VM vm) => GetId(Name, vm.Env, loc).Unquote(loc, vm);
 }
