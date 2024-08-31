@@ -12,3 +12,9 @@
 
 (check 5:2
   (find-first (^[x] (> x 3)) [1 3 5 7 9]))
+
+(check ['foo:1:T 'bar:2:F]
+  [(zip '[foo bar] '[1 2 3] [T F])*])
+
+(check [42:'foo 43:'bar]
+  [(enumerate 42 '[foo bar])*])

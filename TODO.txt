@@ -16,11 +16,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * add Pair slice support
 * add array/map/list/pair/string slice assign
 
-* add iter/enumerate
-** src & start index (default 0)
-** zip with infinite range
-*** add zip iter
-
 ** add filter macro
 *** jalang
 

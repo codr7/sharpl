@@ -759,7 +759,7 @@ public class VM
             {
                 var dav = av;
                 if (ev.Type == Core.Bit && av.Type != Core.Bit) { av = Value.Make(Core.Bit, (bool)av); }
-                if (!av.Equals(ev)) { throw new EvalError(checkOp.Loc, $"Check failed: expected {ev}, actual {dav}!"); }
+                if (!av.Equals(ev)) { throw new EvalError(checkOp.Loc, $"Check failed: expected {ev.Dump(this)}, actual {dav.Dump(this)}!"); }
             }
             else
             {

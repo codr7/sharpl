@@ -1,3 +1,6 @@
+using Sharpl.Iters.Core;
+using Sharpl.Types.Core;
+
 namespace Sharpl.Libs;
 
 public class Iter : Lib
@@ -126,6 +129,19 @@ public class Iter : Lib
                   vm.Emit(Ops.Goto.Make(start));
                   done.PC = vm.EmitPC;
               });
+
+        BindMethod("zip", ["in1", "in2", "in3?"], (loc, target, vm, stack, arity) =>
+        {
+            Sharpl.Iter[] sources = new Sharpl.Iter[arity];
+            
+            for (int i = arity-1; i >= 0; i--) {
+                var s = stack.Pop();
+                if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s); }
+                else { throw new EvalError(loc, $"Not iterable: {s}"); }
+            }
+
+            stack.Push(Core.Iter, new Zip(sources));
+        });
     }
 
     protected override void OnInit(VM vm)
@@ -133,6 +149,9 @@ public class Iter : Lib
         Import(vm.CoreLib);
 
         vm.Eval("""
+          (^enumerate [i in]
+            (zip (range i) in))
+
           (^sum [in]
             (reduce + in 0))
         """);

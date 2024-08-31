@@ -476,6 +476,25 @@ All composite types may be sliced by indexing using a pair.
 ```
 `6`
 
+### zip
+`zip` may be used to braid any number of sequences.
+
+```
+[(zip '[foo bar] '[1 2 3] [T F])*]
+```
+`['foo:1:T 'bar:2:F]`
+
+
+[(zip '[foo bar] '[1 2 3])*]
+
+## enumerate
+`enumerate` may be used to zip any sequence with indexes.
+
+```
+[(enumerate 42 '[foo bar])*]
+```
+`[42:'foo 43:'bar]`
+
 ### find
 `find-first` may be used to find the first value in a sequence matching the specified predicate, along with its index; or `_` if not found.
 
