@@ -6,11 +6,11 @@
     (out c (max (or (out c) 0) n))))
   
 (^decode-game [in out]
-  (for [c (split in \,)]
+  (for [c (split in ",")]
     (decode-color c out)))
   
 (^decode-line [in]
-  (let [games (split (in (+ (_:find-first (^[c] (is c \:)) in)):_) \;)]
+  (let [games (split (in (+ (_:find-first (^[c] (is c \:)) in)):_) ";")]
     (reduce decode-game games {})))
 	
 (^read-games [path]
