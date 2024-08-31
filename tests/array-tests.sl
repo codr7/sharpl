@@ -30,6 +30,9 @@
 (check [2 3]
   ([1 2 3 4] 1:2))
 
+(check [2 3]
+  ([1 2 3] 1:_))
+
 (check [1 2]
   (let [foo [1]] 
     (push foo 2)

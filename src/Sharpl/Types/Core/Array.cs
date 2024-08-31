@@ -24,15 +24,16 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
             case 1:
                 {
                     var iv = stack.Pop();
+                    var a = target.Cast(this);
 
                     if (iv.Type == Core.Pair)
                     {
                         var p = iv.CastUnbox(Core.Pair);
-                        var i = p.Item1.CastUnbox(loc, Core.Int);
-                        var n = p.Item2.CastUnbox(loc, Core.Int);
-                        stack.Push(Core.Array, target.Cast(this)[i..(i + n)]);
+                        var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Core.Int);
+                        var n = (p.Item2.Type == Core.Nil) ? a.Length-1 : p.Item2.CastUnbox(loc, Core.Int);
+                        stack.Push(Core.Array, a[i..(i + n)]);
                     }
-                    else { stack.Push(target.Cast(this)[iv.CastUnbox(Core.Int)]); }
+                    else { stack.Push(a[iv.CastUnbox(Core.Int)]); }
     
                     break;
                 }
