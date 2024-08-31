@@ -15,11 +15,15 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add Pair slice support
 
-* aoc2
-** add filter macro
-*** jalang
+** add array/map/list/pair/string splice (slice assign)
+
 ** add iter/enumerate
 *** src & start index (default 0)
+
+** add filter macro
+*** jalang
+
+* aoc2
 ** implement pair unification in let macro
 ** make values callable
 *** change into (arg v)
@@ -35,8 +39,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** add Port interface
 *** port/get/put methods
 *** send json
-
-** add string/array/map/list slice assign
 
 * add iter benchmark
 ** fib-tail but use loop instead of tail call
