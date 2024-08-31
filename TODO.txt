@@ -14,11 +14,12 @@ April 29th
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add Pair slice support
+* add array/map/list/pair/string slice assign
 
-** add array/map/list/pair/string splice (slice assign)
-
-** add iter/enumerate
-*** src & start index (default 0)
+* add iter/enumerate
+** src & start index (default 0)
+** zip with infinite range
+*** add zip iter
 
 ** add filter macro
 *** jalang
@@ -90,7 +91,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** implement read-command
 ** implement form to create account
 
-* add zip/unzip
+* add unzip
 
 * add array fib
 ** add repeat method
