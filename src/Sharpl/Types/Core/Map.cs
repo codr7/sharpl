@@ -5,7 +5,6 @@ namespace Sharpl.Types.Core;
 public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrait, LengthTrait
 {
     public MapType(string name) : base(name) { }
-
     public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
@@ -33,16 +32,13 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                     if (kv.Type == Libs.Core.Pair)
                     {
                         var p = kv.CastUnbox(Libs.Core.Pair);
-                        var i = m.IndexOf(p.Item1);
+                        var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : m.IndexOf(p.Item1);
                         if (i == -1) { throw new EvalError(loc, $"Key not found: {p.Item1}"); }
-                        var j = m.IndexOf(p.Item2);
+                        var j = (p.Item2.Type == Libs.Core.Nil) ? m.Count - 1 : m.IndexOf(p.Item2);
                         if (j == -1) { throw new EvalError(loc, $"Key not found: {p.Item2}"); }
                         stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j + 1)]));
                     }
-                    else
-                    {
-                        stack.Push(m.ContainsKey(kv) ? m[kv] : Value.Nil);
-                    }
+                    else { stack.Push(m.ContainsKey(kv) ? m[kv] : Value.Nil); }
 
                     break;
                 }

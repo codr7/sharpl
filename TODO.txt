@@ -13,7 +13,6 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add support for _ slicing (map)
 * add Pair slice support
 
 * aoc2
