@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Sharpl.Libs;
 
@@ -41,6 +42,15 @@ public class String : Lib
         {
             var s = stack.Pop().Cast(Core.String);
             stack.Push(Core.String, s.ToUpper());
+        });
+
+        BindMethod("replace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
+        {
+            var n = stack.Pop().Cast(loc, Core.String);
+            var o = stack.Pop().Cast(loc, Core.String);
+            var i = stack.Pop().Cast(loc, Core.String);
+            o = o.Replace(" ", "\\s*");
+            stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
         });
     }
 }

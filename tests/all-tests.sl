@@ -62,7 +62,6 @@
 (load "method-tests.sl")
 (load "pair-tests.sl")
 (load "quote-tests.sl")
-(load "rx-tests.sl")
 (load "string-tests.sl")
 
 (load "../aoc23/code1-1.sl")

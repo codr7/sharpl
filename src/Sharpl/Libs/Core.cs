@@ -701,15 +701,6 @@ public class Core : Lib
                 }
             });
 
-        BindMethod("rxplace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
-            {
-                var n = stack.Pop().Cast(loc, String);
-                var o = stack.Pop().Cast(loc, String);
-                var i = stack.Pop().Cast(loc, String);
-                o = o.Replace(" ", "\\s*");
-                stack.Push(Value.Make(String, Regex.Replace(i, o, n)));
-            });
-
         BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>
             {
                 int b = stack.Pop().CastUnbox(Int);
