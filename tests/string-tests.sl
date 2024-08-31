@@ -31,4 +31,4 @@
   (string/replace "abaabba" "a" "A"))
 
 (check "foo-bar"
-  (string/replace "foo  bar" "(\\w+) (\\w+)" "$1-$2"))
+  (string/replace "foo  bar" "(\w+) (\w+)" "$1-$2"))

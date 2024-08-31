@@ -14,7 +14,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** unquote inside method
 
 * add import macro with alias
-
+ 
 * add Port type
 ** add Port interface
 *** port/get/put methods
@@ -68,31 +68,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** udp
 *** port/send-to/recv-from
 
-JsonSerializer serializer = new JsonSerializer();
-MyObject o;
-using (FileStream s = File.Open("bigfile.json", FileMode.Open))
-using (StreamReader sr = new StreamReader(s))
-using (JsonReader reader = new JsonTextReader(sr))
-{
-    while (reader.Read())
-    {
-        // deserialize only when there's "{" character in the stream
-        if (reader.TokenType == JsonToken.StartObject)
-        {
-            o = serializer.Deserialize<MyObject>(reader);
-        }
-    }
-}
-
-using (FileStream? fileStream = new FileStream("hugefile.json", FileMode.Open))
-{
-    IAsyncEnumerable<Person?> people = JsonSerializer.DeserializeAsyncEnumerable<Person?>(fileStream);
-    await foreach (Person? person in people)
-    {
-        Console.WriteLine($"Hello, my name is {person.Name}!");
-    }
-}
-
 * add while lop
 ** iterate while condition is true
 
@@ -104,16 +79,6 @@ using (FileStream? fileStream = new FileStream("hugefile.json", FileMode.Open))
   [(iter 
     (ind n i)
     (> (dec i) 0))*])
-
-* add enums
-
-(enum Foo bar baz)
-
-Foo/bar
-(Foo 0)
-(Foo 'baz)
-(Int Foo/bar)
-(Str Foo/bar)
 
 * investigate compiling linq expressions
 ** https://learn.microsoft.com/en-us/dotnet/api/system.linq.expressions.expression?view=net-8.0
@@ -140,11 +105,6 @@ Foo/bar
 ** slurp literals using readers
 *** error for other forms
 ** take Input/OutputStream
-
-* trex
-** add io/string
-** add StackTrait with push
-*** implement for Array
 
 * add OutputStream type
 ** bind OUT
