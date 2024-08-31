@@ -33,18 +33,19 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
             case 1:
                 {
                     var iv = stack.Pop();
+                    var t = target.Cast(this);
 
                     if (iv.Type == Libs.Core.Pair)
                     {
                         var p = iv.CastUnbox(Libs.Core.Pair);
-                        var i = p.Item1.CastUnbox(loc, Libs.Core.Int);
-                        var n = p.Item2.CastUnbox(loc, Libs.Core.Int);
-                        stack.Push(Libs.Core.String, target.Cast(this)[i..(i + n)]);
+                        var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Libs.Core.Int);
+                        var n = (p.Item2.Type == Libs.Core.Nil) ? t.Length - 1: p.Item2.CastUnbox(loc, Libs.Core.Int);
+                        stack.Push(Libs.Core.String, t[i..(i + n)]);
                     }
                     else
                     {
                         var i = iv.CastUnbox(loc, Libs.Core.Int);
-                        stack.Push(Libs.Core.Char, target.Cast(this)[i]);
+                        stack.Push(Libs.Core.Char, t[i]);
                     }
 
                     break;

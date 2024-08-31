@@ -32,7 +32,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
                     {
                         var p = iv.CastUnbox(Core.Pair);
                         var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Core.Int);
-                        var n = (p.Item2.Type == Core.Nil) ? t.Count : p.Item2.CastUnbox(loc, Core.Int);
+                        var n = (p.Item2.Type == Core.Nil) ? t.Count - 1 : p.Item2.CastUnbox(loc, Core.Int);
                         stack.Push(Core.List, t[i..(i + n)]);
                     }
                     else
