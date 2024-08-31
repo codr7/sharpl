@@ -378,6 +378,13 @@ String literals may be defined using double quotes.
 ```
 `"FOO"`
 
+`reverse` may be used to reverse a string.
+
+```
+(string/reverse "foo")
+```
+`"oof"`
+
 `replace` may be used to replace all occurrences of a pattern.
 
 ```
