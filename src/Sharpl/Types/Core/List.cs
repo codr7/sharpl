@@ -71,14 +71,14 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
     public Sharpl.Iter CreateIter(Value target) =>
         new EnumeratorItems(target.Cast(this).GetEnumerator());
 
-    public override void Dump(Value value, StringBuilder result)
+    public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append("(List");
 
         foreach (var v in value.Cast(this))
         {
             result.Append(' ');
-            v.Dump(result);
+            v.Dump(vm, result);
         }
 
         result.Append(')');
@@ -118,14 +118,14 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         dstVal.Cast(this).Add(val);
 
-    public override void Say(Value value, StringBuilder result)
+    public override void Say(Value value, VM vm, StringBuilder result)
     {
         result.Append("(List");
 
         foreach (var v in value.Cast(this))
         {
             result.Append(' ');
-            v.Say(result);
+            v.Say(vm, result);
         }
 
         result.Append(')');

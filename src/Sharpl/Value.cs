@@ -51,29 +51,30 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     }
 
     public Value Copy() => Type.Copy(this);
-    public void Dump(StringBuilder result) => Type.Dump(this, result);
+    public void Dump(VM vm, StringBuilder result) => Type.Dump(this, vm, result);
+
+    public string Dump(VM vm)
+    {
+        var res = new StringBuilder();
+        Dump(vm, res);
+        return res.ToString();
+    }
+
     public void Emit(Loc loc, VM vm, Form.Queue args) => Type.Emit(loc, vm, this, args);
     public void EmitCall(Loc loc, VM vm, Form.Queue args) => Type.EmitCall(loc, vm, this, args);
     public void EmitId(Loc loc, VM vm, Form.Queue args) => Type.EmitId(loc, vm, this, args);
     public bool Equals(Value other) => Type == other.Type && Type.Equals(this, other);
     public override int GetHashCode() => Data.GetHashCode();
-    public void Say(StringBuilder result) => Type.Say(this, result);
+    public void Say(VM vm, StringBuilder result) => Type.Say(this, vm, result);
 
-    public string Say()
+    public string Say(VM vm)
     {
         var result = new StringBuilder();
-        Say(result);
+        Say(vm, result);
         return result.ToString();
     }
 
     public string ToJson(Loc loc) => Type.ToJson(loc, this);
-
-    public override string ToString()
-    {
-        var res = new StringBuilder();
-        Dump(res);
-        return res.ToString();
-    }
 
     public T? TryCastUnbox<T>(Type<T> type) where T : struct =>
         Type == type ? Unsafe.Unbox<T>(Data) : default(T?);

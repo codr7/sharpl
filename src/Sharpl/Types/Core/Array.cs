@@ -69,7 +69,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
     public Sharpl.Iter CreateIter(Value target) =>
         new EnumeratorItems(((IEnumerable<Value>)target.Cast(this)).GetEnumerator());
 
-    public override void Dump(Value value, StringBuilder result)
+    public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append('[');
         var i = 0;
@@ -77,7 +77,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
         foreach (var v in value.Cast(this))
         {
             if (i > 0) { result.Append(' '); }
-            v.Dump(result);
+            v.Dump(vm, result);
             i++;
         }
 
@@ -122,7 +122,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
         vm.Set(dst, Value.Make(this, dv));
     }
 
-    public override void Say(Value value, StringBuilder result)
+    public override void Say(Value value, VM vm, StringBuilder result)
     {
         result.Append('[');
         var i = 0;
@@ -130,7 +130,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
         foreach (var v in value.Cast(this))
         {
             if (i > 0) { result.Append(' '); }
-            v.Say(result);
+            v.Say(vm, result);
             i++;
         }
 

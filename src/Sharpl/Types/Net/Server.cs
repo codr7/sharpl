@@ -27,5 +27,6 @@ public class ServerType : Type<TcpListener>, CloseTrait, IterTrait
         return new PipeItems(c);
     }
 
-    public override void Dump(Value value, StringBuilder result) => result.Append($"(Server {value.Cast(this)})");
+    public override void Dump(Value value, VM vm, StringBuilder result) => 
+        result.Append($"(net/Server {vm.GetObjectId(value.Cast(this))})");
 }

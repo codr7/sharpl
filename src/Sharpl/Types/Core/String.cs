@@ -19,7 +19,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
         while (arity > 0)
         {
-            stack.Pop().Say(res);
+            stack.Pop().Say(vm, res);
             arity--;
         }
 
@@ -67,12 +67,8 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
     public Iter CreateIter(Value target) =>
         new Iters.Core.EnumeratorItems(target.Cast(this).Select(c => Value.Make(Libs.Core.Char, c)).GetEnumerator());
 
-    public override void Dump(Value value, StringBuilder result)
-    {
-        result.Append('"');
-        result.Append(Escape(value.Cast(this)));
-        result.Append('"');
-    }
+    public override void Dump(Value value, VM vm, StringBuilder result) =>
+      result.Append($"\"{Escape(value.Cast(this))}\"");
 
     public int Length(Value target) => target.Cast(this).Length;
 
@@ -94,7 +90,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         vm.Set(dst, Value.Make(this, dstVal.Cast(this) + val.CastUnbox(Libs.Core.Char)));
 
-    public override void Say(Value value, StringBuilder result) => result.Append(value.Data);
+    public override void Say(Value value, VM vm, StringBuilder result) => result.Append(value.Data);
 
     public override string ToJson(Loc loc, Value value) => $"\"{Escape(value.Cast(this))}\"";
 }

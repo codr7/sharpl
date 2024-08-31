@@ -22,8 +22,8 @@ public class String : Lib
 
             while (arity > 0)
             {
-                if (sep.Type != Core.Nil && res.Length > 0) { sep.Say(res); }
-                stack.Pop().Say(res);
+                if (sep.Type != Core.Nil && res.Length > 0) { sep.Say(vm, res); }
+                stack.Pop().Say(vm, res);
                 arity--;
             }
 

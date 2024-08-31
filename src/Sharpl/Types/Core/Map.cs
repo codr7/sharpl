@@ -82,7 +82,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
     public Iter CreateIter(Value target) =>
         new Iters.Core.EnumeratorItems(target.Cast(this).Items.Select(v => Value.Make(Libs.Core.Pair, v)).GetEnumerator());
 
-    public override void Dump(Value value, StringBuilder result)
+    public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append('{');
         var i = 0;
@@ -90,9 +90,9 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
         foreach (var v in value.Cast(this))
         {
             if (i > 0) { result.Append(' '); }
-            v.Item1.Dump(result);
+            v.Item1.Dump(vm, result);
             result.Append(':');
-            v.Item2.Dump(result);
+            v.Item2.Dump(vm, result);
             i++;
         }
 
@@ -115,7 +115,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
 
     public int Length(Value target) => target.Cast(this).Count;
 
-    public override void Say(Value value, StringBuilder result)
+    public override void Say(Value value, VM vm, StringBuilder result)
     {
         result.Append('{');
         var i = 0;
@@ -123,9 +123,9 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
         foreach (var v in value.Cast(this))
         {
             if (i > 0) { result.Append(' '); }
-            v.Item1.Say(result);
+            v.Item1.Say(vm, result);
             result.Append(':');
-            v.Item2.Say(result);
+            v.Item2.Say(vm, result);
             i++;
         }
 

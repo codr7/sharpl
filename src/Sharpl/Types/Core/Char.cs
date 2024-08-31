@@ -17,7 +17,7 @@ public class CharType(string name) :
         return new Iters.Core.CharRange(minVal, maxVal, strideVal);
     }
 
-    public override void Dump(Value value, StringBuilder result)
+    public override void Dump(Value value, VM vm, StringBuilder result)
     {
         var c = value.CastUnbox(this);
         result.Append('\\');

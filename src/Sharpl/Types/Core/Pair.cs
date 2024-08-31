@@ -97,12 +97,12 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
 
     public Sharpl.Iter CreateIter(Value target) => new PairItems(target);
 
-    public override void Dump(Value value, StringBuilder result)
+    public override void Dump(Value value, VM vm, StringBuilder result)
     {
         var p = value.CastUnbox(this);
-        p.Item1.Dump(result);
+        p.Item1.Dump(vm, result);
         result.Append(':');
-        p.Item2.Dump(result);
+        p.Item2.Dump(vm, result);
     }
 
     public override bool Equals(Value left, Value right)
@@ -136,11 +136,11 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         vm.Set(dst, Value.Make(this, (val, dstVal)));
 
-    public override void Say(Value value, StringBuilder result)
+    public override void Say(Value value, VM vm, StringBuilder result)
     {
         var p = value.CastUnbox(this);
-        p.Item1.Say(result);
+        p.Item1.Say(vm, result);
         result.Append(':');
-        p.Item2.Say(result);
+        p.Item2.Say(vm, result);
     }
 }

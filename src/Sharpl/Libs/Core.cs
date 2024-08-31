@@ -339,7 +339,7 @@ public class Core : Lib
 
             while (arity > 0)
             {
-                stack.Pop().Say(res);
+                stack.Pop().Say(vm, res);
                 arity--;
             }
 
@@ -353,7 +353,7 @@ public class Core : Lib
 
                 while (arity > 0)
                 {
-                    stack.Pop().Say(res);
+                    stack.Pop().Say(vm, res);
                     arity--;
                 }
 
@@ -717,7 +717,7 @@ public class Core : Lib
 
                 while (arity > 0)
                 {
-                    stack.Pop().Say(res);
+                    stack.Pop().Say(vm, res);
                     arity--;
                 }
 

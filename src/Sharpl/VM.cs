@@ -63,13 +63,10 @@ public class VM
     private readonly List<Label> labels = [];
     private string loadPath = "";
     private int nextRegisterIndex = 0;
+    private Dictionary<object, int> objectIds = new Dictionary<object, int>();
     private readonly Value[] registers;
     private readonly List<int> splats = [];
     private readonly Dictionary<string, Sym> syms = [];
-
-    private Reader[] readers = [
-
-    ];
 
     public VM(C config)
     {
@@ -606,6 +603,17 @@ public class VM
     public int FrameCount => frames.Count;
 
     public Value Get(Register register) => GetRegister(register.FrameOffset, register.Index);
+    
+    public int GetObjectId(object it) {
+        if (!objectIds.ContainsKey(it)) {
+            var id = objectIds.Count+1;
+            objectIds[it] = id;
+            return id;
+        }
+
+        return objectIds[it];
+    }
+
     public Value GetRegister(int frameOffset, int index) => registers[RegisterIndex(frameOffset, index)];
 
     public Sym Intern(string name)

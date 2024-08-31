@@ -19,7 +19,7 @@ public abstract class AnyType(string name)
     }
 
     public virtual Value Copy(Value value) => value;
-    public virtual void Dump(Value value, StringBuilder result) => result.Append(value.Data.ToString());
+    public virtual void Dump(Value value, VM vm, StringBuilder result) => result.Append(value.Data.ToString());
     public virtual void Emit(Loc loc, VM vm, Value value, Form.Queue args) => vm.Emit(Ops.Push.Make(value));
 
     public virtual void EmitCall(Loc loc, VM vm, Value target, Form.Queue args)
@@ -33,7 +33,7 @@ public abstract class AnyType(string name)
 
     public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args) => Emit(loc, vm, value, args);
     public abstract bool Equals(Value left, Value right);
-    public virtual void Say(Value value, StringBuilder result) => Dump(value, result);
+    public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Loc loc, Value value) => throw new EvalError(loc, $"Not supported: {value}");
     public override string ToString() => Name;
     public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(loc, value);

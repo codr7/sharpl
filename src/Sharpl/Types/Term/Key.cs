@@ -6,14 +6,14 @@ public class KeyType : Type<ConsoleKeyInfo>
 {
     public KeyType(string name) : base(name) { }
 
-    public override void Dump(Value value, StringBuilder result)
+    public override void Dump(Value value, VM vm, StringBuilder result)
     {
-        result.Append("(Key ");
-        Say(value, result);
+        result.Append("(term/Key ");
+        Say(value, vm, result);
         result.Append(')');
     }
 
-    public override void Say(Value value, StringBuilder result)
+    public override void Say(Value value, VM vm, StringBuilder result)
     {
         var ki = value.CastUnbox(this);
         if ((ki.Modifiers & ConsoleModifiers.Alt) != 0) { result.Append("Alt+"); }

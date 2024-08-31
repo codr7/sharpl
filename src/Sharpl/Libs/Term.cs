@@ -54,7 +54,7 @@ public class Term : Lib
             {
                 if ((e.Type != Core.Bit) || e.CastUnbox(Core.Bit))
                 {
-                    Console.Write((e.Type == Core.Bit) ? k.KeyChar : e.Say());
+                    Console.Write((e.Type == Core.Bit) ? k.KeyChar : e.Say(vm));
                 }
             }
 
@@ -80,7 +80,7 @@ public class Term : Lib
                 {
                     if ((v.Type != Core.Bit) || v.CastUnbox(Core.Bit))
                     {
-                        Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say());
+                        Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say(vm));
                     }
                 }
 
@@ -176,7 +176,7 @@ public class Term : Lib
 
             while (arity > 0)
             {
-                stack.Pop().Say(res);
+                stack.Pop().Say(vm, res);
                 arity--;
             }
 
