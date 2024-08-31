@@ -27,11 +27,16 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
                 {
                     var t = target.Cast(this);
                     var iv = stack.Pop();
-                    
-                    if (iv.Type == Core.Pair) {
+
+                    if (iv.Type == Core.Pair)
+                    {
                         var p = iv.CastUnbox(Core.Pair);
-                        stack.Push(Core.List, t[p.Item1.CastUnbox(loc, Core.Int)..(p.Item2.CastUnbox(loc, Core.Int)+1)]);
-                    } else {
+                        var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Core.Int);
+                        var n = (p.Item2.Type == Core.Nil) ? t.Count : p.Item2.CastUnbox(loc, Core.Int);
+                        stack.Push(Core.List, t[i..(i + n)]);
+                    }
+                    else
+                    {
                         var i = iv.CastUnbox(Core.Int);
                         stack.Push(t[i]);
                     }
@@ -100,12 +105,14 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
 
     public int Length(Value target) => target.Cast(this).Count;
 
-    public Value Peek(Loc loc, VM vm, Value srcVal) {
+    public Value Peek(Loc loc, VM vm, Value srcVal)
+    {
         var src = srcVal.Cast(this);
         return (src.Count == 0) ? Value.Nil : src[^1];
     }
 
-    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal)
+    {
         var sv = srcVal.Cast(this);
         var n = sv.Count;
         if (n == 0) { return Value.Nil; }
@@ -131,6 +138,6 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
         result.Append(')');
     }
 
-    public override string ToJson(Loc loc, Value value) => 
+    public override string ToJson(Loc loc, Value value) =>
         $"[{string.Join(',', value.Cast(this).Select(it => it.ToJson(loc)).ToArray())}]";
 }

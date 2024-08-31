@@ -24,17 +24,17 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
             case 1:
                 {
                     var iv = stack.Pop();
-                    var a = target.Cast(this);
+                    var t = target.Cast(this);
 
                     if (iv.Type == Core.Pair)
                     {
                         var p = iv.CastUnbox(Core.Pair);
                         var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Core.Int);
-                        var n = (p.Item2.Type == Core.Nil) ? a.Length-1 : p.Item2.CastUnbox(loc, Core.Int);
-                        stack.Push(Core.Array, a[i..(i + n)]);
+                        var n = (p.Item2.Type == Core.Nil) ? t.Length - 1 : p.Item2.CastUnbox(loc, Core.Int);
+                        stack.Push(Core.Array, t[i..(i + n)]);
                     }
-                    else { stack.Push(a[iv.CastUnbox(Core.Int)]); }
-    
+                    else { stack.Push(t[iv.CastUnbox(Core.Int)]); }
+
                     break;
                 }
             case 2:
@@ -101,12 +101,14 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
 
     public int Length(Value target) => target.Cast(this).Length;
 
-    public Value Peek(Loc loc, VM vm, Value srcVal) {
+    public Value Peek(Loc loc, VM vm, Value srcVal)
+    {
         var src = srcVal.Cast(this);
         return (src.Length == 0) ? Value.Nil : src[^1];
     }
 
-    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal)
+    {
         var sv = srcVal.Cast(this);
         if (sv.Length == 0) { return Value.Nil; }
         var v = sv[^1];
@@ -118,7 +120,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
     {
         var dv = dstVal.Cast(this);
         var i = dv.Length;
-        Array.Resize(ref dv, i+1); 
+        Array.Resize(ref dv, i + 1);
         dv[i] = val;
         vm.Set(dst, Value.Make(this, dv));
     }
@@ -138,6 +140,6 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
         result.Append(']');
     }
 
-    public override string ToJson(Loc loc, Value value) => 
+    public override string ToJson(Loc loc, Value value) =>
         $"[{string.Join(',', value.Cast(this).Select(it => it.ToJson(loc)).ToArray())}]";
 }
