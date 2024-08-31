@@ -383,6 +383,7 @@ String literals may be defined using double quotes.
 ```
 (string/split "foo bar" " ")
 ```
+`["foo" "bar"]`
 
 `reverse` may be used to reverse a string.
 
