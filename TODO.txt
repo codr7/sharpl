@@ -13,6 +13,19 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* add fork
+** new interpreter
+*** copy everything
+** return port
+*** two channels
+*** pass port with channels reversed as arg
+
+(let [p (fork [p] (p 42))]
+  (p))
+
+* add timeout arg to poll
+https://deniskyashif.com/2019/12/11/csharp-channels-part-2/
+
 * add Pair slice support
 * add array/map/list/pair/string slice assign
 

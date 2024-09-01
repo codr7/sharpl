@@ -338,6 +338,17 @@ Also like integers; negative fixpoints lack syntax, and must be created by way o
 ```
 `[1.1 1.2 1.3 1.4]`
 
+## pipes
+Pipes are unbounded, thread safe communication channels.
+
+`poll` returns the first pipe that's ready for reading.
+```
+(let [p1 (Pipe) p2 (Pipe)]
+  (p2 42)
+  ((poll p1 p2)))
+```
+`42`
+
 ## composite types
 
 ### pairs

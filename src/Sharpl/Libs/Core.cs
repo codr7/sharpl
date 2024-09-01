@@ -2,6 +2,7 @@ using Sharpl.Types.Core;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Channels;
 
 namespace Sharpl.Libs;
 
@@ -600,6 +601,13 @@ public class Core : Lib
             var src = stack.Pop();
             if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); }
             else { throw new EvalError(loc, "Invalid peek target: {src}"); }
+        });
+
+        BindMethod("poll", ["source1", "source2?"], (loc, target, vm, stack, arity) => {
+            var crs = new Channel<Value>[arity];
+            for (var i = arity - 1; i >= 0; i--) { crs[i] = stack.Pop().Cast(loc, Pipe); }
+            var t = Task.Run(async () => await TaskUtil.Poll(crs));
+            stack.Push(Pipe, t.Result);
         });
 
         BindMacro("pop", ["src"], (loc, target, vm, args) =>

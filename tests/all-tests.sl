@@ -61,6 +61,7 @@
 (load "map-tests.sl")
 (load "method-tests.sl")
 (load "pair-tests.sl")
+(load "pipe-tests.sl")
 (load "quote-tests.sl")
 (load "string-tests.sl")
 
