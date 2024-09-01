@@ -9,6 +9,11 @@ public abstract class Form(Loc loc) : Emitter
 
     public virtual void CollectIds(HashSet<string> result) { }
 
+    public T Cast<T>(Loc loc) where T: Form {
+        if (this is T result) { return result; }
+        throw new EvalError(loc, $"Type mismatch: {this}");
+    }
+
     public abstract string Dump(VM vm);
     public abstract void Emit(VM vm, Queue args);
 

@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v23
+sharpl v24
 
    1 (say 'hello)
    2 
@@ -503,16 +503,29 @@ All composite types may be sliced by indexing using a pair.
 ```
 `5:2`
 
-## pipes
+## communication
+### pipes
 Pipes are unbounded, thread safe communication channels.
 
-`poll` returns the first pipe that's ready for reading.
+### ports
+Ports are bidirectional communication channels.
+
+### poll
+`poll` returns the first argument that's ready for reading.
 ```
 (let [p1 (Pipe) p2 (Pipe)]
   (p2 42)
   ((poll p1 p2)))
 ```
 `42`
+
+## threads
+`spawn` may be used to start new threads. Each thread runs on its own VM. A port is created for communication, one side passed as argument and the other returned.
+
+```
+(let [p (spawn [p] (p 42))]
+  (p))
+```
 
 ## libraries
 `lib` may be used to define/extend libraries.

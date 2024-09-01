@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Threading.Channels;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
 
@@ -39,7 +40,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 23;
+    public static readonly int VERSION = 24;
 
     public readonly Libs.Char CharLib;
     public readonly Libs.Core CoreLib = new Libs.Core();

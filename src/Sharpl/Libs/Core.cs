@@ -1,8 +1,7 @@
 using Sharpl.Types.Core;
 using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Channels;
+using Forms = Sharpl.Forms;
 
 namespace Sharpl.Libs;
 
@@ -26,6 +25,7 @@ public class Core : Lib
     public static readonly NilType Nil = new NilType("Nil");
     public static readonly PairType Pair = new PairType("Pair");
     public static readonly PipeType Pipe = new PipeType("Pipe");
+    public static readonly PortType Port = new PortType("Port");
     public static readonly StringType String = new StringType("String");
     public static readonly SymType Sym = new SymType("Sym");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
@@ -115,6 +115,7 @@ public class Core : Lib
         BindType(Method);
         BindType(Pair);
         BindType(Pipe);
+        BindType(Port);
         BindType(String);
         BindType(Sym);
         BindType(UserMethod);
@@ -603,7 +604,8 @@ public class Core : Lib
             else { throw new EvalError(loc, "Invalid peek target: {src}"); }
         });
 
-        BindMethod("poll", ["source1", "source2?"], (loc, target, vm, stack, arity) => {
+        BindMethod("poll", ["source1", "source2?"], (loc, target, vm, stack, arity) =>
+        {
             var crs = new Channel<Value>[arity];
             for (var i = arity - 1; i >= 0; i--) { crs[i] = stack.Pop().Cast(loc, Pipe); }
             var t = Task.Run(async () => await TaskUtil.Poll(crs));
@@ -731,6 +733,25 @@ public class Core : Lib
 
                 Console.WriteLine(res.ToString());
             });
+
+        BindMacro("spawn", ["args", "body?"], (loc, target, vm, args) =>
+        {
+            var forkArgs = args.Pop().Cast<Forms::Array>(loc).Items;
+            if (forkArgs.Length != 1) { throw new EmitError(loc, "Wrong number of arguments."); }
+
+            var c1 = PipeType.Make();
+            var c2 = PipeType.Make();
+
+            var fvm = new VM(vm.Config);
+            var portName = forkArgs[0].Cast<Forms::Id>(loc).Name;
+            fvm.Env.Bind(portName, Value.Make(Port, new PipePort(c1.Reader, c2.Writer)));
+            var startPC = fvm.EmitPC;
+            args.Emit(fvm);
+            fvm.Emit(Ops.Stop.Make());
+
+            vm.Emit(Ops.Push.Make(Value.Make(Port, new PipePort(c2.Reader, c1.Writer))));
+            new Thread(() => fvm.Eval(startPC)).Start();
+        });
 
         BindMethod("type-of", ["x"], (loc, target, vm, stack, arity) =>
             stack.Push(Meta, stack.Pop().Type));

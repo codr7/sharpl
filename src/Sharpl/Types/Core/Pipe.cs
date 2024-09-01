@@ -6,6 +6,8 @@ namespace Sharpl.Types.Core;
 
 public class PipeType : Type<Channel<Value>>, IterTrait
 {
+    public static Channel<Value> Make() => Channel.CreateUnbounded<Value>();
+
     public PipeType(string name) : base(name) { }
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity) =>
