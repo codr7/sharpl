@@ -17,6 +17,10 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** implement in Pipe/Port
 ** use in poll imp
 
+* add support for multiple values in pipe/port write
+
+* add threads to examples/net/server
+
 * add Pair slice support
 * add array/map/list/pair/string slice assign
 

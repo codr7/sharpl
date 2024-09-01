@@ -504,10 +504,10 @@ All composite types may be sliced by indexing using a pair.
 
 ## communication
 ### pipes
-Pipes are unbounded, thread safe communication channels. Pipes may be called without arguments to read and with an argument to write.
+Pipes are unbounded, thread safe communication channels. Pipes may be called without arguments to read and with to write.
 
 ### ports
-Ports are bidirectional communication channels. Like pipes, ports may be called without arguments to read and with an argument to write.
+Ports are bidirectional communication channels. Like pipes, ports may be called without arguments to read and with to write.
 
 ### poll
 `poll` returns the first argument that's ready for reading.
