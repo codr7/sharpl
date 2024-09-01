@@ -486,7 +486,7 @@ All composite types may be sliced by indexing using a pair.
 
 [(zip '[foo bar] '[1 2 3])*]
 
-## enumerate
+### enumerate
 `enumerate` may be used to zip any sequence with indexes.
 
 ```
