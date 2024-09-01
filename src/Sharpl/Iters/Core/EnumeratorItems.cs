@@ -1,14 +1,6 @@
 namespace Sharpl.Iters.Core;
 
-public class EnumeratorItems : BasicIter
+public class EnumeratorItems(IEnumerator<Value> Source) : BasicIter
 {
-    public readonly IEnumerator<Value> Source;
-
-    public EnumeratorItems(IEnumerator<Value> source)
-    {
-        Source = source;
-    }
-
-    public override Value? Next() => 
-        Source.MoveNext() ? Source.Current : null;
+    public override Value? Next() => Source.MoveNext() ? Source.Current : null;
 }

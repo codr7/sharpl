@@ -1,14 +1,7 @@
 namespace Sharpl.Iters.Core;
 
-public class Zip : BasicIter
+public class Zip(Iter[] Sources) : BasicIter
 {
-    public readonly Iter[] Sources;
-
-    public Zip(Iter[] sources)
-    {
-        Sources = sources;
-    }
-
     public override Value? Next()
     {
         var vs = Sources.Select(it => it.Next()).ToArray();
