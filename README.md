@@ -240,7 +240,6 @@ For others; like arrays and maps; two values may well be equal despite having di
 
 
 ## types
-
 ### nil
 The `Nil` type has one value (`_`), which represents the absence of a value.
 
@@ -520,7 +519,7 @@ Ports are bidirectional communication channels.
 `42`
 
 ## threads
-`spawn` may be used to start new threads. Each thread runs on its own VM. A port is created for communication, one side passed as argument and the other returned.
+`spawn` may be used to start new threads, each thread runs in a separate VM. A port is created for communication, one side passed as argument and the other returned.
 
 ```
 (let [p (spawn [p] (p 42))]
