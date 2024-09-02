@@ -258,7 +258,7 @@ Symbols may be created by quoting identifiers or using the type constructor.
 `gensym` may be used to create unique symbols.
 
 ```
-  (Sym 'foo)
+  (gensym 'foo)
 
 '7foo
 ```
