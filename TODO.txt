@@ -13,11 +13,7 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add Poll trait
-** implement in Pipe/Port
-** use in poll imp
-
-* add support for multiple values in pipe/port write
+* add support for multiple values in pipe/port write call case
 
 * add threads to examples/net/server
 

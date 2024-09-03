@@ -1,6 +1,7 @@
 namespace Sharpl;
 
 public interface Port {
-    public Value Read();
-    public void Write(Value value);
+    public Task<bool> Poll(CancellationToken ct);
+    public Task<Value> Read();
+    public Task Write(Value value);
 }

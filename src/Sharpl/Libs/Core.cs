@@ -606,10 +606,16 @@ public class Core : Lib
 
         BindMethod("poll", ["source1", "source2?"], (loc, target, vm, stack, arity) =>
         {
-            var crs = new Channel<Value>[arity];
-            for (var i = arity - 1; i >= 0; i--) { crs[i] = stack.Pop().Cast(loc, Pipe); }
-            var t = Task.Run(async () => await TaskUtil.Poll(crs));
-            stack.Push(Pipe, t.Result);
+            var ss = new (Task<bool>, Value)[arity];
+            var cts = new CancellationTokenSource();
+
+            for (var i = arity - 1; i >= 0; i--) { 
+                var s = stack.Pop();
+                if (s.Type is PollTrait pt) { ss[i] = (pt.Poll(s, cts.Token), s); }
+                else { throw new EvalError(loc, $"Not pollable: {s.Dump(vm)}"); }
+            }
+
+            stack.Push(Task.Run(async () => await TaskUtil.Any(ss, cts)).Result);
         });
 
         BindMacro("pop", ["src"], (loc, target, vm, args) =>

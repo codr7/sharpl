@@ -4,7 +4,7 @@ using Sharpl.Iters.Core;
 
 namespace Sharpl.Types.Core;
 
-public class PipeType : Type<Channel<Value>>, IterTrait
+public class PipeType : Type<Channel<Value>>, IterTrait, PollTrait
 {
     public static Channel<Value> Make() => Channel.CreateUnbounded<Value>();
 
@@ -23,7 +23,8 @@ public class PipeType : Type<Channel<Value>>, IterTrait
                 stack.Push(Task.Run(async () => await t.Reader.ReadAsync()).Result);
                 break;
             case 1:
-                Task.Run(async () => await t.Writer.WriteAsync(stack.Pop()));
+                var v = stack.Pop();
+                Task.Run(async () => await t.Writer.WriteAsync(v));
                 break;
             default:
                 throw new EvalError(loc, "Invalid arguments");
@@ -32,4 +33,6 @@ public class PipeType : Type<Channel<Value>>, IterTrait
 
     public Iter CreateIter(Value target) => new PipeItems(target.Cast(this).Reader);
     public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"(Pipe {vm.GetObjectId(value.Cast(this))})");
+    public Task<bool> Poll(Value target, CancellationToken ct) => 
+        target.Cast(this).Reader.WaitToReadAsync(ct).AsTask();
 }
