@@ -4,9 +4,9 @@
   (say "Usage: client [Host] [Port] [Password]")
   (stop))
 
-(var HOST (ARG 0))
-(var PORT (parse-int:_ (ARG 1)))
-(var PASSWORD (ARG 2))
+(var HOST (ARG 0)
+     PORT (parse-int:_ (ARG 1))
+     PASSWORD (ARG 2))
 
 (let [c (net/connect HOST:PORT)]
   (say c)

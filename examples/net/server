@@ -4,12 +4,12 @@
   (say "Usage: server [Host] [Port] [Password]")
   (stop))
 
-(var HOST (ARG 0))
-(var PORT (parse-int:_ (ARG 1)))
-(var PASSWORD (ARG 2))
+(var HOST (ARG 0)
+     PORT (parse-int:_ (ARG 1))
+     PASSWORD (ARG 2))
 
-(var clients (List))
-(var s (net/accept (net/listen HOST:PORT)))
+(var clients (List)
+     s (net/accept (net/listen HOST:PORT)))
 
 (^handle-connect [c]
   (say "New client")
@@ -17,8 +17,8 @@
 
 (^handle-request [c]
   (say "New request")
-  (let [req (c)]
-    (say req)))
+  (let [r (c)]
+    (say r)))
 
 (loop
   (let [ready (poll s clients*)]
