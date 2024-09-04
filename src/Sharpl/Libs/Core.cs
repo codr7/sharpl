@@ -759,6 +759,8 @@ public class Core : Lib
             new Thread(() => fvm.Eval(startPC)).Start();
         });
 
+        BindMacro("stop", [], (loc, target, vm, args) => vm.Emit(Ops.Stop.Make()));
+
         BindMethod("type-of", ["x"], (loc, target, vm, stack, arity) =>
             stack.Push(Meta, stack.Pop().Type));
 
