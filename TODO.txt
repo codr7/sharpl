@@ -15,7 +15,14 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add support for multiple values in pipe/port write call case
 
-* add threads to examples/net/server
+* add support for polling server
+
+* add support for polling network stream
+
+* add Types/Net/Port
+** based on NetworkStream
+** read/write json
+** use in client/server example
 
 * add Pair slice support
 * add array/map/list/pair/string slice assign
