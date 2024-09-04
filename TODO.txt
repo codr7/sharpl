@@ -17,6 +17,16 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** net/port
 ** use in client/server
 
+* add password validation to client/server
+
+* start repl from client to server
+** send code as string
+
+*** add repl method
+**** take optional eval function
+**** push string and call
+**** use in client to send value
+
 * add support for multiple values in pipe/port write call case
 
 * add Pair slice support

@@ -3,9 +3,9 @@ using System.Text;
 
 namespace Sharpl;
 
-public static class REPL
+public class REPL
 {
-    public static void Run(VM vm)
+    public void Run(VM vm)
     {
         vm.Term
             .SetFg(Color.FromArgb(255, 252, 173, 3))
@@ -13,7 +13,6 @@ public static class REPL
             .Reset();
 
         var buffer = new StringBuilder();
-        var stack = new Stack();
         var loc = new Loc("repl");
         var bufferLines = 0;
 
@@ -34,17 +33,11 @@ public static class REPL
 
             if (line == "")
             {
-                var startPC = vm.EmitPC;
-
                 try
                 {
-                    vm.ReadForms(new StringReader(buffer.ToString()), ref loc).Emit(vm);
-                    vm.Emit(Ops.Stop.Make());
-                    vm.Eval(startPC, stack);
-
                     vm.Term
                         .SetFg(Color.FromArgb(255, 0, 255, 0))
-                        .WriteLine((stack is [] ? Value.Nil : stack.Pop()).Dump(vm))
+                        .WriteLine(Eval(vm, buffer.ToString(), ref loc).Dump(vm))
                         .Reset();
                 }
                 catch (Exception e)
@@ -69,5 +62,13 @@ public static class REPL
                 bufferLines++;
             }
         }
+    }
+
+    public virtual Value Eval(VM vm, string input, ref Loc loc)
+    {
+        var startPC = vm.EmitPC;
+        vm.ReadForms(new StringReader(input), ref loc).Emit(vm);
+        vm.Emit(Ops.Stop.Make());
+        return vm.Eval(startPC) ?? Value.Nil;
     }
 }

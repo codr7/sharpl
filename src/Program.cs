@@ -5,7 +5,7 @@ using Ops = Sharpl.Ops;
 var vm = new VM(VM.DEFAULT);
 
 if (args.Length == 0) {
-    REPL.Run(vm);
+    new REPL().Run(vm);
 } else {
     var startPC = vm.EmitPC;
 

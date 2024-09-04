@@ -566,7 +566,11 @@ public class VM
         }
     }
 
-    public void Eval(PC startPC) => Eval(startPC, new Stack());
+    public Value? Eval(PC startPC) {
+        var s = new Stack();
+        Eval(startPC, s);
+        return s.Pop();
+    }
 
     public void Eval(Emitter target, Form.Queue args, Stack stack)
     {
