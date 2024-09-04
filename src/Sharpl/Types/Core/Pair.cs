@@ -95,7 +95,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
         return Order.EQ;
     }
 
-    public Sharpl.Iter CreateIter(Value target) => new PairItems(target);
+    public Sharpl.Iter CreateIter(Value target, VM vm, Loc loc) => new PairItems(target);
 
     public override void Dump(Value value, VM vm, StringBuilder result)
     {

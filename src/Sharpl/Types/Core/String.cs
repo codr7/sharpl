@@ -65,7 +65,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
         }
     }
 
-    public Iter CreateIter(Value target) =>
+    public Iter CreateIter(Value target, VM vm, Loc loc) =>
         new Iters.Core.EnumeratorItems(target.Cast(this).Select(c => Value.Make(Libs.Core.Char, c)).GetEnumerator());
 
     public override void Dump(Value value, VM vm, StringBuilder result) =>

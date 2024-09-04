@@ -12,17 +12,17 @@ public interface Iter : IEnumerable<Value>
 #pragma warning restore CS8629
 
         private Value? current;
-        public readonly Iter Source;
+        private readonly Iter source;
 
         public E(Iter source)
         {
-            Source = source;
+            this.source = source;
         }
 
         public void Dispose() { }
         public bool MoveNext()
         {
-            current = Source.Next();
+            current = source.Next();
             return current != null;
         }
 

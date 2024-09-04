@@ -14,18 +14,18 @@ public class PortType : Type<Port>, IterTrait, PollTrait
         switch (arity)
         {
             case 0:
-                stack.Push(Task.Run(t.Read).Result);
+                stack.Push(Task.Run(() => t.Read(vm, loc)).Result);
                 break;
             case 1:
                 var v = stack.Pop();
-                Task.Run(async () => await t.Write(v));
+                Task.Run(async () => await t.Write(v, vm, loc));
                 break;
             default:
                 throw new EvalError(loc, "Invalid arguments");
         }
     }
 
-    public Iter CreateIter(Value target) => new PortItems(target.Cast(this));
+    public Iter CreateIter(Value target, VM vm, Loc loc) => new PortItems(target.Cast(this), vm, loc);
     public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"(Port {vm.GetObjectId(value.Cast(this))})");
     public Task<bool> Poll(Value target, CancellationToken ct) => target.Cast(this).Poll(ct);
 }

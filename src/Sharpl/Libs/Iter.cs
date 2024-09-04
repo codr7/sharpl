@@ -136,7 +136,7 @@ public class Iter : Lib
             
             for (int i = arity-1; i >= 0; i--) {
                 var s = stack.Pop();
-                if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s); }
+                if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s, vm, loc); }
                 else { throw new EvalError(loc, $"Not iterable: {s}"); }
             }
 

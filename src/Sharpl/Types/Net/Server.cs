@@ -11,7 +11,7 @@ public class ServerType : Type<TcpListener>, CloseTrait, IterTrait
     public ServerType(string name) : base(name) { }
     public void Close(Value target) => target.Cast(this).Stop();
     
-    public Iter CreateIter(Value target)
+    public Iter CreateIter(Value target, VM vm, Loc loc)
     {
         var s = target.Cast(this);
         var c = Channel.CreateUnbounded<Value>();

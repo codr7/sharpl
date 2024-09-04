@@ -313,7 +313,7 @@ public class VM
                     {
                         var createOp = (Ops.CreateIter)op.Data;
                         var v = stack.Pop();
-                        if (v.Type is IterTrait it) { Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v))); }
+                        if (v.Type is IterTrait it) { Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v, this, createOp.Loc))); }
                         else { throw new EvalError(createOp.Loc, $"Not iterable: {v}"); }
                         PC++;
                         break;
@@ -511,7 +511,7 @@ public class VM
                                 if (splats.Count == 0) { throw new EvalError(splatOp.Loc, "Splat outside context"); }
                                 var arity = splats.Pop();
 
-                                foreach (var v in tt.CreateIter(tv))
+                                foreach (var v in tt.CreateIter(tv, this, splatOp.Loc))
                                 {
                                     stack.Push(v);
                                     arity++;
