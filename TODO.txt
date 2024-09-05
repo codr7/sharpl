@@ -21,7 +21,18 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 **** use in client to send value
 
 * add separate Expand phase to Form
-** move all transformations from Emit
+** move transformations from Emit
+** keep going until there's nothing more to expand
+
+* add separate TypeCheck phase to Form
+** add Form.TypeCheck(Env, Stack)
+** add User/Method arg/ret types
+** add optional type to Register
+** add Value.Unknown
+*** add type
+** add TypeCheck op
+*** emit on call for untyped args
+*** remove manual type checks in methods
 
 * add support for multiple values in pipe/port write call case
 * add Pair slice support
