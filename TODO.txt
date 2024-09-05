@@ -21,8 +21,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 **** use in client to send value
 
 * add separate Expand phase to Form
-** move all transformations
-*** including user macros
+** move all transformations from Emit
 
 * add support for multiple values in pipe/port write call case
 * add Pair slice support
