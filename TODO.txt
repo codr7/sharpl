@@ -19,6 +19,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 **** take optional eval function
 **** push string and call
 **** use in client to send value
+** figure out how to handle eval errors gracefully
 
 * add separate Expand phase to Form
 ** move transformations from Emit
