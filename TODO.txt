@@ -13,8 +13,6 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* move aoc23 into examples
-
 * start repl from client to server
 ** send code as string
 *** add repl method
@@ -22,10 +20,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 **** push string and call
 **** use in client to send value
 ** figure out how to handle eval errors gracefully
-
-* add separate Expand phase to Form
-** move transformations from Emit
-** keep going until there's nothing more to expand
 
 * add separate TypeCheck phase to Form
 ** add Form.TypeCheck(Env, Stack)
