@@ -79,6 +79,9 @@ public class Array : Form
         return result;
     }
 
+    public override Value? GetValue(VM vm) =>
+        Items.All(it => it is Literal) ? Value.Make(Libs.Core.Array, Items.Select(it => (it as Literal)!.Value).ToArray()) : null;
+
     public override Form Quote(Loc loc, VM vm) => 
         new Array(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
 

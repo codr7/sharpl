@@ -1,3 +1,5 @@
+using Sharpl.Libs;
+
 namespace Sharpl.Forms;
 
 public class Pair : Form
@@ -36,6 +38,9 @@ public class Pair : Form
         args.Push(new Pair(Loc, l, r));
         return result;
     }
+
+    public override Value? GetValue(VM vm) =>
+        (Left is Literal ll && Right is Literal rr) ? Value.Make(Core.Pair, (ll.Value, rr.Value)) : null;
 
     public override Form Quote(Loc loc, VM vm) => 
         new Pair(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
