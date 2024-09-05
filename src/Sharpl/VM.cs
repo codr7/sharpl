@@ -177,15 +177,10 @@ public class VM
         return result;
     }
 
-    public void Emit(Form form)
-    {
-        var fs = new Form.Queue();
-        fs.Push(form);
-        fs.Emit(this, new Form.Queue());
-    }
+    public void Emit(Form form) => new Form.Queue([form]).Emit(this);
 
     public void Emit(string code, Loc loc) =>
-        ReadForms(new StringReader(code), ref loc).Emit(this, new Form.Queue());
+        ReadForms(new StringReader(code), ref loc).Emit(this);
 
     public PC EmitPC => code.Count;
 
@@ -573,12 +568,12 @@ public class VM
         return (s.Count == 0) ? null : s.Pop();
     }
 
-    public void Eval(Emitter target, Form.Queue args, Stack stack)
+    public void Eval(Form.Queue target, Stack stack)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        target.Emit(this, args);
+        target.Emit(this);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         var prevPC = PC;
@@ -586,18 +581,15 @@ public class VM
         PC = prevPC;
     }
 
-    public Value? Eval(Emitter target, Form.Queue args)
+    public Value? Eval(Form.Queue target)
     {
         var stack = new Stack();
-        Eval(target, args, stack);
+        Eval(target, stack);
         return (stack.Count == 0) ? null : stack.Pop();
     }
 
-    public void Eval(Emitter target, Stack stack) =>
-        Eval(target, new Form.Queue(), stack);
-
-    public Value? Eval(Emitter target) =>
-        Eval(target, new Form.Queue());
+    public Value? Eval(Form target) => Eval(new Form.Queue([target]));
+    public void Eval(Form target, Stack stack) => Eval(new Form.Queue([target]), stack);
 
     public Value? Eval(string code)
     {
@@ -684,7 +676,7 @@ public class VM
 
                 var forms = ReadForms(source, ref loc);
                 Emit(Ops.SetLoadPath.Make(loadPath));
-                forms.Emit(this, new Form.Queue());
+                forms.Emit(this);
                 Emit(Ops.SetLoadPath.Make(prevLoadPath));
             }
         }

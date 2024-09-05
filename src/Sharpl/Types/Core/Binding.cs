@@ -8,7 +8,7 @@ public class BindingType : Type<Register>
     {
         var arity = args.Count;
         var splat = args.IsSplat;
-        args.Emit(vm, new Form.Queue());
+        args.Emit(vm);
         var v = target.CastUnbox(this);
         vm.Emit(Ops.CallRegister.Make(loc, v, arity, splat, vm.NextRegisterIndex));
     }

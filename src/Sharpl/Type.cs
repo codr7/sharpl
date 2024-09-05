@@ -27,7 +27,7 @@ public abstract class AnyType(string name)
         var arity = args.Count;
         var splat = args.IsSplat;
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-        args.Emit(vm, new Form.Queue());
+        args.Emit(vm);
         vm.Emit(Ops.CallDirect.Make(loc, target, arity, splat, vm.NextRegisterIndex));
     }
 

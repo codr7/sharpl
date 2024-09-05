@@ -79,10 +79,10 @@ public class Core : Lib
                         return ("_", -1);
                     }
 
-                    throw new EmitError(f.Loc, $"Invalid method arg: {f}");
+                    throw new EmitError(f.Loc, $"Invalid method arg: {f.Dump(vm)}");
                 }).ToArray();
             }
-            else { throw new EmitError(loc, "Invalid method args"); }
+            else { throw new EmitError(loc, $"Invalid method args: {f!.Dump(vm)}"); }
 
             var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
             var skip = new Label();
@@ -226,7 +226,7 @@ public class Core : Lib
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
                  vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Int)));
-                 args.Emit(vm, new Form.Queue());
+                 args.Emit(vm);
                  vm.Emit(Ops.Stop.Make());
              }
              else { throw new EmitError(loc, "Missing repetitions"); }
@@ -245,7 +245,7 @@ public class Core : Lib
                  {
                      while (true)
                      {
-                         if (args.TryPop() is Form bf) { bf.Emit(vm, args); }
+                         if (args.TryPop() is Form bf) { vm.Emit(bf); }
                          else { break; }
                      }
 
@@ -293,21 +293,21 @@ public class Core : Lib
         BindMacro("do", [], (loc, target, vm, args) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () => args.Emit(vm, new Form.Queue()));
+            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () => args.Emit(vm));
             vm.Emit(Ops.EndFrame.Make());
         });
 
         BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
              {
-                 if (args.TryPop() is Form cf) { cf.Emit(vm, args); }
+                 if (args.TryPop() is Form cf) { vm.Emit(cf); }
                  else { throw new EmitError(loc, "Missing condition"); }
                  var skipElse = new Label();
                  vm.Emit(Ops.Branch.Make(loc, skipElse));
-                 if (args.TryPop() is Form tf) { tf.Emit(vm, args); }
+                 if (args.TryPop() is Form tf) { vm.Emit(tf); }
                  var skipEnd = new Label();
                  vm.Emit(Ops.Goto.Make(skipEnd));
                  skipElse.PC = vm.EmitPC;
-                 args.Emit(vm, new Form.Queue());
+                 args.Emit(vm);
                  skipEnd.PC = vm.EmitPC;
              });
 
@@ -364,12 +364,12 @@ public class Core : Lib
 
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
             {
-                if (args.TryPop() is Form f) { f.Emit(vm, args); }
+                if (args.TryPop() is Form f) { vm.Emit(f); }
                 else { throw new EmitError(loc, "Missing condition"); }
 
                 var skip = new Label();
                 vm.Emit(Ops.Branch.Make(loc, skip));
-                args.Emit(vm, new Form.Queue());
+                args.Emit(vm);
                 skip.PC = vm.EmitPC;
             });
 
@@ -461,7 +461,7 @@ public class Core : Lib
 
                          while (true)
                          {
-                             if (args.TryPop() is Form f) { f.Emit(vm, args); }
+                             if (args.TryPop() is Form f) { vm.Emit(f); }
                              else { break; }
                          }
 
@@ -492,7 +492,7 @@ public class Core : Lib
                     }
 
                     if (args.Empty) { vm.Env = lib; }
-                    else { vm.DoEnv(lib, () => args.Emit(vm, new Form.Queue())); }
+                    else { vm.DoEnv(lib, () => args.Emit(vm)); }
                 }
                 else { throw new EmitError(loc, "Invalid library name"); }
             });
@@ -503,7 +503,7 @@ public class Core : Lib
                 {
                     if (args.TryPop() is Form pf)
                     {
-                        if (vm.Eval(pf, args) is Value p) { vm.Load(p.Cast(pf.Loc, String)); }
+                        if (vm.Eval(pf) is Value p) { vm.Load(p.Cast(pf.Loc, String)); }
                         else { throw new EvalError(pf.Loc, "Missing path"); }
                     }
                     else { break; }
@@ -569,7 +569,7 @@ public class Core : Lib
                  while (!args.Empty)
                  {
                      if (!first) { vm.Emit(Ops.Drop.Make(1)); }
-                     args.Pop().Emit(vm, args);
+                     vm.Emit(args.Pop());
 
                      if (!args.Empty)
                      {
@@ -778,7 +778,7 @@ public class Core : Lib
                             if (f is Forms.Literal lit) { vm.Env[idf.Name] = lit.Value; }
                             var v = new Form.Queue();
                             v.Push(f);
-                            v.Emit(vm, args);
+                            v.Emit(vm);
                             vm.Define(idf.Name);
                         }
                         else { throw new EmitError(loc, "Missing value"); }

@@ -39,9 +39,9 @@ public class IO : Lib
                          }
 
                          var startPC = vm.EmitPC;
-                         af.Items[1].Emit(vm, args);
+                         vm.Emit(af.Items[1]);
                          vm.Emit(Ops.OpenInputStream.Make(loc, 0, reg));
-                         args.Emit(vm, new Form.Queue());
+                         args.Emit(vm);
                      });
                  }
                  else

@@ -13,6 +13,10 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* Expand literal Array/Map/Pair into literals
+** remove Form.GetValue()
+*** scan for literals instead
+
 * move aoc23 into examples
 
 * start repl from client to server

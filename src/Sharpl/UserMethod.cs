@@ -71,7 +71,7 @@ public class UserMethod
     public override string ToString()
     {
         var result = new StringBuilder();
-        result.Append($"({Name} [");
+        result.Append($"(^{Name} [");
 
         for (var i = 0; i < Args.Length; i++)
         {

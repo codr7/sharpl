@@ -16,24 +16,30 @@ public abstract class Form(Loc loc) : Emitter
     }
 
     public abstract string Dump(VM vm);
-    public abstract void Emit(VM vm, Queue args);
+    public virtual void Emit(VM vm, Queue args) { }
 
     public virtual void EmitCall(VM vm, Queue args)
     {
         var arity = args.Count;
-        args.Emit(vm, new Queue());
-        Emit(vm, new Queue());
+        args.Emit(vm);
+        vm.Emit(this);
         vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public abstract bool Equals(Form other);
-    public virtual bool Expand(VM vm, Queue args) => false;
+
+    public virtual bool Expand(VM vm, Queue args)
+    {
+        args.Push(this);
+        return false;
+    }
+
     public virtual Value? GetValue(VM vm) => null;
     public virtual bool IsSplat => false;
     public virtual Form Quote(Loc loc, VM vm) => this;
     public virtual Form Unquote(Loc loc, VM vm) => this;
 
-    public class Queue : Emitter, IEnumerable<Form>
+    public class Queue: IEnumerable<Form>
     {
         private LinkedList<Form> items = new LinkedList<Form>();
 
@@ -54,15 +60,31 @@ public abstract class Form(Loc loc) : Emitter
         public void Clear() => items.Clear();
         public int Count => items.Count;
 
-        public void Emit(VM vm, Queue args)
+        public void Emit(VM vm)
         {
+            Expand(vm);
+
             while (Count > 0)
             {
                 if (TryPop() is Form v) { v.Emit(vm, this); }
             }
         }
 
-        public void Emit(VM vm) => Emit(vm, new Form.Queue());
+        public void Expand(VM vm)
+        {
+            var done = false;
+            
+            while (!done)
+            {
+                var input = new Queue([.. items]);
+                items.Clear();
+                done = true;
+
+                while (input.Count > 0) { 
+                    if (input.Pop().Expand(vm, this)) { done = false; }; 
+                }
+            }
+        }
 
         public bool Empty { get => items.Count == 0; }
 

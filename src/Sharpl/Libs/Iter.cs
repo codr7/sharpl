@@ -115,12 +115,12 @@ public class Iter : Lib
                   var emptyArgs = new Form.Queue();
 
                   var method = new Register(0, vm.AllocRegister());
-                  methodForm.Emit(vm, emptyArgs);
+                  vm.Emit(methodForm);
                   vm.Emit(Ops.SetRegister.Make(method));
 
-                  sequenceForm.Emit(vm, emptyArgs);
+                  vm.Emit(sequenceForm);
                   vm.Emit(Ops.CreateIter.Make(loc, iter));
-                  seedForm.Emit(vm, emptyArgs);
+                  vm.Emit(seedForm);
 
                   var start = new Label(vm.EmitPC);
                   var done = new Label();

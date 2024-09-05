@@ -24,5 +24,5 @@ public readonly struct Macro
     }
 
     public override string ToString() =>
-        $"(Macro {Name} [{string.Join(' ', Args)}])";
+        $"({Name} [{string.Join(' ', Args)}])";
 }

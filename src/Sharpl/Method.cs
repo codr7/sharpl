@@ -25,5 +25,5 @@ public readonly struct Method
     }
 
     public override string ToString() =>
-        $"(Method {Name} [{string.Join(' ', Args)}])";
+        $"(^{Name} [{string.Join(' ', Args)}])";
 }

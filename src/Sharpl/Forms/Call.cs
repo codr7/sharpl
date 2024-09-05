@@ -36,7 +36,6 @@ public class Call : Form
 
         var cas = new Queue(Args);
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-
         var t = Target;
 
         while (t is Pair pf)
@@ -87,6 +86,21 @@ public class Call : Form
         }
 
         return false;
+    }
+
+    public override bool Expand(VM vm, Queue args) {
+        var result = false;
+        if (Target.Expand(vm, args)) { result = true; }
+        var t = args.PopLast();
+        var callArgs = new Form[Args.Length];
+        
+        for (var i = 0; i < Args.Length; i++) {
+            if (Args[i].Expand(vm, args)) { result = true; }
+            callArgs[i] = args.PopLast();
+        }
+
+        args.Push(new Call(Loc, t, callArgs));
+        return result;
     }
 
     public override Form Quote(Loc loc, VM vm) =>

@@ -14,7 +14,7 @@ public class MethodType : Type<Method>
         var splat = args.IsSplat;
         if (!splat && arity < m.MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {m}"); }
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-        args.Emit(vm, new Form.Queue());
+        args.Emit(vm);
         vm.Emit(Ops.CallMethod.Make(loc, m, arity, splat));
     }
 }

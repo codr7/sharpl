@@ -16,6 +16,14 @@ public class Splat : Form
     }
 
     public override bool Equals(Form other) => (other is Splat f) ? f.Target.Equals(Target) : false;
+
+    public override bool Expand(VM vm, Queue args)
+    {
+        var result = Target.Expand(vm, args);
+        args.Push(new Splat(Loc, args.PopLast()));
+        return result;
+    }
+
     public override bool IsSplat => true;
     public override Form Quote(Loc loc, VM vm) => new Splat(loc, Target.Quote(loc, vm));
     public override string Dump(VM vm) => $"{Target.Dump(vm)}*";

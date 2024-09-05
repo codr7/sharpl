@@ -27,6 +27,16 @@ public class Pair : Form
     public override bool Equals(Form other) =>
         (other is And f) ? f.Left.Equals(Left) && f.Right.Equals(Right) : false;
 
+    public override bool Expand(VM vm, Queue args) {
+        var result = false;
+        if (Left.Expand(vm, args)) { result = true; }
+        var l = args.PopLast();
+        if (Right.Expand(vm, args)) { result = true; }
+        var r = args.PopLast();
+        args.Push(new Pair(Loc, l, r));
+        return result;
+    }
+
     public override Form Quote(Loc loc, VM vm) => 
         new Pair(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
 

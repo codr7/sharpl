@@ -38,7 +38,7 @@ public class Id : Form
 
     public override void Emit(VM vm, Queue args)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v) { v.Emit(Loc, vm, args); }
+        if (GetId(Name, vm.Env, Loc) is Value v) { args.PushFirst(new Literal(Loc, v)); }
         else { throw new EmitError(Loc, $"Unknown id: {Name}"); }
     }
 

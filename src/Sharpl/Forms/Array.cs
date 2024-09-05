@@ -66,6 +66,19 @@ public class Array : Form
         return false;
     }
 
+    public override bool Expand(VM vm, Queue args) {
+        var result = false;
+        var newItems = new Form[Items.Length];
+        
+        for (var i = 0; i < Items.Length; i++) {
+            if (Items[i].Expand(vm, args)) { result = true; }
+            newItems[i] = args.PopLast();
+        }
+
+        args.Push(new Array(Loc, newItems));
+        return result;
+    }
+
     public override Form Quote(Loc loc, VM vm) => 
         new Array(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
 
