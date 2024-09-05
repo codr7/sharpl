@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Channels;
 using Sharpl.Libs;
@@ -569,7 +570,7 @@ public class VM
     public Value? Eval(PC startPC) {
         var s = new Stack();
         Eval(startPC, s);
-        return s.Pop();
+        return (s.Count == 0) ? null : s.Pop();
     }
 
     public void Eval(Emitter target, Form.Queue args, Stack stack)

@@ -13,12 +13,6 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add method to create port for network stream
-** net/port
-** use in client/server
-
-* add password validation to client/server
-
 * start repl from client to server
 ** send code as string
 *** add repl method

@@ -8,6 +8,8 @@
      PORT (parse-int:_ (ARG 1))
      PASSWORD (ARG 2))
 
-(let [c (net/connect HOST:PORT)]
-  (say c)
-  (close c))
+(let [c (net/stream-port (net/connect HOST:PORT))]
+  (say "Connected to " HOST:PORT)
+  (c PASSWORD))
+
+(loop)

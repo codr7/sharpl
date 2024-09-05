@@ -13,12 +13,17 @@
 
 (^handle-connect [c]
   (say "New client")
-  (push clients c))
+
+  (else (= (c) PASSWORD)
+    (push clients (net/stream-port c)
+    (say "Authentication failed")
+    (close c))))
 
 (^handle-request [c]
-  (say "New request")
   (let [r (c)]
-    (say r)))
+    (say "New request: " r)))
+
+(say "Listening on " HOST:PORT)
 
 (loop
   (let [ready (poll s clients*)]

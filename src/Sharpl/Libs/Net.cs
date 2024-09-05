@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Channels;
+using Sharpl.Net;
 using Sharpl.Types.Net;
 
 namespace Sharpl.Libs;
@@ -47,6 +48,12 @@ public class Net : Lib
             var s = new TcpListener(a, v.Item2.CastUnbox(loc, Core.Int));
             s.Start();
             stack.Push(Server, s);
+        });
+
+        BindMethod("stream-port", ["it"], (loc, target, vm, stack, arity) =>
+        {
+            var s = stack.Pop().Cast(loc, Stream);
+            stack.Push(Core.Port, new StreamPort(s));
         });
     }
 }
