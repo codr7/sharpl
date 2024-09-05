@@ -36,13 +36,13 @@ public class Id : Form
     public override void CollectIds(HashSet<string> result) =>
         result.Add(Name);
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Queue args)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitId(Loc, vm, args); }
+        if (GetId(Name, vm.Env, Loc) is Value v) { v.Emit(Loc, vm, args); }
         else { throw new EmitError(Loc, $"Unknown id: {Name}"); }
     }
 
-    public override void EmitCall(VM vm, Form.Queue args)
+    public override void EmitCall(VM vm, Queue args)
     {
         if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(Loc, vm, args); }
         else { throw new EmitError(Loc, $"Unknown id: {Name}"); }

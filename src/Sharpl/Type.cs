@@ -31,7 +31,6 @@ public abstract class AnyType(string name)
         vm.Emit(Ops.CallDirect.Make(loc, target, arity, splat, vm.NextRegisterIndex));
     }
 
-    public virtual void EmitId(Loc loc, VM vm, Value value, Form.Queue args) => Emit(loc, vm, value, args);
     public abstract bool Equals(Value left, Value right);
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Loc loc, Value value) => throw new EvalError(loc, $"Not supported: {value}");

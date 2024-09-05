@@ -9,7 +9,8 @@ public abstract class Form(Loc loc) : Emitter
 
     public virtual void CollectIds(HashSet<string> result) { }
 
-    public T Cast<T>(Loc loc) where T: Form {
+    public T Cast<T>(Loc loc) where T : Form
+    {
         if (this is T result) { return result; }
         throw new EvalError(loc, $"Type mismatch: {this}");
     }
@@ -26,6 +27,7 @@ public abstract class Form(Loc loc) : Emitter
     }
 
     public abstract bool Equals(Form other);
+    public virtual bool Expand(VM vm, Queue args) => false;
     public virtual Value? GetValue(VM vm) => null;
     public virtual bool IsSplat => false;
     public virtual Form Quote(Loc loc, VM vm) => this;
@@ -112,7 +114,7 @@ public abstract class Form(Loc loc) : Emitter
         }
 
         public Form PopLast() => TryPopLast() ?? throw new InvalidOperationException("There is no last element");
- 
+
         public void Push(Form form) => items.AddLast(form);
         public void PushFirst(Form form) => items.AddFirst(form);
 
