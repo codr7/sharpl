@@ -20,13 +20,13 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         Type.Call(loc, vm, stack, this, arity, registerCount);
 
     public T Cast<T>(Type<T> type) where T : class =>
-        Type == type ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);
+        Unsafe.As<T>(Data);
 
     public T Cast<T>(Loc loc, Type<T> type) where T : class =>
         Type == type ? Unsafe.As<T>(Data) : TypeMismatch(loc, Type, type);
 
     public T CastUnbox<T>(Type<T> type) where T : struct =>
-        Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(Type, type);
+        Unsafe.As<StrongBox<T>>(Data).Value;
 
     public T CastUnbox<T>(Loc loc, Type<T> type) where T : struct =>
         Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(loc, Type, type);
@@ -34,13 +34,13 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     // Do not remove Nullable<T> overloads - they are necessary
     // to correctly handle unboxing of nullable structs.
     public T? CastUnbox<T>(Type<T?> type) where T : struct =>
-        Type == type ? (T?)Data : TypeMismatch(Type, type);
+        (T?)Data;
 
     public T? CastUnbox<T>(Loc loc, Type<T?> type) where T : struct =>
         Type == type ? (T?)Data : TypeMismatch(loc, Type, type);
 
     public T CastSlow<T>(Type<T> type) =>
-        Type == type ? (T)Data : TypeMismatch(Type, type);
+        (T)Data;
 
     public int CompareTo(Value other)
     {
@@ -80,10 +80,6 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         Type == type ? Unsafe.Unbox<T>(Data) : default(T?);
 
     public Form Unquote(Loc loc, VM vm) => Type.Unquote(loc, vm, this);
-
-    [DoesNotReturn, StackTraceHidden]
-    static T TypeMismatch<T>(AnyType lhs, Type<T> rhs) =>
-        throw new Exception($"Type mismatch: {lhs}/{rhs}");
 
     [DoesNotReturn, StackTraceHidden]
     static T TypeMismatch<T>(Loc loc, AnyType lhs, Type<T> rhs) =>
