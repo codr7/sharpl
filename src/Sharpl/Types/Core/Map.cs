@@ -78,6 +78,9 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
     public Iter CreateIter(Value target, VM vm, Loc loc) =>
         new Iters.Core.EnumeratorItems(target.Cast(this).Items.Select(v => Value.Make(Libs.Core.Pair, v)).GetEnumerator());
 
+    public override Value Copy(Value value) => 
+        Value.Make(this, new OrderedMap<Value, Value>(value.Cast(this).Items.Select(it => (it.Item1.Copy(), it.Item2.Copy())).ToArray()));
+
     public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append('{');

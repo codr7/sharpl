@@ -70,6 +70,9 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
     public Sharpl.Iter CreateIter(Value target, VM vm, Loc loc) =>
         new EnumeratorItems(((IEnumerable<Value>)target.Cast(this)).GetEnumerator());
 
+    public override Value Copy(Value value) =>
+        Value.Make(this, value.Cast(this).Select(it => it.Copy()).ToArray());
+
     public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append('[');

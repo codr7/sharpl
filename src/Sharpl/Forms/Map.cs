@@ -84,7 +84,7 @@ public class Map : Form
 
     public override Value? GetValue(VM vm) =>
         Items.All(it => it is Literal) 
-            ? Value.Make(Libs.Core.Map, new OrderedMap<Value, Value>(Items.Select(it => (it as Literal)!.Value.CastUnbox(Libs.Core.Pair)).ToArray())) 
+            ? Value.Make(Libs.Core.Map, new OrderedMap<Value, Value>(Items.Select(it => (it as Literal)!.Value.Copy().CastUnbox(Libs.Core.Pair)).ToArray())) 
             : null;
 
     public override Form Quote(Loc loc, VM vm) =>

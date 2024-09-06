@@ -40,7 +40,7 @@ public class Pair : Form
     }
 
     public override Value? GetValue(VM vm) =>
-        (Left is Literal ll && Right is Literal rr) ? Value.Make(Core.Pair, (ll.Value, rr.Value)) : null;
+        (Left is Literal ll && Right is Literal rr) ? Value.Make(Core.Pair, (ll.Value.Copy(), rr.Value.Copy())) : null;
 
     public override Form Quote(Loc loc, VM vm) => 
         new Pair(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));

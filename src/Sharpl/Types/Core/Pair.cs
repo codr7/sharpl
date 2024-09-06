@@ -97,6 +97,11 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
 
     public Sharpl.Iter CreateIter(Value target, VM vm, Loc loc) => new PairItems(target);
 
+    public override Value Copy(Value value) {
+        var p = value.CastUnbox(this);
+        return Value.Make(this, (p.Item1.Copy(), p.Item2.Copy()));
+    }
+
     public override void Dump(Value value, VM vm, StringBuilder result)
     {
         var p = value.CastUnbox(this);

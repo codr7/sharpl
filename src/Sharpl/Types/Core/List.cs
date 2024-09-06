@@ -76,6 +76,9 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
     public Sharpl.Iter CreateIter(Value target, VM vm, Loc loc) =>
         new EnumeratorItems(target.Cast(this).GetEnumerator());
 
+    public override Value Copy(Value value) => 
+        Value.Make(this, new List<Value>(value.Cast(this).Select(it => it.Copy())));
+
     public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append("(List");
