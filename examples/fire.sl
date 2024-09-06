@@ -41,8 +41,14 @@
       (inc avg-time (- (time/now) t0))
       (inc avg-frames)))
 
-    (init)
-    (for 50 (render))
-    (term/reset)
+(^run []
+  (init)
+  
+  (for [_ (range 0 50)]
+    (if (term/poll-key) (return)) 
+    (render))
 
-(say (/ (* 1000000000.0 avg-frames) avg-time))
+  (term/reset)
+  (say (/ (* 1000000000.0 avg-frames) avg-time)))
+
+(run)

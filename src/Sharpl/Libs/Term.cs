@@ -44,7 +44,7 @@ public class Term : Lib
             vm.Term.MoveTo(x, (y == Value.Nil) ? null : y.CastUnbox(loc, Core.Int));
         });
 
-        BindMethod("is-key-pressed", [], (loc, target, vm, stack, arity) =>
+        BindMethod("poll-key", [], (loc, target, vm, stack, arity) =>
             stack.Push(Core.Bit, Console.KeyAvailable));
 
         BindMethod("read-key", [], (loc, target, vm, stack, arity) =>
