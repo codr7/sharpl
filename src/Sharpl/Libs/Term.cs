@@ -2,6 +2,7 @@ namespace Sharpl.Libs;
 
 using Sharpl.Types.Term;
 using System.Drawing;
+using System.Linq.Expressions;
 using System.Text;
 
 public class Term : Lib
@@ -42,6 +43,9 @@ public class Term : Lib
             var x = stack.Pop().CastUnbox(loc, Core.Int);
             vm.Term.MoveTo(x, (y == Value.Nil) ? null : y.CastUnbox(loc, Core.Int));
         });
+
+        BindMethod("is-key-pressed", [], (loc, target, vm, stack, arity) =>
+            stack.Push(Core.Bit, Console.KeyAvailable));
 
         BindMethod("read-key", [], (loc, target, vm, stack, arity) =>
         {
