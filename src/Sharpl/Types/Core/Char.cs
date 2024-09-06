@@ -29,4 +29,7 @@ public class CharType(string name) :
             _ => c
         });
     }    
+
+    public override void Say(Value value, VM vm, StringBuilder result) =>
+        result.Append(value.CastUnbox(this));
 }
