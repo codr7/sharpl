@@ -13,7 +13,9 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* Perform literal constructor calls in Call.GetValue
+* implement copy for List/Map.
+
+* perform literal constructor calls in Call.GetValue
 ** check if target is meta literal
 ** check if all args are literal
 ** benchmark list
