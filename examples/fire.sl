@@ -1,14 +1,14 @@
-(define width  (term/width) 
-        height (term/height)
-        pixels (resize [] (* width height) 0)
+(var width  (term/width) 
+     height (term/height)
+     pixels (resize [] (* width height) 0)
         
-        max-y    (- height 1)
-        max-fade 50
+     max-y    (- height 1)
+     max-fade 50
 
-        avg-frames 0 
-        avg-time  .0)
+     avg-frames 0 
+     avg-time  .0)
 
-(fun init ()
+(^init []
   (for [i (range 0 width)]
     (pixels i 255))
 
@@ -16,10 +16,10 @@
   (term/move-to 1 1)
   (term/flush))
 
-(fun render ()
-  (let [i -1]
+(^render []
+  (let [i (- 1)]
     (for [_ (range 0 max-y)]
-      (for [_ (range 0 (width x))]
+      (for [x (range 0 width)]
         (let [v (pixels (inc i))
               j (+ i width)]
           (if (and x (< x (- width 1)))

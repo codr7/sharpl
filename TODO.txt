@@ -9,6 +9,7 @@ April 29th
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * fire.sl
+** add fix/to-int
 
 * add time/now method
 ** add duration/timestamp types

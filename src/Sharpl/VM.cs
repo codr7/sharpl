@@ -202,6 +202,13 @@ public class VM
 
             switch (op.Type)
             {
+                case Op.T.And:
+                    {
+                        var andOp = (Ops.And)op.Data;
+                        if (!(bool)stack.Peek()) { PC = andOp.Done.PC; }
+                        else { PC++; }
+                        break;
+                    }
                 case Op.T.BeginFrame:
                     {
                         var beginOp = (Ops.BeginFrame)op.Data;

@@ -222,6 +222,26 @@ public class Core : Lib
             else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 
+        BindMacro("and", ["value1"], (loc, target, vm, args) =>
+             {
+                 var done = new Label();
+                 var first = true;
+
+                 while (!args.Empty)
+                 {
+                     if (!first) { vm.Emit(Ops.Drop.Make(1)); }
+                     vm.Emit(args.Pop());
+
+                     if (!args.Empty)
+                     {
+                         vm.Emit(Ops.And.Make(done));
+                         first = false;
+                     }
+                 }
+
+                 done.PC = vm.EmitPC;
+             });
+
         BindMacro("bench", ["n"], (loc, target, vm, args) =>
          {
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)

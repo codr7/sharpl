@@ -17,3 +17,9 @@
   (or F 0))
 
 (check (or T 42))
+
+(check 42
+  (and T 42))
+
+(check 0
+  (and 0 42))
