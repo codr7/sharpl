@@ -34,7 +34,7 @@
     (for [_ (range 0 width)]
       (let [g (pixels (dec i))
             r (else g 255 0)
-            b (else (= g 255) 255 0)]
+            b (else (is g 255) 255 0)]
           (term/pick-back (rgb r g b))
           (term/write \\s)))
     (term/write \\n))
