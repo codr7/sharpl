@@ -43,6 +43,7 @@ public class VM
 
     public readonly Libs.Char CharLib;
     public readonly Libs.Core CoreLib = new Libs.Core();
+    public readonly Libs.Fix FixLib;
     public readonly Libs.IO IOLib;
     public readonly Libs.Iter IterLib;
     public readonly Libs.Json JsonLib;
@@ -90,6 +91,9 @@ public class VM
         StringLib = new Libs.String();
         StringLib.Init(this);
 
+        FixLib = new Libs.Fix();
+        FixLib.Init(this);
+        
         JsonLib = new Libs.Json();
         JsonLib.Init(this);
 

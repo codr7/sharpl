@@ -37,7 +37,7 @@
               r (else g 255 0)
               b (else (= g 255) 255 0)]
           (if (not (is g prev-g))
-            (term/pick-bg (rgb (fix/to-int r) (fix/to-int g) (fix/to-int b)))
+            (term/pick-back (rgb (fix/to-int r) (fix/to-int g) (fix/to-int b)))
             (term/write " ")
             (set prev-g g))))
       (term/write \\n)))
