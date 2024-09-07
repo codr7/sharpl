@@ -21,6 +21,7 @@ public struct Char : Reader
             c = source.Read() switch {
                 'n' => '\n',
                 'r' => '\r',
+                's' => ' ',
                 var e =>  throw new ReadError(loc, $"Invalid special char literal: {e}")
             };
         }

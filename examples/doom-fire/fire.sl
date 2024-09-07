@@ -36,7 +36,7 @@
             r (else g 255 0)
             b (else (= g 255) 255 0)]
           (term/pick-back (rgb r g b))
-          (term/write " ")))
+          (term/write \\s)))
     (term/write \\n))
 
   (term/flush)))
