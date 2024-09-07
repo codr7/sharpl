@@ -9,19 +9,20 @@ April 29th
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * fire.sl
-** switch from hex to decimal notation
+** add (resize array n 0) method
+*** value optional
+**** default nil
 ** add support for inc/dec delta
-** add (resize array n) method
-** add rand-int method
 ** add support for _ loop bindings
 *** skip allocating/setting register
-** add time/now method
-*** add duration/timestamp types
-*** add support for timestamp-timestamp => duration
-*** add support for timestamp+duration -> timestamp
-*** add support for +- duration
-*** add support for duration * int
-*** add support for duration / int
+
+* add time/now method
+** add duration/timestamp types
+** add support for timestamp-timestamp => duration
+** add support for timestamp+duration -> timestamp
+** add support for +- duration
+** add support for duration * int
+** add support for duration / int
 
 * perform literal constructor calls in Call.GetValue
 ** check if target is meta literal

@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Drawing;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Threading.Channels;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
 
@@ -37,7 +35,7 @@ public class VM
             Readers.Id.Instance
         ]);
 
-        public C() {}
+        public C() { }
     };
 
     public static readonly C DEFAULT = new C();
@@ -56,6 +54,7 @@ public class VM
     public readonly C Config;
     public PC PC = 0;
     public readonly Term Term = new Term();
+    public readonly Random Random = new Random();
 
     private readonly List<Call> calls = [];
     private readonly List<Op> code = [];
@@ -562,7 +561,8 @@ public class VM
         }
     }
 
-    public Value? Eval(PC startPC) {
+    public Value? Eval(PC startPC)
+    {
         var s = new Stack();
         Eval(startPC, s);
         return (s.Count == 0) ? null : s.Pop();
@@ -601,10 +601,12 @@ public class VM
     public int FrameCount => frames.Count;
 
     public Value Get(Register register) => GetRegister(register.FrameOffset, register.Index);
-    
-    public int GetObjectId(object it) {
-        if (!objectIds.ContainsKey(it)) {
-            var id = objectIds.Count+1;
+
+    public int GetObjectId(object it)
+    {
+        if (!objectIds.ContainsKey(it))
+        {
+            var id = objectIds.Count + 1;
             objectIds[it] = id;
             return id;
         }

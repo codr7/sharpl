@@ -46,6 +46,12 @@
 (check 3
   (max 1 3 2))
 
+(check 0
+  (rand-int 1))
+  
+(check F 
+  (is (rand-int) (rand-int)))
+
 (load "array-tests.sl")
 (load "char-tests.sl")
 (load "fib-tests.sl")

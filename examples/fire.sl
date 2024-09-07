@@ -17,7 +17,7 @@
   (term/flush))
 
 (fun render ()
-  (let [t0 (time/now) i -1]
+  (let [i -1]
     (for [_ (range 0 max-y)]
       (for [_ (range 0 (width x))]
         (let [v (pixels (inc i))
@@ -42,10 +42,7 @@
             (set prev-g g))))
       (term/write \\n)))
 
-  (term/flush)
-  
-  (inc avg-time (- (time/now) t0))
-  (inc avg-frames)))
+  (term/flush)))
 
 (^run []  
   (for [_ (range 0 50)]
@@ -59,5 +56,3 @@
 (term/clear-screen)
 (term/move-to 1 1)
 (term/flush)
-  
-(say (/ (* 1000000000.0 avg-frames) avg-time))

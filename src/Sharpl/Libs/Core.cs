@@ -609,7 +609,8 @@ public class Core : Lib
             var ss = new (Task<bool>, Value)[arity];
             var cts = new CancellationTokenSource();
 
-            for (var i = arity - 1; i >= 0; i--) { 
+            for (var i = arity - 1; i >= 0; i--)
+            {
                 var s = stack.Pop();
                 if (s.Type is PollTrait pt) { ss[i] = (pt.Poll(s, cts.Token), s); }
                 else { throw new EvalError(loc, $"Not pollable: {s.Dump(vm)}"); }
@@ -643,6 +644,13 @@ public class Core : Lib
              }
              else { throw new EmitError(loc, $"Invalid push destination: {dst}"); }
          });
+
+        BindMethod("rand-int", ["n?"], (loc, target, vm, stack, arity) =>
+        {
+            Value? n = (arity == 1) ? stack.Pop() : null;
+            var v = vm.Random.Next();
+            stack.Push(Int, (n is null) ? v : v % ((Value)n).CastUnbox(loc, Int));
+        });
 
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
             {
