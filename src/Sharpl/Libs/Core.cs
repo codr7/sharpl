@@ -293,8 +293,9 @@ public class Core : Lib
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
             {
                 var r = v.CastUnbox(Binding);
-                var d = args.Empty ? null : args.Pop() as Forms.Literal;
-                vm.Emit(Ops.Decrement.Make(r, (d is null) ? 1 : d.Value.CastUnbox(loc, Int)));
+                var d = args.Empty ? null : args.Pop();
+                if (d is not null && d is not Forms.Literal) { throw new EmitError(d.Loc, $"Literal expected: {d}"); }
+                vm.Emit(Ops.Decrement.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(loc, Int)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
             else { throw new EmitError(loc, "Invalid target"); }
@@ -400,8 +401,9 @@ public class Core : Lib
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
             {
                 var r = v.CastUnbox(Binding);
-                var d = args.Empty ? null : args.Pop() as Forms.Literal;
-                vm.Emit(Ops.Increment.Make(r, (d is null) ? 1 : d.Value.CastUnbox(loc, Int)));
+                var d = args.Empty ? null : args.Pop();
+                if (d is not null && d is not Forms.Literal) { throw new EmitError(d!.Loc, $"Literal expected: {d}"); }
+                vm.Emit(Ops.Increment.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(loc, Int)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
             else { throw new EmitError(loc, "Invalid target"); }
@@ -713,7 +715,7 @@ public class Core : Lib
 
         BindMacro("return", [], (loc, target, vm, args) =>
             {
-                var vf = args.Pop();
+                var vf = args.TryPop();
                 UserMethod? m = null;
 
                 if (vf is Forms.Call c)
@@ -754,7 +756,7 @@ public class Core : Lib
 
                 if (m is null)
                 {
-                    vm.Emit(vf);
+                    if (vf is not null) { vm.Emit(vf); }
                     vm.Emit(Ops.ExitMethod.Make());
                 }
             });
@@ -787,10 +789,10 @@ public class Core : Lib
             while (!args.Empty) {
                 var id = args.Pop().Cast<Forms::Id>();
                 var v = args.Pop();
-                var r = new Register(0, vm.AllocRegister());
-                vm.Env.Bind(id.Name, Value.Make(Binding, r));
+                var b = vm.Env[id.Name];
+                if (b is null) { throw new EmitError(loc, $"Unknown symbol: {id.Name}"); }
                 vm.Emit(v);
-                vm.Emit(Ops.SetRegister.Make(r));
+                vm.Emit(Ops.SetRegister.Make(((Value)b).CastUnbox(Binding)));
             }
         });
 

@@ -33,7 +33,10 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
                         var n = (p.Item2.Type == Core.Nil) ? t.Length - 1 : p.Item2.CastUnbox(loc, Core.Int);
                         stack.Push(Core.Array, t[i..(i + n)]);
                     }
-                    else { stack.Push(t[iv.CastUnbox(Core.Int)]); }
+                    else
+                    {
+                        stack.Push(t[iv.CastUnbox(Core.Int)]);
+                    }
 
                     break;
                 }

@@ -3,7 +3,7 @@
      pixels (resize [] (* width height) 0)
         
      max-y    (- height 1)
-     max-fade 50
+     max-fade 10
 
      avg-frames 0 
      avg-time  .0)
@@ -20,32 +20,30 @@
   (let [i (- 1)]
     (for [_ (range 0 max-y)]
       (for [x (range 0 width)]
-        (let [v (pixels (inc i))
-              j (+ i width)]
-          (if (and x (< x (- width 1)))
-            (inc j (- 1 (rand-int 3))))
+        (let [j (+ i width)
+              v (pixels (inc i))]
+          (if (and (> x 0) (< x (- width 1)))
+            (set j (+ j (- 1 (rand-int 3)))))
         
-          (pixels j (else v (- v (rand-int (min max-fade (+ (fix/to-int v) 1)))) v)))))
+          (pixels j (- v (rand-int (min max-fade (+ v 1))))))))
 
-  (inc i (+ width 1))
+  (set i (+ i width 1))
   (term/move-to 1 1)
-      
+
   (let [prev-g _]
     (for [_ (range 0 height)]
       (for [_ (range 0 width)]
         (let [g (pixels (dec i))
               r (else g 255 0)
               b (else (= g 255) 255 0)]
-          (if (not (is g prev-g))
-            (term/pick-back (rgb (fix/to-int r) (fix/to-int g) (fix/to-int b)))
-            (term/write " ")
-            (set prev-g g))))
+            (term/pick-back (rgb r g b))
+            (term/write " ")))
       (term/write \\n)))
 
   (term/flush)))
 
 (^run []  
-  (for [_ (range 0 50)]
+  (loop
     (if (term/poll-key) (return)) 
     (render)))
 
@@ -56,3 +54,4 @@
 (term/clear-screen)
 (term/move-to 1 1)
 (term/flush)
+(term/restore)

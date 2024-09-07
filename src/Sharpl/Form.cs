@@ -86,7 +86,7 @@ public abstract class Form(Loc loc) : Emitter
             }
         }
 
-        public bool Empty { get => items.Count == 0; }
+        public bool Empty => items.Count == 0;
 
         public Form[] Items
         {
