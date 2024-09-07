@@ -1,6 +1,6 @@
 (define width  (term/width) 
         height (term/height)
-        pixels (resize [] (* width height))
+        pixels (resize [] (* width height) 0)
         
         max-y    (- height 1)
         max-fade 50

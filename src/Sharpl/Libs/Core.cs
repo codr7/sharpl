@@ -1,4 +1,5 @@
 using Sharpl.Types.Core;
+using System.Collections;
 using System.Text;
 using System.Threading.Channels;
 using Forms = Sharpl.Forms;
@@ -678,6 +679,17 @@ public class Core : Lib
                 if (t is RangeTrait rt) { stack.Push(Iter, rt.CreateRange(loc, min, max, stride)); }
                 else { throw new EvalError(loc, $"Invalid range type: {t}"); }
             });
+
+        BindMethod("resize", ["array", "size", "value?"], (loc, target, vm, stack, arity) =>
+        {
+            var v = (arity == 3) ? stack.Pop() : Value.Nil;
+            var s = stack.Pop().CastUnbox(loc, Int); 
+            var a = stack.Pop().Cast(loc, Array);
+            var ps = a.Length;
+            System.Array.Resize(ref a, s);
+            for (var i = ps; i < s; i++) { a[i] = v; }
+            stack.Push(Array, a);
+        });
 
         BindMacro("return", [], (loc, target, vm, args) =>
             {

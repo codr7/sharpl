@@ -9,9 +9,6 @@ April 29th
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * fire.sl
-** add (resize array n 0) method
-*** value optional
-**** default nil
 
 * add time/now method
 ** add duration/timestamp types

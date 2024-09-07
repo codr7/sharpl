@@ -47,3 +47,9 @@
 
 (check 3
   #[1 2 3])
+
+(check [_ _]
+  (resize [] 2))
+
+(check [42 42]
+  (resize [] 2 42))
