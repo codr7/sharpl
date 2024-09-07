@@ -50,6 +50,7 @@
 (init)
 (run)
 
+(term/read-key)
 (term/reset)
 (term/clear-screen)
 (term/move-to 1 1)
