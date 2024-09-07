@@ -267,12 +267,13 @@ public class Core : Lib
             else { throw new EvalError(loc, $"Not supported: {it}"); }
         });
 
-        BindMacro("dec", [], (loc, target, vm, args) =>
+        BindMacro("dec", ["delta?"], (loc, target, vm, args) =>
         {
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
             {
                 var r = v.CastUnbox(Binding);
-                vm.Emit(Ops.Decrement.Make(r));
+                var d = args.Empty ? null : args.Pop() as Forms.Literal;
+                vm.Emit(Ops.Decrement.Make(r, (d is null) ? 1 : d.Value.CastUnbox(loc, Int)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
             else { throw new EmitError(loc, "Invalid target"); }
@@ -373,12 +374,13 @@ public class Core : Lib
                 skip.PC = vm.EmitPC;
             });
 
-        BindMacro("inc", [], (loc, target, vm, args) =>
+        BindMacro("inc", ["delta?"], (loc, target, vm, args) =>
         {
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
             {
                 var r = v.CastUnbox(Binding);
-                vm.Emit(Ops.Increment.Make(r));
+                var d = args.Empty ? null : args.Pop() as Forms.Literal;
+                vm.Emit(Ops.Increment.Make(r, (d is null) ? 1 : d.Value.CastUnbox(loc, Int)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
             else { throw new EmitError(loc, "Invalid target"); }

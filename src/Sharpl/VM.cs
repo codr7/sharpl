@@ -338,7 +338,7 @@ public class VM
                     {
                         var decrementOp = (Ops.Decrement)op.Data;
                         var i = Index(decrementOp.Target);
-                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - 1);
+                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - decrementOp.Delta);
                         registers[i] = v;
                         PC++;
                         break;
@@ -381,7 +381,7 @@ public class VM
                     {
                         var incrementOp = (Ops.Increment)op.Data;
                         var i = Index(incrementOp.Target);
-                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + 1);
+                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + incrementOp.Delta);
                         registers[i] = v;
                         PC++;
                         break;

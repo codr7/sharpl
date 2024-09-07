@@ -40,6 +40,22 @@
 (check T
   (= (emit '(+ 1 2)) (eval '(+ 1 2))))
 
+(check 2
+  (let [x 1]
+    (inc x)))
+  
+(check 3
+  (let [x 1]
+    (inc x 2)))
+
+(check 1
+  (let [x 2]
+    (dec x)))
+
+(check 1
+  (let [x 3]
+    (dec x 2)))
+
 (check 1
   (min 3 1 2))
 

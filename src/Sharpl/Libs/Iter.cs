@@ -34,7 +34,7 @@ public class Iter : Lib
             vm.Emit(Ops.Goto.Make(ok));
             next.PC = vm.EmitPC;
             vm.Emit(Ops.Drop.Make(1));
-            vm.Emit(Ops.Increment.Make(index));
+            vm.Emit(Ops.Increment.Make(index, 1));
             vm.Emit(Ops.Goto.Make(start));
             fail.PC = vm.EmitPC;
             vm.Emit(Ops.Push.Make(Value.Nil));
