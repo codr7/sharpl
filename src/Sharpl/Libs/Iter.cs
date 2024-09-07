@@ -58,10 +58,16 @@ public class Iter : Lib
                          var seqReg = vm.AllocRegister();
                          vm.Emit(valForm);
                          vm.Emit(Ops.CreateIter.Make(loc, new Register(0, seqReg)));
-                         var itReg = vm.AllocRegister();
+                         var itReg = -1;
+
+                         if (idForm is Forms.Id idf)
+                         {
+                             itReg = vm.AllocRegister();
+                             vm.Env.Bind(idf.Name, Value.Make(Core.Binding, new Register(0, itReg)));
+                         }
+                         else if (idForm is not Forms.Nil) { throw new EmitError(loc, "Expected id: " + idForm); }
+
                          bindings.Add((new Register(0, seqReg), new Register(0, itReg)));
-                         if (idForm is Forms.Id idf) { vm.Env.Bind(idf.Name, Value.Make(Core.Binding, new Register(0, itReg))); }
-                         else { throw new EmitError(loc, "Expected id: " + idForm); }
                      }
                  }
                  else { throw new EmitError(loc, "Invalid loop bindings"); }
@@ -71,8 +77,8 @@ public class Iter : Lib
 
                  foreach (var (seqReg, itReg) in bindings)
                  {
-                     vm.Emit(Ops.IterNext.Make(loc, seqReg, end));
-                     vm.Emit(Ops.SetRegister.Make(itReg));
+                     vm.Emit(Ops.IterNext.Make(loc, seqReg, end, push: itReg.Index != -1));
+                     if (itReg.Index != -1) { vm.Emit(Ops.SetRegister.Make(itReg)); }
                  }
 
                  args.Emit(vm);
@@ -133,8 +139,9 @@ public class Iter : Lib
         BindMethod("zip", ["in1", "in2", "in3?"], (loc, target, vm, stack, arity) =>
         {
             Sharpl.Iter[] sources = new Sharpl.Iter[arity];
-            
-            for (int i = arity-1; i >= 0; i--) {
+
+            for (int i = arity - 1; i >= 0; i--)
+            {
                 var s = stack.Pop();
                 if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s, vm, loc); }
                 else { throw new EvalError(loc, $"Not iterable: {s}"); }

@@ -392,7 +392,7 @@ public class VM
 
                         if (Get(iterOp.Iter).Cast(Core.Iter).Next() is Value v)
                         {
-                            stack.Push(v);
+                            if (iterOp.Push) { stack.Push(v); }
                             PC++;
                         }
                         else { PC = iterOp.Done.PC; }

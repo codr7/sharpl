@@ -12,8 +12,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** add (resize array n 0) method
 *** value optional
 **** default nil
-** add support for _ loop bindings
-*** skip allocating/setting register
 
 * add time/now method
 ** add duration/timestamp types
