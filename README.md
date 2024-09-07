@@ -64,6 +64,16 @@ New dynamically scoped bindings may be created using `var`.
 ```
 `42`
 
+### updates
+`set` may be used to update a binding.
+
+```
+(let [foo 1 bar 2]
+  (set foo 3 bar 4)
+  foo:bar)
+```
+`3:4`
+
 ## branching
 `if` may be used to conditionally evaluate a block of code.
 

@@ -782,16 +782,28 @@ public class Core : Lib
                 Console.WriteLine(res.ToString());
             });
 
+        BindMacro("set", ["id1", "value1", "id2?", "value2?"], (loc, target, vm, args) =>
+        {
+            while (!args.Empty) {
+                var id = args.Pop().Cast<Forms::Id>();
+                var v = args.Pop();
+                var r = new Register(0, vm.AllocRegister());
+                vm.Env.Bind(id.Name, Value.Make(Binding, r));
+                vm.Emit(v);
+                vm.Emit(Ops.SetRegister.Make(r));
+            }
+        });
+
         BindMacro("spawn", ["args", "body?"], (loc, target, vm, args) =>
         {
-            var forkArgs = args.Pop().Cast<Forms::Array>(loc).Items;
+            var forkArgs = args.Pop().Cast<Forms::Array>().Items;
             if (forkArgs.Length != 1) { throw new EmitError(loc, "Wrong number of arguments."); }
 
             var c1 = PipeType.Make();
             var c2 = PipeType.Make();
 
             var fvm = new VM(vm.Config);
-            var portName = forkArgs[0].Cast<Forms::Id>(loc).Name;
+            var portName = forkArgs[0].Cast<Forms::Id>().Name;
             fvm.Env.Bind(portName, Value.Make(Port, new PipePort(c1.Reader, c2.Writer)));
             var startPC = fvm.EmitPC;
             args.Emit(fvm);

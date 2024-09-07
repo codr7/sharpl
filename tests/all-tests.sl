@@ -13,6 +13,11 @@
     (let [bar (+ foo 7)] 
       bar)))
 
+(check 3:4
+  (let [foo 1 bar 2]
+    (set foo 3 bar 4)
+    foo:bar))
+
 (check 42
   (let [foo 35])
   (var foo 42)
