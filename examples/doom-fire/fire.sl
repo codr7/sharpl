@@ -30,15 +30,14 @@
   (set i (+ i width 1))
   (term/move-to 1 1)
 
-  (let [prev-g _]
-    (for [_ (range 0 height)]
-      (for [_ (range 0 width)]
-        (let [g (pixels (dec i))
-              r (else g 255 0)
-              b (else (= g 255) 255 0)]
-            (term/pick-back (rgb r g b))
-            (term/write " ")))
-      (term/write \\n)))
+  (for [_ (range 0 height)]
+    (for [_ (range 0 width)]
+      (let [g (pixels (dec i))
+            r (else g 255 0)
+            b (else (= g 255) 255 0)]
+          (term/pick-back (rgb r g b))
+          (term/write " ")))
+    (term/write \\n))
 
   (term/flush)))
 
