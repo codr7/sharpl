@@ -3,10 +3,7 @@
      pixels (resize [] (* width height) 0)
         
      max-y    (- height 1)
-     max-fade 10
-
-     avg-frames 0 
-     avg-time  .0)
+     max-fade 10)
 
 (^setup []
   (for [i (range 0 width)]
