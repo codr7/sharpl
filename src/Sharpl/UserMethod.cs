@@ -59,7 +59,7 @@ public class UserMethod
                         var r = v.CastUnbox(Core.Binding);
                         if (r.FrameOffset != 0 || r.Index != ar) { vm.SetRegister(0, ar, vm.Get(r)); }
                     }
-                    else { vm.SetRegister(0, ar, v.Copy()); }
+                    else { vm.SetRegister(0, ar, v); }
                 }
                 else { vm.SetRegister(0, ar, stack.Pop()); }
             }
