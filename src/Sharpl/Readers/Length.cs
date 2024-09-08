@@ -4,10 +4,10 @@ public struct Length : Reader
 {
     public static readonly Length Instance = new Length();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var c = source.Peek();
-        if (c == -1 || c != '#') { return false; }
+        if (c is null || c != '#') { return false; }
         var formLoc = loc;
         loc.Column++;
         source.Read();

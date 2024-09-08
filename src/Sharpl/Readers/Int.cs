@@ -7,7 +7,7 @@ public struct Int : Reader
 {
     public static readonly Int Instance = new Int();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var formLoc = loc;
         var v = 0;
@@ -15,12 +15,19 @@ public struct Int : Reader
         while (true)
         {
             var c = source.Peek();
-            if (c == -1) { break; }
-            if (c == '.') { return Fix.Instance.Read(source, vm, ref loc, forms, formLoc, v); }
-            var cc = Convert.ToChar(c);
-            if (!char.IsAsciiDigit(cc)) { break; }
+            if (c is null) { break; }
+            
+            if (c == '.') { 
+                source.Read();
+                c = source.Peek();
+                source.Unread('.');
+                if (c == '.') { break; } 
+                return Fix.Instance.Read(source, vm, ref loc, forms, formLoc, v); 
+            }
+
+            if (!char.IsAsciiDigit((char)c)) { break; }
             source.Read();
-            v = v * 10 + CharUnicodeInfo.GetDecimalDigitValue(cc);
+            v = v * 10 + CharUnicodeInfo.GetDecimalDigitValue((char)c);
             loc.Column++;
         }
 

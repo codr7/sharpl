@@ -3,10 +3,10 @@ namespace Sharpl.Readers;
 public struct Pair: Reader {
     public static readonly Pair Instance = new Pair();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms) {
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms) {
         if (forms.Count == 0) { return false; }
         var c = source.Peek();
-        if (c == -1 || c != ':') { return false; }
+        if (c is null || c != ':') { return false; }
         var left = forms.TryPopLast();
         if (left is null) { throw new EmitError(loc, "Missing left value"); }
         var formLoc = left.Loc;

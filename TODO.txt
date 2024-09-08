@@ -8,9 +8,8 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add range reader
-** 1..2
-** update fire
+* add support for range pair dest
+** use as max:stride
 
 * add time/now method
 ** add duration/timestamp types

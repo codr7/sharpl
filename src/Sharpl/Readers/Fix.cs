@@ -7,22 +7,28 @@ public struct Fix : Reader
 {
     public static readonly Fix Instance = new Fix();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms, Loc formLoc, long val)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms, Loc formLoc, long val)
     {
         var c = source.Peek();
-        if (c == -1 || c != '.') { return false; }
-        loc.Column++;
+        if (c is null || c != '.') { return false; }
         source.Read();
+        c = source.Peek();
+        
+        if (c == '.') {
+            source.Unread('.');
+            return false;
+        }
+
+        loc.Column++;
         byte e = 0;
 
         while (true)
         {
             c = source.Peek();
-            if (c == -1) { break; }
-            var cc = Convert.ToChar(c);
-            if (!char.IsAsciiDigit(cc)) { break; }
+            if (c is null) { break; }
+            if (!char.IsAsciiDigit((char)c)) { break; }
             source.Read();
-            val = val * 10 + (long)CharUnicodeInfo.GetDecimalDigitValue(cc);
+            val = val * 10 + (long)CharUnicodeInfo.GetDecimalDigitValue((char)c);
             e++;
             loc.Column++;
         }
@@ -32,6 +38,6 @@ public struct Fix : Reader
         return true;
     }
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms) =>
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms) =>
         Read(source, vm, ref loc, forms, loc, 0);
 }

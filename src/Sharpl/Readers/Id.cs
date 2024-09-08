@@ -11,15 +11,14 @@ public struct Id : Reader
             c == '(' || c == ')' ||
             c == '[' || c == ']' ||
             c == '{' || c == '}' ||
-            c == '\'' || c == ',' || c == '"' || c == ':' || c == '&' || c == '#');
+            c == '\'' || c == ',' || c == '.' || c == '"' || c == ':' || c == '&' || c == '#');
 
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var c = source.Peek();
-        if (c == -1) { return false; }
-        var cc = Convert.ToChar(c);
-        if (!Valid(cc) || char.IsDigit(cc)) { return false; }
+        if (c is null) { return false; }
+        if (!Valid((char)c) || char.IsDigit((char)c)) { return false; }
 
         var formLoc = loc;
         var buffer = new StringBuilder();
@@ -27,11 +26,10 @@ public struct Id : Reader
         while (true)
         {
             c = source.Peek();
-            if (c == -1) { break; }
-            cc = Convert.ToChar(c);
-            if (!Valid(cc) || ((c == '*') && buffer.Length != 0)) { break; }
+            if (c is null) { break; }
+            if (!Valid((char)c) || ((c == '*') && buffer.Length != 0)) { break; }
             source.Read();
-            buffer.Append(cc);
+            buffer.Append(c);
             loc.Column++;
             if (c == '^' && buffer.Length == 1) { break; }
         }

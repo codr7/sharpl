@@ -20,6 +20,7 @@ public class FixType(string name) :
     {
         ulong? minVal = min.TryCastUnbox(this);
         ulong? maxVal = max.TryCastUnbox(this);
+        if (stride.Type == Libs.Core.Nil) { throw new EvalError(loc, "Missing stride"); }
         ulong strideVal = stride.CastUnbox(this);
         return new Iters.Core.FixRange(minVal ?? Fix.Make(1, 0), maxVal, strideVal);
     }

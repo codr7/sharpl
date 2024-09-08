@@ -3,9 +3,9 @@ namespace Sharpl.Readers;
 public struct Map: Reader {
     public static readonly Map Instance = new Map();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms) {
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms) {
         var c = source.Peek();
-        if (c == -1 || c != '{') { return false; }
+        if (c is null || c != '{') { return false; }
         var formLoc = loc;
         loc.Column++;
         source.Read();
@@ -14,7 +14,7 @@ public struct Map: Reader {
         while (true) {
             WhiteSpace.Instance.Read(source, vm, ref loc, forms);
             c = source.Peek();
-            if (c == -1) { throw new ReadError(loc, "Unexpected end of map"); }
+            if (c is null) { throw new ReadError(loc, "Unexpected end of map"); }
             
             if (c == '}') {
                 loc.Column++;

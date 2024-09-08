@@ -2,7 +2,7 @@ namespace Sharpl.Readers;
 
 public struct OneOf(Reader[] Parts) : Reader
 {
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         foreach (var r in Parts)
         {

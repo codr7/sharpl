@@ -67,7 +67,7 @@ public class REPL
     public virtual Value Eval(VM vm, string input, ref Loc loc)
     {
         var startPC = vm.EmitPC;
-        vm.ReadForms(new StringReader(input), ref loc).Emit(vm);
+        vm.ReadForms(new Source(new StringReader(input)), ref loc).Emit(vm);
         vm.Emit(Ops.Stop.Make());
         return vm.Eval(startPC) ?? Value.Nil;
     }

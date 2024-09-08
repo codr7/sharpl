@@ -4,10 +4,10 @@ public struct Call : Reader
 {
     public static readonly Call Instance = new Call();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var c = source.Peek();
-        if (c == -1 || c != '(') { return false; }
+        if (c is null || c != '(') { return false; }
 
         var formLoc = loc;
         loc.Column++;
@@ -19,7 +19,7 @@ public struct Call : Reader
             WhiteSpace.Instance.Read(source, vm, ref loc, args);
             c = source.Peek();
 
-            if (c == -1) { throw new ReadError(loc, "Unexpected end of call"); }
+            if (c is null) { throw new ReadError(loc, "Unexpected end of call"); }
 
             if (c == ')')
             {

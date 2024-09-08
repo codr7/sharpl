@@ -27,6 +27,7 @@ public class VM
             Readers.Length.Instance,
             Readers.Map.Instance,
             Readers.Pair.Instance,
+            Readers.Range.Instance,
             Readers.Quote.Instance,
             Readers.Splat.Instance,
             Readers.String.Instance,
@@ -183,7 +184,7 @@ public class VM
     public void Emit(Form form) => new Form.Queue([form]).Emit(this);
 
     public void Emit(string code, Loc loc) =>
-        ReadForms(new StringReader(code), ref loc).Emit(this);
+        ReadForms(new Source(new StringReader(code)), ref loc).Emit(this);
 
     public PC EmitPC => code.Count;
 
@@ -605,7 +606,7 @@ public class VM
     public Value? Eval(string code)
     {
         var loc = new Loc("Eval");
-        var forms = ReadForms(new StringReader(code), ref loc);
+        var forms = ReadForms(new Source(new StringReader(code)), ref loc);
         return Eval(forms);
     }
 
@@ -670,11 +671,7 @@ public class VM
 
         try
         {
-            if (Path.GetDirectoryName(p) is string d)
-            {
-                loadPath = d;
-            }
-
+            if (Path.GetDirectoryName(p) is string d) { loadPath = d; }
             var loc = new Loc(path);
 
             using (StreamReader source = new StreamReader(p, Encoding.UTF8))
@@ -687,7 +684,7 @@ public class VM
                     loc.NewLine();
                 }
 
-                var forms = ReadForms(source, ref loc);
+                var forms = ReadForms(new Source(source), ref loc);
                 Emit(Ops.SetLoadPath.Make(loadPath));
                 forms.Emit(this);
                 Emit(Ops.SetLoadPath.Make(prevLoadPath));
@@ -703,22 +700,22 @@ public class VM
 
     public int NextRegisterIndex => nextRegisterIndex;
 
-    public bool ReadForm(TextReader source, ref Loc loc, Form.Queue forms) =>
+    public bool ReadForm(Source source, ref Loc loc, Form.Queue forms) =>
         Config.Reader.Read(source, this, ref loc, forms);
 
-    public Form? ReadForm(TextReader source, ref Loc loc)
+    public Form? ReadForm(Source source, ref Loc loc)
     {
         var forms = new Form.Queue();
         ReadForm(source, ref loc, forms);
         return forms.TryPop();
     }
 
-    public void ReadForms(TextReader source, ref Loc loc, Form.Queue forms)
+    public void ReadForms(Source source, ref Loc loc, Form.Queue forms)
     {
         while (ReadForm(source, ref loc, forms)) { }
     }
 
-    public Form.Queue ReadForms(TextReader source, ref Loc loc)
+    public Form.Queue ReadForms(Source source, ref Loc loc)
     {
         var forms = new Form.Queue();
         ReadForms(source, ref loc, forms);

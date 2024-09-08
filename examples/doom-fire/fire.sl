@@ -6,7 +6,7 @@
      max-fade 10)
 
 (^setup []
-  (for [i (range 0 width)]
+  (for [i 0..width]
     (pixels i 255))
 
   (term/clear-screen)
@@ -23,8 +23,8 @@
 
 (^render []
   (let [i (- 1)]
-    (for [_ (range 0 max-y)]
-      (for [x (range 0 width)]
+    (for [_ 0..max-y]
+      (for [x 0..width]
         (let [j (+ i width)
               v (pixels (inc i))]
           (if (and (> x 0) (< x (- width 1)))
@@ -35,8 +35,8 @@
     (set i (+ i width 1))
     (term/move-to 1 1)
 
-    (for [_ (range 0 height)]
-      (for [_ (range 0 width)]
+    (for [_ 0..height]
+      (for [_ 0..width]
         (let [g (pixels (dec i))
               r (else g 255 0)
               b (else (is g 255) 255 0)]

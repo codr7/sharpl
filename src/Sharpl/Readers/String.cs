@@ -8,7 +8,7 @@ public struct String : Reader
     public static readonly String Instance = new String();
 
 
-    public static char? GetEscape(int c) => c switch
+    public static char? GetEscape(char? c) => c switch
     {
         'r' => '\r',
         'n' => '\n',
@@ -17,10 +17,10 @@ public struct String : Reader
         _ => null
     };
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var c = source.Peek();
-        if (c == -1 || c != '"') { return false; }
+        if (c is null || c != '"') { return false; }
         source.Read();
         var formLoc = loc;
         var s = new StringBuilder();
@@ -28,7 +28,7 @@ public struct String : Reader
         while (true)
         {
             c = source.Peek();
-            if (c == -1) { throw new ReadError(loc, "Invalid string"); }
+            if (c is null) { throw new ReadError(loc, "Invalid string"); }
             source.Read();
             loc.Column++;
             if (c == '"') { break; }
@@ -47,7 +47,7 @@ public struct String : Reader
                 source.Read();
             }
 
-            s.Append(Convert.ToChar(c));
+            s.Append(c);
             loc.Column++;
         }
 

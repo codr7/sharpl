@@ -4,16 +4,13 @@ public struct WhiteSpace : Reader
 {
     public static readonly WhiteSpace Instance = new WhiteSpace();
 
-    public bool Read(TextReader source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
     {
         var done = false;
  
         while (!done)
-        {
-            var c = source.Peek();
-            if (c == -1) { break; }
-            
-            switch (c)
+        {            
+            switch (source.Peek())
             {
                 case ' ':
                 case '\t':  

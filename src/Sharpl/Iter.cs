@@ -28,7 +28,7 @@ public interface Iter : IEnumerable<Value>
 
         public void Reset() => throw new NotImplementedException();
     }
-
+    string Dump(VM vm);
     Value? Next();
 }
 
@@ -36,5 +36,6 @@ public abstract class BasicIter : Iter
 {
     IEnumerator IEnumerable.GetEnumerator() => new Iter.E(this);
     public IEnumerator<Value> GetEnumerator() => new Iter.E(this);
+    public virtual string Dump(VM vm) => $"{this}";
     public abstract Value? Next();
 }
