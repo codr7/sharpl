@@ -1,6 +1,8 @@
 namespace Sharpl.Forms;
 
+using System.Data;
 using System.Text;
+using Sharpl.Libs;
 
 public class Call : Form
 {
@@ -90,16 +92,27 @@ public class Call : Form
 
     public override bool Expand(VM vm, Queue args) {
         var result = false;
-        if (Target.Expand(vm, args)) { result = true; }
-        var t = args.PopLast();
-        var callArgs = new Form[Args.Length];
-        
-        for (var i = 0; i < Args.Length; i++) {
-            if (Args[i].Expand(vm, args)) { result = true; }
-            callArgs[i] = args.PopLast();
+
+        if (Target.GetValue(vm) is Value tv && tv.Type == Core.Meta && Args.All(a => a is Literal)) {
+            var stack = new Stack();
+            foreach (var a in Args) { stack.Push((a as Literal)!.Value); }
+            Core.Meta.Call(Loc, vm, stack, tv, Args.Length, vm.NextRegisterIndex);
+            if (stack.Pop() is Value v) {args.Push(new Literal(Loc, v)); }
+            else { throw new EmitError(Loc, "Expected value"); }
+            result = true;
+        } else {
+            if (Target.Expand(vm, args)) { result = true; }
+            var t = args.PopLast();
+            var callArgs = new Form[Args.Length];
+            
+            for (var i = 0; i < Args.Length; i++) {
+                if (Args[i].Expand(vm, args)) { result = true; }
+                callArgs[i] = args.PopLast();
+            }
+
+            args.Push(new Call(Loc, t, callArgs));
         }
 
-        args.Push(new Call(Loc, t, callArgs));
         return result;
     }
 

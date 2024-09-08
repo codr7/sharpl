@@ -8,11 +8,6 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* perform literal constructor calls in Call.GetValue
-** check if target is meta literal
-** check if all args are literal
-** benchmark list
-
 * add range reader
 ** 1..2
 ** update fire
