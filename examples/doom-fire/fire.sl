@@ -8,13 +8,21 @@
      avg-frames 0 
      avg-time  .0)
 
-(^init []
+(^setup []
   (for [i (range 0 width)]
     (pixels i 255))
 
   (term/clear-screen)
   (term/move-to 1 1)
   (term/flush))
+
+(^cleanup []
+  (term/read-key)
+  (term/reset)
+  (term/clear-screen)
+  (term/move-to 1 1)
+  (term/flush)
+  (term/restore))
 
 (^render []
   (let [i (- 1)]
@@ -46,12 +54,6 @@
     (if (term/poll-key) (return)) 
     (render)))
 
-(init)
+(setup)
 (run)
-
-(term/read-key)
-(term/reset)
-(term/clear-screen)
-(term/move-to 1 1)
-(term/flush)
-(term/restore)
+(cleanup)
