@@ -8,14 +8,14 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* rename return to exit
-** optional code (0)
-** client/server
-
 * perform literal constructor calls in Call.GetValue
 ** check if target is meta literal
 ** check if all args are literal
 ** benchmark list
+
+* add range reader
+** 1..2
+** update fire
 
 * add time/now method
 ** add duration/timestamp types

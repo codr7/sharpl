@@ -357,6 +357,9 @@ public class Core : Lib
             vm.Eval(f, stack);
         });
 
+        BindMethod("exit", ["code?"], (loc, target, vm, stack, arity) =>
+            Environment.Exit((arity == 0) ? 0 : stack.Pop().CastUnbox(Int)));
+
         BindMethod("fail", [], (loc, target, vm, stack, arity) =>
         {
             stack.Reverse(arity);
@@ -705,7 +708,7 @@ public class Core : Lib
         BindMethod("resize", ["array", "size", "value?"], (loc, target, vm, stack, arity) =>
         {
             var v = (arity == 3) ? stack.Pop() : Value.Nil;
-            var s = stack.Pop().CastUnbox(loc, Int); 
+            var s = stack.Pop().CastUnbox(loc, Int);
             var a = stack.Pop().Cast(loc, Array);
             var ps = a.Length;
             System.Array.Resize(ref a, s);
@@ -786,7 +789,8 @@ public class Core : Lib
 
         BindMacro("set", ["id1", "value1", "id2?", "value2?"], (loc, target, vm, args) =>
         {
-            while (!args.Empty) {
+            while (!args.Empty)
+            {
                 var id = args.Pop().Cast<Forms::Id>();
                 var v = args.Pop();
                 var b = vm.Env[id.Name];

@@ -2,7 +2,7 @@
 
 (if (not (= #ARG 3)) 
   (say "Usage: server [Host] [Port] [Password]")
-  (stop))
+  (exit))
 
 (var HOST (ARG 0)
      PORT (parse-int:_ (ARG 1))
