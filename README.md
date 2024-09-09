@@ -493,9 +493,6 @@ All composite types may be sliced by indexing using a pair.
 ```
 `['foo:1:T 'bar:2:F]`
 
-
-[(zip '[foo bar] '[1 2 3])*]
-
 ### enumerate
 `enumerate` may be used to zip any sequence with indexes.
 
@@ -519,7 +516,7 @@ Pipes are unbounded, thread safe communication channels. Pipes may be called wit
 ### ports
 Ports are bidirectional communication channels. Like pipes, ports may be called without arguments to read and with to write.
 
-### poll
+### polling
 `poll` returns the first argument that's ready for reading.
 ```
 (let [p1 (Pipe) p2 (Pipe)]
