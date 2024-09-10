@@ -345,7 +345,7 @@ Also like integers; negative fixpoints lack syntax, and must be created by way o
 ```
 [(range 1.1 1.4 .1)*]
 ```
-`[1.1 1.2 1.3 1.4]`
+`[1.1 1.2 1.3]`
 
 ## composite types
 

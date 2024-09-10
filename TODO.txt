@@ -8,12 +8,6 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add support for range pair dest
-** use as max:stride
-
-* change fix range to exclude max
-** update readme
-
 * add time/now method
 ** add duration/timestamp types
 ** add support for timestamp-timestamp => duration

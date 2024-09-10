@@ -22,9 +22,21 @@ public struct Range : Reader
         var formLoc = loc;
         loc.Column += 2;
         var left = forms.PopLast();
-        if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError(loc, "Missing right value"); }
+        if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError(loc, "Missing max"); }
         var right = forms.PopLast();
-        forms.Push(new Forms.Call(formLoc, new Forms.Id(loc, "range"), [left, right]));
+        WhiteSpace.Instance.Read(source, vm, ref loc, forms);
+        c = source.Peek();
+        Form? stride = null;
+
+        if (c == ':')
+        {
+            source.Read();
+            loc.Column++;
+            if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError(loc, "Missing stride"); }
+            stride = forms.PopLast();
+        }
+
+        forms.Push(new Forms.Call(formLoc, new Forms.Id(loc, "range"), [left, right, stride ?? new Forms.Nil(loc)]));
         return true;
     }
 }

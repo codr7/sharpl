@@ -16,7 +16,7 @@ public class FixRange : BasicIter
     public override Value? Next()
     {
         var v = Fix.Add(value, Stride);
-        
+
         if (Fix.Val(v) < MaxVal) { 
             value = v;
             return Value.Make(Libs.Core.Fix, value); 
