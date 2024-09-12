@@ -54,7 +54,7 @@ https://deniskyashif.com/2019/12/11/csharp-channels-part-2/
 *** add FExpr type
 ** unquote inside method
 
-* add import macro with alias
+* add import macro
 
 * add iter benchmark
 ** fib-tail but use loop instead of tail call
@@ -69,17 +69,9 @@ https://deniskyashif.com/2019/12/11/csharp-channels-part-2/
 ** create user method like VM.Compose
 *** one for each arity
 
-* add ports
-** add port type
-** port/send/recv methods
-** port/spawn
-*** start thread
-**** separate vm
-*** channels from nets project
-** tcp
-*** port/connect/listen/
-** udp
-*** port/send-to/recv-from
+* add UDP support
+
+* add domain socket support
 
 * add while lop
 ** iterate while condition is true

@@ -1,7 +1,7 @@
 namespace Sharpl.Ops;
 
-public readonly record struct GetRegister(Register Target)
+public readonly record struct GetRegister(Register Target) : Op
 {
-    public static Op Make(Register target) => new Op(Op.T.GetRegister, new GetRegister(target));
+    public static Op Make(Register target) => new GetRegister(target);
     public override string ToString() => $"GetRegister {Target}";
 }

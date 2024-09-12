@@ -1,7 +1,7 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Splat(Loc Loc)
+public readonly record struct Splat(Loc Loc) : Op
 {
-    public static Op Make(Loc loc) => new Op(Op.T.Splat, new Splat(loc));
+    public static Op Make(Loc loc) => new Splat(loc);
     public override string ToString() => $"Splat {Loc}";
 }

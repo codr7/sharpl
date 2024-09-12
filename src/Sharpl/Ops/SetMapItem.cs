@@ -1,7 +1,7 @@
 namespace Sharpl.Ops;
 
-public readonly record struct SetMapItem()
+public readonly record struct SetMapItem() : Op
 {
-    public static Op Make() => new Op(Op.T.SetMapItem, new SetMapItem());
+    public static Op Make() => new SetMapItem();
     public override string ToString() => $"SetMapItem";
 }
