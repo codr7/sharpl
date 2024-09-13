@@ -1,7 +1,5 @@
 using Sharpl.Types.Core;
-using System.Collections;
 using System.Text;
-using System.Threading.Channels;
 using Forms = Sharpl.Forms;
 
 namespace Sharpl.Libs;
@@ -13,6 +11,7 @@ public class Core : Lib
     public static readonly BitType Bit = new BitType("Bit");
     public static readonly CharType Char = new CharType("Char");
     public static readonly ColorType Color = new ColorType("Color");
+    public static readonly DurationType Duration = new DurationType("Duration");
     public static readonly FixType Fix = new FixType("Fix");
     public static readonly FormType Form = new FormType("Form");
     public static readonly IntType Int = new IntType("Int");
@@ -29,6 +28,7 @@ public class Core : Lib
     public static readonly PortType Port = new PortType("Port");
     public static readonly StringType String = new StringType("String");
     public static readonly SymType Sym = new SymType("Sym");
+    public static readonly TimestampType Timestamp = new TimestampType("Timestamp");
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
 
     public static void DefineMethod(Loc loc, VM vm, Form.Queue args, Type<UserMethod> type, Op stopOp)
@@ -106,6 +106,7 @@ public class Core : Lib
         BindType(Bit);
         BindType(Char);
         BindType(Color);
+        BindType(Duration);
         BindType(Fix);
         BindType(Int);
         BindType(Lib);
@@ -119,6 +120,7 @@ public class Core : Lib
         BindType(Port);
         BindType(String);
         BindType(Sym);
+        BindType(Timestamp);
         BindType(UserMethod);
 
         Bind("F", Value.F);

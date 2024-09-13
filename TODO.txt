@@ -8,6 +8,14 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* add timestamp/duration
+** add time/to/from-utc
+** implement timestamp numeric
+** implement duration numeric
+** add tests
+** readme
+** commit
+
 * add time/now method
 ** add duration/timestamp types
 ** add support for timestamp-timestamp => duration

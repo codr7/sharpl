@@ -51,6 +51,7 @@ public class VM
     public readonly Libs.Net NetLib;
     public readonly Libs.String StringLib;
     public readonly Libs.Term TermLib;
+    public readonly Libs.Time TimeLib;
     public readonly Lib UserLib = new Lib("user", null, []);
 
     public readonly C Config;
@@ -106,6 +107,9 @@ public class VM
 
         TermLib = new Libs.Term(this);
         TermLib.Init(this);
+
+        TimeLib = new Libs.Time();
+        TimeLib.Init(this);
     }
 
     public int AllocRegister()
