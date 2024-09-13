@@ -9,15 +9,17 @@ public class TimestampType(string name) :
 {
     public void Add(Loc loc, VM vm, Stack stack, int arity)
     {
-        /*var res = 0;
+        stack.Reverse(arity);
+        var res = stack.Pop().CastUnbox(this);
+        arity--;
 
         while (arity > 0)
         {
-            res += stack.Pop().CastUnbox(loc, this);
+            res = res.Add(stack.Pop().CastUnbox(loc, Libs.Core.Duration));
             arity--;
         }
 
-        stack.Push(this, res);*/
+        stack.Push(this, res);
     }
 
     public override bool Bool(Value value) => value.CastUnbox(this).CompareTo(DateTime.MinValue) > 0;
@@ -31,57 +33,29 @@ public class TimestampType(string name) :
         return new Iters.Core.TimeRange(minVal, maxVal, (TimeSpan)strideVal);
     }
 
-    public void Divide(Loc loc, VM vm, Stack stack, int arity)
-    {
-        /*stack.Reverse(arity);
-        var res = stack.Pop().CastUnbox(loc, this);
-        arity--;
+    public void Divide(Loc loc, VM vm, Stack stack, int arity) =>
+        throw new EvalError(loc, "Not supported");
 
-        while (arity > 0)
-        {
-            res /= stack.Pop().CastUnbox(loc, this);
-            arity--;
-        }
-
-        stack.Push(this, res);*/
-    }
-
-    public void Multiply(Loc loc, VM vm, Stack stack, int arity)
-    {
-        /*var res = stack.Pop().CastUnbox(loc, this);
-        arity--;
-
-        while (arity > 0)
-        {
-            res *= stack.Pop().CastUnbox(loc, this);
-            arity--;
-        }
-
-        stack.Push(this, res);*/
-    }
+    public void Multiply(Loc loc, VM vm, Stack stack, int arity) =>
+            throw new EvalError(loc, "Not supported");
 
     public void Subtract(Loc loc, VM vm, Stack stack, int arity)
     {
-        /*var res = 0;
-
-        if (arity > 0)
+        if (arity == 1) { throw new EvalError(loc, "Not supported"); }
+        else
         {
-            if (arity == 1) { res = -stack.Pop().CastUnbox(loc, this); }
-            else
+            stack.Reverse(arity);
+            var res = stack.Pop().CastUnbox(this);
+            arity--;
+
+            while (arity > 0)
             {
-                stack.Reverse(arity);
-                res = stack.Pop().CastUnbox(loc, this);
+                res = res.Subtract(stack.Pop().CastUnbox(loc, Libs.Core.Duration));
                 arity--;
-
-                while (arity > 0)
-                {
-                    res -= stack.Pop().CastUnbox(loc, this);
-                    arity--;
-                }
             }
-        }
 
-        stack.Push(this, res);*/
+            stack.Push(this, res);
+        }
     }
 
     public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"{value.CastUnbox(this):yyyy-MM-dd HH:mm:ss}");
