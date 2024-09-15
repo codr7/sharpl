@@ -42,6 +42,12 @@ public class TimestampType(string name) :
     public void Subtract(Loc loc, VM vm, Stack stack, int arity)
     {
         if (arity == 1) { throw new EvalError(loc, "Not supported"); }
+        else if (arity == 2 && stack.Peek().Type == Libs.Core.Timestamp)
+        {
+            var y = stack.Pop().CastUnbox(this);
+            var x = stack.Pop().CastUnbox(this);
+            stack.Push(Libs.Core.Duration, x.Subtract(y));
+        }
         else
         {
             stack.Reverse(arity);

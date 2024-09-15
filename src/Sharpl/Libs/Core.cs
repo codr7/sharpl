@@ -199,28 +199,28 @@ public class Core : Lib
         });
 
 
-        BindMethod("+", [], (loc, target, vm, stack, arity) =>
+        BindMethod("+", ["x"], (loc, target, vm, stack, arity) =>
         {
-            if (stack.Peek().Type is NumericTrait nt) { nt.Add(loc, vm, stack, arity); }
+            if (stack[^arity].Type is NumericTrait nt) { nt.Add(loc, vm, stack, arity); }
             else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 
-        BindMethod("-", [], (loc, target, vm, stack, arity) =>
+        BindMethod("-", ["x"], (loc, target, vm, stack, arity) =>
         {
-            if (stack.Peek().Type is NumericTrait nt) { nt.Subtract(loc, vm, stack, arity); }
+            if (stack[^arity].Type is NumericTrait nt) { nt.Subtract(loc, vm, stack, arity); }
             else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 
         BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
          {
-             if (stack.Peek().Type is NumericTrait nt)
+             if (stack[^arity].Type is NumericTrait nt)
              { nt.Multiply(loc, vm, stack, arity); }
              else { throw new EvalError(loc, $"Expected numeric value"); }
          });
 
         BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
-            if (stack.Peek().Type is NumericTrait nt) { nt.Divide(loc, vm, stack, arity); }
+            if (stack[^arity].Type is NumericTrait nt) { nt.Divide(loc, vm, stack, arity); }
             else { throw new EvalError(loc, $"Expected numeric value"); }
         });
 

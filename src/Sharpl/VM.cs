@@ -40,7 +40,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 25;
+    public static readonly int VERSION = 26;
 
     public readonly Libs.Char CharLib;
     public readonly Libs.Core CoreLib = new Libs.Core();

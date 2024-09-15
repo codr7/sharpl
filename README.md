@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v25
+sharpl v26
 
    1 (say 'hello)
    2 
@@ -508,6 +508,52 @@ All composite types may be sliced by indexing using a pair.
 (find-first (^[x] (> x 3)) [1 3 5 7 9])
 ```
 `5:2`
+
+## time
+`time/today` and `time/now` may be used to get the current date/time.
+
+```
+(is (time/trunc (time/now)) (time/today))
+```
+`T`
+
+### durations
+Subtracting timestamps results in a duration.
+
+```
+  (- (time/now) (time/today))
+```
+`16:36:27.2404435`
+
+Common suffixes are defined as constructors.
+
+```
+(is (time/m 120) (time/h))
+```
+`T`
+
+When applied to durations they return the value for the specified unit.
+
+```
+(time/d (time/w 2))
+```
+`14`
+
+Durations may be added/subtracted to timestamps.
+
+```
+(+ (time/today) (time/m 90))
+```
+`2024-09-15 01:30:00`
+
+### time zones
+By default all timestamps are local, `time/to-utc` and `time/from-utc` may be used to convert back and forth.
+
+```
+(let [t (time/now)]
+  (is (time/to-local (time/to-utc t)) t))
+```
+`T`
 
 ## communication
 ### pipes
