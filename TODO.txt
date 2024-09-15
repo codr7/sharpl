@@ -8,9 +8,10 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* time
 ** add duration range iter
-
 ** add week-/day support
+** add ranges to readme
 
 * start repl from client to server
 ** send code as string

@@ -539,7 +539,7 @@ When applied to durations they return the value for the specified unit.
 ```
 `14`
 
-Durations may be added/subtracted to timestamps.
+Durations may be added/subtracted to/from timestamps.
 
 ```
 (+ (time/today) (time/m 90))
