@@ -9,8 +9,12 @@ April 29th
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * time
+** add support for using d/h/m/etc as timestamp accessors
+** add y
 ** add duration range iter
 ** add week-/day support
+** add timestamp constructor
+*** optional args
 ** add ranges to readme
 
 * start repl from client to server
