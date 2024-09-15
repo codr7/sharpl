@@ -91,6 +91,7 @@
 (load "pipe-tests.sl")
 (load "quote-tests.sl")
 (load "string-tests.sl")
+(load "time-tests.sl")
 (load "thread-tests.sl")
 
 (load "../examples/aoc23/code1-1.sl")
