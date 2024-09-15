@@ -42,8 +42,7 @@
 (check 42:2
   (parse-int "42foo"))
 
-(check T
-  (= (emit '(+ 1 2)) (eval '(+ 1 2))))
+(check (= (emit '(+ 1 2)) (eval '(+ 1 2))))
 
 (check 2
   (let [x 1]

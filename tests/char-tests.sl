@@ -1,4 +1,4 @@
-(check T (char/is-digit \0))
+(check (char/is-digit \0))
 
 (check F (char/is-digit \a))
 
