@@ -19,14 +19,14 @@ All features described in this document are part of the [test suite](https://git
 
 ## novelties
 
-- Pairs (`a:b`) are used everywhere, all the time.
+- [Pairs](https://github.com/codr7/sharpl/tree/main#pairs) (`a:b`) are used everywhere, all the time.
 - Range support (`min..max:stride`).
-- Maps (`{k1:v1...kN:vN}`) are ordered.
-- Methods may be composed using `&`.
-- Varargs (`foo*`) are similar to Python.
+- [Maps](https://github.com/codr7/sharpl/tree/main#maps) (`{k1:v1...kN:vN}`) are ordered.
+- [Methods](https://github.com/codr7/sharpl/tree/main#methods) may be [composed](https://github.com/codr7/sharpl/tree/main#composition) using `&`.
+- [Varargs](https://github.com/codr7/sharpl/tree/main#varargs) (`foo*`) are similar to Python.
 - Splatting (`[1 2 3]*`) is simlar to Python.
-- Unified, deeply integrated iterator protocol.
-- Default decimal type is fixpoint.
+- Unified, deeply integrated [iterator](https://github.com/codr7/sharpl/tree/main#iterators) protocol.
+- Default decimal type is [fixpoint](https://github.com/codr7/sharpl/tree/main#fixpoints).
 - Nil is written `_`.
 - Both `T` and `F` are defined.
 - Zeros and empty strings, arrays, lists and maps are considered false.
