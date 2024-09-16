@@ -303,7 +303,7 @@ public class Core : Lib
             else { throw new EmitError(loc, "Invalid target"); }
         });
 
-        BindMacro("demit", [], (loc, target, vm, args) =>
+        BindMacro("dmit", [], (loc, target, vm, args) =>
         {
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));

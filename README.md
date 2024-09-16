@@ -704,10 +704,10 @@ MSBuild version 17.9.8+b34f75857 for .NET
 ```
 
 ## debugging
-`demit` may be used to display the VM operations emitted for an expression.
+`dmit` may be used to display the VM operations emitted for an expression.
 
 ```
-(demit '(+ 1 2))
+(dmit '(+ 1 2))
 ```
 ```
 9    Push 1
