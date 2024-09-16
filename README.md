@@ -31,9 +31,9 @@ All features described in this document are part of the [test suite](https://git
 - Both `T` and `F` are defined.
 - Zeros and empty strings, arrays, lists and maps are considered false.
 - `=` is generic and compares values deeply, `is` may be used to compare identity.
-- Lambdas look like anonymous methods.
+- [Lambdas](https://github.com/codr7/sharpl/tree/main#lambdas) look like anonymous methods.
 - Compile time eval (called `emit`), similar to Zig's comptime.
-- Explicit tail calls using `return`.
+- Explicit [tail calls](https://github.com/codr7/sharpl/tree/main#tail-calls) using `return`.
 - Parens are used for calls only.
 - Many things are callable, simlar to Clojure.
 - Methods have their own symbol (^).
