@@ -8,7 +8,6 @@ public class REPL
     public void Run(VM vm)
     {
         vm.Term
-            .SetFg(Color.FromArgb(255, 252, 173, 3))
             .Write($"sharpl v{VM.VERSION}\n\n")
             .Reset();
 
@@ -19,7 +18,6 @@ public class REPL
         while (true)
         {
             vm.Term
-                .SetFg(Color.FromArgb(255, 128, 128, 128))
                 .Write($"{loc.Line + bufferLines,4} ")
                 .Reset()
                 .Flush();
@@ -36,14 +34,12 @@ public class REPL
                 try
                 {
                     vm.Term
-                        .SetFg(Color.FromArgb(255, 0, 255, 0))
                         .WriteLine(Eval(vm, buffer.ToString(), ref loc).Dump(vm))
                         .Reset();
                 }
                 catch (Exception e)
                 {
                     vm.Term
-                        .SetFg(Color.FromArgb(255, 255, 0, 0))
                         .WriteLine(e)
                         .Reset();
                 }

@@ -312,7 +312,7 @@ public class Core : Lib
             args.Clear();
             skip.PC = vm.EmitPC;
             vm.Emit(Ops.Stop.Make());
-            vm.Demit(startPC);
+            vm.Dmit(startPC);
         });
 
         BindMacro("do", [], (loc, target, vm, args) =>

@@ -38,23 +38,6 @@ public class Time : Lib
             }
         });
 
-        BindMethod("m", ["n?"], (loc, target, vm, stack, arity) =>
-        {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Minutes);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Minute);
-            }
-            else
-            {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMinutes(n)));
-            }
-        });
-
         BindMethod("M", ["n?"], (loc, target, vm, stack, arity) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
@@ -69,6 +52,23 @@ public class Time : Lib
             {
                 var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
                 stack.Push(Core.Duration, new Duration(n, TimeSpan.FromTicks(0)));
+            }
+        });
+
+        BindMethod("m", ["n?"], (loc, target, vm, stack, arity) =>
+        {
+            if (arity == 1 && stack.Peek().Type == Core.Duration)
+            {
+                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Minutes);
+            }
+            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
+            {
+                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Minute);
+            }
+            else
+            {
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMinutes(n)));
             }
         });
 

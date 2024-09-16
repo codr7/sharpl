@@ -157,9 +157,8 @@ public class VM
         definitionCount++;
     }
 
-    public void Demit(PC startPC)
+    public void Dmit(PC startPC)
     {
-        Term.SetFg(Color.FromArgb(255, 128, 128, 255));
         for (var pc = startPC; pc < code.Count; pc++) { Term.Write($"{pc,-4} {code[pc]}\n"); }
         Term.Flush();
     }
