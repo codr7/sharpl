@@ -20,6 +20,7 @@ All features described in this document are part of the [test suite](https://git
 ## novelties
 
 - Pairs (`a:b`) are used everywhere, all the time.
+- Range support (`min..max:stride`).
 - Maps (`{k1:v1...kN:vN}`) are ordered.
 - Methods may be composed using `&`.
 - Varargs (`foo*`) are similar to Python.
