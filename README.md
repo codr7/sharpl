@@ -36,6 +36,7 @@ All features described in this document are part of the [test suite](https://git
 - Explicit tail calls using `return`.
 - Parens are used for calls only.
 - Many things are callable, simlar to Clojure.
+- Methods have their own symbol (^).
 - Line numbers are a thing.
 
 ## bindings
