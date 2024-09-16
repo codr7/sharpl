@@ -18,28 +18,34 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount) =>
         Type.Call(loc, vm, stack, this, arity, registerCount);
 
+    // Please do not remove the type checks below.
+    // These methods provide slightly more optimal type check and cast path
+    // as compared to regular cast operators. The reason for this is that
+    // Sharpl has its own type system abstraction which upholds type safety
+    // guarantees, therefore we can avoid double-checking whether the type is
+    // correct. However, if the type comparisons below are removed, this will
+    // make the code below very unsafe by reinterpreting structs and classes
+    // as arbitrary types which will can lead to memory corruption and crashes.
     public T Cast<T>(Type<T> type) where T : class =>
-        Unsafe.As<T>(Data);
+        Type == type ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);
 
     public T Cast<T>(Loc loc, Type<T> type) where T : class =>
         Type == type ? Unsafe.As<T>(Data) : TypeMismatch(loc, Type, type);
 
     public T CastUnbox<T>(Type<T> type) where T : struct =>
-        Unsafe.As<StrongBox<T>>(Data).Value;
+        Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(Type, type);
 
     public T CastUnbox<T>(Loc loc, Type<T> type) where T : struct =>
         Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(loc, Type, type);
 
     // Do not remove Nullable<T> overloads - they are necessary
     // to correctly handle unboxing of nullable structs.
-    public T? CastUnbox<T>(Type<T?> type) where T : struct =>
-        (T?)Data;
+    public T? CastUnbox<T>(Type<T?> type) where T : struct => (T?)Data;
 
     public T? CastUnbox<T>(Loc loc, Type<T?> type) where T : struct =>
         Type == type ? (T?)Data : TypeMismatch(loc, Type, type);
 
-    public T CastSlow<T>(Type<T> type) =>
-        (T)Data;
+    public T CastSlow<T>(Type<T> type) => (T)Data;
 
     public int CompareTo(Value other)
     {
@@ -78,6 +84,10 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         Type == type ? Unsafe.Unbox<T>(Data) : default(T?);
 
     public Form Unquote(Loc loc, VM vm) => Type.Unquote(loc, vm, this);
+
+    [DoesNotReturn, StackTraceHidden]
+    static T TypeMismatch<T>(AnyType lhs, Type<T> rhs) =>
+        throw new InvalidCastException($"Type mismatch: {lhs}/{rhs}");
 
     [DoesNotReturn, StackTraceHidden]
     static T TypeMismatch<T>(Loc loc, AnyType lhs, Type<T> rhs) =>
