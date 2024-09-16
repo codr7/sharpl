@@ -56,7 +56,7 @@ https://deniskyashif.com/2019/12/11/csharp-channels-part-2/
 
 * port list benchmark to python
 
-* track repetitions in demit
+* track repetitions in dmit
 ** add flag
 ** display frame graph
 

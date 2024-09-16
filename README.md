@@ -79,11 +79,9 @@ New dynamically scoped bindings may be created using `var`.
 `if` may be used to conditionally evaluate a block of code.
 
 ```
-(if T (say 'is-true))
+(if T 'is-true)
 ```
-```
-is-true
-```
+`'is-true`
 
 `else` may be used to specify an else-clause.
 
