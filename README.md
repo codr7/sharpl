@@ -287,6 +287,13 @@ Special characters require one more escape.
 ```
 `\\n`
 
+Characters support ranges.
+
+```
+[\a..\z:2*]
+```
+`[\a \c \e \g \i \k \m \o \q \s \u \w \y]`
+
 ### integers
 Integers support the regular arithmetic operations.
 
@@ -302,10 +309,11 @@ Negative integers lack syntax, and must be created by way of subtraction.
 ```
 `-42`
 
-`range` may be used to create a new integer range.
+
+Integers support ranges.
 
 ```
-[(range 1 10 2)*]
+[1..10:2*]
 ```
 `[1 3 5 7 9]`
 
@@ -339,10 +347,10 @@ Also like integers; negative fixpoints lack syntax, and must be created by way o
 ```
 `-1.234`
 
-`range` may be used to create a new fixpoint range.
+Fixpoints support ranges.
 
 ```
-[(range 1.1 1.4 .1)*]
+[1.1..1.4:.1*]
 ```
 `[1.1 1.2 1.3]`
 
@@ -555,8 +563,8 @@ Durations may be added/subtracted to/from timestamps.
 `2024-09-15 01:30:00`
 
 ## ranges
-Timestamps come with range support.<br/>
-The following example generates timestamps between `2024 1 1` and the next day, separated by six hours.
+Timestamps support ranges.<br/>
+The following example generates timestamps between `2024-1-1` and the next day, separated by six hours.
 
 ```
 (let [t (Timestamp 2024 1 1)]

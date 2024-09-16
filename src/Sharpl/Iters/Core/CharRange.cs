@@ -4,21 +4,21 @@ public class CharRange : BasicIter
 {
     public readonly char? Max;
     public readonly int Stride;
-    private int value;
+    private char value;
 
     public CharRange(char min, char? max, int stride)
     {
         Max = max;
         Stride = stride;
-        value = min - stride;
+        value = (char)(min - (char)stride);
     }
 
     public override Value? Next()
     {
         if (Max is char mv && value+1 < mv)
         {
-            value += Stride;
-            return Value.Make(Libs.Core.Int, value);
+            value += (char)Stride;
+            return Value.Make(Libs.Core.Char, value);
         }
 
         return null;

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Text;
 
 namespace Sharpl.Types.Core;
@@ -13,7 +12,7 @@ public class CharType(string name) :
     {
         char minVal = (min.Type == Libs.Core.Nil) ? '\0' : min.CastUnbox(loc, this);
         char? maxVal = (max.Type == Libs.Core.Nil) ? null : max.CastUnbox(loc, this);
-        int strideVal = (stride.Type == Libs.Core.Nil) ? ((maxVal is char mv && maxVal < minVal) ? -1 : 1) : stride.CastUnbox(loc, this);
+        int strideVal = (stride.Type == Libs.Core.Nil) ? ((maxVal is char mv && maxVal < minVal) ? -1 : 1) : stride.CastUnbox(loc, Libs.Core.Int);
         return new Iters.Core.CharRange(minVal, maxVal, strideVal);
     }
 
@@ -26,7 +25,7 @@ public class CharType(string name) :
         {
             '\n' => "\\n",
             '\r' => "\\r",
-            _ => c
+            _ => $"{c}"
         });
     }    
 
