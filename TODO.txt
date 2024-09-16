@@ -9,13 +9,16 @@ April 29th
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * time
+** finish duration type
+** commit
+** add time/y/M
 ** add support for using d/h/m/etc as timestamp accessors
-** add y
 ** add duration range iter
 ** add week-/day support
 ** add timestamp constructor
 *** optional args
-** add ranges to readme
+** update readme
+*** ranges
 
 * start repl from client to server
 ** send code as string

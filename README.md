@@ -510,12 +510,21 @@ All composite types may be sliced by indexing using a pair.
 `5:2`
 
 ## time
+The time library uses established naming conventions when referring to fields: `Y` for years, `M` for months, `D` for days, `h` for hours, `m` for minutes, `s` for seconds, `ms` for milliseconds and `us` for microseconds.
+
 `time/today` and `time/now` may be used to get the current date/time.
 
 ```
 (is (time/trunc (time/now)) (time/today))
 ```
 `T`
+
+The `Timestamp` constructor may be used to create new timestamps manually, pass `_` for default.
+
+```
+  (Timestamp 2024 _ _ 21 22)
+```
+`2024-01-01 21:22:00`
 
 ### durations
 Subtracting timestamps results in a duration.
@@ -525,17 +534,17 @@ Subtracting timestamps results in a duration.
 ```
 `16:36:27.2404435`
 
-Common suffixes are defined as constructors.
+Suffixes may be used as constructors.
 
 ```
 (is (time/m 120) (time/h))
 ```
 `T`
 
-When applied to durations they return the value for the specified unit.
+When applied to timestamps or durations they return the value for the specified field.
 
 ```
-(time/d (time/w 2))
+(time/D (time/W 2))
 ```
 `14`
 
@@ -545,6 +554,16 @@ Durations may be added/subtracted to/from timestamps.
 (+ (time/today) (time/m 90))
 ```
 `2024-09-15 01:30:00`
+
+## ranges
+Timestamps come with range support.<br/>
+The following example generates timestamps between `2024 1 1` and the next day, separated by six hours.
+
+```
+(let [t (Timestamp 2024 1 1)]
+  [t..(+ t (time/D 1)):(time/h 6)*])
+```
+`[2024-01-01 00:00:00 2024-01-01 06:00:00 2024-01-01 12:00:00 2024-01-01 18:00:00]`
 
 ### time zones
 By default all timestamps are local, `time/to-utc` and `time/from-utc` may be used to convert back and forth.

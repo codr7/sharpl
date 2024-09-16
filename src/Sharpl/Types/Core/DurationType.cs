@@ -3,18 +3,18 @@ using System.Text;
 namespace Sharpl.Types.Core;
 
 public class DurationType(string name) :
-    ComparableType<TimeSpan>(name),
+    ComparableType<Duration>(name),
     NumericTrait
 {
-    public static readonly TimeSpan ZERO = TimeSpan.FromTicks(0);
+    public static readonly Duration ZERO = new Duration(0, TimeSpan.FromTicks(0));
 
     public void Add(Loc loc, VM vm, Stack stack, int arity)
     {
-        var res = TimeSpan.FromTicks(0);
+        var res = new Duration(0, TimeSpan.FromTicks(0));
 
         while (arity > 0)
         {
-            res = res.Add(stack.Pop().CastUnbox(loc, this));
+            res = stack.Pop().CastUnbox(loc, this).Add(res);
             arity--;
         }
 
@@ -54,7 +54,7 @@ public class DurationType(string name) :
 
     public void Subtract(Loc loc, VM vm, Stack stack, int arity)
     {
-        var res = TimeSpan.FromTicks(0);
+        var res = new Duration(0, TimeSpan.FromTicks(0));
 
         if (arity > 0)
         {

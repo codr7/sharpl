@@ -4,22 +4,24 @@ public class TimeRange : BasicIter
 {
     public readonly DateTime Min;
     public readonly DateTime? Max;
-    public readonly TimeSpan Stride;
+    public readonly Duration Stride;
     private DateTime value;
 
-    public TimeRange(DateTime min, DateTime? max, TimeSpan stride)
+    public TimeRange(DateTime min, DateTime? max, Duration stride)
     {
         Min = min;
         Max = max;
         Stride = stride;
-        value = min - stride;
+        value = stride.SubtractFrom(min);
     }
 
     public override Value? Next()
     {
-        if (Max is null || value.Add(Stride).CompareTo(Max) < 0)
+        var nv = Stride.AddTo(value);
+
+        if (Max is null || nv.CompareTo(Max) < 0)
         {
-            value = value.Add(Stride);
+            value = nv;
             return Value.Make(Libs.Core.Timestamp, value);
         }
 
