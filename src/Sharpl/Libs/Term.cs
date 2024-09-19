@@ -41,7 +41,7 @@ public class Term : Lib
         {
             var y = stack.Pop();
             var x = stack.Pop().CastUnbox(loc, Core.Int);
-            vm.Term.MoveTo(x, (y == Value.Nil) ? null : y.CastUnbox(loc, Core.Int));
+            vm.Term.MoveTo(x, (y == Value._) ? null : y.CastUnbox(loc, Core.Int));
         });
 
         BindMethod("poll-key", [], (loc, target, vm, stack, arity) =>

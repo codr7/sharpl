@@ -38,7 +38,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                         if (j == -1) { throw new EvalError(loc, $"Key not found: {p.Item2}"); }
                         stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j + 1)]));
                     }
-                    else { stack.Push(m.ContainsKey(kv) ? m[kv] : Value.Nil); }
+                    else { stack.Push(m.ContainsKey(kv) ? m[kv] : Value._); }
 
                     break;
                 }
@@ -46,7 +46,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                 {
                     var m = target.Cast(this);
                     var v = stack.Pop();
-                    if (v.Equals(Value.Nil)) { m.Remove(stack.Pop()); }
+                    if (v.Equals(Value._)) { m.Remove(stack.Pop()); }
                     else { m.Set(stack.Pop(), v); }
                     break;
                 }

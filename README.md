@@ -573,6 +573,22 @@ The following example generates timestamps between `2024-1-1` and the next day, 
 ```
 `[2024-01-01 00:00:00 2024-01-01 06:00:00 2024-01-01 12:00:00 2024-01-01 18:00:00]`
 
+### months
+`MONTHS` maps indexes to month names.
+
+```
+time/MONTHS
+```
+`[_ 'jan 'feb 'mar 'apr 'may 'jun 'jul 'aug 'sep 'oct 'nov 'dec]`
+
+### weekdays
+`WEEKDAYS` maps indexes to week day names.
+
+```
+time/WEEKDAYS
+```
+`['su 'mo 'tu 'we 'th 'fr 'sa]`
+
 ### time zones
 By default all timestamps are local, `time/to-utc` and `time/from-utc` may be used to convert back and forth.
 

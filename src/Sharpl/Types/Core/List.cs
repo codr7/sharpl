@@ -111,14 +111,14 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
     public Value Peek(Loc loc, VM vm, Value srcVal)
     {
         var src = srcVal.Cast(this);
-        return (src.Count == 0) ? Value.Nil : src[^1];
+        return (src.Count == 0) ? Value._ : src[^1];
     }
 
     public Value Pop(Loc loc, VM vm, Register src, Value srcVal)
     {
         var sv = srcVal.Cast(this);
         var n = sv.Count;
-        if (n == 0) { return Value.Nil; }
+        if (n == 0) { return Value._; }
         n--;
         var v = sv[n];
         sv.RemoveAt(n);

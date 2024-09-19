@@ -11,8 +11,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public static explicit operator bool(Value v) => v.Type.Bool(v);
     public static Value Make<T>(Type<T> type, T data) where T : notnull => new Value(type, data);
 
+    public static readonly Value _ = Make(Libs.Core.Nil, false);
     public static readonly Value F = Make(Libs.Core.Bit, false);
-    public static readonly Value Nil = Make(Libs.Core.Nil, false);
     public static readonly Value T = Make(Libs.Core.Bit, true);
 
     public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount) =>

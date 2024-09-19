@@ -90,7 +90,7 @@ public static class Json
         return buffer.ToString() switch
         {
             "" => null,
-            "null" => Value.Nil,
+            "null" => Value._,
             "true" => Value.T,
             "false" => Value.F,
             var id => throw new ReadError(loc, $"Unknown id: {id}")

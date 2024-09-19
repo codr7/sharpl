@@ -684,7 +684,7 @@ public class Core : Lib
 
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
             {
-                Value max = Value.Nil, min = Value.Nil, stride = Value.Nil;
+                Value max = Value._, min = Value._, stride = Value._;
                 AnyType t = Nil;
 
                 switch (arity)
@@ -709,7 +709,7 @@ public class Core : Lib
 
         BindMethod("resize", ["array", "size", "value?"], (loc, target, vm, stack, arity) =>
         {
-            var v = (arity == 3) ? stack.Pop() : Value.Nil;
+            var v = (arity == 3) ? stack.Pop() : Value._;
             var s = stack.Pop().CastUnbox(loc, Int);
             var a = stack.Pop().Cast(loc, Array);
             var ps = a.Length;

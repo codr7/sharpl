@@ -65,6 +65,6 @@ public class REPL
         var startPC = vm.EmitPC;
         vm.ReadForms(new Source(new StringReader(input)), ref loc).Emit(vm);
         vm.Emit(Ops.Stop.Make());
-        return vm.Eval(startPC) ?? Value.Nil;
+        return vm.Eval(startPC) ?? Value._;
     }
 }

@@ -29,5 +29,9 @@
   (let [t (Timestamp 2024 1 1)]
     #[t..(+ t (time/D 1)):(time/h 6)*]))
 
+(let [t (Timestamp 2024 9 19)]
+  (check 'sep (time/MONTHS (time/M t)))
+  (check 'th (time/WEEKDAYS (time/WD t))))
+
 (check (let [t (time/now)]
   (is (time/to-local (time/to-utc t) t))))

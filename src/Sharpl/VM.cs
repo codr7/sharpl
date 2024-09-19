@@ -108,7 +108,7 @@ public class VM
         TermLib = new Libs.Term(this);
         TermLib.Init(this);
 
-        TimeLib = new Libs.Time();
+        TimeLib = new Libs.Time(this);
         TimeLib.Init(this);
     }
 

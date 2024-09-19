@@ -110,13 +110,13 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
     public Value Peek(Loc loc, VM vm, Value srcVal)
     {
         var src = srcVal.Cast(this);
-        return (src.Length == 0) ? Value.Nil : src[^1];
+        return (src.Length == 0) ? Value._ : src[^1];
     }
 
     public Value Pop(Loc loc, VM vm, Register src, Value srcVal)
     {
         var sv = srcVal.Cast(this);
-        if (sv.Length == 0) { return Value.Nil; }
+        if (sv.Length == 0) { return Value._; }
         var v = sv[^1];
         vm.Set(src, Value.Make(this, sv[0..^1]));
         return v;

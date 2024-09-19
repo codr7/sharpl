@@ -8,8 +8,7 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* time
-** add weekday support
+* add wd support to time
 
 * start repl from client to server
 ** send code as string

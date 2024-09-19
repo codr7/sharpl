@@ -1,9 +1,33 @@
+using Sharpl.Readers;
+
 namespace Sharpl.Libs;
 
 public class Time : Lib
 {
-    public Time() : base("time", null, [])
+    public Time(VM vm) : base("time", null, [])
     {
+        Value[] mts = [
+            Value._,
+            Value.Make(Core.Sym, vm.Intern("jan")),
+            Value.Make(Core.Sym, vm.Intern("feb")),
+            Value.Make(Core.Sym, vm.Intern("mar")),
+            Value.Make(Core.Sym, vm.Intern("apr")),
+            Value.Make(Core.Sym, vm.Intern("may")),
+            Value.Make(Core.Sym, vm.Intern("jun")),
+            Value.Make(Core.Sym, vm.Intern("jul")),
+            Value.Make(Core.Sym, vm.Intern("aug")),
+            Value.Make(Core.Sym, vm.Intern("sep")),
+            Value.Make(Core.Sym, vm.Intern("oct")),
+            Value.Make(Core.Sym, vm.Intern("nov")),
+            Value.Make(Core.Sym, vm.Intern("dec")),
+        ];
+
+        Bind("MONTHS", Value.Make(Core.Array, mts));
+
+        var wds = new Value[7];
+        for (var i = 0; i < 7; i++) { wds[i] = Value.Make(Core.Sym, vm.Intern(((DayOfWeek)i).ToString().ToLower()[0..2])); }
+        Bind("WEEKDAYS", Value.Make(Core.Array, wds));
+
         BindMethod("D", ["n?"], (loc, target, vm, stack, arity) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
@@ -135,22 +159,26 @@ public class Time : Lib
             }
         });
 
+        BindMethod("WD", ["n?"], (loc, target, vm, stack, arity) =>
+            stack.Push(Core.Int, (int)stack.Pop().CastUnbox(loc, Core.Timestamp).DayOfWeek));
+
         BindMethod("W", ["n?"], (loc, target, vm, stack, arity) =>
-        {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Days / 7);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).IsoWeek());
-            }
-            else
-            {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromDays(n * 7)));
-            }
-        });
+          {
+              if (arity == 1 && stack.Peek().Type == Core.Duration)
+              {
+                  stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Days / 7);
+              }
+              else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
+              {
+                  stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).IsoWeek());
+              }
+              else
+              {
+                  var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                  stack.Push(Core.Duration, new Duration(0, TimeSpan.FromDays(n * 7)));
+              }
+          });
+
 
         BindMethod("Y", ["n?"], (loc, target, vm, stack, arity) =>
         {
