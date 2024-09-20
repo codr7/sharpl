@@ -11,7 +11,7 @@ public struct Quote : Reader
         var formLoc = loc;
         loc.Column++;
         source.Read();
-        if (vm.ReadForm(source, ref loc, forms) && forms.TryPopLast() is Form f) { forms.Push(new Forms.QuoteForm(formLoc, f)); }
+        if (vm.ReadForm(source, ref loc, forms) && forms.TryPopLast() is Form f) { forms.Push(new Forms.QuoteForm(f, formLoc)); }
         else { throw new ReadError("Missing quoted value", loc); }
         return true;
     }

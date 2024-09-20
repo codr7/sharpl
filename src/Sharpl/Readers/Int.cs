@@ -32,7 +32,7 @@ public struct Int : Reader
         }
 
         if (formLoc.Column == loc.Column) { return false; }
-        forms.Push(new Forms.Literal(formLoc, Value.Make(Core.Int, v)));
+        forms.Push(new Forms.Literal(Value.Make(Core.Int, v), formLoc));
         return true;
     }
 }

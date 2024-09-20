@@ -34,7 +34,7 @@ public struct Fix : Reader
         }
 
         if (formLoc.Column == loc.Column) { return false; }
-        forms.Push(new Forms.Literal(formLoc, Value.Make(Core.Fix, Sharpl.Fix.Make(e, val))));
+        forms.Push(new Forms.Literal(Value.Make(Core.Fix, Sharpl.Fix.Make(e, val)), formLoc));
         return true;
     }
 

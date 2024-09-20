@@ -6,7 +6,7 @@ public class Map : Form
 {
     public readonly Form[] Items;
 
-    public Map(Loc loc, Form[] items) : base(loc)
+    public Map(Form[] items, Loc loc) : base(loc)
     {
         Items = items;
     }
@@ -29,7 +29,7 @@ public class Map : Form
             }
         }
 
-        if (callConstructor) { args.PushFirst(new Call(Loc, new Id(Loc, "Map"), Items)); }
+        if (callConstructor) { args.PushFirst(new Call(new Id("Map", Loc), Items, Loc)); }
         else
         {
             vm.Emit(Ops.CreateMap.Make(Items.Length));
@@ -78,7 +78,7 @@ public class Map : Form
             newItems[i] = args.PopLast();
         }
 
-        args.Push(new Map(Loc, newItems));
+        args.Push(new Map(newItems, Loc));
         return result;
     }
 
@@ -88,7 +88,7 @@ public class Map : Form
             : null;
 
     public override Form Quote(Loc loc, VM vm) =>
-        new Map(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
+        new Map(Items.Select(it => it.Quote(loc, vm)).ToArray(), loc);
 
     public override string Dump(VM vm)
     {
@@ -108,5 +108,5 @@ public class Map : Form
     }
 
     public override Form Unquote(Loc loc, VM vm) =>
-        new Map(loc, Items.Select(it => it.Unquote(loc, vm)).ToArray());
+        new Map(Items.Select(it => it.Unquote(loc, vm)).ToArray(), loc);
 }

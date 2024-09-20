@@ -33,7 +33,7 @@ public struct Call : Reader
 
         if (args.Empty) { throw new ReadError("Missing call target", loc); }
         var target = args.Pop();
-        forms.Push(new Forms.Call(formLoc, (Form)target, args.Items));
+        forms.Push(new Forms.Call((Form)target, args.Items, formLoc));
         return true;
     }
 }

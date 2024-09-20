@@ -6,7 +6,7 @@ public class QuoteForm : Form
 {
     public readonly Form Target;
 
-    public QuoteForm(Loc loc, Form target) : base(loc)
+    public QuoteForm(Form target, Loc loc) : base(loc)
     {
         Target = target;
     }
@@ -19,12 +19,12 @@ public class QuoteForm : Form
     public override bool Expand(VM vm, Queue args)
     {
         var result = Target.Expand(vm, args);
-        args.Push(new QuoteForm(Loc, args.PopLast()));
+        args.Push(new QuoteForm(args.PopLast(), Loc));
         return result;
     }
 
     public override bool IsSplat => Target.IsSplat;
-    public override Form Quote(Loc loc, VM vm) => new QuoteForm(loc, this);
+    public override Form Quote(Loc loc, VM vm) => new QuoteForm(this, loc);
     public override string Dump(VM vm) => $"{Target.Dump(vm)}";
     public override Form Unquote(Loc loc, VM vm) => Target;
 }

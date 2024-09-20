@@ -16,7 +16,7 @@ public struct And: Reader {
         WhiteSpace.Instance.Read(source, vm, forms, ref loc);
         if (source.Peek() == '&' && !Read(source, vm, forms, ref loc)) { throw new ReadError("Failed reading nested and form", loc); }
         var right = forms.PopLast();
-        forms.Push(new Forms.And(formLoc, left, right));
+        forms.Push(new Forms.And(left, right, formLoc));
         return true;
     }
 }

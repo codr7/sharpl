@@ -13,7 +13,7 @@ public struct Length : Reader
         source.Read();
 
         if (vm.ReadForm(source, ref loc, forms) && forms.TryPopLast() is Form f) {
-            forms.Push(new Forms.Call(formLoc, new Forms.Id(formLoc, "length"), [f])); 
+            forms.Push(new Forms.Call(new Forms.Id("length", formLoc), [f], formLoc)); 
         }
         else { throw new ReadError("Missing length value", loc); }
         

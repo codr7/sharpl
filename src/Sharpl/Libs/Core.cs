@@ -350,7 +350,7 @@ public class Core : Lib
             vm.Eval(startPC, stack);
             stack.Reverse();
 
-            foreach (var it in stack) { args.PushFirst(new Forms.Literal(loc, it)); }
+            foreach (var it in stack) { args.PushFirst(new Forms.Literal(it, loc)); }
         });
 
         BindMethod("eval", ["code?"], (loc, target, vm, stack, arity) =>

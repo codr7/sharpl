@@ -51,7 +51,7 @@ public struct String : Reader
             loc.Column++;
         }
 
-        forms.Push(new Forms.Literal(formLoc, Value.Make(Core.String, s.ToString())));
+        forms.Push(new Forms.Literal(Value.Make(Core.String, s.ToString()), formLoc));
         return true;
     }
 }

@@ -26,7 +26,7 @@ public struct Char : Reader
             };
         }
 
-        forms.Push(new Forms.Literal(formLoc, Value.Make(Core.Char, (char)c)));
+        forms.Push(new Forms.Literal(Value.Make(Core.Char, (char)c), formLoc));
         return true;
     }
 }

@@ -36,7 +36,7 @@ public struct Range : Reader
             stride = forms.PopLast();
         }
 
-        forms.Push(new Forms.Call(formLoc, new Forms.Id(loc, "range"), [left, right, stride ?? new Forms.Nil(loc)]));
+        forms.Push(new Forms.Call(new Forms.Id("range", loc), [left, right, stride ?? new Forms.Nil(loc)], formLoc));
         return true;
     }
 }

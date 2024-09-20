@@ -28,7 +28,7 @@ public class Id : Form
 
     public readonly string Name;
 
-    public Id(Loc loc, string name) : base(loc)
+    public Id(string name, Loc loc) : base(loc)
     {
         Name = name;
     }
@@ -38,7 +38,7 @@ public class Id : Form
 
     public override void Emit(VM vm, Queue args)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v) { args.PushFirst(new Literal(Loc, v)); }
+        if (GetId(Name, vm.Env, Loc) is Value v) { args.PushFirst(new Literal(v, Loc)); }
         else { throw new EmitError($"Unknown id: {Name}", Loc); }
     }
 
@@ -54,7 +54,7 @@ public class Id : Form
     public override Value? GetValue(VM vm) => FindId(Name, vm.Env, Loc);
 
     public override Form Quote(Loc loc, VM vm) =>
-        new Literal(loc, Value.Make(Core.Sym, vm.Intern(Name)));
+        new Literal(Value.Make(Core.Sym, vm.Intern(Name)), loc);
 
     public override string Dump(VM vm) => Name;
     public override Form Unquote(Loc loc, VM vm) => GetId(Name, vm.Env, loc).Unquote(loc, vm);

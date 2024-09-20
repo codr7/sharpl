@@ -27,7 +27,7 @@ public struct Array: Reader {
             if (!vm.ReadForm(source, ref loc, items)) { throw new ReadError("Unexpected end of array", loc); }
         }
 
-        forms.Push(new Forms.Array(formLoc, items.Items));
+        forms.Push(new Forms.Array(items.Items, formLoc));
         return true;
     }
 }

@@ -4,7 +4,7 @@ public class Splat : Form
 {
     public readonly Form Target;
 
-    public Splat(Loc loc, Form target) : base(loc)
+    public Splat(Form target, Loc loc) : base(loc)
     {
         Target = target;
     }
@@ -20,12 +20,12 @@ public class Splat : Form
     public override bool Expand(VM vm, Queue args)
     {
         var result = Target.Expand(vm, args);
-        args.Push(new Splat(Loc, args.PopLast()));
+        args.Push(new Splat(args.PopLast(), Loc));
         return result;
     }
 
     public override bool IsSplat => true;
-    public override Form Quote(Loc loc, VM vm) => new Splat(loc, Target.Quote(loc, vm));
+    public override Form Quote(Loc loc, VM vm) => new Splat(Target.Quote(loc, vm), loc);
     public override string Dump(VM vm) => $"{Target.Dump(vm)}*";
-    public override Form Unquote(Loc loc, VM vm) => new Splat(loc, Target);
+    public override Form Unquote(Loc loc, VM vm) => new Splat(Target, loc);
 }

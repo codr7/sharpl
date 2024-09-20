@@ -10,7 +10,7 @@ public class Call : Form
     public readonly Form Target;
 
 
-    public Call(Loc loc, Form target, Form[] args) : base(loc)
+    public Call(Form target, Form[] args, Loc loc) : base(loc)
     {
         Target = target;
         Args = args;
@@ -97,7 +97,7 @@ public class Call : Form
             var stack = new Stack();
             foreach (var a in Args) { stack.Push((a as Literal)!.Value); }
             Core.Meta.Call(Loc, vm, stack, tv, Args.Length, vm.NextRegisterIndex);
-            if (stack.Pop() is Value v) {args.Push(new Literal(Loc, v)); }
+            if (stack.Pop() is Value v) {args.Push(new Literal(v, Loc)); }
             else { throw new EmitError("Expected value", Loc); }
             result = true;
         } else {
@@ -110,14 +110,14 @@ public class Call : Form
                 callArgs[i] = args.PopLast();
             }
 
-            args.Push(new Call(Loc, t, callArgs));
+            args.Push(new Call(t, callArgs, Loc));
         }
 
         return result;
     }
 
     public override Form Quote(Loc loc, VM vm) =>
-        new Literal(Loc, Value.Make(Libs.Core.Form, new Call(loc, Target.Quote(loc, vm), Args.Select(a => a.Quote(loc, vm)).ToArray())));
+        new Literal(Value.Make(Libs.Core.Form, new Call(Target.Quote(loc, vm), Args.Select(a => a.Quote(loc, vm)).ToArray(), loc)), Loc);
 
     public override string Dump(VM vm)
     {
@@ -130,6 +130,6 @@ public class Call : Form
     }
 
     public override Form Unquote(Loc loc, VM vm) {
-        return new Call(loc, Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray());
+        return new Call(Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray(), loc);
     }
 }

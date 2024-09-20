@@ -130,7 +130,7 @@ public class VM
     public void CallUserMethod(Loc loc, Stack stack, UserMethod target, Value?[] argMask, int arity, int registerCount)
     {
         BeginFrame(registerCount);
-        calls.Push(new Call(loc, target, PC, frames.Count));
+        calls.Push(new Call(target, PC, frames.Count, loc));
         target.BindArgs(this, argMask, arity, stack);
 #pragma warning disable CS8629
         PC = (PC)target.StartPC;

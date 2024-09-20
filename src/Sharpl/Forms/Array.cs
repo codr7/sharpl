@@ -6,7 +6,7 @@ public class Array : Form
 {
     public readonly Form[] Items;
 
-    public Array(Loc loc, Form[] items) : base(loc)
+    public Array(Form[] items, Loc loc) : base(loc)
     {
         Items = items;
     }
@@ -32,7 +32,7 @@ public class Array : Form
         if (splat)
         {
             var its = Items;
-            Form cf = new Call(Loc, new Id(Loc, "Array"), its);
+            Form cf = new Call(new Id("Array", Loc), its, Loc);
             args.PushFirst(cf);
         }
         else
@@ -75,7 +75,7 @@ public class Array : Form
             newItems[i] = args.PopLast();
         }
 
-        args.Push(new Array(Loc, newItems));
+        args.Push(new Array(newItems, Loc));
         return result;
     }
 
@@ -83,7 +83,7 @@ public class Array : Form
         Items.All(it => it is Literal) ? Value.Make(Libs.Core.Array, Items.Select(it => (it as Literal)!.Value.Copy()).ToArray()) : null;
 
     public override Form Quote(Loc loc, VM vm) => 
-        new Array(loc, Items.Select(it => it.Quote(loc, vm)).ToArray());
+        new Array(Items.Select(it => it.Quote(loc, vm)).ToArray(), loc);
 
     public override string Dump(VM vm)
     {
@@ -103,5 +103,5 @@ public class Array : Form
     }
 
     public override Form Unquote(Loc loc, VM vm) =>
-        new Array(loc, Items.Select(it => it.Unquote(loc, vm)).ToArray());
+        new Array(Items.Select(it => it.Unquote(loc, vm)).ToArray(), loc);
 }

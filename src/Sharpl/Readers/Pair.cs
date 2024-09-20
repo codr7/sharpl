@@ -18,7 +18,7 @@ public struct Pair: Reader {
         if (source.Peek() == ':' && !vm.ReadForm(source, ref loc, forms)) { throw new ReadError("Failed reading nested pair", loc); }
         var right = forms.TryPopLast();
         if (right is null) { throw new ReadError("Missing right value", loc); }
-        forms.Push(new Forms.Pair(formLoc, left, right));
+        forms.Push(new Forms.Pair(left, right, formLoc));
         return true;
     }
 }

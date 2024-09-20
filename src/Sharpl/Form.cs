@@ -3,7 +3,7 @@ using Sharpl.Ops;
 
 namespace Sharpl;
 
-public abstract class Form(Loc loc) : Emitter
+public abstract class Form(Loc loc)
 {
     public readonly Loc Loc = loc;
 

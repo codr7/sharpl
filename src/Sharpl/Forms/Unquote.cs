@@ -4,7 +4,7 @@ public class UnquoteForm : Form
 {
     public readonly Form Target;
 
-    public UnquoteForm(Loc loc, Form target) : base(loc)
+    public UnquoteForm(Form target, Loc loc) : base(loc)
     {
         Target = target;
     }
@@ -16,12 +16,12 @@ public class UnquoteForm : Form
     public override bool Expand(VM vm, Queue args)
     {
         var result = Target.Expand(vm, args);
-        args.Push(new UnquoteForm(Loc, args.PopLast()));
+        args.Push(new UnquoteForm(args.PopLast(), Loc));
         return result;
     }
 
     public override bool IsSplat => Target.IsSplat;
     public override Form Quote(Loc loc, VM vm) => Target.Unquote(loc, vm);
     public override string Dump(VM vm) => $",{Target.Dump(vm)}";
-    public override Form Unquote(Loc loc, VM vm) => new UnquoteForm(loc, this);
+    public override Form Unquote(Loc loc, VM vm) => new UnquoteForm(this, loc);
 }

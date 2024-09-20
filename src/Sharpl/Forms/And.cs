@@ -5,7 +5,7 @@ public class And : Form
     public readonly Form Left;
     public readonly Form Right;
 
-    public And(Loc loc, Form left, Form right) : base(loc)
+    public And(Form left, Form right, Loc loc) : base(loc)
     {
         Left = left;
         Right = right;
@@ -32,15 +32,15 @@ public class And : Form
         var l = args.PopLast();
         if (Right.Expand(vm, args)) { result = true; }
         var r = args.PopLast();
-        args.Push(new And(Loc, l, r));
+        args.Push(new And(l, r, Loc));
         return result;
     }
 
     public override Form Quote(Loc loc, VM vm) => 
-        new And(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
+        new And(Left.Quote(loc, vm), Right.Quote(loc, vm), loc);
 
     public override string Dump(VM vm) => $"{Left.Dump(vm)} & {Right.Dump(vm)}";
 
     public override Form Unquote(Loc loc, VM vm) => 
-        new And(loc, Left.Unquote(loc, vm), Right.Unquote(loc, vm));
+        new And(Left.Unquote(loc, vm), Right.Unquote(loc, vm), loc);
 }

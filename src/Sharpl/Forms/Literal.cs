@@ -4,7 +4,7 @@ public class Literal : Form
 {
     public readonly Value Value;
 
-    public Literal(Loc loc, Value value) : base(loc)
+    public Literal(Value value, Loc loc) : base(loc)
     {
         Value = value;
     }

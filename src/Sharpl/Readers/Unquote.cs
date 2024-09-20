@@ -21,7 +21,7 @@ public struct Unquote : Reader
             if (!Splat.Instance.Read(source, vm, forms, ref loc)) { throw new ReadError("Failed reading unquoted splat", loc); }
         }
 
-        forms.Push(new Forms.UnquoteForm(formLoc, forms.PopLast()));
+        forms.Push(new Forms.UnquoteForm(forms.PopLast(), formLoc));
         return true;
     }
 }

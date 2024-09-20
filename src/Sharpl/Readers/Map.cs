@@ -26,7 +26,7 @@ public struct Map: Reader {
             if (!vm.ReadForm(source, ref loc, items)) { throw new ReadError("Unexpected end of map", loc); }
         }
 
-        forms.Push(new Forms.Map(formLoc, items.Items));
+        forms.Push(new Forms.Map(items.Items, formLoc));
         return true;
     }
 }

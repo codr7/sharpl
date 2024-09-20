@@ -3,7 +3,7 @@ namespace Sharpl.Forms;
 public class Binding : Form
 {
     public readonly Register Register;
-    public Binding(Loc loc, Register reg) : base(loc)
+    public Binding(Register reg, Loc loc) : base(loc)
     {
         Register = reg;
     }

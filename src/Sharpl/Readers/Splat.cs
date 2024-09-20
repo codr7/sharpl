@@ -12,7 +12,7 @@ public struct Splat: Reader {
         source.Read();
         var target = forms.TryPopLast();
 #pragma warning disable CS8604 
-        forms.Push(new Forms.Splat(formLoc, target));
+        forms.Push(new Forms.Splat(target, formLoc));
 #pragma warning restore CS8604
         return true;
     }

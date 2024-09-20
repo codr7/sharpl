@@ -7,7 +7,7 @@ public class Pair : Form
     public readonly Form Left;
     public readonly Form Right;
 
-    public Pair(Loc loc, Form left, Form right) : base(loc)
+    public Pair(Form left, Form right, Loc loc) : base(loc)
     {
         Left = left;
         Right = right;
@@ -35,7 +35,7 @@ public class Pair : Form
         var l = args.PopLast();
         if (Right.Expand(vm, args)) { result = true; }
         var r = args.PopLast();
-        args.Push(new Pair(Loc, l, r));
+        args.Push(new Pair(l, r, Loc));
         return result;
     }
 
@@ -43,10 +43,10 @@ public class Pair : Form
         (Left is Literal ll && Right is Literal rr) ? Value.Make(Core.Pair, (ll.Value.Copy(), rr.Value.Copy())) : null;
 
     public override Form Quote(Loc loc, VM vm) => 
-        new Pair(loc, Left.Quote(loc, vm), Right.Quote(loc, vm));
+        new Pair(Left.Quote(loc, vm), Right.Quote(loc, vm), loc);
 
     public override string Dump(VM vm) => $"{Left.Dump(vm)}:{Right.Dump(vm)}";
 
     public override Form Unquote(Loc loc, VM vm) => 
-        new Pair(loc, Left.Unquote(loc, vm), Right.Unquote(loc, vm));
+        new Pair(Left.Unquote(loc, vm), Right.Unquote(loc, vm), loc);
 }

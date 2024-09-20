@@ -35,7 +35,7 @@ public abstract class AnyType(string name)
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Loc loc, Value value) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
-    public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(loc, value);
+    public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(value, loc);
 }
 
 public class Type<T>(string name) : AnyType(name)
