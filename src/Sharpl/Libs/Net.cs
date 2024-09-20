@@ -18,16 +18,16 @@ public class Net : Lib
 
         BindMethod("connect", ["addr"], (loc, target, vm, stack, arity) =>
         {
-            var v = stack.Pop().CastUnbox(loc, Core.Pair);
-            var a = IPAddress.Parse(v.Item1.Cast(loc, Core.String));
+            var v = stack.Pop().CastUnbox(Core.Pair, loc);
+            var a = IPAddress.Parse(v.Item1.Cast(Core.String, loc));
             var c = new TcpClient();
-            c.Connect(a, v.Item2.CastUnbox(loc, Core.Int));
+            c.Connect(a, v.Item2.CastUnbox(Core.Int, loc));
             stack.Push(Stream, c.GetStream());
         });
 
         BindMethod("accept", ["server"], (loc, target, vm, stack, arity) =>
         {
-            var s = stack.Pop().Cast(loc, Server);
+            var s = stack.Pop().Cast(Server, loc);
             var c = Channel.CreateUnbounded<Value>();
 
             Task.Run(async () =>
@@ -43,16 +43,16 @@ public class Net : Lib
 
         BindMethod("listen", ["addr"], (loc, target, vm, stack, arity) =>
         {
-            var v = stack.Pop().CastUnbox(loc, Core.Pair);
-            var a = IPAddress.Parse(v.Item1.Cast(loc, Core.String));
-            var s = new TcpListener(a, v.Item2.CastUnbox(loc, Core.Int));
+            var v = stack.Pop().CastUnbox(Core.Pair, loc);
+            var a = IPAddress.Parse(v.Item1.Cast(Core.String, loc));
+            var s = new TcpListener(a, v.Item2.CastUnbox(Core.Int, loc));
             s.Start();
             stack.Push(Server, s);
         });
 
         BindMethod("stream-port", ["it"], (loc, target, vm, stack, arity) =>
         {
-            var s = stack.Pop().Cast(loc, Stream);
+            var s = stack.Pop().Cast(Stream, loc);
             stack.Push(Core.Port, new StreamPort(s));
         });
     }

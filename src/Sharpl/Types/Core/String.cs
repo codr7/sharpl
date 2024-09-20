@@ -12,7 +12,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity)
+    public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
         var res = new StringBuilder();
@@ -26,7 +26,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
         stack.Push(Value.Make(this, res.ToString()));
     }
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
     {
         switch (arity)
         {
@@ -38,13 +38,13 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
                     if (iv.Type == Libs.Core.Pair)
                     {
                         var p = iv.CastUnbox(Libs.Core.Pair);
-                        var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Libs.Core.Int);
-                        var n = (p.Item2.Type == Libs.Core.Nil) ? t.Length - 1: p.Item2.CastUnbox(loc, Libs.Core.Int);
+                        var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : p.Item1.CastUnbox(Libs.Core.Int, loc);
+                        var n = (p.Item2.Type == Libs.Core.Nil) ? t.Length - 1: p.Item2.CastUnbox(Libs.Core.Int, loc);
                         stack.Push(Libs.Core.String, t[i..(i + n)]);
                     }
                     else
                     {
-                        var i = iv.CastUnbox(loc, Libs.Core.Int);
+                        var i = iv.CastUnbox(Libs.Core.Int, loc);
                         stack.Push(Libs.Core.Char, t[i]);
                     }
 
@@ -52,10 +52,10 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
                 }
             case 2:
                 {
-                    var v = stack.Pop().CastUnbox(loc, Libs.Core.Char);
+                    var v = stack.Pop().CastUnbox(Libs.Core.Char, loc);
                     var s = target.Cast(this);
                     var cs = s.ToCharArray();
-                    var i = stack.Pop().CastUnbox(loc, Libs.Core.Int);
+                    var i = stack.Pop().CastUnbox(Libs.Core.Int, loc);
                     cs[i] = v;
                     break;
                 }
@@ -93,5 +93,5 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
 
     public override void Say(Value value, VM vm, StringBuilder result) => result.Append(value.Data);
 
-    public override string ToJson(Loc loc, Value value) => $"\"{Escape(value.Cast(this))}\"";
+    public override string ToJson(Value value, Loc loc) => $"\"{Escape(value.Cast(this))}\"";
 }

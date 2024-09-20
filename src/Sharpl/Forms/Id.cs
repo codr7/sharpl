@@ -13,7 +13,7 @@ public class Id : Form
             var ln = name.Substring(0, i);
             var lv = env[ln];
             if (lv is null) { return null; }
-            env = ((Value)lv).Cast(loc, Core.Lib);
+            env = ((Value)lv).Cast(Core.Lib, loc);
             name = name.Substring(i + 1);
         }
 
@@ -44,7 +44,7 @@ public class Id : Form
 
     public override void EmitCall(VM vm, Queue args)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(Loc, vm, args); }
+        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(vm, args, Loc); }
         else { throw new EmitError($"Unknown id: {Name}", Loc); }
     }
 
@@ -57,5 +57,5 @@ public class Id : Form
         new Literal(Value.Make(Core.Sym, vm.Intern(Name)), loc);
 
     public override string Dump(VM vm) => Name;
-    public override Form Unquote(Loc loc, VM vm) => GetId(Name, vm.Env, loc).Unquote(loc, vm);
+    public override Form Unquote(Loc loc, VM vm) => GetId(Name, vm.Env, loc).Unquote(vm, loc);
 }

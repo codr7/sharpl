@@ -10,12 +10,12 @@ public class PipeType : Type<Channel<Value>>, IterTrait, PollTrait
 
     public PipeType(string name) : base(name) { }
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity) =>
+    public override void Call(VM vm, Stack stack, int arity, Loc loc) =>
         stack.Push(Libs.Core.Pipe, Channel.CreateUnbounded<Value>());
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
     {
-        var t = target.Cast(loc, this);
+        var t = target.Cast(this, loc);
 
         switch (arity)
         {

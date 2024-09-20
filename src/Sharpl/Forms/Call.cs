@@ -96,7 +96,7 @@ public class Call : Form
         if (Target.GetValue(vm) is Value tv && tv.Type == Core.Meta && Args.All(a => a is Literal)) {
             var stack = new Stack();
             foreach (var a in Args) { stack.Push((a as Literal)!.Value); }
-            Core.Meta.Call(Loc, vm, stack, tv, Args.Length, vm.NextRegisterIndex);
+            Core.Meta.Call(vm, stack, tv, Args.Length, vm.NextRegisterIndex, Loc);
             if (stack.Pop() is Value v) {args.Push(new Literal(v, Loc)); }
             else { throw new EmitError("Expected value", Loc); }
             result = true;

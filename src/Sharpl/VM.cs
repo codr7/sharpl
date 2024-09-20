@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Drawing;
 using System.Text;
 using Sharpl.Libs;
 using Sharpl.Types.Core;
@@ -137,18 +136,6 @@ public class VM
 #pragma warning restore CS8629
     }
 
-    public Value Compose(Loc loc, Form left, Form right, Form.Queue args)
-    {
-        var m = new UserMethod(loc, this, $"{left.Dump(this)} & {right.Dump(this)}", [], [("values*", -1)], false);
-        var skip = new Label();
-        Emit(Ops.Goto.Make(skip));
-        m.StartPC = EmitPC;
-        Emit($"(return ({right.Dump(this)} ({left.Dump(this)} {args.Dump(this)})))", loc);
-        Emit(Ops.ExitMethod.Make());
-        skip.PC = EmitPC;
-        return Value.Make(Libs.Core.UserMethod, m);
-    }
-
     public void Define(string name)
     {
         var i = definitionCount;
@@ -238,7 +225,7 @@ public class VM
                         var arity = op.Arity;
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        op.Target.Call(op.Loc, this, stack, arity, op.RegisterCount);
+                        op.Target.Call(this, stack, arity, op.RegisterCount, op.Loc);
                         break;
                     }
                 case Ops.CallMethod op:
@@ -255,7 +242,7 @@ public class VM
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         var target = Get(op.Target);
-                        target.Call(op.Loc, this, stack, arity, op.RegisterCount);
+                        target.Call(this, stack, arity, op.RegisterCount, op.Loc);
                         break;
                     }
                 case Ops.CallStack op:
@@ -264,7 +251,7 @@ public class VM
                         var arity = op.Arity;
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        target.Call(op.Loc, this, stack, arity, op.RegisterCount);
+                        target.Call(this, stack, arity, op.RegisterCount, op.Loc);
                         break;
                     }
                 case Ops.CallTail op:
@@ -515,7 +502,7 @@ public class VM
                     }
                 case Ops.UnquoteRegister op:
                     {
-                        var f = Get(op.Register).Unquote(op.Loc, this);
+                        var f = Get(op.Register).Unquote(this, op.Loc);
                         Eval(f, stack);
                         PC++;
                         break;
@@ -743,7 +730,7 @@ public class VM
 
         if (stack.Pop() is Value p)
         {
-            sr = new StreamReader(Path.Combine(loadPath, p.Cast(op.Loc, Core.String)));
+            sr = new StreamReader(Path.Combine(loadPath, p.Cast(Core.String, op.Loc)));
             SetRegister(op.FrameOffset, op.Index, Value.Make(IO.InputStream, sr));
         }
         else { throw new EvalError("Missing path", op.Loc); }

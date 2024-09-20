@@ -6,7 +6,7 @@ namespace Sharpl.Types.Core;
 
 public class SymType(string name) : Type<Sym>(name), ComparableTrait
 {
-    public override void Call(Loc loc, VM vm, Stack stack, int arity)
+    public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
         var res = new StringBuilder();
@@ -29,9 +29,9 @@ public class SymType(string name) : Type<Sym>(name), ComparableTrait
 
     public override bool Equals(Value left, Value right) => left.Cast(this) == right.Cast(this);
     public override void Say(Value value, VM vm, StringBuilder result) => result.Append(value.Cast(this).Name);
-    public override string ToJson(Loc loc, Value value) => $"\"{value.Cast(this).Name}\"";
+    public override string ToJson(Value value, Loc loc) => $"\"{value.Cast(this).Name}\"";
 
-    public override Form Unquote(Loc loc, VM vm, Value value)
+    public override Form Unquote(VM vm, Value value, Loc loc)
     {
         var id = value.Cast(this).Name;
         var v = vm.Env[id];

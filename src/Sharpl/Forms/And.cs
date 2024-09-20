@@ -18,10 +18,10 @@ public class And : Form
     }
 
     public override void Emit(VM vm, Queue args) =>
-        vm.Emit(Ops.Push.Make(vm.Compose(Loc, Left, Right, new Queue())));
+        vm.Emit(Ops.Push.Make(Form.Compose(vm, Left, Right, new Queue(), Loc)));
 
     public override void EmitCall(VM vm, Queue args) =>
-        vm.Compose(Loc, Left, Right, args).EmitCall(Loc, vm, args);
+        Form.Compose(vm, Left, Right, args, Loc).EmitCall(vm, args, Loc);
 
     public override bool Equals(Form other) =>
         (other is And f) && f.Left.Equals(Left) && f.Right.Equals(Right);

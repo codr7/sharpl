@@ -4,7 +4,8 @@ public class MacroType : Type<Macro>
 {
     public MacroType(string name) : base(name) { }
 
-    public override void EmitCall(Loc loc, VM vm, Value target, Form.Queue args) {
+    public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
+    {
         target.CastUnbox(this).Emit(loc, vm, args);
         args.Emit(vm);
     }

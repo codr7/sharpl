@@ -14,7 +14,7 @@ public class DurationType(string name) :
 
         while (arity > 0)
         {
-            res = stack.Pop().CastUnbox(loc, this).Add(res);
+            res = stack.Pop().CastUnbox(this, loc).Add(res);
             arity--;
         }
 
@@ -26,12 +26,12 @@ public class DurationType(string name) :
     public void Divide(Loc loc, VM vm, Stack stack, int arity)
     {
         stack.Reverse(arity);
-        var res = stack.Pop().CastUnbox(loc, this);
+        var res = stack.Pop().CastUnbox(this, loc);
         arity--;
 
         while (arity > 0)
         {
-            res = res.Divide(stack.Pop().CastUnbox(loc, Libs.Core.Int));
+            res = res.Divide(stack.Pop().CastUnbox(Libs.Core.Int, loc));
             arity--;
         }
 
@@ -40,12 +40,12 @@ public class DurationType(string name) :
 
     public void Multiply(Loc loc, VM vm, Stack stack, int arity)
     {
-        var res = stack.Pop().CastUnbox(loc, this);
+        var res = stack.Pop().CastUnbox(this, loc);
         arity--;
 
         while (arity > 0)
         {
-            res = res.Multiply(stack.Pop().CastUnbox(loc, Libs.Core.Int));
+            res = res.Multiply(stack.Pop().CastUnbox(Libs.Core.Int, loc));
             arity--;
         }
 
@@ -58,16 +58,16 @@ public class DurationType(string name) :
 
         if (arity > 0)
         {
-            if (arity == 1) { res = res.Subtract(stack.Pop().CastUnbox(loc, this)); }
+            if (arity == 1) { res = res.Subtract(stack.Pop().CastUnbox(this, loc)); }
             else
             {
                 stack.Reverse(arity);
-                res = stack.Pop().CastUnbox(loc, this);
+                res = stack.Pop().CastUnbox(this, loc);
                 arity--;
 
                 while (arity > 0)
                 {
-                    res = res.Subtract(stack.Pop().CastUnbox(loc, this));
+                    res = res.Subtract(stack.Pop().CastUnbox(this, loc));
                     arity--;
                 }
             }

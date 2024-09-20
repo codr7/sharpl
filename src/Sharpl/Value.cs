@@ -15,8 +15,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public static readonly Value F = Make(Libs.Core.Bit, false);
     public static readonly Value T = Make(Libs.Core.Bit, true);
 
-    public void Call(Loc loc, VM vm, Stack stack, int arity, int registerCount) =>
-        Type.Call(loc, vm, stack, this, arity, registerCount);
+    public void Call(VM vm, Stack stack, int arity, int registerCount, Loc loc) =>
+        Type.Call(vm, stack, this, arity, registerCount, loc);
 
     // Please do not remove the type checks below.
     // These methods provide slightly more optimal type check and cast path
@@ -29,20 +29,20 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public T Cast<T>(Type<T> type) where T : class =>
         Type == type ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);
 
-    public T Cast<T>(Loc loc, Type<T> type) where T : class =>
+    public T Cast<T>(Type<T> type, Loc loc) where T : class =>
         Type == type ? Unsafe.As<T>(Data) : TypeMismatch(loc, Type, type);
 
     public T CastUnbox<T>(Type<T> type) where T : struct =>
         Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(Type, type);
 
-    public T CastUnbox<T>(Loc loc, Type<T> type) where T : struct =>
+    public T CastUnbox<T>(Type<T> type, Loc loc) where T : struct =>
         Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(loc, Type, type);
 
     // Do not remove Nullable<T> overloads - they are necessary
     // to correctly handle unboxing of nullable structs.
     public T? CastUnbox<T>(Type<T?> type) where T : struct => (T?)Data;
 
-    public T? CastUnbox<T>(Loc loc, Type<T?> type) where T : struct =>
+    public T? CastUnbox<T>(Type<T?> type, Loc loc) where T : struct =>
         Type == type ? (T?)Data : TypeMismatch(loc, Type, type);
 
     public T CastSlow<T>(Type<T> type) => (T)Data;
@@ -65,8 +65,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         return res.ToString();
     }
 
-    public void Emit(Loc loc, VM vm, Form.Queue args) => Type.Emit(loc, vm, this, args);
-    public void EmitCall(Loc loc, VM vm, Form.Queue args) => Type.EmitCall(loc, vm, this, args);
+    public void Emit(VM vm, Form.Queue args, Loc loc) => Type.Emit(vm, this, args, loc);
+    public void EmitCall(VM vm, Form.Queue args, Loc loc) => Type.EmitCall(vm, this, args, loc);
     public bool Equals(Value other) => Type == other.Type && Type.Equals(this, other);
     public override int GetHashCode() => Data.GetHashCode();
     public void Say(VM vm, StringBuilder result) => Type.Say(this, vm, result);
@@ -78,12 +78,12 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
         return result.ToString();
     }
 
-    public string ToJson(Loc loc) => Type.ToJson(loc, this);
+    public string ToJson(Loc loc) => Type.ToJson(this, loc);
 
     public T? TryCastUnbox<T>(Type<T> type) where T : struct =>
         Type == type ? Unsafe.Unbox<T>(Data) : default(T?);
 
-    public Form Unquote(Loc loc, VM vm) => Type.Unquote(loc, vm, this);
+    public Form Unquote(VM vm, Loc loc) => Type.Unquote(vm, this, loc);
 
     [DoesNotReturn, StackTraceHidden]
     static T TypeMismatch<T>(AnyType lhs, Type<T> rhs) =>

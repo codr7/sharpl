@@ -40,7 +40,7 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(0, TimeSpan.FromDays(n)));
             }
         });
@@ -57,7 +57,7 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(0, TimeSpan.FromHours(n)));
             }
         });
@@ -74,7 +74,7 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(n, TimeSpan.FromTicks(0)));
             }
         });
@@ -91,7 +91,7 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMinutes(n)));
             }
         });
@@ -108,7 +108,7 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMilliseconds(n)));
             }
         });
@@ -128,19 +128,19 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(0, TimeSpan.FromSeconds(n)));
             }
         });
 
         BindMethod("to-local", ["t"], (loc, target, vm, stack, arity) =>
-           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(loc, Core.Timestamp).ToLocalTime()));
+           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).ToLocalTime()));
 
         BindMethod("to-utc", ["t"], (loc, target, vm, stack, arity) =>
-           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(loc, Core.Timestamp).ToUniversalTime()));
+           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).ToUniversalTime()));
 
         BindMethod("trunc", ["t"], (loc, target, vm, stack, arity) =>
-           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(loc, Core.Timestamp).Date));
+           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).Date));
 
         BindMethod("us", ["n?"], (loc, target, vm, stack, arity) =>
         {
@@ -154,13 +154,13 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMicroseconds(n)));
             }
         });
 
         BindMethod("WD", ["n?"], (loc, target, vm, stack, arity) =>
-            stack.Push(Core.Int, (int)stack.Pop().CastUnbox(loc, Core.Timestamp).DayOfWeek));
+            stack.Push(Core.Int, (int)stack.Pop().CastUnbox(Core.Timestamp, loc).DayOfWeek));
 
         BindMethod("W", ["n?"], (loc, target, vm, stack, arity) =>
           {
@@ -174,7 +174,7 @@ public class Time : Lib
               }
               else
               {
-                  var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                  var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                   stack.Push(Core.Duration, new Duration(0, TimeSpan.FromDays(n * 7)));
               }
           });
@@ -192,7 +192,7 @@ public class Time : Lib
             }
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(loc, Core.Int);
+                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
                 stack.Push(Core.Duration, new Duration(n * 12, TimeSpan.FromTicks(0)));
             }
         });

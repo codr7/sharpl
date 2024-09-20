@@ -7,9 +7,9 @@ public class PortType : Type<Port>, CloseTrait, IterTrait, PollTrait
 {
     public PortType(string name) : base(name) { }
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
     {
-        var t = target.Cast(loc, this);
+        var t = target.Cast(this, loc);
 
         switch (arity)
         {

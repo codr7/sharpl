@@ -27,7 +27,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
 
     public PairType(string name) : base(name) { }
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity)
+    public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
         if (arity < 2) { throw new EvalError("Wrong number of arguments", loc); }
         var r = stack.Pop();
@@ -43,7 +43,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
         stack.Push(r);
     }
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
     {
         switch (arity)
         {
@@ -51,18 +51,18 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
                 {
                     var t = target;
 
-                    for (var i = stack.Pop().CastUnbox(loc, Core.Int); i >= 0; i--)
+                    for (var i = stack.Pop().CastUnbox(Core.Int, loc); i >= 0; i--)
                     {
                         switch (i)
                         {
                             case 0:
-                                stack.Push(target.CastUnbox(loc, this).Item1);
+                                stack.Push(target.CastUnbox(this, loc).Item1);
                                 break;
                             case 1:
-                                stack.Push(target.CastUnbox(loc, this).Item2);
+                                stack.Push(target.CastUnbox(this, loc).Item2);
                                 break;
                             default:
-                                t = target.CastUnbox(loc, this).Item2;
+                                t = target.CastUnbox(this, loc).Item2;
                                 break;
                         }
                     }
@@ -72,7 +72,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
             case 2:
                 {
                     var v = stack.Pop();
-                    var i = stack.Pop().CastUnbox(loc, Core.Int);
+                    var i = stack.Pop().CastUnbox(Core.Int, loc);
                     stack.Push(Update(loc, target, v, i));
                     break;
                 }

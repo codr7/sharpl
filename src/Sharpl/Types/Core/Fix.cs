@@ -9,10 +9,10 @@ public class FixType(string name) :
 {
     public override bool Bool(Value value) => Fix.Val(value.CastUnbox(this)) != 0;
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity)
+    public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
-        var v = stack.Pop().CastUnbox(loc, Libs.Core.Int);
-        var e = stack.Pop().CastUnbox(loc, Libs.Core.Int);
+        var v = stack.Pop().CastUnbox(Libs.Core.Int, loc);
+        var e = stack.Pop().CastUnbox(Libs.Core.Int, loc);
         stack.Push(Value.Make(Libs.Core.Fix, Fix.Make((byte)e, v)));
     }
 
@@ -31,12 +31,12 @@ public class FixType(string name) :
     public void Add(Loc loc, VM vm, Stack stack, int arity)
     {
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
-        var res = stack.Pop().CastUnbox(loc, this);
+        var res = stack.Pop().CastUnbox(this, loc);
         arity--;
 
         while (arity > 0)
         {
-            res = Fix.Add(res, stack.Pop().CastUnbox(loc, this));
+            res = Fix.Add(res, stack.Pop().CastUnbox(this, loc));
             arity--;
         }
 
@@ -47,12 +47,12 @@ public class FixType(string name) :
     {
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
         stack.Reverse(arity);
-        var res = stack.Pop().CastUnbox(loc, this);
+        var res = stack.Pop().CastUnbox(this, loc);
         arity--;
 
         while (arity > 0)
         {
-            res = Fix.Divide(res, stack.Pop().CastUnbox(loc, this));
+            res = Fix.Divide(res, stack.Pop().CastUnbox(this, loc));
             arity--;
         }
 
@@ -65,12 +65,12 @@ public class FixType(string name) :
     public void Multiply(Loc loc, VM vm, Stack stack, int arity)
     {        
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
-        var res = stack.Pop().CastUnbox(loc, this);
+        var res = stack.Pop().CastUnbox(this, loc);
         arity--;
 
         while (arity > 0)
         {
-            res = Fix.Multiply(res, stack.Pop().CastUnbox(loc, this));
+            res = Fix.Multiply(res, stack.Pop().CastUnbox(this, loc));
             arity--;
         }
 
@@ -85,18 +85,18 @@ public class FixType(string name) :
         {
             if (arity == 1)
             {
-                res = Fix.Negate(stack.Pop().CastUnbox(loc, this));
+                res = Fix.Negate(stack.Pop().CastUnbox(this, loc));
 
             }
             else
             {
                 stack.Reverse(arity);
-                res = stack.Pop().CastUnbox(loc, this);
+                res = stack.Pop().CastUnbox(this, loc);
                 arity--;
 
                 while (arity > 0)
                 {
-                    res = Fix.Subtract(res, stack.Pop().CastUnbox(loc, this));
+                    res = Fix.Subtract(res, stack.Pop().CastUnbox(this, loc));
                     arity--;
                 }
             }
@@ -105,5 +105,5 @@ public class FixType(string name) :
         stack.Push(this, res);
     }
 
-    public override string ToJson(Loc loc, Value value) => Fix.ToString(value.CastUnbox(this), true);
+    public override string ToJson(Value value, Loc loc) => Fix.ToString(value.CastUnbox(this), true);
 }

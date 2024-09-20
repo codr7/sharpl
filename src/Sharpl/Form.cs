@@ -1,10 +1,22 @@
 using System.Collections;
-using Sharpl.Ops;
 
 namespace Sharpl;
 
 public abstract class Form(Loc loc)
 {
+    public static Value Compose(VM vm, Form left, Form right, Form.Queue args, Loc loc)
+    {
+        var m = new UserMethod(vm, $"{left.Dump(vm)} & {right.Dump(vm)}", [], [("values*", -1)], false, loc);
+        var skip = new Label();
+        vm.Emit(Ops.Goto.Make(skip));
+        m.StartPC = vm.EmitPC;
+        vm.Emit($"(return ({right.Dump(vm)} ({left.Dump(vm)} {args.Dump(vm)})))", loc);
+        vm.Emit(Ops.ExitMethod.Make());
+        skip.PC = vm.EmitPC;
+        return Value.Make(Libs.Core.UserMethod, m);
+    }
+
+
     public readonly Loc Loc = loc;
 
     public virtual void CollectIds(HashSet<string> result) { }
@@ -23,7 +35,7 @@ public abstract class Form(Loc loc)
         var arity = args.Count;
         args.Emit(vm);
         vm.Emit(this);
-        vm.Emit(CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
     }
 
     public abstract bool Equals(Form other);

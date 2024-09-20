@@ -11,7 +11,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
     public ListType(string name) : base(name) { }
     public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity)
+    public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
         var vs = new List<Value>(arity);
@@ -19,7 +19,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
         stack.Push(Value.Make(this, vs));
     }
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
     {
         switch (arity)
         {
@@ -31,8 +31,8 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
                     if (iv.Type == Core.Pair)
                     {
                         var p = iv.CastUnbox(Core.Pair);
-                        var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(loc, Core.Int);
-                        var n = (p.Item2.Type == Core.Nil) ? t.Count - 1 : p.Item2.CastUnbox(loc, Core.Int);
+                        var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(Core.Int, loc);
+                        var n = (p.Item2.Type == Core.Nil) ? t.Count - 1 : p.Item2.CastUnbox(Core.Int, loc);
                         stack.Push(Core.List, t[i..(i + n)]);
                     }
                     else
@@ -141,6 +141,6 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
         result.Append(')');
     }
 
-    public override string ToJson(Loc loc, Value value) =>
+    public override string ToJson(Value value, Loc loc) =>
         $"[{string.Join(',', value.Cast(this).Select(it => it.ToJson(loc)).ToArray())}]";
 }

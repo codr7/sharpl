@@ -7,20 +7,20 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
     public MapType(string name) : base(name) { }
     public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
-    public override void Call(Loc loc, VM vm, Stack stack, int arity)
+    public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
         var m = new OrderedMap<Value, Value>();
 
         for (var i = 0; i < arity; i++)
         {
-            var p = stack.Pop().CastUnbox(loc, Libs.Core.Pair);
+            var p = stack.Pop().CastUnbox(Libs.Core.Pair, loc);
             m[p.Item1] = p.Item2;
         }
 
         stack.Push(Value.Make(this, m));
     }
 
-    public override void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
     {
         switch (arity)
         {
@@ -131,6 +131,6 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
         result.Append('}');
     }
 
-    public override string ToJson(Loc loc, Value value) =>
+    public override string ToJson(Value value, Loc loc) =>
         $"{{{string.Join(',', value.Cast(this).Items.Select(it => $"{it.Item1.ToJson(loc)}:{it.Item2.ToJson(loc)}").ToArray())}}}";
 }

@@ -32,7 +32,7 @@ public class String : Lib
 
         BindMethod("reverse", ["in"], (loc, target, vm, stack, arity) =>
         {
-            var s = stack.Pop().Cast(loc, Core.String);
+            var s = stack.Pop().Cast(Core.String, loc);
             char[] cs = s.ToCharArray();
             Array.Reverse(cs);
             stack.Push(Core.String, new string(cs));
@@ -40,9 +40,9 @@ public class String : Lib
 
         BindMethod("split", ["in", "sep"], (loc, target, vm, stack, arity) =>
         {
-            var sep = stack.Pop().Cast(loc, Core.String);
+            var sep = stack.Pop().Cast(Core.String, loc);
             var res = new Regex(sep).
-                Split(stack.Pop().Cast(loc, Core.String)).
+                Split(stack.Pop().Cast(Core.String, loc)).
                 Select(s => Value.Make(Core.String, s)).
                 ToArray();
             stack.Push(Core.Array, res);
@@ -56,9 +56,9 @@ public class String : Lib
 
         BindMethod("replace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
         {
-            var n = stack.Pop().Cast(loc, Core.String);
-            var o = stack.Pop().Cast(loc, Core.String);
-            var i = stack.Pop().Cast(loc, Core.String);
+            var n = stack.Pop().Cast(Core.String, loc);
+            var o = stack.Pop().Cast(Core.String, loc);
+            var i = stack.Pop().Cast(Core.String, loc);
             o = o.Replace(" ", "\\s*");
             stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
         });

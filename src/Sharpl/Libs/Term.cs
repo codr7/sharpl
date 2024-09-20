@@ -40,8 +40,8 @@ public class Term : Lib
         BindMethod("move-to", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             var y = stack.Pop();
-            var x = stack.Pop().CastUnbox(loc, Core.Int);
-            vm.Term.MoveTo(x, (y == Value._) ? null : y.CastUnbox(loc, Core.Int));
+            var x = stack.Pop().CastUnbox(Core.Int, loc);
+            vm.Term.MoveTo(x, (y == Value._) ? null : y.CastUnbox(Core.Int, loc));
         });
 
         BindMethod("poll-key", [], (loc, target, vm, stack, arity) =>
@@ -120,14 +120,14 @@ public class Term : Lib
             var max = (vm.Term.Width, vm.Term.Height);
  
             if (arity > 0) {
-                var p = stack.Pop().CastUnbox(loc, Core.Pair);
-                min = (p.Item1.CastUnbox(loc, Core.Int), p.Item2.CastUnbox(loc, Core.Int));
+                var p = stack.Pop().CastUnbox(Core.Pair, loc);
+                min = (p.Item1.CastUnbox(Core.Int, loc), p.Item2.CastUnbox(Core.Int, loc));
                 arity--;
             }
 
             if (arity > 0) {
-                var p = stack.Pop().CastUnbox(loc, Core.Pair);
-                max = (p.Item1.CastUnbox(loc, Core.Int), p.Item2.CastUnbox(loc, Core.Int));
+                var p = stack.Pop().CastUnbox(Core.Pair, loc);
+                max = (p.Item1.CastUnbox(Core.Int, loc), p.Item2.CastUnbox(Core.Int, loc));
                 arity--;
             }
 
@@ -138,7 +138,7 @@ public class Term : Lib
             var lines = 1;
  
             if (arity > 0) {
-                lines = stack.Pop().CastUnbox(loc, Core.Int);
+                lines = stack.Pop().CastUnbox(Core.Int, loc);
                 arity--;
             }
 
@@ -149,7 +149,7 @@ public class Term : Lib
             var lines = 1;
  
             if (arity > 0) {
-                lines = stack.Pop().CastUnbox(loc, Core.Int);
+                lines = stack.Pop().CastUnbox(Core.Int, loc);
                 arity--;
             }
 
@@ -158,13 +158,13 @@ public class Term : Lib
 
         BindMethod("pick-back", ["color"], (loc, target, vm, stack, arity) =>
        {
-           var c = stack.Pop().CastUnbox(loc, Core.Color);
+           var c = stack.Pop().CastUnbox(Core.Color, loc);
            vm.Term.SetBg(c);
        });
 
         BindMethod("pick-front", ["color"], (loc, target, vm, stack, arity) =>
         {
-            var c = stack.Pop().CastUnbox(loc, Core.Color);
+            var c = stack.Pop().CastUnbox(Core.Color, loc);
             vm.Term.SetFg(c);
         });
 

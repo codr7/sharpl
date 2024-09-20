@@ -85,7 +85,7 @@ public class Core : Lib
             }
             else { throw new EmitError($"Invalid method args: {f!.Dump(vm)}", loc); }
 
-            var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
+            var m = new UserMethod(vm, name, ids.ToArray(), fas, vararg, loc);
             var skip = new Label();
             if (ids.Count > 0) { vm.Emit(Ops.PrepareClosure.Make(m, skip)); }
             else { vm.Emit(Ops.Goto.Make(skip)); }
@@ -95,7 +95,7 @@ public class Core : Lib
             args.Emit(vm);
             vm.Emit(stopOp);
             skip.PC = vm.EmitPC;
-            if (name == "") { v.Emit(loc, vm, args); }
+            if (name == "") { v.Emit(vm, args, loc); }
         });
     }
 
@@ -248,7 +248,7 @@ public class Core : Lib
          {
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
-                 vm.Emit(Ops.Benchmark.Make(n.CastUnbox(loc, Int)));
+                 vm.Emit(Ops.Benchmark.Make(n.CastUnbox(Int, loc)));
                  args.Emit(vm);
                  vm.Emit(Ops.Stop.Make());
              }
@@ -279,7 +279,7 @@ public class Core : Lib
              }
 
              vm.Emit(ef);
-             if (emptyArgs) { Value.T.Emit(loc, vm, new Form.Queue()); }
+             if (emptyArgs) { Value.T.Emit(vm, new Form.Queue(), loc); }
              vm.Emit(Ops.Check.Make(loc));
          });
 
@@ -297,7 +297,7 @@ public class Core : Lib
                 var r = v.CastUnbox(Binding);
                 var d = args.Empty ? null : args.Pop();
                 if (d is not null && d is not Forms.Literal) { throw new EmitError($"Literal expected: {d}", d.Loc); }
-                vm.Emit(Ops.Decrement.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(loc, Int)));
+                vm.Emit(Ops.Decrement.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(Int, loc)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
             else { throw new EmitError("Invalid target", loc); }
@@ -355,7 +355,7 @@ public class Core : Lib
 
         BindMethod("eval", ["code?"], (loc, target, vm, stack, arity) =>
         {
-            var f = stack.Pop().Unquote(loc, vm);
+            var f = stack.Pop().Unquote(vm, loc);
             vm.Eval(f, stack);
         });
 
@@ -408,7 +408,7 @@ public class Core : Lib
                 var r = v.CastUnbox(Binding);
                 var d = args.Empty ? null : args.Pop();
                 if (d is not null && d is not Forms.Literal) { throw new EmitError($"Literal expected: {d}", d!.Loc); }
-                vm.Emit(Ops.Increment.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(loc, Int)));
+                vm.Emit(Ops.Increment.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(Int, loc)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
             else { throw new EmitError("Invalid target", loc); }
@@ -514,7 +514,7 @@ public class Core : Lib
                 {
                     Lib? lib = null;
 
-                    if (vm.Env.Find(nf.Name) is Value v) { lib = v.Cast(loc, Lib); }
+                    if (vm.Env.Find(nf.Name) is Value v) { lib = v.Cast(Lib, loc); }
                     else
                     {
                         lib = new Lib(nf.Name, vm.Env, args.CollectIds());
@@ -533,7 +533,7 @@ public class Core : Lib
                 {
                     if (args.TryPop() is Form pf)
                     {
-                        if (vm.Eval(pf) is Value p) { vm.Load(p.Cast(pf.Loc, String)); }
+                        if (vm.Eval(pf) is Value p) { vm.Load(p.Cast(String, pf.Loc)); }
                         else { throw new EvalError("Missing path", pf.Loc); }
                     }
                     else { break; }
@@ -679,7 +679,7 @@ public class Core : Lib
         {
             Value? n = (arity == 1) ? stack.Pop() : null;
             var v = vm.Random.Next();
-            stack.Push(Int, (n is null) ? v : v % ((Value)n).CastUnbox(loc, Int));
+            stack.Push(Int, (n is null) ? v : v % ((Value)n).CastUnbox(Int, loc));
         });
 
         BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
@@ -710,8 +710,8 @@ public class Core : Lib
         BindMethod("resize", ["array", "size", "value?"], (loc, target, vm, stack, arity) =>
         {
             var v = (arity == 3) ? stack.Pop() : Value._;
-            var s = stack.Pop().CastUnbox(loc, Int);
-            var a = stack.Pop().Cast(loc, Array);
+            var s = stack.Pop().CastUnbox(Int, loc);
+            var a = stack.Pop().Cast(Array, loc);
             var ps = a.Length;
             System.Array.Resize(ref a, s);
             for (var i = ps; i < s; i++) { a[i] = v; }
