@@ -8,7 +8,10 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add wd support to time
+* aoc2
+** implement pair unification in let macro
+** make values callable
+*** change into (arg v)
 
 * start repl from client to server
 ** send code as string
@@ -31,14 +34,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * add support for multiple values in pipe/port write call case
 * add Pair slice support
 * add array/map/list/pair/string slice assign
-
-** add filter macro
-*** jalang
-
-* aoc2
-** implement pair unification in let macro
-** make values callable
-*** change into (arg v)
 
 * add timeout arg to poll
 https://deniskyashif.com/2019/12/11/csharp-channels-part-2/

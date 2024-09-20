@@ -485,6 +485,14 @@ All composite types may be sliced by indexing using a pair.
 ```
 `(List 'foo:1 'bar:2 'baz:3)`
 
+### filter
+`filter` may be used to select items matching the specified predicate from any iterable.
+
+```
+(filter (^[x] (> x 2)) [1 2 3 4 5])
+```
+`(List 3 4 5)`
+
 ### reduce
 `reduce` may be used to transform any iterable into a single value.
 

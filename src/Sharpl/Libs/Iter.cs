@@ -7,6 +7,39 @@ public class Iter : Lib
 {
     public Iter() : base("iter", null, [])
     {
+        BindMacro("filter", ["method", "sequence"], (loc, target, vm, args) =>
+        {
+            var iter = new Register(0, vm.AllocRegister());
+            var item = new Register(0, vm.AllocRegister());
+            var result = new Register(0, vm.AllocRegister());
+            vm.Emit(Ops.CreateList.Make(result));
+
+            var methodForm = args.Pop();
+            var method = new Register(0, vm.AllocRegister());
+            vm.Emit(methodForm);
+            vm.Emit(Ops.SetRegister.Make(method));
+
+            var sequenceForm = args.Pop();
+            vm.Emit(sequenceForm);
+            vm.Emit(Ops.CreateIter.Make(loc, iter));
+
+            var start = new Label(vm.EmitPC);
+            var done = new Label();
+            vm.Emit(Ops.IterNext.Make(loc, iter, done));
+            vm.Emit(Ops.Repush.Make(1));
+            vm.Emit(Ops.CallRegister.Make(loc, method, 1, false, vm.NextRegisterIndex));
+            var skip = new Label();
+            vm.Emit(Ops.Branch.Make(loc, skip));
+            vm.Emit(Ops.PushItem.Make(loc, result));
+            vm.Emit(Ops.Goto.Make(start));
+            skip.PC = vm.EmitPC;
+            vm.Emit(Ops.Drop.Make(1));
+            vm.Emit(Ops.Goto.Make(start));
+            done.PC = vm.EmitPC;
+            vm.Emit(Ops.GetRegister.Make(result));
+        });
+
+
         BindMacro("find-first", ["pred", "seq"], (loc, target, vm, args) =>
         {
             var pred = new Register(0, vm.AllocRegister());
