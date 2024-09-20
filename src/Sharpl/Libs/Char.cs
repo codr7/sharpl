@@ -6,7 +6,7 @@ public class Char : Lib
     {
         BindMethod("digit", ["ch"], (loc, target, vm, stack, arity) =>
             stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Char, loc) - '0'));
-        
+
         BindMethod("is-digit", ["ch"], (loc, target, vm, stack, arity) =>
             stack.Push(Core.Bit, char.IsDigit(stack.Pop().CastUnbox(Core.Char, loc))));
     }

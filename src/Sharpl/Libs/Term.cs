@@ -1,8 +1,6 @@
 namespace Sharpl.Libs;
 
 using Sharpl.Types.Term;
-using System.Drawing;
-using System.Linq.Expressions;
 using System.Text;
 
 public class Term : Lib
@@ -109,51 +107,59 @@ public class Term : Lib
             vm.Term.Save();
         });
 
-        BindMethod("set-region", [], (loc, target, vm, stack, arity) => {
-            if (arity == 0) {
+        BindMethod("set-region", [], (loc, target, vm, stack, arity) =>
+        {
+            if (arity == 0)
+            {
                 vm.Term.SetRegion();
-                return;    
+                return;
             }
 
             stack.Reverse(arity);
             var min = (1, 1);
             var max = (vm.Term.Width, vm.Term.Height);
- 
-            if (arity > 0) {
+
+            if (arity > 0)
+            {
                 var p = stack.Pop().CastUnbox(Core.Pair, loc);
                 min = (p.Item1.CastUnbox(Core.Int, loc), p.Item2.CastUnbox(Core.Int, loc));
                 arity--;
             }
 
-            if (arity > 0) {
+            if (arity > 0)
+            {
                 var p = stack.Pop().CastUnbox(Core.Pair, loc);
                 max = (p.Item1.CastUnbox(Core.Int, loc), p.Item2.CastUnbox(Core.Int, loc));
                 arity--;
             }
 
-           vm.Term.SetRegion(min, max);
+            vm.Term.SetRegion(min, max);
         });
 
-        BindMethod("scroll-down", [], (loc, target, vm, stack, arity) => {
+        BindMethod("scroll-down", [], (loc, target, vm, stack, arity) =>
+        {
             var lines = 1;
- 
-            if (arity > 0) {
+
+            if (arity > 0)
+            {
                 lines = stack.Pop().CastUnbox(Core.Int, loc);
                 arity--;
             }
 
-           vm.Term.ScrollDown(lines);
+            vm.Term.ScrollDown(lines);
         });
 
-        BindMethod("scroll-up", [], (loc, target, vm, stack, arity) => {
+        BindMethod("scroll-up", [], (loc, target, vm, stack, arity) =>
+        {
             var lines = 1;
- 
-            if (arity > 0) {
+
+            if (arity > 0)
+            {
                 lines = stack.Pop().CastUnbox(Core.Int, loc);
                 arity--;
             }
 
-           vm.Term.ScrollUp(lines);
+            vm.Term.ScrollUp(lines);
         });
 
         BindMethod("pick-back", ["color"], (loc, target, vm, stack, arity) =>

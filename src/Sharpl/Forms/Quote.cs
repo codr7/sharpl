@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Sharpl.Forms;
 
 public class QuoteForm : Form

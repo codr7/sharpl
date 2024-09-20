@@ -21,7 +21,7 @@ public class DurationType(string name) :
         stack.Push(this, res);
     }
 
-    public override bool Bool(Value value) => value.CastUnbox(this).CompareTo(ZERO)> 0;
+    public override bool Bool(Value value) => value.CastUnbox(this).CompareTo(ZERO) > 0;
 
     public void Divide(Loc loc, VM vm, Stack stack, int arity)
     {

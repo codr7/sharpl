@@ -29,7 +29,8 @@ public class Pair : Form
     public override bool Equals(Form other) =>
         (other is And f) ? f.Left.Equals(Left) && f.Right.Equals(Right) : false;
 
-    public override bool Expand(VM vm, Queue args) {
+    public override bool Expand(VM vm, Queue args)
+    {
         var result = false;
         if (Left.Expand(vm, args)) { result = true; }
         var l = args.PopLast();
@@ -42,11 +43,11 @@ public class Pair : Form
     public override Value? GetValue(VM vm) =>
         (Left is Literal ll && Right is Literal rr) ? Value.Make(Core.Pair, (ll.Value.Copy(), rr.Value.Copy())) : null;
 
-    public override Form Quote(VM vm, Loc loc) => 
+    public override Form Quote(VM vm, Loc loc) =>
         new Pair(Left.Quote(vm, loc), Right.Quote(vm, loc), loc);
 
     public override string Dump(VM vm) => $"{Left.Dump(vm)}:{Right.Dump(vm)}";
 
-    public override Form Unquote(VM vm, Loc loc) => 
+    public override Form Unquote(VM vm, Loc loc) =>
         new Pair(Left.Unquote(vm, loc), Right.Unquote(vm, loc), loc);
 }

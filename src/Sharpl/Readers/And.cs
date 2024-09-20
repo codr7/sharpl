@@ -1,14 +1,15 @@
 namespace Sharpl.Readers;
 
-public struct And: Reader {
+public struct And : Reader
+{
     public static readonly And Instance = new And();
 
     public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
-    {        
+    {
         if (forms.Count == 0) { return false; }
         var c = source.Peek();
         if (c is null || c != '&') { return false; }
-        var left = forms.PopLast();        
+        var left = forms.PopLast();
         var formLoc = left.Loc;
         loc.Column++;
         source.Read();

@@ -97,7 +97,8 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
 
     public Sharpl.Iter CreateIter(Value target, VM vm, Loc loc) => new PairItems(target);
 
-    public override Value Copy(Value value) {
+    public override Value Copy(Value value)
+    {
         var p = value.CastUnbox(this);
         return Value.Make(this, (p.Item1.Copy(), p.Item2.Copy()));
     }
@@ -117,11 +118,13 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
         return lp.Item1.Equals(rp.Item1) && lp.Item2.Equals(rp.Item2);
     }
 
-    public int Length(Value target) {
+    public int Length(Value target)
+    {
         var v = target;
         var result = 1;
 
-        while (v.Type == this) {
+        while (v.Type == this)
+        {
             var p = v.CastUnbox(this);
             v = p.Item2;
             result++;
@@ -132,7 +135,8 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
 
     public Value Peek(Loc loc, VM vm, Value srcVal) => srcVal.CastUnbox(this).Item1;
 
-    public Value Pop(Loc loc, VM vm, Register src, Value srcVal) {
+    public Value Pop(Loc loc, VM vm, Register src, Value srcVal)
+    {
         var sv = srcVal.CastUnbox(this);
         vm.Set(src, sv.Item2);
         return sv.Item1;

@@ -3,7 +3,6 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-using System.Reflection.PortableExecutable;
 using Sharpl.Libs;
 
 public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTrait, StackTrait
@@ -76,7 +75,7 @@ public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTra
     public Sharpl.Iter CreateIter(Value target, VM vm, Loc loc) =>
         new EnumeratorItems(target.Cast(this).GetEnumerator());
 
-    public override Value Copy(Value value) => 
+    public override Value Copy(Value value) =>
         Value.Make(this, new List<Value>(value.Cast(this).Select(it => it.Copy())));
 
     public override void Dump(Value value, VM vm, StringBuilder result)

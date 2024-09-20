@@ -26,7 +26,8 @@ public class And : Form
     public override bool Equals(Form other) =>
         (other is And f) && f.Left.Equals(Left) && f.Right.Equals(Right);
 
-    public override bool Expand(VM vm, Queue args) {
+    public override bool Expand(VM vm, Queue args)
+    {
         var result = false;
         if (Left.Expand(vm, args)) { result = true; }
         var l = args.PopLast();
@@ -36,11 +37,11 @@ public class And : Form
         return result;
     }
 
-    public override Form Quote(VM vm, Loc loc) => 
+    public override Form Quote(VM vm, Loc loc) =>
         new And(Left.Quote(vm, loc), Right.Quote(vm, loc), loc);
 
     public override string Dump(VM vm) => $"{Left.Dump(vm)} & {Right.Dump(vm)}";
 
-    public override Form Unquote(VM vm, Loc loc) => 
+    public override Form Unquote(VM vm, Loc loc) =>
         new And(Left.Unquote(vm, loc), Right.Unquote(vm, loc), loc);
 }

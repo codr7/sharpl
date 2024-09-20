@@ -17,9 +17,10 @@ public class FixRange : BasicIter
     {
         var v = Fix.Add(value, Stride);
 
-        if (Fix.Val(v) < MaxVal) { 
+        if (Fix.Val(v) < MaxVal)
+        {
             value = v;
-            return Value.Make(Libs.Core.Fix, value); 
+            return Value.Make(Libs.Core.Fix, value);
         }
 
         return null;

@@ -16,13 +16,15 @@ public struct Char : Reader
 
         c = source.Read();
         if (c is null) { throw new ReadError("Invalid char literal", loc); }
-        
-        if (c == '\\') {
-            c = source.Read() switch {
+
+        if (c == '\\')
+        {
+            c = source.Read() switch
+            {
                 'n' => '\n',
                 'r' => '\r',
                 's' => ' ',
-                var e =>  throw new ReadError($"Invalid special char literal: {e}", loc)
+                var e => throw new ReadError($"Invalid special char literal: {e}", loc)
             };
         }
 

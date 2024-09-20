@@ -66,11 +66,13 @@ public class Array : Form
         return false;
     }
 
-    public override bool Expand(VM vm, Queue args) {
+    public override bool Expand(VM vm, Queue args)
+    {
         var result = false;
         var newItems = new Form[Items.Length];
-        
-        for (var i = 0; i < Items.Length; i++) {
+
+        for (var i = 0; i < Items.Length; i++)
+        {
             if (Items[i].Expand(vm, args)) { result = true; }
             newItems[i] = args.PopLast();
         }
@@ -82,7 +84,7 @@ public class Array : Form
     public override Value? GetValue(VM vm) =>
         Items.All(it => it is Literal) ? Value.Make(Libs.Core.Array, Items.Select(it => (it as Literal)!.Value.Copy()).ToArray()) : null;
 
-    public override Form Quote(VM vm, Loc loc) => 
+    public override Form Quote(VM vm, Loc loc) =>
         new Array(Items.Select(it => it.Quote(vm, loc)).ToArray(), loc);
 
     public override string Dump(VM vm)

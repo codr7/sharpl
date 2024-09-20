@@ -1,6 +1,7 @@
 namespace Sharpl.Readers;
 
-public struct Array: Reader {
+public struct Array : Reader
+{
     public static readonly Array Instance = new Array();
 
     public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
@@ -10,15 +11,17 @@ public struct Array: Reader {
         var formLoc = loc;
         loc.Column++;
         source.Read();
-        
+
         var items = new Form.Queue();
 
-        while (true) {
+        while (true)
+        {
             WhiteSpace.Instance.Read(source, vm, forms, ref loc);
             c = source.Peek();
             if (c is null) { throw new ReadError("Unexpected end of array", loc); }
-            
-            if (c == ']') {
+
+            if (c == ']')
+            {
                 loc.Column++;
                 source.Read();
                 break;

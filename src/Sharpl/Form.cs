@@ -51,7 +51,7 @@ public abstract class Form(Loc loc)
     public virtual Form Quote(VM vm, Loc loc) => this;
     public virtual Form Unquote(VM vm, Loc loc) => this;
 
-    public class Queue: IEnumerable<Form>
+    public class Queue : IEnumerable<Form>
     {
         private LinkedList<Form> items = new LinkedList<Form>();
 
@@ -85,15 +85,16 @@ public abstract class Form(Loc loc)
         public void Expand(VM vm)
         {
             var done = false;
-            
+
             while (!done)
             {
                 var input = new Queue([.. items]);
                 items.Clear();
                 done = true;
 
-                while (input.Count > 0) { 
-                    if (input.Pop().Expand(vm, this)) { done = false; }; 
+                while (input.Count > 0)
+                {
+                    if (input.Pop().Expand(vm, this)) { done = false; };
                 }
             }
         }

@@ -16,6 +16,6 @@ public class BindingType : Type<Register>
     public override void Emit(VM vm, Value target, Form.Queue args, Loc loc) =>
         vm.Emit(Ops.GetRegister.Make(target.CastUnbox(this)));
 
-    public override Form Unquote(VM vm, Value value, Loc loc) => 
-        new Forms.Binding(value.CastUnbox(this), loc);     
+    public override Form Unquote(VM vm, Value value, Loc loc) =>
+        new Forms.Binding(value.CastUnbox(this), loc);
 }

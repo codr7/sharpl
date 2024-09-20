@@ -25,7 +25,7 @@ public class FixType(string name) :
         return new Iters.Core.FixRange(minVal ?? Fix.Make(1, 0), maxVal, strideVal);
     }
 
-    public override void Dump(Value value, VM vm, StringBuilder result) => 
+    public override void Dump(Value value, VM vm, StringBuilder result) =>
         result.Append(Fix.ToString(value.CastUnbox(this)));
 
     public void Add(Loc loc, VM vm, Stack stack, int arity)
@@ -63,7 +63,7 @@ public class FixType(string name) :
         Fix.Equals(left.CastUnbox(this), right.CastUnbox(this));
 
     public void Multiply(Loc loc, VM vm, Stack stack, int arity)
-    {        
+    {
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
         var res = stack.Pop().CastUnbox(this, loc);
         arity--;

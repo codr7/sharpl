@@ -1,5 +1,6 @@
 namespace Sharpl.Types.Core;
 
-public interface IterTrait {
+public interface IterTrait
+{
     Iter CreateIter(Value target, VM vm, Loc loc);
 };

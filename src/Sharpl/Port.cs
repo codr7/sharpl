@@ -1,6 +1,7 @@
 namespace Sharpl;
 
-public interface Port {
+public interface Port
+{
     void Close();
     Task<bool> Poll(CancellationToken ct);
     Task<Value?> Read(VM vm, Loc loc);

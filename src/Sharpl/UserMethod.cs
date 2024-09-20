@@ -1,6 +1,6 @@
+using Sharpl.Libs;
 using System.Data;
 using System.Text;
-using Sharpl.Libs;
 
 namespace Sharpl;
 
@@ -47,7 +47,7 @@ public class UserMethod
             {
                 var n = arity - Args.Length + 1;
                 var vs = new Value[n];
-                for (var j = n - 1; j >= 0; j--) { vs[j] = (argMask[n+j-2] is Value v) ? v : stack.Pop(); }
+                for (var j = n - 1; j >= 0; j--) { vs[j] = (argMask[n + j - 2] is Value v) ? v : stack.Pop(); }
                 vm.SetRegister(0, ar, Value.Make(Core.Array, vs));
             }
             else

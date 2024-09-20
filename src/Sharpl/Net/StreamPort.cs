@@ -22,8 +22,9 @@ public record class StreamPort(NetworkStream stream) : Port
         var buffer = new byte[sizeof(ushort)];
         var i = 0;
         var ct = new CancellationTokenSource().Token;
-        
-        while (i < buffer.Length) {
+
+        while (i < buffer.Length)
+        {
             int n = await stream.ReadAsync(buffer, i, buffer.Length - i, ct);
             if (n == 0) { return null; }
             i += n;
@@ -49,5 +50,5 @@ public record class StreamPort(NetworkStream stream) : Port
         var sbs = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)bs.Length));
         await stream.WriteAsync(sbs);
         await stream.WriteAsync(bs);
-    }   
+    }
 }

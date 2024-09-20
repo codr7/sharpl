@@ -1,8 +1,8 @@
+using Sharpl.Types.Core;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Sharpl.Types.Core;
 
 namespace Sharpl;
 

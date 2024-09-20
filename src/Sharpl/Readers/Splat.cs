@@ -1,6 +1,7 @@
 namespace Sharpl.Readers;
 
-public struct Splat: Reader {
+public struct Splat : Reader
+{
     public static readonly Splat Instance = new Splat();
 
     public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)

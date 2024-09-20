@@ -10,11 +10,11 @@ public static class TaskUtil
         var trs = sources.Select(c => (c.Reader.WaitToReadAsync(cts.Token).AsTask(), c)).ToArray();
         return await Any(trs);
     }
-    
+
     public static async ValueTask<T> Any<T>((Task<bool>, T)[] sources) =>
         await Any(sources, new CancellationTokenSource());
 
-   public static async ValueTask<T> Any<T>((Task<bool>, T)[] sources, CancellationTokenSource cts)
+    public static async ValueTask<T> Any<T>((Task<bool>, T)[] sources, CancellationTokenSource cts)
     {
         var lookup = sources.ToDictionary();
         Task<bool> ct = await Task.WhenAny(lookup.Keys);

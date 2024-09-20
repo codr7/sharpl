@@ -1,5 +1,6 @@
 namespace Sharpl.Types.Core;
 
-public interface CloseTrait {
+public interface CloseTrait
+{
     void Close(Value target);
 };

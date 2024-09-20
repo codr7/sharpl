@@ -1,6 +1,6 @@
+using Sharpl.Iters.Core;
 using System.Text;
 using System.Threading.Channels;
-using Sharpl.Iters.Core;
 
 namespace Sharpl.Types.Core;
 
@@ -33,6 +33,6 @@ public class PipeType : Type<Channel<Value>>, IterTrait, PollTrait
 
     public Iter CreateIter(Value target, VM vm, Loc loc) => new PipeItems(target.Cast(this).Reader);
     public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"(Pipe {vm.GetObjectId(value.Cast(this))})");
-    public Task<bool> Poll(Value target, CancellationToken ct) => 
+    public Task<bool> Poll(Value target, CancellationToken ct) =>
         target.Cast(this).Reader.WaitToReadAsync(ct).AsTask();
 }

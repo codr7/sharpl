@@ -5,7 +5,7 @@ using Sharpl.Libs;
 public class StreamLines : BasicIter
 {
     public readonly TextReader Reader;
-    
+
     public StreamLines(TextReader reader)
     {
         Reader = reader;

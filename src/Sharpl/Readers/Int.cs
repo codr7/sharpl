@@ -1,5 +1,5 @@
-using System.Globalization;
 using Sharpl.Libs;
+using System.Globalization;
 
 namespace Sharpl.Readers;
 
@@ -16,13 +16,14 @@ public struct Int : Reader
         {
             var c = source.Peek();
             if (c is null) { break; }
-            
-            if (c == '.') { 
+
+            if (c == '.')
+            {
                 source.Read();
                 c = source.Peek();
                 source.Unread('.');
-                if (c == '.') { break; } 
-                return Fix.Instance.Read(source, vm, ref loc, forms, formLoc, v); 
+                if (c == '.') { break; }
+                return Fix.Instance.Read(source, vm, ref loc, forms, formLoc, v);
             }
 
             if (!char.IsAsciiDigit((char)c)) { break; }

@@ -1,8 +1,8 @@
+using Sharpl.Net;
+using Sharpl.Types.Net;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Channels;
-using Sharpl.Net;
-using Sharpl.Types.Net;
 
 namespace Sharpl.Libs;
 

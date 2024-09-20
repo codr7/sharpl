@@ -1,6 +1,7 @@
 namespace Sharpl.Readers;
 
-public struct Pair: Reader {
+public struct Pair : Reader
+{
     public static readonly Pair Instance = new Pair();
 
     public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)

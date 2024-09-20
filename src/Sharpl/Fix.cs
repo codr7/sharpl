@@ -16,9 +16,9 @@ public static class Fix
     {
         var le = Exp(left);
         var re = Exp(right);
-        
-        return (le == re) 
-            ? Make(le, Val(left) + Val(right)) 
+
+        return (le == re)
+            ? Make(le, Val(left) + Val(right))
             : Make(le, Val(left) + Val(right) * Scale(le) / Scale(re));
     }
 
@@ -50,20 +50,20 @@ public static class Fix
     public static bool Negative(UT it) => ((it >> ExpBits) & 1) == 1;
 
     private static readonly T[] scaleTable = [
-        1, 
-        10, 
-        100, 
-        1000, 
-        10000, 
-        100000, 
-        1000000, 
-        10000000, 
-        100000000, 
-        1000000000, 
-        10000000000, 
-        100000000000, 
-        1000000000000, 
-        10000000000000, 
+        1,
+        10,
+        100,
+        1000,
+        10000,
+        100000,
+        1000000,
+        10000000,
+        100000000,
+        1000000000,
+        10000000000,
+        100000000000,
+        1000000000000,
+        10000000000000,
         100000000000000];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -74,9 +74,9 @@ public static class Fix
     {
         var le = Exp(left);
         var re = Exp(right);
-        
-        return (le == re) 
-            ? Make(le, Val(left) - Val(right)) 
+
+        return (le == re)
+            ? Make(le, Val(left) - Val(right))
             : Make(re, Val(left) * Scale(re) / Scale(le) - Val(right));
     }
 

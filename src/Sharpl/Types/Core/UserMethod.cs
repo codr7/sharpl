@@ -19,15 +19,18 @@ public class UserMethodType : Type<UserMethod>
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
         var argMask = new Value?[arity];
         var i = 0;
-        
-        foreach (var a in args) {
-            if (a.GetValue(vm) is Value av) {
-                if (av.Type == Libs.Core.Binding) {
+
+        foreach (var a in args)
+        {
+            if (a.GetValue(vm) is Value av)
+            {
+                if (av.Type == Libs.Core.Binding)
+                {
                     var r = av.CastUnbox(Libs.Core.Binding);
-                    av = Value.Make(Libs.Core.Binding, new Register(r.FrameOffset+1, r.Index));
+                    av = Value.Make(Libs.Core.Binding, new Register(r.FrameOffset + 1, r.Index));
                 }
 
-                argMask[i] = av; 
+                argMask[i] = av;
             }
             else { vm.Emit(a); }
             i++;

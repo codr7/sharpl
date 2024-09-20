@@ -1,4 +1,3 @@
-using System.Data;
 using System.Text;
 
 namespace Sharpl.Types.Core;
@@ -28,8 +27,9 @@ public class TimestampType(string name) :
     public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {
         int y = 1, M = 1, d = 1, h = 0, m = 0, s = 0, ms = 0, us = 0;
-        
-        var get = (int dv) => {
+
+        var get = (int dv) =>
+        {
             var v = stack.Pop();
             return (v.Type == Libs.Core.Nil) ? dv : v.CastUnbox(Libs.Core.Int, loc);
         };
@@ -49,11 +49,11 @@ public class TimestampType(string name) :
     {
         DateTime minVal = (min.Type == Libs.Core.Nil) ? DateTime.MinValue : min.CastUnbox(this, loc);
         DateTime maxVal = (max.Type == Libs.Core.Nil) ? DateTime.MaxValue : max.CastUnbox(this, loc);
-        
-        Duration? strideVal = (stride.Type == Libs.Core.Nil) 
-            ? (maxVal is DateTime mv 
-                ? new Duration(0, TimeSpan.FromDays((mv.CompareTo(minVal) < 0) ? -1 : 1)) 
-                : null) 
+
+        Duration? strideVal = (stride.Type == Libs.Core.Nil)
+            ? (maxVal is DateTime mv
+                ? new Duration(0, TimeSpan.FromDays((mv.CompareTo(minVal) < 0) ? -1 : 1))
+                : null)
             : stride.CastUnbox(Libs.Core.Duration, loc);
 
         if (strideVal is null) { throw new EvalError("Missing stride", loc); }

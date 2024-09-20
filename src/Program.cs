@@ -4,17 +4,21 @@ using Ops = Sharpl.Ops;
 
 var vm = new VM(VM.DEFAULT);
 
-if (args.Length == 0) {
+if (args.Length == 0)
+{
     new REPL().Run(vm);
-} else {
+}
+else
+{
     var startPC = vm.EmitPC;
 
-    var vs = new Value[args.Length-1];
+    var vs = new Value[args.Length - 1];
 
-    for (var i = 0; i < vs.Length; i++) {
-        vs[i] = Value.Make(Core.String, args[i+1]);
+    for (var i = 0; i < vs.Length; i++)
+    {
+        vs[i] = Value.Make(Core.String, args[i + 1]);
     }
-    
+
     vm.UserLib.Bind("ARG", Value.Make(Core.Array, vs));
     vm.Load(args[0]);
     vm.Emit(Ops.Stop.Make());

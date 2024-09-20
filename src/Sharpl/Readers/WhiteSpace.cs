@@ -7,13 +7,13 @@ public struct WhiteSpace : Reader
     public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var done = false;
- 
+
         while (!done)
-        {            
+        {
             switch (source.Peek())
             {
                 case ' ':
-                case '\t':  
+                case '\t':
                     loc.Column++;
                     source.Read();
                     break;

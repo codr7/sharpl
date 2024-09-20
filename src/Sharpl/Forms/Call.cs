@@ -1,8 +1,8 @@
 namespace Sharpl.Forms;
 
+using Sharpl.Libs;
 using System.Data;
 using System.Text;
-using Sharpl.Libs;
 
 public class Call : Form
 {
@@ -90,22 +90,27 @@ public class Call : Form
         return false;
     }
 
-    public override bool Expand(VM vm, Queue args) {
+    public override bool Expand(VM vm, Queue args)
+    {
         var result = false;
 
-        if (Target.GetValue(vm) is Value tv && tv.Type == Core.Meta && Args.All(a => a is Literal)) {
+        if (Target.GetValue(vm) is Value tv && tv.Type == Core.Meta && Args.All(a => a is Literal))
+        {
             var stack = new Stack();
             foreach (var a in Args) { stack.Push((a as Literal)!.Value); }
             Core.Meta.Call(vm, stack, tv, Args.Length, vm.NextRegisterIndex, Loc);
-            if (stack.Pop() is Value v) {args.Push(new Literal(v, Loc)); }
+            if (stack.Pop() is Value v) { args.Push(new Literal(v, Loc)); }
             else { throw new EmitError("Expected value", Loc); }
             result = true;
-        } else {
+        }
+        else
+        {
             if (Target.Expand(vm, args)) { result = true; }
             var t = args.PopLast();
             var callArgs = new Form[Args.Length];
-            
-            for (var i = 0; i < Args.Length; i++) {
+
+            for (var i = 0; i < Args.Length; i++)
+            {
                 if (Args[i].Expand(vm, args)) { result = true; }
                 callArgs[i] = args.PopLast();
             }

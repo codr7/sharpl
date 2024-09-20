@@ -27,7 +27,7 @@ public class CharType(string name) :
             '\r' => "\\r",
             _ => $"{c}"
         });
-    }    
+    }
 
     public override void Say(Value value, VM vm, StringBuilder result) =>
         result.Append(value.CastUnbox(this));

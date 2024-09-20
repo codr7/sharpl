@@ -17,7 +17,7 @@ public class IntRange : BasicIter
 
     public override Value? Next()
     {
-        if (Max is null || value+1 < Max)
+        if (Max is null || value + 1 < Max)
         {
             value += Stride;
             return Value.Make(Libs.Core.Int, value);

@@ -1,5 +1,5 @@
-using System.Globalization;
 using Sharpl.Libs;
+using System.Globalization;
 
 namespace Sharpl.Readers;
 
@@ -13,8 +13,9 @@ public struct Fix : Reader
         if (c is null || c != '.') { return false; }
         source.Read();
         c = source.Peek();
-        
-        if (c == '.') {
+
+        if (c == '.')
+        {
             source.Unread('.');
             return false;
         }
