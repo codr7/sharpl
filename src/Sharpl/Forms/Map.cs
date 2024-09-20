@@ -87,8 +87,8 @@ public class Map : Form
             ? Value.Make(Libs.Core.Map, new OrderedMap<Value, Value>(Items.Select(it => (it as Literal)!.Value.Copy().CastUnbox(Libs.Core.Pair)).ToArray())) 
             : null;
 
-    public override Form Quote(Loc loc, VM vm) =>
-        new Map(Items.Select(it => it.Quote(loc, vm)).ToArray(), loc);
+    public override Form Quote(VM vm, Loc loc) =>
+        new Map(Items.Select(it => it.Quote(vm, loc)).ToArray(), loc);
 
     public override string Dump(VM vm)
     {
@@ -107,6 +107,6 @@ public class Map : Form
         return b.ToString();
     }
 
-    public override Form Unquote(Loc loc, VM vm) =>
-        new Map(Items.Select(it => it.Unquote(loc, vm)).ToArray(), loc);
+    public override Form Unquote(VM vm, Loc loc) =>
+        new Map(Items.Select(it => it.Unquote(vm, loc)).ToArray(), loc);
 }

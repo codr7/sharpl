@@ -36,11 +36,11 @@ public class And : Form
         return result;
     }
 
-    public override Form Quote(Loc loc, VM vm) => 
-        new And(Left.Quote(loc, vm), Right.Quote(loc, vm), loc);
+    public override Form Quote(VM vm, Loc loc) => 
+        new And(Left.Quote(vm, loc), Right.Quote(vm, loc), loc);
 
     public override string Dump(VM vm) => $"{Left.Dump(vm)} & {Right.Dump(vm)}";
 
-    public override Form Unquote(Loc loc, VM vm) => 
-        new And(Left.Unquote(loc, vm), Right.Unquote(loc, vm), loc);
+    public override Form Unquote(VM vm, Loc loc) => 
+        new And(Left.Unquote(vm, loc), Right.Unquote(vm, loc), loc);
 }

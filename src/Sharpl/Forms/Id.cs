@@ -53,9 +53,9 @@ public class Id : Form
 
     public override Value? GetValue(VM vm) => FindId(Name, vm.Env, Loc);
 
-    public override Form Quote(Loc loc, VM vm) =>
+    public override Form Quote(VM vm, Loc loc) =>
         new Literal(Value.Make(Core.Sym, vm.Intern(Name)), loc);
 
     public override string Dump(VM vm) => Name;
-    public override Form Unquote(Loc loc, VM vm) => GetId(Name, vm.Env, loc).Unquote(vm, loc);
+    public override Form Unquote(VM vm, Loc loc) => GetId(Name, vm.Env, loc).Unquote(vm, loc);
 }

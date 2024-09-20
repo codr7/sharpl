@@ -48,8 +48,8 @@ public abstract class Form(Loc loc)
 
     public virtual Value? GetValue(VM vm) => null;
     public virtual bool IsSplat => false;
-    public virtual Form Quote(Loc loc, VM vm) => this;
-    public virtual Form Unquote(Loc loc, VM vm) => this;
+    public virtual Form Quote(VM vm, Loc loc) => this;
+    public virtual Form Unquote(VM vm, Loc loc) => this;
 
     public class Queue: IEnumerable<Form>
     {

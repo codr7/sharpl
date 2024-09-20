@@ -25,7 +25,7 @@ public class Splat : Form
     }
 
     public override bool IsSplat => true;
-    public override Form Quote(Loc loc, VM vm) => new Splat(Target.Quote(loc, vm), loc);
+    public override Form Quote(VM vm, Loc loc) => new Splat(Target.Quote(vm, loc), loc);
     public override string Dump(VM vm) => $"{Target.Dump(vm)}*";
-    public override Form Unquote(Loc loc, VM vm) => new Splat(Target, loc);
+    public override Form Unquote(VM vm, Loc loc) => new Splat(Target, loc);
 }

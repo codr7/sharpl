@@ -116,8 +116,8 @@ public class Call : Form
         return result;
     }
 
-    public override Form Quote(Loc loc, VM vm) =>
-        new Literal(Value.Make(Libs.Core.Form, new Call(Target.Quote(loc, vm), Args.Select(a => a.Quote(loc, vm)).ToArray(), loc)), Loc);
+    public override Form Quote(VM vm, Loc loc) =>
+        new Literal(Value.Make(Libs.Core.Form, new Call(Target.Quote(vm, loc), Args.Select(a => a.Quote(vm, loc)).ToArray(), loc)), Loc);
 
     public override string Dump(VM vm)
     {
@@ -129,7 +129,8 @@ public class Call : Form
         return b.ToString();
     }
 
-    public override Form Unquote(Loc loc, VM vm) {
-        return new Call(Target.Unquote(loc, vm), Args.Select(a => a.Unquote(loc, vm)).ToArray(), loc);
+    public override Form Unquote(VM vm, Loc loc)
+    {
+        return new Call(Target.Unquote(vm, loc), Args.Select(a => a.Unquote(vm, loc)).ToArray(), loc);
     }
 }

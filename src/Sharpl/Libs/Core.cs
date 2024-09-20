@@ -308,7 +308,7 @@ public class Core : Lib
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             var startPC = vm.EmitPC;
-            foreach (var a in args) { vm.Emit(a.Unquote(loc, vm)); }
+            foreach (var a in args) { vm.Emit(a.Unquote(vm, loc)); }
             args.Clear();
             skip.PC = vm.EmitPC;
             vm.Emit(Ops.Stop.Make());
@@ -341,7 +341,7 @@ public class Core : Lib
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
             var startPC = vm.EmitPC;
-            foreach (var a in args) { vm.Emit(a.Unquote(loc, vm)); }
+            foreach (var a in args) { vm.Emit(a.Unquote(vm, loc)); }
             args.Clear();
             vm.Emit(Ops.Stop.Make());
             skip.PC = vm.EmitPC;

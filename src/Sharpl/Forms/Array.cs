@@ -82,8 +82,8 @@ public class Array : Form
     public override Value? GetValue(VM vm) =>
         Items.All(it => it is Literal) ? Value.Make(Libs.Core.Array, Items.Select(it => (it as Literal)!.Value.Copy()).ToArray()) : null;
 
-    public override Form Quote(Loc loc, VM vm) => 
-        new Array(Items.Select(it => it.Quote(loc, vm)).ToArray(), loc);
+    public override Form Quote(VM vm, Loc loc) => 
+        new Array(Items.Select(it => it.Quote(vm, loc)).ToArray(), loc);
 
     public override string Dump(VM vm)
     {
@@ -102,6 +102,6 @@ public class Array : Form
         return b.ToString();
     }
 
-    public override Form Unquote(Loc loc, VM vm) =>
-        new Array(Items.Select(it => it.Unquote(loc, vm)).ToArray(), loc);
+    public override Form Unquote(VM vm, Loc loc) =>
+        new Array(Items.Select(it => it.Unquote(vm, loc)).ToArray(), loc);
 }
