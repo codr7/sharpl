@@ -4,7 +4,7 @@ public struct Range : Reader
 {
     public static readonly Range Instance = new Range();
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         if (forms.Empty) { return false; }
         var c = source.Peek();
@@ -22,9 +22,9 @@ public struct Range : Reader
         var formLoc = loc;
         loc.Column += 2;
         var left = forms.PopLast();
-        if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError(loc, "Missing max"); }
+        if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError("Missing max", loc); }
         var right = forms.PopLast();
-        WhiteSpace.Instance.Read(source, vm, ref loc, forms);
+        WhiteSpace.Instance.Read(source, vm, forms, ref loc);
         c = source.Peek();
         Form? stride = null;
 
@@ -32,7 +32,7 @@ public struct Range : Reader
         {
             source.Read();
             loc.Column++;
-            if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError(loc, "Missing stride"); }
+            if (!vm.ReadForm(source, ref loc, forms)) { throw new ReadError("Missing stride", loc); }
             stride = forms.PopLast();
         }
 

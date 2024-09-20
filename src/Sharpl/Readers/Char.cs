@@ -6,7 +6,7 @@ public struct Char : Reader
 {
     public static readonly Char Instance = new Char();
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var c = source.Peek();
         if (c is null || c != '\\') { return false; }
@@ -15,14 +15,14 @@ public struct Char : Reader
         loc.Column++;
 
         c = source.Read();
-        if (c is null) { throw new ReadError(loc, "Invalid char literal"); }
+        if (c is null) { throw new ReadError("Invalid char literal", loc); }
         
         if (c == '\\') {
             c = source.Read() switch {
                 'n' => '\n',
                 'r' => '\r',
                 's' => ' ',
-                var e =>  throw new ReadError(loc, $"Invalid special char literal: {e}")
+                var e =>  throw new ReadError($"Invalid special char literal: {e}", loc)
             };
         }
 

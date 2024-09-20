@@ -229,7 +229,7 @@ public class VM
                             if ((bool)v) { PC++; }
                             else { PC = op.Right.PC; }
                         }
-                        else { throw new EvalError(op.Loc, "Missing condition"); }
+                        else { throw new EvalError("Missing condition", op.Loc); }
 
                         break;
                     }
@@ -271,7 +271,7 @@ public class VM
                     {
                         var arity = op.ArgMask.Length;
                         if (op.Splat) { arity += splats.Pop(); }
-                        if (arity < op.Target.MinArgCount) { throw new EvalError(op.Loc, $"Not enough arguments: {op.Target} {arity}"); }
+                        if (arity < op.Target.MinArgCount) { throw new EvalError($"Not enough arguments: {op.Target} {arity}", op.Loc); }
                         var call = calls.Peek();
                         frames.Trunc(call.FrameOffset);
                         op.Target.BindArgs(this, op.ArgMask, arity, stack);
@@ -308,7 +308,7 @@ public class VM
                     {
                         var v = stack.Pop();
                         if (v.Type is IterTrait it) { Set(op.Target, Value.Make(Core.Iter, it.CreateIter(v, this, op.Loc))); }
-                        else { throw new EvalError(op.Loc, $"Not iterable: {v}"); }
+                        else { throw new EvalError($"Not iterable: {v}", op.Loc); }
                         PC++;
                         break;
                     }
@@ -403,7 +403,7 @@ public class VM
                     {
                         var t = Get(op.Target);
                         if (t.Type is StackTrait st) { stack.Push(st.Pop(op.Loc, this, op.Target, t)); }
-                        else { throw new EvalError(op.Loc, $"Invalid target: {t}"); }
+                        else { throw new EvalError($"Invalid target: {t}", op.Loc); }
                         PC++;
                         break;
                     }
@@ -426,9 +426,9 @@ public class VM
                         {
                             var t = Get(op.Target);
                             if (t.Type is StackTrait st) { st.Push(op.Loc, this, op.Target, t, v); }
-                            else { throw new EvalError(op.Loc, $"Invalid target: {t}"); }
+                            else { throw new EvalError($"Invalid target: {t}", op.Loc); }
                         }
-                        else { throw new EvalError(op.Loc, "Missing value"); }
+                        else { throw new EvalError("Missing value", op.Loc); }
 
                         PC++;
                         break;
@@ -475,14 +475,14 @@ public class VM
                     }
                 case Ops.Splat op:
                     {
-                        if (stack.Count == 0) { throw new EvalError(op.Loc, "Missing splat target"); }
+                        if (stack.Count == 0) { throw new EvalError("Missing splat target", op.Loc); }
                         else
                         {
                             var tv = stack.Pop();
 
                             if (tv.Type is Types.Core.IterTrait tt)
                             {
-                                if (splats.Count == 0) { throw new EvalError(op.Loc, "Splat outside context"); }
+                                if (splats.Count == 0) { throw new EvalError("Splat outside context", op.Loc); }
                                 var arity = splats.Pop();
 
                                 foreach (var v in tt.CreateIter(tv, this, op.Loc))
@@ -493,7 +493,7 @@ public class VM
 
                                 splats.Push(arity);
                             }
-                            else { throw new EvalError(op.Loc, $"Invalid splat target: {tv}"); }
+                            else { throw new EvalError($"Invalid splat target: {tv}", op.Loc); }
                         }
 
                         PC++;
@@ -528,7 +528,7 @@ public class VM
                             stack.Push(pv.Item1);
                             stack.Push(pv.Item2);
                         }
-                        else { throw new EvalError(op.Loc, "Missing target"); }
+                        else { throw new EvalError("Missing target", op.Loc); }
 
                         PC++;
                         break;
@@ -665,7 +665,7 @@ public class VM
     public int NextRegisterIndex => nextRegisterIndex;
 
     public bool ReadForm(Source source, ref Loc loc, Form.Queue forms) =>
-        Config.Reader.Read(source, this, ref loc, forms);
+        Config.Reader.Read(source, this, forms, ref loc);
 
     public Form? ReadForm(Source source, ref Loc loc)
     {
@@ -728,11 +728,11 @@ public class VM
             {
                 var dav = av;
                 if (ev.Type == Core.Bit && av.Type != Core.Bit) { av = Value.Make(Core.Bit, (bool)av); }
-                if (!av.Equals(ev)) { throw new EvalError(op.Loc, $"Check failed: expected {ev.Dump(this)}, actual {dav.Dump(this)}!"); }
+                if (!av.Equals(ev)) { throw new EvalError($"Check failed: expected {ev.Dump(this)}, actual {dav.Dump(this)}!", op.Loc); }
             }
-            else { throw new EvalError(op.Loc, "Missing actual value"); }
+            else { throw new EvalError("Missing actual value", op.Loc); }
         }
-        else { throw new EvalError(op.Loc, "Missing expected value"); }
+        else { throw new EvalError("Missing expected value", op.Loc); }
 
         PC++;
     }
@@ -746,7 +746,7 @@ public class VM
             sr = new StreamReader(Path.Combine(loadPath, p.Cast(op.Loc, Core.String)));
             SetRegister(op.FrameOffset, op.Index, Value.Make(IO.InputStream, sr));
         }
-        else { throw new EvalError(op.Loc, "Missing path"); }
+        else { throw new EvalError("Missing path", op.Loc); }
 
         PC++;
     }

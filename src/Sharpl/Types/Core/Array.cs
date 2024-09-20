@@ -47,7 +47,7 @@ public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait,
                     break;
                 }
             default:
-                throw new EvalError(loc, $"Wrong number of arguments: {arity}");
+                throw new EvalError($"Wrong number of arguments: {arity}", loc);
 
         }
     }

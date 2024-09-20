@@ -35,7 +35,7 @@ public class SymType(string name) : Type<Sym>(name), ComparableTrait
     {
         var id = value.Cast(this).Name;
         var v = vm.Env[id];
-        if (v is null) { throw new EmitError(loc, "Missing unquoted value"); }
+        if (v is null) { throw new EmitError("Missing unquoted value", loc); }
         return new Literal(loc, (Value)v);
     }
 }

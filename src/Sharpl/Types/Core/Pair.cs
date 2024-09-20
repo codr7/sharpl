@@ -22,14 +22,14 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
             return Value.Make(Core.Pair, (p.Item1, Update(loc, p.Item2, value, i - 1)));
         }
 
-        throw new EvalError(loc, "Index out of bounds");
+        throw new EvalError("Index out of bounds", loc);
     }
 
     public PairType(string name) : base(name) { }
 
     public override void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        if (arity < 2) { throw new EvalError(loc, "Wrong number of arguments"); }
+        if (arity < 2) { throw new EvalError("Wrong number of arguments", loc); }
         var r = stack.Pop();
         arity--;
 
@@ -77,7 +77,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
                     break;
                 }
             default:
-                throw new EvalError(loc, $"Wrong number of arguments: {arity}");
+                throw new EvalError($"Wrong number of arguments: {arity}", loc);
         }
     }
 

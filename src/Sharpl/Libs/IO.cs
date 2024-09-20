@@ -21,7 +21,7 @@ public class IO : Lib
                  {
                      if (af.Items.Length < 2)
                      {
-                         throw new EmitError(loc, "Missing args");
+                         throw new EmitError("Missing args", loc);
                      }
 
                      vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
@@ -35,7 +35,7 @@ public class IO : Lib
                          }
                          else
                          {
-                             throw new EmitError(a0.Loc, "Expected identifier: {a0}");
+                             throw new EmitError("Expected identifier: {a0}", a0.Loc);
                          }
 
                          var startPC = vm.EmitPC;
@@ -46,12 +46,12 @@ public class IO : Lib
                  }
                  else
                  {
-                     throw new EmitError(loc, "Invalid args");
+                     throw new EmitError("Invalid args", loc);
                  }
              }
              else
              {
-                 throw new EmitError(loc, "Missing args");
+                 throw new EmitError("Missing args", loc);
              }
          });
 

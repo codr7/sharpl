@@ -27,7 +27,7 @@ public class PipeType : Type<Channel<Value>>, IterTrait, PollTrait
                 Task.Run(async () => await t.Writer.WriteAsync(v));
                 break;
             default:
-                throw new EvalError(loc, "Invalid arguments");
+                throw new EvalError("Invalid arguments", loc);
         }
     }
 

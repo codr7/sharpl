@@ -14,7 +14,7 @@ public class UserMethodType : Type<UserMethod>
         var m = target.Cast(this);
         var arity = args.Count;
         var splat = args.IsSplat;
-        if (!splat && arity < m.MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {m}"); }
+        if (!splat && arity < m.MinArgCount) { throw new EmitError($"Not enough arguments: {m}", loc); }
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
         var argMask = new Value?[arity];
         var i = 0;

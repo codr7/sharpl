@@ -23,7 +23,7 @@ public class Id : Form
     public static Value GetId(string name, Env env, Loc loc)
     {
         if (FindId(name, env, loc) is Value v) { return v; }
-        throw new EmitError(loc, $"Unknown id: {name}");
+        throw new EmitError($"Unknown id: {name}", loc);
     }
 
     public readonly string Name;
@@ -39,13 +39,13 @@ public class Id : Form
     public override void Emit(VM vm, Queue args)
     {
         if (GetId(Name, vm.Env, Loc) is Value v) { args.PushFirst(new Literal(Loc, v)); }
-        else { throw new EmitError(Loc, $"Unknown id: {Name}"); }
+        else { throw new EmitError($"Unknown id: {Name}", Loc); }
     }
 
     public override void EmitCall(VM vm, Queue args)
     {
         if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(Loc, vm, args); }
-        else { throw new EmitError(Loc, $"Unknown id: {Name}"); }
+        else { throw new EmitError($"Unknown id: {Name}", Loc); }
     }
 
     public override bool Equals(Form other) =>

@@ -19,7 +19,7 @@ public static class Json
             ReadWhitespace(source, ref loc);
             switch (source.Peek())
             {
-                case -1: throw new ReadError(loc, "Unexpected end of array");
+                case -1: throw new ReadError("Unexpected end of array", loc);
 
                 case ']':
                     {
@@ -37,7 +37,7 @@ public static class Json
             }
 
             if (ReadValue(vm, source, ref loc) is Value it) { items.Add(it); }
-            else { throw new ReadError(loc, "Unexpected end of array"); }
+            else { throw new ReadError("Unexpected end of array", loc); }
         }
 
     EXIT:
@@ -93,7 +93,7 @@ public static class Json
             "null" => Value._,
             "true" => Value.T,
             "false" => Value.F,
-            var id => throw new ReadError(loc, $"Unknown id: {id}")
+            var id => throw new ReadError($"Unknown id: {id}", loc)
         };
     }
 
@@ -110,7 +110,7 @@ public static class Json
             ReadWhitespace(source, ref loc);
             switch (source.Peek())
             {
-                case -1: throw new ReadError(loc, "Unexpected end of map");
+                case -1: throw new ReadError("Unexpected end of map", loc);
 
                 case '}':
                     {
@@ -131,13 +131,13 @@ public static class Json
             {
                 ReadWhitespace(source, ref loc);
                 c = source.Peek();
-                if (c != ':') { throw new ReadError(loc, $"Invalid map: {c}"); }
+                if (c != ':') { throw new ReadError($"Invalid map: {c}", loc); }
                 loc.Column++;
                 source.Read();
                 if (ReadValue(vm, source, ref loc) is Value v) { m[Value.Make(Core.Sym, vm.Intern(k.Cast(Core.String)))] = v; }
-                else { throw new ReadError(loc, "Unexpected end of map"); }
+                else { throw new ReadError("Unexpected end of map", loc); }
             }
-            else { throw new ReadError(loc, "Unexpected end of map"); }
+            else { throw new ReadError("Unexpected end of map", loc); }
         }
 
     EXIT:
@@ -173,7 +173,7 @@ public static class Json
         while (true)
         {
             c = source.Peek();
-            if (c == -1) { throw new ReadError(loc, "Invalid string"); }
+            if (c == -1) { throw new ReadError("Invalid string", loc); }
             source.Read();
             if (c == '"') { break; }
 
@@ -187,7 +187,7 @@ public static class Json
                     'n' => '\n',
                     '\\' => '\\',
                     '"' => '"',
-                    var v => throw new ReadError(loc, $"Invalid escape: {Convert.ToChar(v)}")
+                    var v => throw new ReadError($"Invalid escape: {Convert.ToChar(v)}", loc)
                 };
             }
 

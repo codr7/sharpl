@@ -14,7 +14,7 @@ public struct Id : Reader
             c == '\'' || c == ',' || c == '.' || c == '"' || c == ':' || c == '&' || c == '#');
 
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var c = source.Peek();
         if (c is null) { return false; }

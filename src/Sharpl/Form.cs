@@ -12,7 +12,7 @@ public abstract class Form(Loc loc) : Emitter
     public T Cast<T>() where T : Form
     {
         if (this is T result) { return result; }
-        throw new EvalError(Loc, $"Type mismatch: {this}");
+        throw new EvalError($"Type mismatch: {this}", Loc);
     }
 
     public abstract string Dump(VM vm);

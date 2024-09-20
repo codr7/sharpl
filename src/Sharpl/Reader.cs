@@ -11,5 +11,5 @@ public readonly record struct Source(TextReader Reader)
 
 public interface Reader
 {
-    bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms);
+    bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc);
 }

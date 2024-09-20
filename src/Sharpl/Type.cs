@@ -10,11 +10,11 @@ public abstract class AnyType(string name)
     public string Name { get; } = name;
 
     public virtual bool Bool(Value value) => true;
-    public virtual void Call(Loc loc, VM vm, Stack stack, int arity) => throw new EvalError(loc, "Not supported");
+    public virtual void Call(Loc loc, VM vm, Stack stack, int arity) => throw new EvalError("Not supported", loc);
 
     public virtual void Call(Loc loc, VM vm, Stack stack, Value target, int arity, int registerCount)
     {
-        if (arity != 0) { throw new EvalError(loc, "Wrong number of arguments"); }
+        if (arity != 0) { throw new EvalError("Wrong number of arguments", loc); }
         stack.Push(target);
     }
 
@@ -33,7 +33,7 @@ public abstract class AnyType(string name)
 
     public abstract bool Equals(Value left, Value right);
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
-    public virtual string ToJson(Loc loc, Value value) => throw new EvalError(loc, $"Not supported: {value}");
+    public virtual string ToJson(Loc loc, Value value) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
     public virtual Form Unquote(Loc loc, VM vm, Value value) => new Literal(loc, value);
 }

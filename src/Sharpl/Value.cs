@@ -91,5 +91,5 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
 
     [DoesNotReturn, StackTraceHidden]
     static T TypeMismatch<T>(Loc loc, AnyType lhs, Type<T> rhs) =>
-        throw new EvalError(loc, $"Type mismatch: {lhs}/{rhs}");
+        throw new EvalError($"Type mismatch: {lhs}/{rhs}", loc);
 }

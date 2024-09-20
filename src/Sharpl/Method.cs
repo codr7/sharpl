@@ -20,7 +20,7 @@ public readonly struct Method
 
     public void Call(Loc loc, VM vm, Stack stack, int arity)
     {
-        if (arity < MinArgCount) { throw new EvalError(loc, $"Not enough arguments: {this}"); }
+        if (arity < MinArgCount) { throw new EvalError($"Not enough arguments: {this}", loc); }
         Body(loc, this, vm, stack, arity);
     }
 

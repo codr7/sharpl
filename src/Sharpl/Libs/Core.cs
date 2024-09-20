@@ -60,7 +60,7 @@ public class Core : Lib
             {
                 fas = af.Items.Select(f =>
                 {
-                    if (vararg) { throw new EmitError(f.Loc, "Vararg must be final param."); }
+                    if (vararg) { throw new EmitError("Vararg must be final param.", f.Loc); }
 
                     if (f is Forms.Splat s)
                     {
@@ -80,10 +80,10 @@ public class Core : Lib
                         return ("_", -1);
                     }
 
-                    throw new EmitError(f.Loc, $"Invalid method arg: {f.Dump(vm)}");
+                    throw new EmitError($"Invalid method arg: {f.Dump(vm)}", f.Loc);
                 }).ToArray();
             }
-            else { throw new EmitError(loc, $"Invalid method args: {f!.Dump(vm)}"); }
+            else { throw new EmitError($"Invalid method args: {f!.Dump(vm)}", loc); }
 
             var m = new UserMethod(loc, vm, name, ids.ToArray(), fas, vararg);
             var skip = new Label();
@@ -154,12 +154,12 @@ public class Core : Lib
             var lv = stack.Pop();
             arity--;
             var res = true;
-            if (lv.Type is not ComparableTrait t) { throw new EvalError(loc, $"Not comparable: {lv}"); }
+            if (lv.Type is not ComparableTrait t) { throw new EvalError($"Not comparable: {lv}", loc); }
 
             while (arity > 0)
             {
                 var rv = stack.Pop();
-                if (rv.Type != t) { throw new EvalError(loc, $"Type mismatch: {lv} {rv}"); }
+                if (rv.Type != t) { throw new EvalError($"Type mismatch: {lv} {rv}", loc); }
 
                 if (t.Compare(lv, rv) != Order.GT)
                 {
@@ -179,12 +179,12 @@ public class Core : Lib
             arity--;
             var res = true;
             var t = lv.Type as ComparableTrait;
-            if (t is null) { throw new EvalError(loc, $"Not comparable: {lv}"); }
+            if (t is null) { throw new EvalError($"Not comparable: {lv}", loc); }
 
             while (arity > 0)
             {
                 var rv = stack.Pop();
-                if (rv.Type != t) { throw new EvalError(loc, $"Type mismatch: {lv} {rv}"); }
+                if (rv.Type != t) { throw new EvalError($"Type mismatch: {lv} {rv}", loc); }
 
                 if (t.Compare(lv, rv) != Order.LT)
                 {
@@ -202,26 +202,26 @@ public class Core : Lib
         BindMethod("+", ["x"], (loc, target, vm, stack, arity) =>
         {
             if (stack[^arity].Type is NumericTrait nt) { nt.Add(loc, vm, stack, arity); }
-            else { throw new EvalError(loc, $"Expected numeric value"); }
+            else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMethod("-", ["x"], (loc, target, vm, stack, arity) =>
         {
             if (stack[^arity].Type is NumericTrait nt) { nt.Subtract(loc, vm, stack, arity); }
-            else { throw new EvalError(loc, $"Expected numeric value"); }
+            else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
          {
              if (stack[^arity].Type is NumericTrait nt)
              { nt.Multiply(loc, vm, stack, arity); }
-             else { throw new EvalError(loc, $"Expected numeric value"); }
+             else { throw new EvalError($"Expected numeric value", loc); }
          });
 
         BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
         {
             if (stack[^arity].Type is NumericTrait nt) { nt.Divide(loc, vm, stack, arity); }
-            else { throw new EvalError(loc, $"Expected numeric value"); }
+            else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMacro("and", ["value1"], (loc, target, vm, args) =>
@@ -252,7 +252,7 @@ public class Core : Lib
                  args.Emit(vm);
                  vm.Emit(Ops.Stop.Make());
              }
-             else { throw new EmitError(loc, "Missing repetitions"); }
+             else { throw new EmitError("Missing repetitions", loc); }
          });
 
         BindMacro("check", ["x"], (loc, target, vm, args) =>
@@ -287,7 +287,7 @@ public class Core : Lib
         {
             var it = stack.Pop();
             if (it.Type is CloseTrait ct) { ct.Close(it); }
-            else { throw new EvalError(loc, $"Not supported: {it}"); }
+            else { throw new EvalError($"Not supported: {it}", loc); }
         });
 
         BindMacro("dec", ["delta?"], (loc, target, vm, args) =>
@@ -296,11 +296,11 @@ public class Core : Lib
             {
                 var r = v.CastUnbox(Binding);
                 var d = args.Empty ? null : args.Pop();
-                if (d is not null && d is not Forms.Literal) { throw new EmitError(d.Loc, $"Literal expected: {d}"); }
+                if (d is not null && d is not Forms.Literal) { throw new EmitError($"Literal expected: {d}", d.Loc); }
                 vm.Emit(Ops.Decrement.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(loc, Int)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
-            else { throw new EmitError(loc, "Invalid target"); }
+            else { throw new EmitError("Invalid target", loc); }
         });
 
         BindMacro("dmit", [], (loc, target, vm, args) =>
@@ -325,7 +325,7 @@ public class Core : Lib
         BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
              {
                  if (args.TryPop() is Form cf) { vm.Emit(cf); }
-                 else { throw new EmitError(loc, "Missing condition"); }
+                 else { throw new EmitError("Missing condition", loc); }
                  var skipElse = new Label();
                  vm.Emit(Ops.Branch.Make(loc, skipElse));
                  if (args.TryPop() is Form tf) { vm.Emit(tf); }
@@ -373,7 +373,7 @@ public class Core : Lib
                 arity--;
             }
 
-            throw new EvalError(loc, res.ToString());
+            throw new EvalError(res.ToString(), loc);
         });
 
         BindMethod("gensym", ["name"], (loc, target, vm, stack, arity) =>
@@ -393,7 +393,7 @@ public class Core : Lib
         BindMacro("if", ["condition"], (loc, target, vm, args) =>
             {
                 if (args.TryPop() is Form f) { vm.Emit(f); }
-                else { throw new EmitError(loc, "Missing condition"); }
+                else { throw new EmitError("Missing condition", loc); }
 
                 var skip = new Label();
                 vm.Emit(Ops.Branch.Make(loc, skip));
@@ -407,11 +407,11 @@ public class Core : Lib
             {
                 var r = v.CastUnbox(Binding);
                 var d = args.Empty ? null : args.Pop();
-                if (d is not null && d is not Forms.Literal) { throw new EmitError(d!.Loc, $"Literal expected: {d}"); }
+                if (d is not null && d is not Forms.Literal) { throw new EmitError($"Literal expected: {d}", d!.Loc); }
                 vm.Emit(Ops.Increment.Make(r, (d is null) ? 1 : (d as Forms.Literal)!.Value.CastUnbox(loc, Int)));
                 vm.Emit(Ops.GetRegister.Make(r));
             }
-            else { throw new EmitError(loc, "Invalid target"); }
+            else { throw new EmitError("Invalid target", loc); }
         });
 
         BindMethod("is", ["x"], (loc, target, vm, stack, arity) =>
@@ -440,7 +440,7 @@ public class Core : Lib
             {
                 var v = stack.Pop();
                 if (v.Type is LengthTrait st) { stack.Push(Int, st.Length(v)); }
-                else { throw new EvalError(loc, $"Not supported: {v}"); }
+                else { throw new EvalError($"Not supported: {v}", loc); }
             });
 
         BindMacro("let", ["bindings"], (loc, target, vm, args) =>
@@ -486,7 +486,7 @@ public class Core : Lib
                                      vm.Env[idf.Name] = Value.Make(Binding, r);
                                  }
                              }
-                             else { throw new EmitError(bf.Loc, $"Invalid method arg: {bf}"); }
+                             else { throw new EmitError($"Invalid method arg: {bf}", bf.Loc); }
                          }
 
                          while (true)
@@ -503,7 +503,7 @@ public class Core : Lib
                          vm.Emit(Ops.EndFrame.Make());
                      });
                 }
-                else { throw new EmitError(loc, "Missing bindings"); }
+                else { throw new EmitError("Missing bindings", loc); }
             });
 
         BindMacro("lib", [], (loc, target, vm, args) =>
@@ -524,7 +524,7 @@ public class Core : Lib
                     if (args.Empty) { vm.Env = lib; }
                     else { vm.DoEnv(lib, () => args.Emit(vm)); }
                 }
-                else { throw new EmitError(loc, "Invalid library name"); }
+                else { throw new EmitError("Invalid library name", loc); }
             });
 
         BindMacro("load", ["path"], (loc, target, vm, args) =>
@@ -534,7 +534,7 @@ public class Core : Lib
                     if (args.TryPop() is Form pf)
                     {
                         if (vm.Eval(pf) is Value p) { vm.Load(p.Cast(pf.Loc, String)); }
-                        else { throw new EvalError(pf.Loc, "Missing path"); }
+                        else { throw new EvalError("Missing path", pf.Loc); }
                     }
                     else { break; }
                 }
@@ -564,7 +564,7 @@ public class Core : Lib
             while (arity > 0)
             {
                 var sv = stack.Pop();
-                if (sv.Type != t) { throw new EvalError(loc, "Wrong type: {sv.Type}/{t}"); }
+                if (sv.Type != t) { throw new EvalError("Wrong type: {sv.Type}/{t}", loc); }
                 if (t.Compare(sv, v) != Order.LT) { v = sv; }
                 arity--;
             }
@@ -581,7 +581,7 @@ public class Core : Lib
             while (arity > 0)
             {
                 var sv = stack.Pop();
-                if (sv.Type != t) { throw new EvalError(loc, "Wrong type: {sv.Type}/{t}"); }
+                if (sv.Type != t) { throw new EvalError("Wrong type: {sv.Type}/{t}", loc); }
                 if (t.Compare(sv, v) != Order.GT) { v = sv; }
                 arity--;
             }
@@ -631,7 +631,7 @@ public class Core : Lib
         {
             var src = stack.Pop();
             if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); }
-            else { throw new EvalError(loc, "Invalid peek target: {src}"); }
+            else { throw new EvalError("Invalid peek target: {src}", loc); }
         });
 
         BindMethod("poll", ["source1", "source2?"], (loc, target, vm, stack, arity) =>
@@ -643,7 +643,7 @@ public class Core : Lib
             {
                 var s = stack.Pop();
                 if (s.Type is PollTrait pt) { ss[i] = (pt.Poll(s, cts.Token), s); }
-                else { throw new EvalError(loc, $"Not pollable: {s.Dump(vm)}"); }
+                else { throw new EvalError($"Not pollable: {s.Dump(vm)}", loc); }
             }
 
             stack.Push(Task.Run(async () => await TaskUtil.Any(ss, cts)).Result);
@@ -657,7 +657,7 @@ public class Core : Lib
              {
                  vm.Emit(Ops.PopItem.Make(loc, v.CastUnbox(Binding)));
              }
-             else { throw new EmitError(loc, $"Invalid push destination: {src}"); }
+             else { throw new EmitError($"Invalid push destination: {src}", loc); }
          });
 
         BindMacro("push", ["dst", "val"], (loc, target, vm, args) =>
@@ -672,7 +672,7 @@ public class Core : Lib
                      vm.Emit(Ops.PushItem.Make(loc, v.CastUnbox(Binding)));
                  }
              }
-             else { throw new EmitError(loc, $"Invalid push destination: {dst}"); }
+             else { throw new EmitError($"Invalid push destination: {dst}", loc); }
          });
 
         BindMethod("rand-int", ["n?"], (loc, target, vm, stack, arity) =>
@@ -704,7 +704,7 @@ public class Core : Lib
                 }
 
                 if (t is RangeTrait rt) { stack.Push(Iter, rt.CreateRange(loc, min, max, stride)); }
-                else { throw new EvalError(loc, $"Invalid range type: {t}"); }
+                else { throw new EvalError($"Invalid range type: {t}", loc); }
             });
 
         BindMethod("resize", ["array", "size", "value?"], (loc, target, vm, stack, arity) =>
@@ -730,7 +730,7 @@ public class Core : Lib
 
                     if (m is UserMethod)
                     {
-                        if (!args.Empty) { throw new EmitError(loc, "Too many args in tail call"); }
+                        if (!args.Empty) { throw new EmitError("Too many args in tail call", loc); }
                         var emptyArgs = new Form.Queue();
                         var splat = false;
 
@@ -743,7 +743,7 @@ public class Core : Lib
                             }
                         }
 
-                        if (!splat && c.Args.Length < m.MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {m}"); }
+                        if (!splat && c.Args.Length < m.MinArgCount) { throw new EmitError($"Not enough arguments: {m}", loc); }
                         var argMask = new Value?[c.Args.Length];
                         var i = 0;
 
@@ -796,7 +796,7 @@ public class Core : Lib
                 var id = args.Pop().Cast<Forms::Id>();
                 var v = args.Pop();
                 var b = vm.Env[id.Name];
-                if (b is null) { throw new EmitError(loc, $"Unknown symbol: {id.Name}"); }
+                if (b is null) { throw new EmitError($"Unknown symbol: {id.Name}", loc); }
                 vm.Emit(v);
                 vm.Emit(Ops.SetRegister.Make(((Value)b).CastUnbox(Binding)));
             }
@@ -805,7 +805,7 @@ public class Core : Lib
         BindMacro("spawn", ["args", "body?"], (loc, target, vm, args) =>
         {
             var forkArgs = args.Pop().Cast<Forms::Array>().Items;
-            if (forkArgs.Length != 1) { throw new EmitError(loc, "Wrong number of arguments."); }
+            if (forkArgs.Length != 1) { throw new EmitError("Wrong number of arguments.", loc); }
 
             var c1 = PipeType.Make();
             var c2 = PipeType.Make();
@@ -843,9 +843,9 @@ public class Core : Lib
                             v.Emit(vm);
                             vm.Define(idf.Name);
                         }
-                        else { throw new EmitError(loc, "Missing value"); }
+                        else { throw new EmitError("Missing value", loc); }
                     }
-                    else { throw new EmitError(loc, $"Invalid binding: {id}"); }
+                    else { throw new EmitError($"Invalid binding: {id}", loc); }
                 }
             });
     }

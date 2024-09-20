@@ -60,7 +60,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
                     break;
                 }
             default:
-                throw new EvalError(loc, $"Wrong number of arguments: {arity}");
+                throw new EvalError($"Wrong number of arguments: {arity}", loc);
 
         }
     }

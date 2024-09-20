@@ -12,7 +12,7 @@ public class MethodType : Type<Method>
         var m = target.CastUnbox(this);
         var arity = args.Count;
         var splat = args.IsSplat;
-        if (!splat && arity < m.MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {m}"); }
+        if (!splat && arity < m.MinArgCount) { throw new EmitError($"Not enough arguments: {m}", loc); }
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
         args.Emit(vm);
         vm.Emit(Ops.CallMethod.Make(loc, m, arity, splat));

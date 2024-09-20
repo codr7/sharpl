@@ -19,7 +19,7 @@ public readonly struct Macro
 
     public void Emit(Loc loc, VM vm, Form.Queue args)
     {
-        if (args.Count < MinArgCount) { throw new EmitError(loc, $"Not enough arguments: {this}"); }
+        if (args.Count < MinArgCount) { throw new EmitError($"Not enough arguments: {this}", loc); }
         Body(loc, this, vm, args);
     }
 

@@ -98,12 +98,12 @@ public class Iter : Lib
                              itReg = vm.AllocRegister();
                              vm.Env.Bind(idf.Name, Value.Make(Core.Binding, new Register(0, itReg)));
                          }
-                         else if (idForm is not Forms.Nil) { throw new EmitError(loc, "Expected id: " + idForm); }
+                         else if (idForm is not Forms.Nil) { throw new EmitError("Expected id: " + idForm, loc); }
 
                          bindings.Add((new Register(0, seqReg), new Register(0, itReg)));
                      }
                  }
-                 else { throw new EmitError(loc, "Invalid loop bindings"); }
+                 else { throw new EmitError("Invalid loop bindings", loc); }
 
                  var end = new Label();
                  var start = new Label(vm.EmitPC);
@@ -177,7 +177,7 @@ public class Iter : Lib
             {
                 var s = stack.Pop();
                 if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s, vm, loc); }
-                else { throw new EvalError(loc, $"Not iterable: {s}"); }
+                else { throw new EvalError($"Not iterable: {s}", loc); }
             }
 
             stack.Push(Core.Iter, new Zip(sources));

@@ -33,9 +33,9 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                     {
                         var p = kv.CastUnbox(Libs.Core.Pair);
                         var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : m.IndexOf(p.Item1);
-                        if (i == -1) { throw new EvalError(loc, $"Key not found: {p.Item1}"); }
+                        if (i == -1) { throw new EvalError($"Key not found: {p.Item1}", loc); }
                         var j = (p.Item2.Type == Libs.Core.Nil) ? m.Count - 1 : m.IndexOf(p.Item2);
-                        if (j == -1) { throw new EvalError(loc, $"Key not found: {p.Item2}"); }
+                        if (j == -1) { throw new EvalError($"Key not found: {p.Item2}", loc); }
                         stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j + 1)]));
                     }
                     else { stack.Push(m.ContainsKey(kv) ? m[kv] : Value._); }
@@ -51,7 +51,7 @@ public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrai
                     break;
                 }
             default:
-                throw new EvalError(loc, $"Wrong number of arguments: {arity}");
+                throw new EvalError($"Wrong number of arguments: {arity}", loc);
 
         }
     }

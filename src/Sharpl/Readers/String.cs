@@ -17,7 +17,7 @@ public struct String : Reader
         _ => null
     };
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var c = source.Peek();
         if (c is null || c != '"') { return false; }
@@ -28,7 +28,7 @@ public struct String : Reader
         while (true)
         {
             c = source.Peek();
-            if (c is null) { throw new ReadError(loc, "Invalid string"); }
+            if (c is null) { throw new ReadError("Invalid string", loc); }
             source.Read();
             loc.Column++;
             if (c == '"') { break; }

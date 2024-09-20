@@ -55,19 +55,19 @@ public class TimestampType(string name) :
                 : null) 
             : stride.CastUnbox(loc, Libs.Core.Duration);
 
-        if (strideVal is null) { throw new EvalError(loc, "Missing stride"); }
+        if (strideVal is null) { throw new EvalError("Missing stride", loc); }
         return new Iters.Core.TimeRange(minVal, maxVal, (Duration)strideVal);
     }
 
     public void Divide(Loc loc, VM vm, Stack stack, int arity) =>
-        throw new EvalError(loc, "Not supported");
+        throw new EvalError("Not supported", loc);
 
     public void Multiply(Loc loc, VM vm, Stack stack, int arity) =>
-            throw new EvalError(loc, "Not supported");
+            throw new EvalError("Not supported", loc);
 
     public void Subtract(Loc loc, VM vm, Stack stack, int arity)
     {
-        if (arity == 1) { throw new EvalError(loc, "Not supported"); }
+        if (arity == 1) { throw new EvalError("Not supported", loc); }
         else if (arity == 2 && stack.Peek().Type == Libs.Core.Timestamp)
         {
             var y = stack.Pop().CastUnbox(this);

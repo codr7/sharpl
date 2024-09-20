@@ -47,7 +47,7 @@ public class Call : Form
                 t = pf.Left;
             }
             else if (pf.Left is Nil) { t = pf.Right; }
-            else { throw new EvalError(Loc, $"Invalid call target: {pf}"); }
+            else { throw new EvalError($"Invalid call target: {pf}", Loc); }
         }
 
         t.EmitCall(vm, cas);
@@ -98,7 +98,7 @@ public class Call : Form
             foreach (var a in Args) { stack.Push((a as Literal)!.Value); }
             Core.Meta.Call(Loc, vm, stack, tv, Args.Length, vm.NextRegisterIndex);
             if (stack.Pop() is Value v) {args.Push(new Literal(Loc, v)); }
-            else { throw new EmitError(Loc, "Expected value"); }
+            else { throw new EmitError("Expected value", Loc); }
             result = true;
         } else {
             if (Target.Expand(vm, args)) { result = true; }

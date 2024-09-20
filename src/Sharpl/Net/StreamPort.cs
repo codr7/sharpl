@@ -39,7 +39,7 @@ public record class StreamPort(NetworkStream stream) : Port
         var data = Encoding.UTF8.GetString(await Read((ushort)size));
         var jsLoc = new Loc("json");
         if (Json.ReadValue(vm, new StringReader(data), ref jsLoc) is Value v) { return v; }
-        throw new EvalError(loc, "Failed to parse JSON value");
+        throw new EvalError("Failed to parse JSON value", loc);
     }
 
     public async Task Write(Value value, VM vm, Loc loc)

@@ -4,7 +4,7 @@ public struct Length : Reader
 {
     public static readonly Length Instance = new Length();
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var c = source.Peek();
         if (c is null || c != '#') { return false; }
@@ -15,7 +15,7 @@ public struct Length : Reader
         if (vm.ReadForm(source, ref loc, forms) && forms.TryPopLast() is Form f) {
             forms.Push(new Forms.Call(formLoc, new Forms.Id(formLoc, "length"), [f])); 
         }
-        else { throw new ReadError(loc, "Missing length value"); }
+        else { throw new ReadError("Missing length value", loc); }
         
         return true;
     }

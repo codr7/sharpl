@@ -21,7 +21,7 @@ public class PortType : Type<Port>, CloseTrait, IterTrait, PollTrait
                 Task.Run(async () => await t.Write(v, vm, loc));
                 break;
             default:
-                throw new EvalError(loc, "Invalid arguments");
+                throw new EvalError("Invalid arguments", loc);
         }
     }
 

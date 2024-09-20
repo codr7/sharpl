@@ -4,7 +4,7 @@ public struct WhiteSpace : Reader
 {
     public static readonly WhiteSpace Instance = new WhiteSpace();
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var done = false;
  

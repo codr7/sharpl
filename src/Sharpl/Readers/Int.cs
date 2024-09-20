@@ -7,7 +7,7 @@ public struct Int : Reader
 {
     public static readonly Int Instance = new Int();
 
-    public bool Read(Source source, VM vm, ref Loc loc, Form.Queue forms)
+    public bool Read(Source source, VM vm, Form.Queue forms, ref Loc loc)
     {
         var formLoc = loc;
         var v = 0;
