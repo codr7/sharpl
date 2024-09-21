@@ -225,7 +225,7 @@ public class VM
                         var arity = op.Arity;
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        op.Target.Call(this, stack, arity, op.RegisterCount, op.Loc);
+                        op.Target.Call(this, stack, arity, op.RegisterCount, false, op.Loc);
                         break;
                     }
                 case Ops.CallMethod op:
@@ -242,7 +242,7 @@ public class VM
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         var target = Get(op.Target);
-                        target.Call(this, stack, arity, op.RegisterCount, op.Loc);
+                        target.Call(this, stack, arity, op.RegisterCount, false, op.Loc);
                         break;
                     }
                 case Ops.CallStack op:
@@ -251,7 +251,7 @@ public class VM
                         var arity = op.Arity;
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        target.Call(this, stack, arity, op.RegisterCount, op.Loc);
+                        target.Call(this, stack, arity, op.RegisterCount, false, op.Loc);
                         break;
                     }
                 case Ops.CallTail op:
@@ -559,6 +559,14 @@ public class VM
         var loc = new Loc("Eval");
         var forms = ReadForms(new Source(new StringReader(code)), ref loc);
         return Eval(forms);
+    }
+
+    public void EvalUntil(PC endPC, Stack stack)
+    {
+        var prev = code[endPC];
+        code[endPC] = Ops.Stop.Make();
+        try { Eval(PC, stack); }
+        finally { code[endPC] = prev; }
     }
 
     public int FrameCount => frames.Count;

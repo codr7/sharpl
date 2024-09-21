@@ -43,7 +43,7 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
         stack.Push(r);
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
         switch (arity)
         {

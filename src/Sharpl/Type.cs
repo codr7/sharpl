@@ -10,7 +10,7 @@ public abstract class AnyType(string name)
     public virtual bool Bool(Value value) => true;
     public virtual void Call(VM vm, Stack stack, int arity, Loc loc) => throw new EvalError("Not supported", loc);
 
-    public virtual void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
+    public virtual void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
         if (arity != 0) { throw new EvalError("Wrong number of arguments", loc); }
         stack.Push(target);

@@ -13,12 +13,9 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** make values callable
 *** change into (arg v)
 
-* figure out how to convert map/filter to iterators
-** define like Form.Compose
-*** no method needed
-*** end with stop
-** add UserIter type
-*** nested eval from pc
+* convert map/filter/reduce to regular methods
+** use EvalUntil
+** return iters from map/filter
 
 * start repl from client to server
 ** send code as string

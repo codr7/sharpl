@@ -93,6 +93,7 @@ public class Core : Lib
             var v = Value.Make(type, m);
             if (name != "") { parentEnv.Bind(name, v); }
             args.Emit(vm);
+            m.EndPC = vm.EmitPC;
             vm.Emit(stopOp);
             skip.PC = vm.EmitPC;
             if (name == "") { v.Emit(vm, args, loc); }

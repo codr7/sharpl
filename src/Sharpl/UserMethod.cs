@@ -13,6 +13,7 @@ public class UserMethod
     public readonly Loc Loc;
     public readonly string Name;
     public int? StartPC;
+    public int? EndPC;
     public readonly bool Vararg;
 
     public UserMethod(VM vm, string name, string[] ids, (string, int)[] args, bool vararg, Loc loc)

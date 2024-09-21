@@ -15,8 +15,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public static readonly Value F = Make(Libs.Core.Bit, false);
     public static readonly Value T = Make(Libs.Core.Bit, true);
 
-    public void Call(VM vm, Stack stack, int arity, int registerCount, Loc loc) =>
-        Type.Call(vm, stack, this, arity, registerCount, loc);
+    public void Call(VM vm, Stack stack, int arity, int registerCount, bool eval, Loc loc) =>
+        Type.Call(vm, stack, this, arity, registerCount, eval, loc);
 
     // Please do not remove the type checks below.
     // These methods provide slightly more optimal type check and cast path

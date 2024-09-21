@@ -26,7 +26,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
         stack.Push(Value.Make(this, res.ToString()));
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, Loc loc)
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
         switch (arity)
         {
