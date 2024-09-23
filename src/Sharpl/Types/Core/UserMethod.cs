@@ -6,9 +6,14 @@ public class UserMethodType : Type<UserMethod>
 
     public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
+        var startPC = vm.PC;
         var m = target.Cast(this);
         vm.CallUserMethod(loc, stack, m, new Value?[m.Args.Length], arity, registerCount);
-        if (eval) { vm.EvalUntil((int)m.EndPC!, stack); }
+
+        if (eval) { 
+            vm.EvalUntil((int)m.EndPC!, stack);
+            vm.PC = startPC;
+        }
     }
 
     public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)

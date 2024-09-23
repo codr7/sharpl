@@ -1,6 +1,6 @@
 namespace Sharpl.Iters.Core;
 
-public class FixRange : BasicIter
+public class FixRange : Iter
 {
     public readonly long? MaxVal;
     public readonly ulong Stride;
@@ -13,7 +13,7 @@ public class FixRange : BasicIter
         value = Fix.Subtract(min, stride);
     }
 
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
         var v = Fix.Add(value, Stride);
 

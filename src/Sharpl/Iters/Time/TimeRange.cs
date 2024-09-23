@@ -1,6 +1,6 @@
 namespace Sharpl.Iters.Core;
 
-public class TimeRange : BasicIter
+public class TimeRange : Iter
 {
     public readonly DateTime Min;
     public readonly DateTime? Max;
@@ -15,7 +15,7 @@ public class TimeRange : BasicIter
         value = stride.SubtractFrom(min);
     }
 
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
         var nv = Stride.AddTo(value);
 

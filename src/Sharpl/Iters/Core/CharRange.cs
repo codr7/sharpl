@@ -1,6 +1,6 @@
 namespace Sharpl.Iters.Core;
 
-public class CharRange : BasicIter
+public class CharRange : Iter
 {
     public readonly char? Max;
     public readonly int Stride;
@@ -13,7 +13,7 @@ public class CharRange : BasicIter
         value = (char)(min - (char)stride);
     }
 
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
         if (Max is char mv && value + 1 < mv)
         {

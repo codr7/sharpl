@@ -192,6 +192,8 @@ public class VM
 
         while (true)
         {
+            //Console.WriteLine(code[PC]);
+
             switch (code[PC])
             {
                 case Ops.And op:
@@ -368,7 +370,7 @@ public class VM
                     }
                 case Ops.IterNext op:
                     {
-                        if (Get(op.Iter).Cast(Core.Iter).Next() is Value v)
+                        if (Get(op.Iter).Cast(Core.Iter).Next(this, op.Loc) is Value v)
                         {
                             if (op.Push) { stack.Push(v); }
                             PC++;
@@ -467,12 +469,13 @@ public class VM
                         {
                             var tv = stack.Pop();
 
-                            if (tv.Type is Types.Core.IterTrait tt)
+                            if (tv.Type is IterTrait tt)
                             {
                                 if (splats.Count == 0) { throw new EvalError("Splat outside context", op.Loc); }
                                 var arity = splats.Pop();
+                                var it = tt.CreateIter(tv, this, op.Loc);
 
-                                foreach (var v in tt.CreateIter(tv, this, op.Loc))
+                                while (it.Next(this, op.Loc) is Value v)
                                 {
                                     stack.Push(v);
                                     arity++;

@@ -2,7 +2,7 @@ using System.Threading.Channels;
 
 namespace Sharpl.Iters.Core;
 
-public class ServerConnections : BasicIter
+public class ServerConnections : Iter
 {
     public readonly ChannelReader<Value> Source;
 
@@ -11,5 +11,5 @@ public class ServerConnections : BasicIter
         Source = source;
     }
 
-    public override Value? Next() => Source.TryRead(out var v) ? v : null;
+    public override Value? Next(VM vm, Loc loc) => Source.TryRead(out var v) ? v : null;
 }

@@ -1,6 +1,6 @@
 namespace Sharpl.Iters.Core;
 
-public class PairItems : BasicIter
+public class PairItems : Iter
 {
     private Value? value;
 
@@ -9,7 +9,7 @@ public class PairItems : BasicIter
         value = start;
     }
 
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
         if (value is Value v)
         {

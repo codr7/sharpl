@@ -1,6 +1,6 @@
 namespace Sharpl.Iters.Core;
 
-public class IntRange : BasicIter
+public class IntRange : Iter
 {
     public readonly int Min;
     public readonly int? Max;
@@ -15,7 +15,7 @@ public class IntRange : BasicIter
         value = min - stride;
     }
 
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
         if (Max is null || value + 1 < Max)
         {

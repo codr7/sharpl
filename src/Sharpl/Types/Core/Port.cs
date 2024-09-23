@@ -27,7 +27,7 @@ public class PortType : Type<Port>, CloseTrait, IterTrait, PollTrait
 
     public void Close(Value target) => target.Cast(this).Close();
 
-    public Iter CreateIter(Value target, VM vm, Loc loc) => new PortItems(target.Cast(this), vm, loc);
+    public Iter CreateIter(Value target, VM vm, Loc loc) => new PortItems(target.Cast(this));
     public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"(Port {vm.GetObjectId(value.Cast(this))})");
     public Task<bool> Poll(Value target, CancellationToken ct) => target.Cast(this).Poll(ct);
 }

@@ -8,14 +8,12 @@ April 29th
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* convert map to method/iter like filter
+
 * aoc2
 ** implement pair unification in let macro
 ** make values callable
 *** change into (arg v)
-
-* convert map/filter/reduce to regular methods
-** use EvalUntil
-** return iters from map/filter
 
 * start repl from client to server
 ** send code as string

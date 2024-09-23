@@ -1,10 +1,10 @@
 namespace Sharpl.Iters.Core;
 
-public class Zip(Iter[] Sources) : BasicIter
+public class Zip(Iter[] Sources) : Iter
 {
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
-        var vs = Sources.Select(it => it.Next()).ToArray();
+        var vs = Sources.Select(it => it.Next(vm, loc)).ToArray();
 
 #pragma warning disable CS8629
         return vs.Any(v => v is null) ? null : vs

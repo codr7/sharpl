@@ -2,7 +2,7 @@ namespace Sharpl.Iters.IO;
 
 using Sharpl.Libs;
 
-public class StreamLines : BasicIter
+public class StreamLines : Sharpl.Iter
 {
     public readonly TextReader Reader;
 
@@ -11,7 +11,7 @@ public class StreamLines : BasicIter
         Reader = reader;
     }
 
-    public override Value? Next()
+    public override Value? Next(VM vm, Loc loc)
     {
         var line = Reader.ReadLine();
         return (line == null) ? null : Value.Make(Core.String, line);

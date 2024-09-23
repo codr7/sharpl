@@ -19,5 +19,5 @@
 (check [42:'foo 43:'bar]
   [(enumerate 42 '[foo bar])*])
 
-(check (List 3 4 5)
-  (filter (^[x] (> x 2)) [1 2 3 4 5]))
+(check [3 4 5]
+  [(filter (^[x] (> x 2)) [1 2 3 4 5])*])
