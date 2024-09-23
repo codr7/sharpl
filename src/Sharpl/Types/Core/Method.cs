@@ -5,7 +5,7 @@ public class MethodType : Type<Method>
     public MethodType(string name) : base(name) { }
 
     public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc) =>
-        target.CastUnbox(this).Call(loc, vm, stack, arity);
+        target.CastUnbox(this).Call(vm, stack, arity, loc);
 
     public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
     {

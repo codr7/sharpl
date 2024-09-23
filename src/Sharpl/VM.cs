@@ -235,7 +235,7 @@ public class VM
                         var arity = op.Arity;
                         if (op.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        op.Target.Call(op.Loc, this, stack, arity);
+                        op.Target.Call(this, stack, arity, op.Loc);
                         break;
                     }
                 case Ops.CallRegister op:

@@ -2,7 +2,7 @@ namespace Sharpl;
 
 public readonly struct Macro
 {
-    public delegate void BodyType(Loc loc, Macro target, VM vm, Form.Queue args);
+    public delegate void BodyType(VM vm, Macro target, Form.Queue args, Loc loc);
 
     public readonly string[] Args;
     public readonly BodyType Body;
@@ -17,10 +17,10 @@ public readonly struct Macro
         Body = body;
     }
 
-    public void Emit(Loc loc, VM vm, Form.Queue args)
+    public void Emit(VM vm, Form.Queue args, Loc loc)
     {
         if (args.Count < MinArgCount) { throw new EmitError($"Not enough arguments: {this}", loc); }
-        Body(loc, this, vm, args);
+        Body(vm, this, args, loc);
     }
 
     public override string ToString() =>

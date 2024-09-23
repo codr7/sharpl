@@ -13,7 +13,7 @@ public class IO : Lib
 
         Bind("IN", Value.Make(IO.InputStream, Console.In));
 
-        BindMacro("do-read", ["path"], (loc, target, vm, args) =>
+        BindMacro("do-read", ["path"], (vm, target, args, loc) =>
          {
              if (args.TryPop() is Form afs)
              {
@@ -55,7 +55,7 @@ public class IO : Lib
              }
          });
 
-        BindMethod("lines", ["in"], (loc, target, vm, stack, arity) =>
+        BindMethod("lines", ["in"], (vm, stack, target, arity, loc) =>
         {
             var s = stack.Pop().Cast(InputStream);
             stack.Push(Value.Make(Core.Iter, new StreamLines(s)));

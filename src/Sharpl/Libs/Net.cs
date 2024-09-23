@@ -16,7 +16,7 @@ public class Net : Lib
         BindType(Server);
         BindType(Stream);
 
-        BindMethod("connect", ["addr"], (loc, target, vm, stack, arity) =>
+        BindMethod("connect", ["addr"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop().CastUnbox(Core.Pair, loc);
             var a = IPAddress.Parse(v.Item1.Cast(Core.String, loc));
@@ -25,7 +25,7 @@ public class Net : Lib
             stack.Push(Stream, c.GetStream());
         });
 
-        BindMethod("accept", ["server"], (loc, target, vm, stack, arity) =>
+        BindMethod("accept", ["server"], (vm, stack, target, arity, loc) =>
         {
             var s = stack.Pop().Cast(Server, loc);
             var c = Channel.CreateUnbounded<Value>();
@@ -41,7 +41,7 @@ public class Net : Lib
             stack.Push(Core.Pipe, c);
         });
 
-        BindMethod("listen", ["addr"], (loc, target, vm, stack, arity) =>
+        BindMethod("listen", ["addr"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop().CastUnbox(Core.Pair, loc);
             var a = IPAddress.Parse(v.Item1.Cast(Core.String, loc));
@@ -50,7 +50,7 @@ public class Net : Lib
             stack.Push(Server, s);
         });
 
-        BindMethod("stream-port", ["it"], (loc, target, vm, stack, arity) =>
+        BindMethod("stream-port", ["it"], (vm, stack, target, arity, loc) =>
         {
             var s = stack.Pop().Cast(Stream, loc);
             stack.Push(Core.Port, new StreamPort(s));

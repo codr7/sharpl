@@ -8,7 +8,7 @@ public class Iter : Lib
 {
     public Iter() : base("iter", null, [])
     {
-        BindMethod("filter", ["pred", "seq"], (loc, target, vm, stack, arity) =>
+        BindMethod("filter", ["pred", "seq"], (vm, stack, target, arity, loc) =>
         {
             var seq = stack.Pop();
             var pred = stack.Pop();
@@ -16,7 +16,7 @@ public class Iter : Lib
             else { throw new EvalError("Not iterable", loc); }
         });
 
-        BindMacro("find-first", ["pred", "seq"], (loc, target, vm, args) =>
+        BindMacro("find-first", ["pred", "seq"], (vm, target, args, loc) =>
         {
             var pred = new Register(0, vm.AllocRegister());
             vm.Emit(args.Pop());
@@ -50,7 +50,7 @@ public class Iter : Lib
             ok.PC = vm.EmitPC;
         });
 
-        BindMacro("for", ["vars", "body?"], (loc, target, vm, args) =>
+        BindMacro("for", ["vars", "body?"], (vm, target, args, loc) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
@@ -97,7 +97,7 @@ public class Iter : Lib
              });
         });
 
-        BindMacro("map", ["method", "sequence1"], (loc, target, vm, args) =>
+        BindMacro("map", ["method", "sequence1"], (vm, target, args, loc) =>
                       {
                           var result = new Register(0, vm.AllocRegister());
                           vm.Emit(Ops.CreateList.Make(result));
@@ -121,7 +121,7 @@ public class Iter : Lib
                           args.Clear();
                       });
 
-        BindMacro("reduce", ["method", "sequence", "seed"], (loc, target, vm, args) =>
+        BindMacro("reduce", ["method", "sequence", "seed"], (vm, target, args, loc) =>
               {
                   var iter = new Register(0, vm.AllocRegister());
                   var methodForm = args.Pop();
@@ -145,7 +145,7 @@ public class Iter : Lib
                   done.PC = vm.EmitPC;
               });
 
-        BindMethod("zip", ["in1", "in2", "in3?"], (loc, target, vm, stack, arity) =>
+        BindMethod("zip", ["in1", "in2", "in3?"], (vm, stack, target, arity, loc) =>
         {
             Sharpl.Iter[] sources = new Sharpl.Iter[arity];
 

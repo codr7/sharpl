@@ -7,13 +7,13 @@ public class String : Lib
 {
     public String() : base("string", null, [])
     {
-        BindMethod("down", ["in"], (loc, target, vm, stack, arity) =>
+        BindMethod("down", ["in"], (vm, stack, target, arity, loc) =>
         {
             var s = stack.Pop().Cast(Core.String);
             stack.Push(Core.String, s.ToLower());
         });
 
-        BindMethod("join", ["sep"], (loc, target, vm, stack, arity) =>
+        BindMethod("join", ["sep"], (vm, stack, target, arity, loc) =>
         {
             stack.Reverse(arity);
             var sep = stack.Pop();
@@ -30,7 +30,7 @@ public class String : Lib
             stack.Push(Core.String, res.ToString());
         });
 
-        BindMethod("reverse", ["in"], (loc, target, vm, stack, arity) =>
+        BindMethod("reverse", ["in"], (vm, stack, target, arity, loc) =>
         {
             var s = stack.Pop().Cast(Core.String, loc);
             char[] cs = s.ToCharArray();
@@ -38,7 +38,7 @@ public class String : Lib
             stack.Push(Core.String, new string(cs));
         });
 
-        BindMethod("split", ["in", "sep"], (loc, target, vm, stack, arity) =>
+        BindMethod("split", ["in", "sep"], (vm, stack, target, arity, loc) =>
         {
             var sep = stack.Pop().Cast(Core.String, loc);
             var res = new Regex(sep).
@@ -48,13 +48,13 @@ public class String : Lib
             stack.Push(Core.Array, res);
         });
 
-        BindMethod("up", ["in"], (loc, target, vm, stack, arity) =>
+        BindMethod("up", ["in"], (vm, stack, target, arity, loc) =>
         {
             var s = stack.Pop().Cast(Core.String);
             stack.Push(Core.String, s.ToUpper());
         });
 
-        BindMethod("replace", ["in", "old", "new"], (loc, target, vm, stack, arity) =>
+        BindMethod("replace", ["in", "old", "new"], (vm, stack, target, arity, loc) =>
         {
             var n = stack.Pop().Cast(Core.String, loc);
             var o = stack.Pop().Cast(Core.String, loc);

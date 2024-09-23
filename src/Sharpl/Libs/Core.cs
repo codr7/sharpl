@@ -127,10 +127,10 @@ public class Core : Lib
         Bind("F", Value.F);
         Bind("T", Value.T);
 
-        BindMacro("^", [], (loc, target, vm, args) =>
+        BindMacro("^", [], (vm, target, args, loc) =>
             DefineMethod(loc, vm, args, UserMethod, Ops.ExitMethod.Make()));
 
-        BindMethod("=", ["x"], (loc, target, vm, stack, arity) =>
+        BindMethod("=", ["x"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop();
             arity--;
@@ -150,7 +150,7 @@ public class Core : Lib
             stack.Push(Value.Make(Bit, res));
         });
 
-        BindMethod("<", ["x", "y"], (loc, target, vm, stack, arity) =>
+        BindMethod("<", ["x", "y"], (vm, stack, target, arity, loc) =>
         {
             var lv = stack.Pop();
             arity--;
@@ -174,7 +174,7 @@ public class Core : Lib
             stack.Push(Value.Make(Bit, res));
         });
 
-        BindMethod(">", ["x", "y"], (loc, target, vm, stack, arity) =>
+        BindMethod(">", ["x", "y"], (vm, stack, target, arity, loc) =>
         {
             var lv = stack.Pop();
             arity--;
@@ -200,32 +200,32 @@ public class Core : Lib
         });
 
 
-        BindMethod("+", ["x"], (loc, target, vm, stack, arity) =>
+        BindMethod("+", ["x"], (vm, stack, target, arity, loc) =>
         {
             if (stack[^arity].Type is NumericTrait nt) { nt.Add(loc, vm, stack, arity); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
-        BindMethod("-", ["x"], (loc, target, vm, stack, arity) =>
+        BindMethod("-", ["x"], (vm, stack, target, arity, loc) =>
         {
             if (stack[^arity].Type is NumericTrait nt) { nt.Subtract(loc, vm, stack, arity); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
-        BindMethod("*", ["x", "y"], (loc, target, vm, stack, arity) =>
+        BindMethod("*", ["x", "y"], (vm, stack, target, arity, loc) =>
          {
              if (stack[^arity].Type is NumericTrait nt)
              { nt.Multiply(loc, vm, stack, arity); }
              else { throw new EvalError($"Expected numeric value", loc); }
          });
 
-        BindMethod("/", ["x", "y"], (loc, target, vm, stack, arity) =>
+        BindMethod("/", ["x", "y"], (vm, stack, target, arity, loc) =>
         {
             if (stack[^arity].Type is NumericTrait nt) { nt.Divide(loc, vm, stack, arity); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
-        BindMacro("and", ["value1"], (loc, target, vm, args) =>
+        BindMacro("and", ["value1"], (vm, target, args, loc) =>
              {
                  var done = new Label();
                  var first = true;
@@ -245,7 +245,7 @@ public class Core : Lib
                  done.PC = vm.EmitPC;
              });
 
-        BindMacro("bench", ["n"], (loc, target, vm, args) =>
+        BindMacro("bench", ["n"], (vm, target, args, loc) =>
          {
              if (args.TryPop() is Form f && vm.Eval(f) is Value n)
              {
@@ -256,7 +256,7 @@ public class Core : Lib
              else { throw new EmitError("Missing repetitions", loc); }
          });
 
-        BindMacro("check", ["x"], (loc, target, vm, args) =>
+        BindMacro("check", ["x"], (vm, target, args, loc) =>
          {
              var ef = args.Pop();
              var emptyArgs = true;
@@ -284,14 +284,14 @@ public class Core : Lib
              vm.Emit(Ops.Check.Make(loc));
          });
 
-        BindMethod("close", ["it"], (loc, target, vm, stack, arity) =>
+        BindMethod("close", ["it"], (vm, stack, target, arity, loc) =>
         {
             var it = stack.Pop();
             if (it.Type is CloseTrait ct) { ct.Close(it); }
             else { throw new EvalError($"Not supported: {it}", loc); }
         });
 
-        BindMacro("dec", ["delta?"], (loc, target, vm, args) =>
+        BindMacro("dec", ["delta?"], (vm, target, args, loc) =>
         {
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
             {
@@ -304,7 +304,7 @@ public class Core : Lib
             else { throw new EmitError("Invalid target", loc); }
         });
 
-        BindMacro("dmit", [], (loc, target, vm, args) =>
+        BindMacro("dmit", [], (vm, target, args, loc) =>
         {
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
@@ -316,14 +316,14 @@ public class Core : Lib
             vm.Dmit(startPC);
         });
 
-        BindMacro("do", [], (loc, target, vm, args) =>
+        BindMacro("do", [], (vm, target, args, loc) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
             vm.DoEnv(new Env(vm.Env, args.CollectIds()), () => args.Emit(vm));
             vm.Emit(Ops.EndFrame.Make());
         });
 
-        BindMacro("else", ["condition", "true?", "false?"], (loc, target, vm, args) =>
+        BindMacro("else", ["condition", "true?", "false?"], (vm, target, args, loc) =>
              {
                  if (args.TryPop() is Form cf) { vm.Emit(cf); }
                  else { throw new EmitError("Missing condition", loc); }
@@ -337,7 +337,7 @@ public class Core : Lib
                  skipEnd.PC = vm.EmitPC;
              });
 
-        BindMacro("emit", ["code?"], (loc, target, vm, args) =>
+        BindMacro("emit", ["code?"], (vm, target, args, loc) =>
         {
             var skip = new Label();
             vm.Emit(Ops.Goto.Make(skip));
@@ -354,16 +354,16 @@ public class Core : Lib
             foreach (var it in stack) { args.PushFirst(new Forms.Literal(it, loc)); }
         });
 
-        BindMethod("eval", ["code?"], (loc, target, vm, stack, arity) =>
+        BindMethod("eval", ["code?"], (vm, stack, target, arity, loc) =>
         {
             var f = stack.Pop().Unquote(vm, loc);
             vm.Eval(f, stack);
         });
 
-        BindMethod("exit", ["code?"], (loc, target, vm, stack, arity) =>
+        BindMethod("exit", ["code?"], (vm, stack, target, arity, loc) =>
             Environment.Exit((arity == 0) ? 0 : stack.Pop().CastUnbox(Int)));
 
-        BindMethod("fail", [], (loc, target, vm, stack, arity) =>
+        BindMethod("fail", [], (vm, stack, target, arity, loc) =>
         {
             stack.Reverse(arity);
             var res = new StringBuilder();
@@ -377,7 +377,7 @@ public class Core : Lib
             throw new EvalError(res.ToString(), loc);
         });
 
-        BindMethod("gensym", ["name"], (loc, target, vm, stack, arity) =>
+        BindMethod("gensym", ["name"], (vm, stack, target, arity, loc) =>
             {
                 stack.Reverse(arity);
                 var res = new StringBuilder();
@@ -391,7 +391,7 @@ public class Core : Lib
                 stack.Push(Value.Make(Sym, vm.Gensym(res.ToString())));
             });
 
-        BindMacro("if", ["condition"], (loc, target, vm, args) =>
+        BindMacro("if", ["condition"], (vm, target, args, loc) =>
             {
                 if (args.TryPop() is Form f) { vm.Emit(f); }
                 else { throw new EmitError("Missing condition", loc); }
@@ -402,7 +402,7 @@ public class Core : Lib
                 skip.PC = vm.EmitPC;
             });
 
-        BindMacro("inc", ["delta?"], (loc, target, vm, args) =>
+        BindMacro("inc", ["delta?"], (vm, target, args, loc) =>
         {
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
             {
@@ -415,7 +415,7 @@ public class Core : Lib
             else { throw new EmitError("Invalid target", loc); }
         });
 
-        BindMethod("is", ["x"], (loc, target, vm, stack, arity) =>
+        BindMethod("is", ["x"], (vm, stack, target, arity, loc) =>
             {
                 var v = stack.Pop();
                 arity--;
@@ -437,14 +437,14 @@ public class Core : Lib
                 stack.Push(Value.Make(Bit, res));
             });
 
-        BindMethod("length", ["it"], (loc, target, vm, stack, arity) =>
+        BindMethod("length", ["it"], (vm, stack, target, arity, loc) =>
             {
                 var v = stack.Pop();
                 if (v.Type is LengthTrait st) { stack.Push(Int, st.Length(v)); }
                 else { throw new EvalError($"Not supported: {v}", loc); }
             });
 
-        BindMacro("let", ["bindings"], (loc, target, vm, args) =>
+        BindMacro("let", ["bindings"], (vm, target, args, loc) =>
             {
                 var ids = args.CollectIds();
 
@@ -507,7 +507,7 @@ public class Core : Lib
                 else { throw new EmitError("Missing bindings", loc); }
             });
 
-        BindMacro("lib", [], (loc, target, vm, args) =>
+        BindMacro("lib", [], (vm, target, args, loc) =>
             {
                 if (args.Count == 0) { vm.Emit(Ops.Push.Make(Value.Make(Lib, vm.Lib))); }
 
@@ -528,7 +528,7 @@ public class Core : Lib
                 else { throw new EmitError("Invalid library name", loc); }
             });
 
-        BindMacro("load", ["path"], (loc, target, vm, args) =>
+        BindMacro("load", ["path"], (vm, target, args, loc) =>
             {
                 while (true)
                 {
@@ -541,7 +541,7 @@ public class Core : Lib
                 }
             });
 
-        BindMacro("loop", ["body?"], (loc, target, vm, args) =>
+        BindMacro("loop", ["body?"], (vm, target, args, loc) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
@@ -556,7 +556,7 @@ public class Core : Lib
              });
         });
 
-        BindMethod("max", ["x", "y?"], (loc, target, vm, stack, arity) =>
+        BindMethod("max", ["x", "y?"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop();
             var t = v.Type as ComparableTrait;
@@ -573,7 +573,7 @@ public class Core : Lib
             stack.Push(v);
         });
 
-        BindMethod("min", ["x", "y?"], (loc, target, vm, stack, arity) =>
+        BindMethod("min", ["x", "y?"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop();
             var t = v.Type as ComparableTrait;
@@ -590,9 +590,9 @@ public class Core : Lib
             stack.Push(v);
         });
 
-        BindMethod("not", ["it"], (loc, target, vm, stack, arity) => stack.Push(Bit, !(bool)stack.Pop()));
+        BindMethod("not", ["it"], (vm, stack, target, arity, loc) => stack.Push(Bit, !(bool)stack.Pop()));
 
-        BindMacro("or", ["value1"], (loc, target, vm, args) =>
+        BindMacro("or", ["value1"], (vm, target, args, loc) =>
              {
                  var done = new Label();
                  var first = true;
@@ -612,7 +612,7 @@ public class Core : Lib
                  done.PC = vm.EmitPC;
              });
 
-        BindMethod("parse-int", ["val"], (loc, target, vm, stack, arity) =>
+        BindMethod("parse-int", ["val"], (vm, stack, target, arity, loc) =>
         {
             int v = 0;
             var i = 0;
@@ -628,14 +628,14 @@ public class Core : Lib
             stack.Push(Pair, (Value.Make(Int, v), Value.Make(Int, i)));
         });
 
-        BindMethod("peek", ["src"], (loc, target, vm, stack, arity) =>
+        BindMethod("peek", ["src"], (vm, stack, target, arity, loc) =>
         {
             var src = stack.Pop();
             if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); }
             else { throw new EvalError("Invalid peek target: {src}", loc); }
         });
 
-        BindMethod("poll", ["source1", "source2?"], (loc, target, vm, stack, arity) =>
+        BindMethod("poll", ["source1", "source2?"], (vm, stack, target, arity, loc) =>
         {
             var ss = new (Task<bool>, Value)[arity];
             var cts = new CancellationTokenSource();
@@ -650,7 +650,7 @@ public class Core : Lib
             stack.Push(Task.Run(async () => await TaskUtil.Any(ss, cts)).Result);
         });
 
-        BindMacro("pop", ["src"], (loc, target, vm, args) =>
+        BindMacro("pop", ["src"], (vm, target, args, loc) =>
          {
              var src = args.Pop();
 
@@ -661,7 +661,7 @@ public class Core : Lib
              else { throw new EmitError($"Invalid push destination: {src}", loc); }
          });
 
-        BindMacro("push", ["dst", "val"], (loc, target, vm, args) =>
+        BindMacro("push", ["dst", "val"], (vm, target, args, loc) =>
          {
              var dst = args.Pop();
 
@@ -676,14 +676,14 @@ public class Core : Lib
              else { throw new EmitError($"Invalid push destination: {dst}", loc); }
          });
 
-        BindMethod("rand-int", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("rand-int", ["n?"], (vm, stack, target, arity, loc) =>
         {
             Value? n = (arity == 1) ? stack.Pop() : null;
             var v = vm.Random.Next();
             stack.Push(Int, (n is null) ? v : v % ((Value)n).CastUnbox(Int, loc));
         });
 
-        BindMethod("range", ["max", "min?", "stride?"], (loc, target, vm, stack, arity) =>
+        BindMethod("range", ["max", "min?", "stride?"], (vm, stack, target, arity, loc) =>
             {
                 Value max = Value._, min = Value._, stride = Value._;
                 AnyType t = Nil;
@@ -708,7 +708,7 @@ public class Core : Lib
                 else { throw new EvalError($"Invalid range type: {t}", loc); }
             });
 
-        BindMethod("resize", ["array", "size", "value?"], (loc, target, vm, stack, arity) =>
+        BindMethod("resize", ["array", "size", "value?"], (vm, stack, target, arity, loc) =>
         {
             var v = (arity == 3) ? stack.Pop() : Value._;
             var s = stack.Pop().CastUnbox(Int, loc);
@@ -719,7 +719,7 @@ public class Core : Lib
             stack.Push(Array, a);
         });
 
-        BindMacro("return", [], (loc, target, vm, args) =>
+        BindMacro("return", [], (vm, target, args, loc) =>
             {
                 var vf = args.TryPop();
                 UserMethod? m = null;
@@ -767,7 +767,7 @@ public class Core : Lib
                 }
             });
 
-        BindMethod("rgb", ["r", "g", "b"], (loc, target, vm, stack, arity) =>
+        BindMethod("rgb", ["r", "g", "b"], (vm, stack, target, arity, loc) =>
             {
                 int b = stack.Pop().CastUnbox(Int);
                 int g = stack.Pop().CastUnbox(Int);
@@ -776,7 +776,7 @@ public class Core : Lib
                 stack.Push(Color, System.Drawing.Color.FromArgb(255, r, g, b));
             });
 
-        BindMethod("say", [], (loc, target, vm, stack, arity) =>
+        BindMethod("say", [], (vm, stack, target, arity, loc) =>
             {
                 stack.Reverse(arity);
                 var res = new StringBuilder();
@@ -790,7 +790,7 @@ public class Core : Lib
                 Console.WriteLine(res.ToString());
             });
 
-        BindMacro("set", ["id1", "value1", "id2?", "value2?"], (loc, target, vm, args) =>
+        BindMacro("set", ["id1", "value1", "id2?", "value2?"], (vm, target, args, loc) =>
         {
             while (!args.Empty)
             {
@@ -803,7 +803,7 @@ public class Core : Lib
             }
         });
 
-        BindMacro("spawn", ["args", "body?"], (loc, target, vm, args) =>
+        BindMacro("spawn", ["args", "body?"], (vm, target, args, loc) =>
         {
             var forkArgs = args.Pop().Cast<Forms::Array>().Items;
             if (forkArgs.Length != 1) { throw new EmitError("Wrong number of arguments.", loc); }
@@ -822,12 +822,12 @@ public class Core : Lib
             new Thread(() => fvm.Eval(startPC)).Start();
         });
 
-        BindMacro("stop", [], (loc, target, vm, args) => vm.Emit(Ops.Stop.Make()));
+        BindMacro("stop", [], (vm, target, args, loc) => vm.Emit(Ops.Stop.Make()));
 
-        BindMethod("type-of", ["x"], (loc, target, vm, stack, arity) =>
+        BindMethod("type-of", ["x"], (vm, stack, target, arity, loc) =>
             stack.Push(Meta, stack.Pop().Type));
 
-        BindMacro("var", ["id", "value"], (loc, target, vm, args) =>
+        BindMacro("var", ["id", "value"], (vm, target, args, loc) =>
             {
                 while (true)
                 {

@@ -26,7 +26,7 @@ public class Time : Lib
         for (var i = 0; i < 7; i++) { wds[i] = Value.Make(Core.Sym, vm.Intern(((DayOfWeek)i).ToString().ToLower()[0..2])); }
         Bind("WEEKDAYS", Value.Make(Core.Array, wds));
 
-        BindMethod("D", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("D", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -43,7 +43,7 @@ public class Time : Lib
             }
         });
 
-        BindMethod("h", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("h", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -60,7 +60,7 @@ public class Time : Lib
             }
         });
 
-        BindMethod("M", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("M", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -77,7 +77,7 @@ public class Time : Lib
             }
         });
 
-        BindMethod("m", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("m", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -94,7 +94,7 @@ public class Time : Lib
             }
         });
 
-        BindMethod("ms", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("ms", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -111,10 +111,10 @@ public class Time : Lib
             }
         });
 
-        BindMethod("now", [], (loc, target, vm, stack, arity) =>
+        BindMethod("now", [], (vm, stack, target, arity, loc) =>
               stack.Push(Core.Timestamp, DateTime.Now));
 
-        BindMethod("s", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("s", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -131,16 +131,16 @@ public class Time : Lib
             }
         });
 
-        BindMethod("to-local", ["t"], (loc, target, vm, stack, arity) =>
+        BindMethod("to-local", ["t"], (vm, stack, target, arity, loc) =>
            stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).ToLocalTime()));
 
-        BindMethod("to-utc", ["t"], (loc, target, vm, stack, arity) =>
+        BindMethod("to-utc", ["t"], (vm, stack, target, arity, loc) =>
            stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).ToUniversalTime()));
 
-        BindMethod("trunc", ["t"], (loc, target, vm, stack, arity) =>
+        BindMethod("trunc", ["t"], (vm, stack, target, arity, loc) =>
            stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).Date));
 
-        BindMethod("us", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("us", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
@@ -157,10 +157,10 @@ public class Time : Lib
             }
         });
 
-        BindMethod("WD", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("WD", ["n?"], (vm, stack, target, arity, loc) =>
             stack.Push(Core.Int, (int)stack.Pop().CastUnbox(Core.Timestamp, loc).DayOfWeek));
 
-        BindMethod("W", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("W", ["n?"], (vm, stack, target, arity, loc) =>
           {
               if (arity == 1 && stack.Peek().Type == Core.Duration)
               {
@@ -178,7 +178,7 @@ public class Time : Lib
           });
 
 
-        BindMethod("Y", ["n?"], (loc, target, vm, stack, arity) =>
+        BindMethod("Y", ["n?"], (vm, stack, target, arity, loc) =>
         {
             if (arity == 1 && stack.Peek().Type == Core.Duration)
             {
