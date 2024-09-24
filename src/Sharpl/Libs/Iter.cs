@@ -1,6 +1,7 @@
 using Sharpl.Iters;
 using Sharpl.Iters.Core;
 using Sharpl.Types.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sharpl.Libs;
 
@@ -96,30 +97,23 @@ public class Iter : Lib
                  vm.Emit(Ops.EndFrame.Make());
              });
         });
+        
+        BindMethod("map", ["result", "seq1", "seq2?"], (vm, stack, target, arity, loc) =>
+        {
+            stack.Reverse(arity);
+            var result = stack.Pop();
+            arity--;
+            var sources = new Sharpl.Iter[arity];
+            
+            for (var i = 0; i < arity; i++)
+            {
+                var s = stack.Pop();
+                if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s, vm, loc);  }
+                else { throw new EvalError($"Not iterable: {s.Dump(vm)}", loc); }
+            }
 
-        BindMacro("map", ["method", "sequence1"], (vm, target, args, loc) =>
-                      {
-                          var result = new Register(0, vm.AllocRegister());
-                          vm.Emit(Ops.CreateList.Make(result));
-                          var methodForm = args.Pop();
-                          var iters = args.Select(a => (a, new Register(0, vm.AllocRegister()))).ToArray();
-
-                          foreach (var (a, it) in iters)
-                          {
-                              vm.Emit(a);
-                              vm.Emit(Ops.CreateIter.Make(loc, it));
-                          }
-                          var start = new Label(vm.EmitPC);
-                          var end = new Label();
-                          foreach (var (a, it) in iters) { vm.Emit(Ops.IterNext.Make(loc, it, end)); }
-                          vm.Emit(methodForm);
-                          vm.Emit(Ops.CallStack.Make(loc, args.Count, args.IsSplat, vm.NextRegisterIndex));
-                          vm.Emit(Ops.PushItem.Make(loc, result));
-                          vm.Emit(Ops.Goto.Make(start));
-                          end.PC = vm.EmitPC;
-                          vm.Emit(Ops.GetRegister.Make(result));
-                          args.Clear();
-                      });
+            stack.Push(Core.Iter, new MapItems(result, sources));
+        });
 
         BindMacro("reduce", ["method", "sequence", "seed"], (vm, target, args, loc) =>
               {
@@ -168,7 +162,7 @@ public class Iter : Lib
           (^enumerate [i in]
             (zip (range i) in))
 
-          (^sum [in]
+          (^sum [in*]
             (reduce + in 0))
         """);
     }

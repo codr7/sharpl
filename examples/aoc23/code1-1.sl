@@ -6,8 +6,9 @@
 (^decode-line [line]
   (parse-int:_ (String (find-digit line) (find-digit (string/reverse line)))))
 
-(^calibrate [input]
-  (sum (map decode-line (io/read-lines input))))
+(^calibrate [path]
+  (io/do-read [f path]
+    (sum (map decode-line (io/lines f))*)))
 
 (check 55108
   (calibrate "input1"))

@@ -12,8 +12,7 @@ public class Json : Lib
         });
 
         BindMethod("encode", ["value"], (vm, stack, target, arity, loc) =>
-        {
-            stack.Push(Core.String, stack.Pop().ToJson(loc));
-        });
+            stack.Push(Core.String, stack.Pop().ToJson(loc))
+        );
     }
 }

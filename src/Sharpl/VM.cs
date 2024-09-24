@@ -6,7 +6,6 @@ using System.Text;
 namespace Sharpl;
 
 using PC = int;
-
 public class VM
 {
     public struct C
@@ -39,7 +38,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 26;
+    public static readonly int VERSION = 27;
 
     public readonly Libs.Char CharLib;
     public readonly Libs.Core CoreLib = new Libs.Core();
@@ -192,7 +191,7 @@ public class VM
 
         while (true)
         {
-            //Console.WriteLine(code[PC]);
+            //Console.WriteLine(PC + " " + code[PC]);
 
             switch (code[PC])
             {
@@ -204,8 +203,8 @@ public class VM
                     }
                 case Ops.BeginFrame op:
                     {
-                        BeginFrame(op.RegisterCount);
                         PC++;
+                        BeginFrame(op.RegisterCount);
                         break;
                     }
                 case Ops.Benchmark op:

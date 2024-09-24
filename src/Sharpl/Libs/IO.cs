@@ -61,15 +61,4 @@ public class IO : Lib
             stack.Push(Value.Make(Core.Iter, new StreamLines(s)));
         });
     }
-
-    protected override void OnInit(VM vm)
-    {
-        Import(vm.CoreLib);
-
-        vm.Eval("""
-          (^read-lines [path]
-            (do-read [in path] 
-              (lines in)))
-        """);
-    }
 }

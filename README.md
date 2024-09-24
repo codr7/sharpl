@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v26
+sharpl v27
 
    1 (say 'hello)
    2 
@@ -201,7 +201,7 @@ Methods may be composed using `&`.
 `[0 1 2]`
 
 ### for
-`for` may be used to iterate any number of sequences.
+`for` may be used to iterate any number of iterables.
 
 ```
 (let [result {}]
@@ -478,12 +478,12 @@ All composite types may be sliced by indexing using a pair.
 ## iterators
 
 ### map
-`map` may be used to map a method over one or more sequences.
+`map` may be used to map a method over one or more iterables, it returns an iterator.
 
 ```
-(map Pair '[foo bar baz] [1 2 3 4])
+[(map Pair '[foo bar baz] [1 2 3 4])*]
 ```
-`(List 'foo:1 'bar:2 'baz:3)`
+`['foo:1 'bar:2 'baz:3]`
 
 ### filter
 `filter` returns an iterator for items matching the specified predicate.
@@ -501,8 +501,16 @@ All composite types may be sliced by indexing using a pair.
 ```
 `6`
 
+### sum
+`sum` is provided as a shortcut.
+
+```
+(sum 1 2 3)
+```
+`10`
+
 ### zip
-`zip` may be used to braid any number of sequences.
+`zip` may be used to braid any number of iterables.
 
 ```
 [(zip '[foo bar] '[1 2 3] [T F])*]
@@ -510,7 +518,7 @@ All composite types may be sliced by indexing using a pair.
 `['foo:1:T 'bar:2:F]`
 
 ### enumerate
-`enumerate` may be used to zip any sequence with indexes.
+`enumerate` may be used to zip any iterable with indexes.
 
 ```
 [(enumerate 42 '[foo bar])*]
@@ -518,7 +526,7 @@ All composite types may be sliced by indexing using a pair.
 `[42:'foo 43:'bar]`
 
 ### find
-`find-first` may be used to find the first value in a sequence matching the specified predicate, along with its index; or `_` if not found.
+`find-first` may be used to find the first value in an iterable matching the specified predicate, along with its index; or `_` if not found.
 
 ```
 (find-first (^[x] (> x 3)) [1 3 5 7 9])

@@ -9,12 +9,11 @@ public class UserMethodType : Type<UserMethod>
         var startPC = vm.PC;
         var m = target.Cast(this);
         vm.CallUserMethod(loc, stack, m, new Value?[m.Args.Length], arity, registerCount);
-
         if (eval) { 
-            vm.EvalUntil((int)m.EndPC!, stack);
-            vm.PC = startPC;
+            vm.EvalUntil(startPC, stack);
+            vm.PC--;
         }
-    }
+    }   
 
     public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
     {
