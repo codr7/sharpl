@@ -16,9 +16,6 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-** convert ops to readonly struct
-* benchmark
-
 * aoc2
 ** implement pair unification in let macro
 ** make values callable
