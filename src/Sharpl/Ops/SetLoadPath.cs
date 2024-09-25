@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct SetLoadPath(string Path) : Op
+public class SetLoadPath : Op
 {
     public static Op Make(string path) => new SetLoadPath(path);
-    public override string ToString() => $"SetLoadPath {Path}";
+    public readonly string Path;
+    public SetLoadPath(string path): base(OpCode.SetLoadPath)
+    {
+        Path = path;
+    }
+
+    public override string Dump(VM vm) => $"SetLoadPath {Path}";
 }

@@ -1,6 +1,12 @@
 namespace Sharpl.Ops;
-public readonly record struct Repush(int N) : Op
+public class Repush : Op
 {
-    public static Op Make(int n) => new Repush(n);
-    public override string ToString() => $"Repush {N}";
+    public static Op Make(int count) => new Repush(count);
+    public readonly int Count;
+    public Repush(int count): base(OpCode.Repush)
+    {
+        Count = count;
+    }
+
+    public override string Dump(VM vm) => $"Repush {Count}";
 }

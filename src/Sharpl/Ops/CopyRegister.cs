@@ -1,10 +1,18 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CopyRegister(int FromFrameOffset, int FromIndex, int ToFrameOffset, int ToIndex) : Op
+public class CopyRegister : Op
 {
-    public static Op Make(int fromFrameOffset, int fromIndex, int toFrameOffset, int toIndex) =>
-        new CopyRegister(fromFrameOffset, fromIndex, toFrameOffset, toIndex);
+    public static Op Make(Register from, Register to) => new CopyRegister(from, to);
 
-    public override string ToString() =>
-        $"CopyRegister {FromFrameOffset}:{FromIndex} {ToFrameOffset}:{ToIndex}";
+    public readonly Register From;
+    public readonly Register To;
+
+    public CopyRegister(Register from, Register to): base(OpCode.CopyRegister)
+    {
+        From = from;
+        To = to;
+    }
+
+    public override string Dump(VM vm) =>
+        $"CopyRegister {From} {To}";
 }

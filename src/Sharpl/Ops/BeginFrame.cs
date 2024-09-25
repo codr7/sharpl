@@ -1,7 +1,14 @@
 namespace Sharpl.Ops;
 
-public readonly record struct BeginFrame(int RegisterCount) : Op
+public class BeginFrame : Op
 {
     public static Op Make(int registerCount) => new BeginFrame(registerCount);
-    public override string ToString() => $"BeginFrame {RegisterCount}";
+    public readonly int RegisterCount;
+
+    public BeginFrame(int registerCount): base(OpCode.BeginFrame)
+    {
+        RegisterCount = registerCount;
+    }
+
+    public override string Dump(VM vm) => $"BeginFrame {RegisterCount}";
 }

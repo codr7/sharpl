@@ -1,7 +1,15 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Increment(Register Target, int Delta) : Op
+public class Increment : Op
 {
     public static Op Make(Register target, int delta) => new Increment(target, delta);
-    public override string ToString() => $"Increment {Target} {Delta}";
+    public readonly Register Target;
+    public readonly int Delta;
+    public Increment(Register target, int delta): base(OpCode.Increment)
+    {
+        Target = target;
+        Delta = delta;
+    }
+
+    public override string Dump(VM vm) => $"Increment {Target} {Delta}";
 }

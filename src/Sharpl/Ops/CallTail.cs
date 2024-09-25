@@ -1,9 +1,22 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CallTail(Loc Loc, UserMethod Target, Value?[] ArgMask, bool Splat) : Op
+public class CallTail : Op
 {
-    public static Op Make(Loc loc, UserMethod target, Value?[] argMask, bool splat) =>
-        new CallTail(loc, target, argMask, splat);
+    public static Op Make(UserMethod target, Value?[] argMask, bool splat, Loc loc) =>
+        new CallTail(target, argMask, splat, loc);
 
-    public override string ToString() => $"CallTail {Loc} {Target} {ArgMask} {Splat}";
+    public readonly UserMethod Target;
+    public readonly Value?[] ArgMask;
+    public readonly bool Splat;
+    public readonly Loc Loc;
+
+    public CallTail(UserMethod target, Value?[] argMask, bool splat, Loc loc): base(OpCode.CallTail)
+    {
+        Target = target;
+        ArgMask = argMask; 
+        Splat = splat; 
+        Loc = loc;
+    }
+
+    public override string Dump(VM vm) => $"CallTail {Loc} {Target} {ArgMask} {Splat}";
 }

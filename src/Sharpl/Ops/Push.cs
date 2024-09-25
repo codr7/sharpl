@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Push(Value Value) : Op
+public class Push : Op
 {
     public static Op Make(Value value) => new Push(value);
-    public override string ToString() => $"Push {Value}";
+    public readonly Value Value;
+    public Push(Value value): base(OpCode.Push)
+    {
+        Value = value;
+    }
+
+    public override string Dump(VM vm) => $"Push {Value}";
 }

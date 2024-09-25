@@ -1,5 +1,6 @@
 using Sharpl.Libs;
 using Sharpl.Types.Core;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Text;
 
@@ -191,128 +192,141 @@ public class VM
 
         while (true)
         {
-            //Console.WriteLine(PC + " " + code[PC]);
-
-            switch (code[PC])
+            var op = code[PC];
+            //Console.WriteLine(PC + " " + op.Dump(this));
+ 
+            switch (op.Code)
             {
-                case Ops.And op:
+                case OpCode.And:
                     {
-                        if (!(bool)stack.Peek()) { PC = op.Done.PC; }
+                        if (!(bool)stack.Peek()) { PC = (op as Ops.And)!.Done.PC; }
                         else { PC++; }
                         break;
                     }
-                case Ops.BeginFrame op:
+                case OpCode.BeginFrame:
                     {
                         PC++;
-                        BeginFrame(op.RegisterCount);
+                        BeginFrame((op as Ops.BeginFrame)!.RegisterCount);
                         break;
                     }
-                case Ops.Benchmark op:
-                    Eval(op, stack);
+                case OpCode.Benchmark:
+                    Eval((op as Ops.Benchmark)!, stack);
                     break;
-                case Ops.Branch op:
+                case OpCode.Branch:
                     {
+                        var branchOp = (op as Ops.Branch)!;
+
                         if (stack.TryPop(out var v))
                         {
                             if ((bool)v) { PC++; }
-                            else { PC = op.Right.PC; }
+                            else { PC = branchOp.Right.PC; }
                         }
-                        else { throw new EvalError("Missing condition", op.Loc); }
+                        else { throw new EvalError("Missing condition", branchOp.Loc); }
 
                         break;
                     }
-                case Ops.CallDirect op:
+                case OpCode.CallDirect:
                     {
-                        var arity = op.Arity;
-                        if (op.Splat) { arity = arity + splats.Pop() - 1; }
+                        var callOp = (op as Ops.CallDirect)!;
+                        var arity = callOp.Arity;
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        op.Target.Call(this, stack, arity, op.RegisterCount, false, op.Loc);
+                        callOp.Target.Call(this, stack, arity, callOp.RegisterCount, false, callOp.Loc);
                         break;
                     }
-                case Ops.CallMethod op:
+                case OpCode.CallMethod:
                     {
-                        var arity = op.Arity;
-                        if (op.Splat) { arity = arity + splats.Pop() - 1; }
+                        var callOp = (op as Ops.CallMethod)!;
+                        var arity = callOp.Arity;
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        op.Target.Call(this, stack, arity, op.Loc);
+                        callOp.Target.Call(this, stack, arity, callOp.Loc);
                         break;
                     }
-                case Ops.CallRegister op:
+                case OpCode.CallRegister:
                     {
-                        var arity = op.Arity;
-                        if (op.Splat) { arity = arity + splats.Pop() - 1; }
+                        var callOp = (op as Ops.CallRegister)!;
+                        var arity = callOp.Arity;
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        var target = Get(op.Target);
-                        target.Call(this, stack, arity, op.RegisterCount, false, op.Loc);
+                        var target = Get(callOp.Target);
+                        target.Call(this, stack, arity, callOp.RegisterCount, false, callOp.Loc);
                         break;
                     }
-                case Ops.CallStack op:
+                case OpCode.CallStack:
                     {
+                        var callOp = (op as Ops.CallStack)!;
                         var target = stack.Pop();
-                        var arity = op.Arity;
-                        if (op.Splat) { arity = arity + splats.Pop() - 1; }
+                        var arity = callOp.Arity;
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        target.Call(this, stack, arity, op.RegisterCount, false, op.Loc);
+                        target.Call(this, stack, arity, callOp.RegisterCount, false, callOp.Loc);
                         break;
                     }
-                case Ops.CallTail op:
+                case OpCode.CallTail:
                     {
-                        var arity = op.ArgMask.Length;
-                        if (op.Splat) { arity += splats.Pop(); }
-                        if (arity < op.Target.MinArgCount) { throw new EvalError($"Not enough arguments: {op.Target} {arity}", op.Loc); }
+                        var callOp = (op as Ops.CallTail)!;
+                        var arity = callOp.ArgMask.Length;
+                        if (callOp.Splat) { arity += splats.Pop(); }
+                        if (arity < callOp.Target.MinArgCount) { throw new EvalError($"Not enough arguments: {callOp.Target} {arity}", callOp.Loc); }
                         var call = calls.Peek();
                         frames.Trunc(call.FrameOffset);
-                        op.Target.BindArgs(this, op.ArgMask, arity, stack);
+                        callOp.Target.BindArgs(this, callOp.ArgMask, arity, stack);
 #pragma warning disable CS8629 
-                        PC = (int)op.Target.StartPC;
+                        PC = (int)callOp.Target.StartPC;
 #pragma warning restore CS8629
                         break;
                     }
-                case Ops.CallUserMethod op:
+                case OpCode.CallUserMethod:
                     {
-                        var arity = op.ArgMask.Length;
-                        if (op.Splat) { arity = arity + splats.Pop() - 1; }
+                        var callOp = (op as Ops.CallUserMethod)!;
+                        var arity = callOp.ArgMask.Length;
+                        if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        CallUserMethod(op.Loc, stack, op.Target, op.ArgMask, arity, op.RegisterCount);
+                        CallUserMethod(callOp.Loc, stack, callOp.Target, callOp.ArgMask, arity, callOp.RegisterCount);
                         break;
                     }
-                case Ops.Check op:
-                    Eval(op, stack);
+                case OpCode.Check:
+                    Eval((op as Ops.Check)!, stack);
                     break;
-                case Ops.CopyRegister op:
+                case OpCode.CopyRegister:
                     {
-                        var v = GetRegister(op.FromFrameOffset, op.FromIndex);
-                        SetRegister(op.ToFrameOffset, op.ToIndex, v);
+                        var copyOp = (op as Ops.CopyRegister)!;
+                        var v = Get(copyOp.From);
+                        Set(copyOp.To, v);
                         PC++;
                         break;
                     }
-                case Ops.CreateArray op:
+                case OpCode.CreateArray:
                     {
-                        stack.Push(Value.Make(Core.Array, new Value[op.Length]));
+                        var createOp = (op as Ops.CreateArray)!;
+                        stack.Push(Value.Make(Core.Array, new Value[createOp.Length]));
                         PC++;
                         break;
                     }
-                case Ops.CreateIter op:
+                case OpCode.CreateIter:
                     {
+                        var createOp = (op as Ops.CreateIter)!;
                         var v = stack.Pop();
-                        if (v.Type is IterTrait it) { Set(op.Target, Value.Make(Core.Iter, it.CreateIter(v, this, op.Loc))); }
-                        else { throw new EvalError($"Not iterable: {v}", op.Loc); }
+                        if (v.Type is IterTrait it) { Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v, this, createOp.Loc))); }
+                        else { throw new EvalError($"Not iterable: {v}", createOp.Loc); }
                         PC++;
                         break;
                     }
-                case Ops.CreateList op:
+                case OpCode.CreateList:
                     {
-                        Set(op.Target, Value.Make(Core.List, new List<Value>()));
+                        var createOp = (op as Ops.CreateList)!;
+                        Set(createOp.Target, Value.Make(Core.List, new List<Value>()));
                         PC++;
                         break;
                     }
-                case Ops.CreateMap:
+                case OpCode.CreateMap:
                     {
                         stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>()));
                         PC++;
                         break;
                     }
-                case Ops.CreatePair:
+                case OpCode.CreatePair:
                     {
                         var r = stack.Pop();
                         var l = stack.Pop();
@@ -320,27 +334,29 @@ public class VM
                         PC++;
                         break;
                     }
-                case Ops.Decrement op:
+                case OpCode.Decrement:
                     {
-                        var i = Index(op.Target);
-                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - op.Delta);
+                        var decrementOp = (op as Ops.Decrement)!;
+                        var i = Index(decrementOp.Target);
+                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - decrementOp.Delta);
                         registers[i] = v;
                         PC++;
                         break;
                     }
-                case Ops.Drop op:
+                case OpCode.Drop:
                     {
-                        stack.Drop(op.Count);
+                        var dropOp = (op as Ops.Drop)!;
+                        stack.Drop(dropOp.Count);
                         PC++;
                         break;
                     }
-                case Ops.EndFrame:
+                case OpCode.EndFrame:
                     {
                         EndFrame();
                         PC++;
                         break;
                     }
-                case Ops.ExitMethod:
+                case OpCode.ExitMethod:
                     {
                         var c = calls.Pop();
                         foreach (var (_, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
@@ -348,106 +364,113 @@ public class VM
                         PC = c.ReturnPC;
                         break;
                     }
-                case Ops.GetRegister op:
+                case OpCode.GetRegister:
                     {
-                        stack.Push(Get(op.Target));
+                        stack.Push(Get((op as Ops.GetRegister)!.Target));
                         PC++;
                         break;
                     }
-                case Ops.Goto op:
+                case OpCode.Goto:
                     {
-                        PC = op.Target.PC;
+                        PC = (op as Ops.Goto)!.Target.PC;
                         break;
                     }
-                case Ops.Increment op:
+                case OpCode.Increment:
                     {
-                        var i = Index(op.Target);
-                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + op.Delta);
+                        var incrementOp = (op as Ops.Increment)!;
+                        var i = Index(incrementOp.Target);
+                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + incrementOp.Delta);
                         registers[i] = v;
                         PC++;
                         break;
                     }
-                case Ops.IterNext op:
+                case OpCode.IterNext:
                     {
-                        if (Get(op.Iter).Cast(Core.Iter).Next(this, op.Loc) is Value v)
+                        var iterOp = (op as Ops.IterNext)!;
+
+                        if (Get(iterOp.Iter).Cast(Core.Iter).Next(this, iterOp.Loc) is Value v)
                         {
-                            if (op.Push) { stack.Push(v); }
+                            if (iterOp.Push) { stack.Push(v); }
                             PC++;
                         }
-                        else { PC = op.Done.PC; }
+                        else { PC = iterOp.Done.PC; }
 
                         break;
                     }
-                case Ops.OpenInputStream op:
-                    Eval(op, stack);
+                case OpCode.OpenInputStream:
+                    Eval((op as Ops.OpenInputStream)!, stack);
                     break;
-                case Ops.Or op:
+                case OpCode.Or:
                     {
-                        if ((bool)stack.Peek()) { PC = op.Done.PC; }
+                        if ((bool)stack.Peek()) { PC = (op as Ops.Or)!.Done.PC; }
                         else { PC++; }
                         break;
                     }
-                case Ops.PopItem op:
+                case OpCode.PopItem:
                     {
-                        var t = Get(op.Target);
-                        if (t.Type is StackTrait st) { stack.Push(st.Pop(op.Loc, this, op.Target, t)); }
-                        else { throw new EvalError($"Invalid target: {t}", op.Loc); }
+                        var popOp = (op as Ops.PopItem)!;
+                        var t = Get(popOp.Target);
+                        if (t.Type is StackTrait st) { stack.Push(st.Pop(popOp.Loc, this, popOp.Target, t)); }
+                        else { throw new EvalError($"Invalid target: {t}", popOp.Loc); }
                         PC++;
                         break;
                     }
-                case Ops.PrepareClosure op:
+                case OpCode.PrepareClosure:
                     {
-                        var m = op.Target;
+                        var prepareOp = (op as Ops.PrepareClosure)!;
+                        var m = prepareOp.Target;
                         foreach (var (_, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
-                        PC = op.Skip.PC;
+                        PC = prepareOp.Skip.PC;
                         break;
                     }
-                case Ops.Push op:
+                case OpCode.Push:
                     {
-                        stack.Push(op.Value.Copy());
+                        stack.Push((op as Ops.Push)!.Value.Copy());
                         PC++;
                         break;
                     }
-                case Ops.PushItem op:
+                case OpCode.PushItem:
                     {
+                        var pushOp = (op as Ops.PushItem)!;
+
                         if (stack.TryPop(out var v))
                         {
-                            var t = Get(op.Target);
-                            if (t.Type is StackTrait st) { st.Push(op.Loc, this, op.Target, t, v); }
-                            else { throw new EvalError($"Invalid target: {t}", op.Loc); }
+                            var t = Get(pushOp.Target);
+                            if (t.Type is StackTrait st) { st.Push(pushOp.Loc, this, pushOp.Target, t, v); }
+                            else { throw new EvalError($"Invalid target: {t}", pushOp.Loc); }
                         }
-                        else { throw new EvalError("Missing value", op.Loc); }
+                        else { throw new EvalError("Missing value", pushOp.Loc); }
 
                         PC++;
                         break;
                     }
-                case Ops.PushSplat:
+                case OpCode.PushSplat:
                     {
                         splats.Push(0);
                         PC++;
                         break;
                     }
-                case Ops.Repush op:
+                case OpCode.Repush:
                     {
                         var v = stack.Peek();
-                        for (var i = 0; i < op.N; i++) { stack.Push(v); }
+                        for (var i = 0; i < (op as Ops.Repush)!.Count; i++) { stack.Push(v); }
                         PC++;
                         break;
                     }
-                case Ops.SetArrayItem op:
+                case OpCode.SetArrayItem:
                     {
                         var v = stack.Pop();
-                        stack.Peek().Cast(Core.Array)[op.Index] = v;
+                        stack.Peek().Cast(Core.Array)[(op as Ops.SetArrayItem)!.Index] = v;
                         PC++;
                         break;
                     }
-                case Ops.SetLoadPath op:
+                case OpCode.SetLoadPath:
                     {
-                        loadPath = op.Path;
+                        loadPath = (op as Ops.SetLoadPath)!.Path;
                         PC++;
                         break;
                     }
-                case Ops.SetMapItem:
+                case OpCode.SetMapItem:
                     {
                         var v = stack.Pop();
                         var k = stack.Pop();
@@ -455,26 +478,28 @@ public class VM
                         PC++;
                         break;
                     }
-                case Ops.SetRegister op:
+                case OpCode.SetRegister:
                     {
-                        Set(op.Target, stack.Pop());
+                        Set((op as Ops.SetRegister)!.Target, stack.Pop());
                         PC++;
                         break;
                     }
-                case Ops.Splat op:
+                case OpCode.Splat:
                     {
-                        if (stack.Count == 0) { throw new EvalError("Missing splat target", op.Loc); }
+                        var splatOp = (op as Ops.Splat)!;
+
+                        if (stack.Count == 0) { throw new EvalError("Missing splat target", splatOp.Loc); }
                         else
                         {
                             var tv = stack.Pop();
 
                             if (tv.Type is IterTrait tt)
                             {
-                                if (splats.Count == 0) { throw new EvalError("Splat outside context", op.Loc); }
+                                if (splats.Count == 0) { throw new EvalError("Splat outside context", splatOp.Loc); }
                                 var arity = splats.Pop();
-                                var it = tt.CreateIter(tv, this, op.Loc);
+                                var it = tt.CreateIter(tv, this, splatOp.Loc);
 
-                                while (it.Next(this, op.Loc) is Value v)
+                                while (it.Next(this, splatOp.Loc) is Value v)
                                 {
                                     stack.Push(v);
                                     arity++;
@@ -482,18 +507,18 @@ public class VM
 
                                 splats.Push(arity);
                             }
-                            else { throw new EvalError($"Invalid splat target: {tv}", op.Loc); }
+                            else { throw new EvalError($"Invalid splat target: {tv}", splatOp.Loc); }
                         }
 
                         PC++;
                         break;
                     }
-                case Ops.Stop:
+                case OpCode.Stop:
                     {
                         PC++;
                         return;
                     }
-                case Ops.Swap:
+                case OpCode.Swap:
                     {
                         var x = stack.Pop();
                         var y = stack.Pop();
@@ -502,22 +527,25 @@ public class VM
                         PC++;
                         break;
                     }
-                case Ops.UnquoteRegister op:
+                case OpCode.UnquoteRegister:
                     {
-                        var f = Get(op.Register).Unquote(this, op.Loc);
+                        var unquoteOp = (op as Ops.UnquoteRegister)!;
+                        var f = Get(unquoteOp.Register).Unquote(this, unquoteOp.Loc);
                         Eval(f, stack);
                         PC++;
                         break;
                     }
-                case Ops.Unzip op:
+                case OpCode.Unzip:
                     {
+                        var unzipOp = (op as Ops.Unzip)!;
+
                         if (stack.TryPop(out var p))
                         {
                             var pv = p.CastUnbox(Core.Pair);
                             stack.Push(pv.Item1);
                             stack.Push(pv.Item2);
                         }
-                        else { throw new EvalError("Missing target", op.Loc); }
+                        else { throw new EvalError("Missing target", unzipOp.Loc); }
 
                         PC++;
                         break;

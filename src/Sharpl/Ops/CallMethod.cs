@@ -1,9 +1,22 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CallMethod(Loc Loc, Method Target, int Arity, bool Splat) : Op
+public class CallMethod : Op
 {
-    public static Op Make(Loc loc, Method target, int arity, bool splat) =>
-        new CallMethod(loc, target, arity, splat);
+    public static Op Make(Method target, int arity, bool splat, Loc loc) =>
+        new CallMethod(target, arity, splat, loc);
 
-    public override string ToString() => $"CallMethod {Target} {Arity} {Splat}";
+    public readonly Loc Loc;
+    public readonly Method Target;
+    public readonly int Arity;
+    public readonly bool Splat;
+
+    public CallMethod(Method target, int arity, bool splat, Loc loc): base(OpCode.CallMethod)
+    {
+        Loc = loc;
+        Target = target;
+        Arity = arity;
+        Splat = splat;
+    }
+
+    public override string Dump(VM vm) => $"CallMethod {Target} {Arity} {Splat}";
 }

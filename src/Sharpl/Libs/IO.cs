@@ -40,7 +40,7 @@ public class IO : Lib
 
                          var startPC = vm.EmitPC;
                          vm.Emit(af.Items[1]);
-                         vm.Emit(Ops.OpenInputStream.Make(loc, 0, reg));
+                         vm.Emit(Ops.OpenInputStream.Make(0, reg, loc));
                          args.Emit(vm);
                      });
                  }

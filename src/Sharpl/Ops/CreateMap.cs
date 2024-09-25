@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CreateMap(int Length) : Op
+public class CreateMap : Op
 {
     public static Op Make(int length) => new CreateMap(length);
-    public override string ToString() => $"CreateMap {Length}";
+    public readonly int Length;
+    public CreateMap(int length) : base(OpCode.CreateMap)
+    {
+        Length = length;
+    }
+
+    public override string Dump(VM vm) => $"CreateMap {Length}";
 }

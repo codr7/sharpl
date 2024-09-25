@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Or(Label Done) : Op
+public class Or : Op
 {
     public static Op Make(Label done) => new Or(done);
-    public override string ToString() => $"Or {Done}";
+    public readonly Label Done;
+    public Or(Label done) : base(OpCode.Or)
+    {
+        Done = done;
+    }
+
+    public override string Dump(VM vm) => $"Or {Done}";
 }

@@ -1,7 +1,8 @@
 namespace Sharpl.Ops;
-public readonly record struct Stop() : Op
+public class Stop : Op
 {
     public static readonly Op Instance = new Stop();
     public static Op Make() => Instance;
-    public override string ToString() => $"Stop";
+    public Stop(): base(OpCode.Stop) { }
+    public override string Dump(VM vm) => $"Stop";
 }

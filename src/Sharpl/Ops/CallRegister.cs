@@ -1,10 +1,25 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CallRegister(Loc Loc, Register Target, int Arity, bool Splat, int RegisterCount) : Op
+public class CallRegister : Op
 {
-    public static Op Make(Loc loc, Register target, int arity, bool splat, int registerCount) =>
-        new CallRegister(loc, target, arity, splat, registerCount);
+    public static Op Make(Register target, int arity, bool splat, int registerCount, Loc loc) =>
+        new CallRegister(target, arity, splat, registerCount, loc);
 
-    public override string ToString() =>
+    public readonly Loc Loc;
+    public readonly Register Target;
+    public readonly int Arity;
+    public readonly bool Splat;
+    public readonly int RegisterCount;
+
+    public CallRegister(Register target, int arity, bool splat, int registerCount, Loc loc) : base(OpCode.CallRegister)
+    {
+        Target = target;
+        Arity = arity; 
+        Splat = splat;
+        RegisterCount = registerCount; 
+        Loc = loc;
+    }
+
+    public override string Dump(VM vm) =>
         $"CallRegister {Loc} {Target} {Arity} {Splat} {RegisterCount}";
 }

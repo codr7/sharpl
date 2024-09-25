@@ -26,7 +26,7 @@ public abstract class AnyType(string name)
         var splat = args.IsSplat;
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
         args.Emit(vm);
-        vm.Emit(Ops.CallDirect.Make(loc, target, arity, splat, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallDirect.Make(target, arity, splat, vm.NextRegisterIndex, loc));
     }
 
     public abstract bool Equals(Value left, Value right);

@@ -1,7 +1,6 @@
 using Sharpl.Iters;
 using Sharpl.Iters.Core;
 using Sharpl.Types.Core;
-using System.ComponentModel.DataAnnotations;
 
 namespace Sharpl.Libs;
 
@@ -25,7 +24,7 @@ public class Iter : Lib
 
             var iter = new Register(0, vm.AllocRegister());
             vm.Emit(args.Pop());
-            vm.Emit(Ops.CreateIter.Make(loc, iter));
+            vm.Emit(Ops.CreateIter.Make(iter, loc));
 
             var index = new Register(0, vm.AllocRegister());
             vm.Emit(Ops.Push.Make(Value.Make(Core.Int, 0)));
@@ -34,11 +33,11 @@ public class Iter : Lib
             var start = new Label(vm.EmitPC);
             var fail = new Label();
             var ok = new Label();
-            vm.Emit(Ops.IterNext.Make(loc, iter, fail));
+            vm.Emit(Ops.IterNext.Make(iter, fail, true, loc));
             vm.Emit(Ops.Repush.Make(1));
-            vm.Emit(Ops.CallRegister.Make(loc, pred, 1, false, vm.NextRegisterIndex));
+            vm.Emit(Ops.CallRegister.Make(pred, 1, false, vm.NextRegisterIndex, loc));
             var next = new Label();
-            vm.Emit(Ops.Branch.Make(loc, next));
+            vm.Emit(Ops.Branch.Make(next, loc));
             vm.Emit(Ops.GetRegister.Make(index));
             vm.Emit(Ops.CreatePair.Make(loc));
             vm.Emit(Ops.Goto.Make(ok));
@@ -67,7 +66,7 @@ public class Iter : Lib
                          var valForm = vfs.Items[i + 1];
                          var seqReg = vm.AllocRegister();
                          vm.Emit(valForm);
-                         vm.Emit(Ops.CreateIter.Make(loc, new Register(0, seqReg)));
+                         vm.Emit(Ops.CreateIter.Make(new Register(0, seqReg), loc));
                          var itReg = -1;
 
                          if (idForm is Forms.Id idf)
@@ -87,7 +86,7 @@ public class Iter : Lib
 
                  foreach (var (seqReg, itReg) in bindings)
                  {
-                     vm.Emit(Ops.IterNext.Make(loc, seqReg, end, push: itReg.Index != -1));
+                     vm.Emit(Ops.IterNext.Make(seqReg, end, push: itReg.Index != -1, loc: loc));
                      if (itReg.Index != -1) { vm.Emit(Ops.SetRegister.Make(itReg)); }
                  }
 
@@ -128,13 +127,13 @@ public class Iter : Lib
                   vm.Emit(Ops.SetRegister.Make(method));
 
                   vm.Emit(sequenceForm);
-                  vm.Emit(Ops.CreateIter.Make(loc, iter));
+                  vm.Emit(Ops.CreateIter.Make(iter, loc));
                   vm.Emit(seedForm);
 
                   var start = new Label(vm.EmitPC);
                   var done = new Label();
-                  vm.Emit(Ops.IterNext.Make(loc, iter, done));
-                  vm.Emit(Ops.CallRegister.Make(loc, method, 2, false, vm.NextRegisterIndex));
+                  vm.Emit(Ops.IterNext.Make(iter, done, true, loc));
+                  vm.Emit(Ops.CallRegister.Make(method, 2, false, vm.NextRegisterIndex, loc));
                   vm.Emit(Ops.Goto.Make(start));
                   done.PC = vm.EmitPC;
               });

@@ -328,7 +328,7 @@ public class Core : Lib
                  if (args.TryPop() is Form cf) { vm.Emit(cf); }
                  else { throw new EmitError("Missing condition", loc); }
                  var skipElse = new Label();
-                 vm.Emit(Ops.Branch.Make(loc, skipElse));
+                 vm.Emit(Ops.Branch.Make(skipElse, loc));
                  if (args.TryPop() is Form tf) { vm.Emit(tf); }
                  var skipEnd = new Label();
                  vm.Emit(Ops.Goto.Make(skipEnd));
@@ -397,7 +397,7 @@ public class Core : Lib
                 else { throw new EmitError("Missing condition", loc); }
 
                 var skip = new Label();
-                vm.Emit(Ops.Branch.Make(loc, skip));
+                vm.Emit(Ops.Branch.Make(skip, loc));
                 args.Emit(vm);
                 skip.PC = vm.EmitPC;
             });
@@ -477,7 +477,7 @@ public class Core : Lib
                                      var r = vm.AllocRegister();
                                      var b = v.CastUnbox(Binding);
                                      brs.Add((r, b.FrameOffset, b.Index));
-                                     vm.Emit(Ops.CopyRegister.Make(b.FrameOffset, b.Index, 0, r));
+                                     vm.Emit(Ops.CopyRegister.Make(b, new Register(0, r)));
                                      vm.Emit(Ops.SetRegister.Make(b));
                                  }
                                  else
@@ -498,7 +498,7 @@ public class Core : Lib
 
                          foreach (var (fromIndex, toFrameOffset, toIndex) in brs)
                          {
-                             vm.Emit(Ops.CopyRegister.Make(0, fromIndex, toFrameOffset, toIndex));
+                             vm.Emit(Ops.CopyRegister.Make(new Register(0, fromIndex), new Register(toFrameOffset, toIndex)));
                          }
 
                          vm.Emit(Ops.EndFrame.Make());
@@ -656,7 +656,7 @@ public class Core : Lib
 
              if (src is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
              {
-                 vm.Emit(Ops.PopItem.Make(loc, v.CastUnbox(Binding)));
+                 vm.Emit(Ops.PopItem.Make(v.CastUnbox(Binding), loc));
              }
              else { throw new EmitError($"Invalid push destination: {src}", loc); }
          });
@@ -670,7 +670,7 @@ public class Core : Lib
                  foreach (var a in args)
                  {
                      vm.Emit(a);
-                     vm.Emit(Ops.PushItem.Make(loc, v.CastUnbox(Binding)));
+                     vm.Emit(Ops.PushItem.Make(v.CastUnbox(Binding), loc));
                  }
              }
              else { throw new EmitError($"Invalid push destination: {dst}", loc); }
@@ -756,7 +756,7 @@ public class Core : Lib
                             i++;
                         }
 
-                        vm.Emit(Ops.CallTail.Make(loc, m, argMask, splat));
+                        vm.Emit(Ops.CallTail.Make(m, argMask, splat, loc));
                     }
                 }
 

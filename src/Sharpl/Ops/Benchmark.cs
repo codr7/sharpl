@@ -1,7 +1,14 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Benchmark(int N) : Op
+public class Benchmark : Op
 {
     public static Op Make(int n) => new Benchmark(n);
-    public override string ToString() => $"Benchmark {N}";
+    public readonly int N;
+
+    public Benchmark(int n): base(OpCode.Benchmark)
+    {
+        N = n;
+    }
+
+    public override string Dump(VM vm) => $"Benchmark {N}";
 }

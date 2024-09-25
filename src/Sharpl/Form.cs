@@ -35,7 +35,7 @@ public abstract class Form(Loc loc)
         var arity = args.Count;
         args.Emit(vm);
         vm.Emit(this);
-        vm.Emit(Ops.CallStack.Make(Loc, arity, args.IsSplat, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallStack.Make(arity, args.IsSplat, vm.NextRegisterIndex, Loc));
     }
 
     public abstract bool Equals(Form other);

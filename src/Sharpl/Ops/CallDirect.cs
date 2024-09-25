@@ -1,10 +1,25 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CallDirect(Loc Loc, Value Target, int Arity, bool Splat, int RegisterCount) : Op
+public class CallDirect : Op
 {
-    public static Op Make(Loc loc, Value Target, int arity, bool splat, int registerCount) =>
-        new CallDirect(loc, Target, arity, splat, registerCount);
+    public static Op Make(Value Target, int arity, bool splat, int registerCount, Loc loc) =>
+        new CallDirect(Target, arity, splat, registerCount, loc);
 
-    public override string ToString() =>
+    public readonly Loc Loc;
+    public readonly Value Target;
+    public readonly int Arity;
+    public readonly bool Splat;
+    public readonly int RegisterCount;
+
+    public CallDirect(Value target, int arity, bool splat, int registerCount, Loc loc) : base(OpCode.CallDirect)
+    {
+        Target = target;
+        Arity = arity;
+        Splat = splat;
+        RegisterCount = registerCount;
+        Loc = loc;
+    }
+
+    public override string Dump(VM vm) =>
         $"CallDirect {Loc} {Target} {Arity} {Splat} {RegisterCount}";
 }

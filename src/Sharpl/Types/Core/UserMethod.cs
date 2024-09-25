@@ -42,6 +42,6 @@ public class UserMethodType : Type<UserMethod>
         }
 
         args.Clear();
-        vm.Emit(Ops.CallUserMethod.Make(loc, m, argMask, splat, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallUserMethod.Make(m, argMask, splat, vm.NextRegisterIndex, loc));
     }
 }

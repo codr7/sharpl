@@ -1,7 +1,14 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CreateArray(int Length) : Op
+public class CreateArray : Op
 {
     public static Op Make(int length) => new CreateArray(length);
-    public override string ToString() => $"CreateArray {Length}";
+    public readonly int Length;
+    public CreateArray(int length) : base(OpCode.CreateArray)
+    {
+        Length = length;
+    }
+
+
+    public override string Dump(VM vm) => $"CreateArray {Length}";
 }

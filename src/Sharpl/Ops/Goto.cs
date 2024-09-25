@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Goto(Label Target) : Op
+public class Goto : Op
 {
     public static Op Make(Label target) => new Goto(target);
-    public override string ToString() => $"Goto {Target}";
+    public readonly Label Target;
+    public Goto(Label target): base(OpCode.Goto)
+    {
+        Target = target;
+    }
+
+    public override string Dump(VM vm) => $"Goto {Target}";
 }

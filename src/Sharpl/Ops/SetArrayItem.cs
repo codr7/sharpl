@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct SetArrayItem(int Index) : Op
+public class SetArrayItem : Op
 {
     public static Op Make(int index) => new SetArrayItem(index);
-    public override string ToString() => $"SetArrayItem {Index}";
+    public readonly int Index;
+    public SetArrayItem(int index): base(OpCode.SetArrayItem)
+    {
+        Index = index;
+    }
+
+    public override string Dump(VM vm) => $"SetArrayItem {Index}";
 }

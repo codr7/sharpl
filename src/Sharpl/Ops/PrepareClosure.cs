@@ -1,7 +1,15 @@
 namespace Sharpl.Ops;
 
-public readonly record struct PrepareClosure(UserMethod Target, Label Skip) : Op
+public class PrepareClosure : Op
 {
     public static Op Make(UserMethod target, Label skip) => new PrepareClosure(target, skip);
-    public override string ToString() => $"PrepareClosure {Target} {Skip}";
+    public readonly UserMethod Target;
+    public readonly Label Skip;
+    public PrepareClosure(UserMethod target, Label skip): base(OpCode.PrepareClosure)
+    {
+        Target = target;
+        Skip = skip;
+    }
+
+    public override string Dump(VM vm) => $"PrepareClosure {Target} {Skip}";
 }

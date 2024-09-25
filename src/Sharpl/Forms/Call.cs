@@ -22,22 +22,9 @@ public class Call : Form
         foreach (var f in Args) { f.CollectIds(result); }
     }
 
-
     public override void Emit(VM vm, Queue args)
     {
-        var splat = false;
-
-        foreach (var f in Args)
-        {
-            if (f.IsSplat)
-            {
-                splat = true;
-                break;
-            }
-        }
-
         var cas = new Queue(Args);
-        if (splat) { vm.Emit(Ops.PushSplat.Make()); }
         var t = Target;
 
         while (t is Pair pf)

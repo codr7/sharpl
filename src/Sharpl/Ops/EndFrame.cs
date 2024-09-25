@@ -1,7 +1,8 @@
 namespace Sharpl.Ops;
 
-public readonly record struct EndFrame() : Op
+public class EndFrame : Op
 {
     public static Op Make() => new EndFrame();
-    public override string ToString() => "EndFrame";
+    public EndFrame(): base(OpCode.EndFrame) { }
+    public override string Dump(VM vm) => "EndFrame";
 }

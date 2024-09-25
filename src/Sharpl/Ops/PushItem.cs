@@ -1,7 +1,15 @@
 namespace Sharpl.Ops;
 
-public readonly record struct PushItem(Loc Loc, Register Target) : Op
+public class PushItem : Op
 {
-    public static Op Make(Loc loc, Register target) => new PushItem(loc, target);
-    public override string ToString() => $"PushItem {Loc} {Target}";
+    public static Op Make(Register target, Loc loc) => new PushItem(target, loc);
+    public readonly Register Target;
+    public readonly Loc Loc;
+    public PushItem(Register target, Loc loc): base(OpCode.PushItem)
+    {
+        Target = target;
+        Loc = loc;
+    }
+
+    public override string Dump(VM vm) => $"PushItem {Loc} {Target}";
 }

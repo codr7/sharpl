@@ -10,7 +10,7 @@ public class BindingType : Type<Register>
         var splat = args.IsSplat;
         args.Emit(vm);
         var v = target.CastUnbox(this);
-        vm.Emit(Ops.CallRegister.Make(loc, v, arity, splat, vm.NextRegisterIndex));
+        vm.Emit(Ops.CallRegister.Make(v, arity, splat, vm.NextRegisterIndex, loc));
     }
 
     public override void Emit(VM vm, Value target, Form.Queue args, Loc loc) =>

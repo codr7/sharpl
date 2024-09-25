@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Swap(Loc Loc) : Op
+public class Swap : Op
 {
     public static Op Make(Loc loc) => new Swap(loc);
-    public override string ToString() => $"Swap {Loc}";
+    public readonly Loc Loc;
+    public Swap(Loc loc): base(OpCode.Swap)
+    {
+        Loc = loc;
+    }
+
+    public override string Dump(VM vm) => $"Swap {Loc}";
 }

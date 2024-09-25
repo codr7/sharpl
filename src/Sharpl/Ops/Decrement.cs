@@ -1,7 +1,16 @@
 namespace Sharpl.Ops;
 
-public readonly record struct Decrement(Register Target, int Delta) : Op
+public class Decrement : Op
 {
     public static Op Make(Register target, int delta) => new Decrement(target, delta);
-    public override string ToString() => $"Decrement {Target} {Delta}";
+    public readonly Register Target;
+    public readonly int Delta;
+    
+    public Decrement(Register target, int delta): base(OpCode.Decrement)
+    {
+        Target = target;
+        Delta = delta;
+    }
+
+    public override string Dump(VM vm) => $"Decrement {Target} {Delta}";
 }

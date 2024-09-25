@@ -1,7 +1,13 @@
 namespace Sharpl.Ops;
 
-public readonly record struct CreateList(Register Target) : Op
+public class CreateList : Op
 {
     public static Op Make(Register target) => new CreateList(target);
-    public override string ToString() => $"CreateList {Target}";
+    public readonly Register Target;
+    public CreateList(Register target) : base(OpCode.CreateList)
+    {
+        Target = target;
+    }
+
+    public override string Dump(VM vm) => $"CreateList {Target}";
 }

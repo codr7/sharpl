@@ -5,8 +5,24 @@ April 29th
 209
 214
 
+290
+89
+251
+232
+
+shift-ctrl-,/.      zoom
+ctrl-k ctrl-d       format
+
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
+
+* finish op code dispatch
+** finish converting vm ops
+* benchmark
+* convert Op to interface
+** add Code field
+** convert ops to readonly record struct
+* benchmark
 
 * aoc2
 ** implement pair unification in let macro
