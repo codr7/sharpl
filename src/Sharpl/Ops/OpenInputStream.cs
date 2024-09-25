@@ -9,12 +9,13 @@ public class OpenInputStream : Op
     public readonly int Index;
     public readonly Loc Loc;
 
-    public OpenInputStream(int frameOffset, int index, Loc loc): base(OpCode.OpenInputStream)
+    public OpenInputStream(int frameOffset, int index, Loc loc)
     {
         FrameOffset = frameOffset;
         Index = index;
         Loc = loc;
     }
 
-    public override string Dump(VM vm) => $"OpenInputStream {Loc} {FrameOffset}:{Index}";
+    public OpCode Code => OpCode.OpenInputStream;
+    public  string Dump(VM vm) => $"OpenInputStream {Loc} {FrameOffset}:{Index}";
 }

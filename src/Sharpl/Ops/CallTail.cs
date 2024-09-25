@@ -10,13 +10,13 @@ public class CallTail : Op
     public readonly bool Splat;
     public readonly Loc Loc;
 
-    public CallTail(UserMethod target, Value?[] argMask, bool splat, Loc loc): base(OpCode.CallTail)
+    public CallTail(UserMethod target, Value?[] argMask, bool splat, Loc loc)
     {
         Target = target;
         ArgMask = argMask; 
         Splat = splat; 
         Loc = loc;
     }
-
-    public override string Dump(VM vm) => $"CallTail {Loc} {Target} {ArgMask} {Splat}";
+    public OpCode Code => OpCode.CallTail;
+    public string Dump(VM vm) => $"CallTail {Loc} {Target} {ArgMask} {Splat}";
 }

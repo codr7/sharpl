@@ -5,10 +5,11 @@ public class And: Op
     public static Op Make(Label done) => new And(done);
     public readonly Label Done;
 
-    public And(Label done): base(OpCode.And)
+    public And(Label done)
     {
         Done = done;
     }
 
-    public override string Dump(VM vm) => $"And {Done}";
+    public OpCode Code => OpCode.And;
+    public string Dump(VM vm) => $"And {Done}";
 }

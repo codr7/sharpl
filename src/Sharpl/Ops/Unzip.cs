@@ -4,10 +4,11 @@ public class Unzip : Op
 {
     public static Op Make(Loc loc) => new Unzip(loc);
     public readonly Loc Loc;
-    public Unzip(Loc loc) : base(OpCode.Unzip)
+    public Unzip(Loc loc)
     {
         Loc = loc;
     }
 
-    public override string Dump(VM vm) => $"Unzip {Loc}";
+    public OpCode Code => OpCode.Unzip;
+    public string Dump(VM vm) => $"Unzip {Loc}";
 }

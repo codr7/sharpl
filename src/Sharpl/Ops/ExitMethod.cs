@@ -3,6 +3,7 @@ public class ExitMethod : Op
 {
     public static Op Instance = new ExitMethod();
     public static Op Make() => Instance;
-    public ExitMethod(): base(OpCode.ExitMethod) { }
-    public override string Dump(VM vm) => $"ExitMethod";
+    public ExitMethod() { }
+    public OpCode Code => OpCode.ExitMethod;
+    public string Dump(VM vm) => $"ExitMethod";
 }

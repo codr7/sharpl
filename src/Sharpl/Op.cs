@@ -18,13 +18,8 @@ public enum OpCode
     UnquoteRegister, Unzip
 };
 
-public abstract class Op
+public interface Op
 {
-    public readonly OpCode Code;
-    public Op(OpCode code)
-    {
-        Code = code;
-    }
-
-    public abstract string Dump(VM vm);
+    OpCode Code { get; }
+    string Dump(VM vm);
 }

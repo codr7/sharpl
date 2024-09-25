@@ -11,7 +11,7 @@ public class CallUserMethod : Op
     public readonly int RegisterCount;
     public readonly Loc Loc;
 
-    public CallUserMethod(UserMethod target, Value?[] argMask, bool splat, int registerCount, Loc loc): base(OpCode.CallUserMethod)
+    public CallUserMethod(UserMethod target, Value?[] argMask, bool splat, int registerCount, Loc loc)
     {
         Target = target;
         ArgMask = argMask;
@@ -19,7 +19,7 @@ public class CallUserMethod : Op
         RegisterCount = registerCount;
         Loc = loc;
     }
-
-    public override string Dump(VM vm) =>
-        $"CallUserMethod {Target} {ArgMask} {Splat} {RegisterCount}";
+  
+    public OpCode Code => OpCode.CallUserMethod;
+    public string Dump(VM vm) => $"CallUserMethod {Target} {ArgMask} {Splat} {RegisterCount}";
 }

@@ -4,10 +4,11 @@ public class GetRegister : Op
 {
     public static Op Make(Register target) => new GetRegister(target);
     public readonly Register Target;
-    public GetRegister(Register target): base(OpCode.GetRegister)
+    public GetRegister(Register target)
     {
         Target = target;
     }
 
-    public override string Dump(VM vm) => $"GetRegister {Target}";
+    public OpCode Code => OpCode.GetRegister;
+    public string Dump(VM vm) => $"GetRegister {Target}";
 }

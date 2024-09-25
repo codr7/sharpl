@@ -727,7 +727,7 @@ public class VM
         var bodyPC = PC + 1;
         var s = new Stack();
 
-        for (var i = 0; i < op.N; i++)
+        for (var i = 0; i < op.Reps; i++)
         {
             Eval(bodyPC, s);
             s.Clear();
@@ -735,7 +735,7 @@ public class VM
 
         var t = Stopwatch.GetTimestamp();
 
-        for (var i = 0; i < op.N; i++)
+        for (var i = 0; i < op.Reps; i++)
         {
             Eval(bodyPC, s);
             s.Clear();

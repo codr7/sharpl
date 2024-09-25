@@ -4,10 +4,11 @@ public class Or : Op
 {
     public static Op Make(Label done) => new Or(done);
     public readonly Label Done;
-    public Or(Label done) : base(OpCode.Or)
+    public Or(Label done)
     {
         Done = done;
     }
 
-    public override string Dump(VM vm) => $"Or {Done}";
+    public OpCode Code => OpCode.Or;
+    public string Dump(VM vm) => $"Or {Done}";
 }

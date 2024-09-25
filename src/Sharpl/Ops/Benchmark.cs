@@ -2,13 +2,14 @@ namespace Sharpl.Ops;
 
 public class Benchmark : Op
 {
-    public static Op Make(int n) => new Benchmark(n);
-    public readonly int N;
+    public static Op Make(int reps) => new Benchmark(reps);
+    public readonly int Reps;
 
-    public Benchmark(int n): base(OpCode.Benchmark)
+    public Benchmark(int reps)
     {
-        N = n;
+        Reps = reps;
     }
 
-    public override string Dump(VM vm) => $"Benchmark {N}";
+    public OpCode Code => OpCode.Benchmark;
+    public string Dump(VM vm) => $"Benchmark {Reps}";
 }

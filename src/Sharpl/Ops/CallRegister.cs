@@ -11,7 +11,7 @@ public class CallRegister : Op
     public readonly bool Splat;
     public readonly int RegisterCount;
 
-    public CallRegister(Register target, int arity, bool splat, int registerCount, Loc loc) : base(OpCode.CallRegister)
+    public CallRegister(Register target, int arity, bool splat, int registerCount, Loc loc)
     {
         Target = target;
         Arity = arity; 
@@ -20,6 +20,6 @@ public class CallRegister : Op
         Loc = loc;
     }
 
-    public override string Dump(VM vm) =>
-        $"CallRegister {Loc} {Target} {Arity} {Splat} {RegisterCount}";
+    public OpCode Code => OpCode.CallRegister;
+    public string Dump(VM vm) => $"CallRegister {Loc} {Target} {Arity} {Splat} {RegisterCount}";
 }

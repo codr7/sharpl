@@ -6,11 +6,12 @@ public class Branch : Op
     public readonly Label Right;
     public readonly Loc Loc;
 
-    public Branch(Label right, Loc loc): base(OpCode.Branch)
+    public Branch(Label right, Loc loc)
     {
         Right = right; 
         Loc = loc;
     }
-    
-    public override string Dump(VM vm) => $"Branch {Loc} {Right}";
+
+    public OpCode Code => OpCode.Branch;
+    public string Dump(VM vm) => $"Branch {Loc} {Right}";
 }

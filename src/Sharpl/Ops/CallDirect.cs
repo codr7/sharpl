@@ -11,7 +11,7 @@ public class CallDirect : Op
     public readonly bool Splat;
     public readonly int RegisterCount;
 
-    public CallDirect(Value target, int arity, bool splat, int registerCount, Loc loc) : base(OpCode.CallDirect)
+    public CallDirect(Value target, int arity, bool splat, int registerCount, Loc loc)
     {
         Target = target;
         Arity = arity;
@@ -20,6 +20,8 @@ public class CallDirect : Op
         Loc = loc;
     }
 
-    public override string Dump(VM vm) =>
+    public OpCode Code => OpCode.CallDirect;
+
+    public string Dump(VM vm) =>
         $"CallDirect {Loc} {Target} {Arity} {Splat} {RegisterCount}";
 }

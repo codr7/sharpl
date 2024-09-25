@@ -10,7 +10,7 @@ public class CallStack : Op
     public readonly int RegisterCount;
     public readonly Loc Loc;
 
-    public CallStack(int arity, bool splat, int registerCount, Loc loc) : base(OpCode.CallStack)
+    public CallStack(int arity, bool splat, int registerCount, Loc loc)
     {
         Arity = arity;
         Splat = splat;
@@ -18,6 +18,6 @@ public class CallStack : Op
         Loc = loc;
     }
 
-    public override string Dump(VM vm) =>
-        $"CallStack {Loc} {Arity} {Splat} {RegisterCount}";
+    public OpCode Code => OpCode.CallStack;
+    public string Dump(VM vm) => $"CallStack {Loc} {Arity} {Splat} {RegisterCount}";
 }

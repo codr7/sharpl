@@ -4,11 +4,11 @@ public class CreateArray : Op
 {
     public static Op Make(int length) => new CreateArray(length);
     public readonly int Length;
-    public CreateArray(int length) : base(OpCode.CreateArray)
+    public CreateArray(int length)
     {
         Length = length;
     }
 
-
-    public override string Dump(VM vm) => $"CreateArray {Length}";
+    public OpCode Code => OpCode.CreateArray;
+    public string Dump(VM vm) => $"CreateArray {Length}";
 }

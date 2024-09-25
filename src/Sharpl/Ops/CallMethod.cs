@@ -10,7 +10,7 @@ public class CallMethod : Op
     public readonly int Arity;
     public readonly bool Splat;
 
-    public CallMethod(Method target, int arity, bool splat, Loc loc): base(OpCode.CallMethod)
+    public CallMethod(Method target, int arity, bool splat, Loc loc)
     {
         Loc = loc;
         Target = target;
@@ -18,5 +18,6 @@ public class CallMethod : Op
         Splat = splat;
     }
 
-    public override string Dump(VM vm) => $"CallMethod {Target} {Arity} {Splat}";
+    public OpCode Code => OpCode.CallMethod;
+    public string Dump(VM vm) => $"CallMethod {Target} {Arity} {Splat}";
 }

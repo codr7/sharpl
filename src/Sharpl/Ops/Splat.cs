@@ -4,10 +4,11 @@ public class Splat : Op
 {
     public static Op Make(Loc loc) => new Splat(loc);
     public readonly Loc Loc;
-    public Splat(Loc loc): base(OpCode.Splat)
+    public Splat(Loc loc)
     {
         Loc = loc;
     }
 
-    public override string Dump(VM vm) => $"Splat {Loc}";
+    public OpCode Code => OpCode.Splat;
+    public string Dump(VM vm) => $"Splat {Loc}";
 }

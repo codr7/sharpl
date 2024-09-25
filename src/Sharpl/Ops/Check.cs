@@ -5,10 +5,11 @@ public class Check : Op
     public static Op Make(Loc loc) => new Check(loc);
     public readonly Loc Loc;
 
-    public Check(Loc loc) : base(OpCode.Check)
+    public Check(Loc loc)
     {
         Loc = loc;
     }
 
-    public override string Dump(VM vm) => $"Check {Loc}";
+    public OpCode Code => OpCode.Check;
+    public string Dump(VM vm) => $"Check {Loc}";
 }

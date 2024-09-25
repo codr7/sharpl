@@ -10,7 +10,7 @@ public class IterNext : Op
     public readonly bool Push;
     public readonly Loc Loc;
 
-    public IterNext(Register iter, Label done, bool push, Loc loc): base(OpCode.IterNext)
+    public IterNext(Register iter, Label done, bool push, Loc loc)
     {
         Iter = iter;
         Done = done;
@@ -18,5 +18,6 @@ public class IterNext : Op
         Loc = loc;
     }
 
-    public override string Dump(VM vm) => $"IterNext {Loc} {Iter} {Done} {Push}";
+    public OpCode Code => OpCode.IterNext;
+    public string Dump(VM vm) => $"IterNext {Loc} {Iter} {Done} {Push}";
 }

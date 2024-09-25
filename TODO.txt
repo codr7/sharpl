@@ -16,12 +16,7 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* finish op code dispatch
-** finish converting vm ops
-* benchmark
-* convert Op to interface
-** add Code field
-** convert ops to readonly record struct
+** convert ops to readonly struct
 * benchmark
 
 * aoc2

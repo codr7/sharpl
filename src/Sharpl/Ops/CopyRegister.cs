@@ -7,12 +7,12 @@ public class CopyRegister : Op
     public readonly Register From;
     public readonly Register To;
 
-    public CopyRegister(Register from, Register to): base(OpCode.CopyRegister)
+    public CopyRegister(Register from, Register to)
     {
         From = from;
         To = to;
     }
 
-    public override string Dump(VM vm) =>
-        $"CopyRegister {From} {To}";
+    public OpCode Code => OpCode.CopyRegister;
+    public string Dump(VM vm) => $"CopyRegister {From} {To}";
 }

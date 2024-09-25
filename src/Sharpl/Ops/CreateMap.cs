@@ -4,10 +4,12 @@ public class CreateMap : Op
 {
     public static Op Make(int length) => new CreateMap(length);
     public readonly int Length;
-    public CreateMap(int length) : base(OpCode.CreateMap)
+
+    public CreateMap(int length)
     {
         Length = length;
     }
 
-    public override string Dump(VM vm) => $"CreateMap {Length}";
+    public OpCode Code => OpCode.CreateMap;
+    public string Dump(VM vm) => $"CreateMap {Length}";
 }
