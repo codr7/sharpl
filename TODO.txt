@@ -1,14 +1,9 @@
 April 29th
 
-275
-85
-209
-214
-
-290
-89
-251
-232
+276
+77
+204
+212
 
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
