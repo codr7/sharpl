@@ -30,6 +30,11 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 (^foo [x@Int] (+ x x))
 
+* convert type checks to ops
+** add/emit TypeCheckStack op
+** add/emit TypeCheckRegister op
+** remove Cast(Loc) variants
+
 * add inlining
 ** add size limit to config
 ** add UserMethod.Recursive

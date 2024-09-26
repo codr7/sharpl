@@ -12,11 +12,8 @@ public class String : Lib
     {
         BindMethod("down", ["in"], (vm, stack, target, arity, loc) =>
         {
-            var v = stack.Pop();
-            var s = Stringify(v, loc).ToLower();
-            if (v.Type == Core.Char) { stack.Push(Core.Char, s[0]); }
-            else { stack.Push(Core.String, s); }
-
+            var s = stack.Pop().Cast(Core.String, loc);
+            stack.Push(Core.String, s.ToLower());
         });
 
         BindMethod("join", ["sep"], (vm, stack, target, arity, loc) =>
@@ -65,10 +62,8 @@ public class String : Lib
 
         BindMethod("up", ["in"], (vm, stack, target, arity, loc) =>
         {
-            var v = stack.Pop();
-            var s = Stringify(v, loc).ToUpper();
-            if (v.Type == Core.Char) { stack.Push(Core.Char, s[0]); }
-            else { stack.Push(Core.String, s);  }
+            var s = stack.Pop().Cast(Core.String, loc);
+            stack.Push(Core.String, s.ToUpper());
         });
     }
 
