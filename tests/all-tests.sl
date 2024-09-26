@@ -73,6 +73,7 @@
   (is (rand-int) (rand-int)))
 
 (load "array-tests.sl")
+(load "bind-tests.sl")
 (load "char-tests.sl")
 (load "fib-tests.sl")
 (load "fix-tests.sl")

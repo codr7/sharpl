@@ -465,29 +465,10 @@ public class Core : Lib
 
                          for (var i = 0; i < bs.Length; i++)
                          {
-                             var bf = bs[i];
-
-                             if (bf is Forms.Id idf)
-                             {
-                                 i++;
-                                 vm.Emit(bs[i]);
-
-                                 if (vm.Env.Find(idf.Name) is Value v && v.Type == Binding)
-                                 {
-                                     var r = vm.AllocRegister();
-                                     var b = v.CastUnbox(Binding);
-                                     brs.Add((r, b.FrameOffset, b.Index));
-                                     vm.Emit(Ops.CopyRegister.Make(b, new Register(0, r)));
-                                     vm.Emit(Ops.SetRegister.Make(b));
-                                 }
-                                 else
-                                 {
-                                     var r = new Register(0, vm.AllocRegister());
-                                     vm.Emit(Ops.SetRegister.Make(r));
-                                     vm.Env[idf.Name] = Value.Make(Binding, r);
-                                 }
-                             }
-                             else { throw new EmitError($"Invalid method arg: {bf}", bf.Loc); }
+                             var f = bs[i];
+                             i++;
+                             vm.Emit(bs[i]);
+                             bind(vm, f, brs);
                          }
 
                          while (true)
@@ -834,20 +815,52 @@ public class Core : Lib
                     var id = args.TryPop();
                     if (id is null) { break; }
 
-                    if (id is Forms.Id idf)
+                    if (args.TryPop() is Form f)
                     {
-                        if (args.TryPop() is Form f)
-                        {
-                            if (f is Forms.Literal lit) { vm.Env[idf.Name] = lit.Value; }
-                            var v = new Form.Queue();
-                            v.Push(f);
-                            v.Emit(vm);
-                            vm.Define(idf.Name);
-                        }
-                        else { throw new EmitError("Missing value", loc); }
+                        vm.Emit(f);
+                        vm.Define(id);
                     }
-                    else { throw new EmitError($"Invalid binding: {id}", loc); }
+                    else { throw new EmitError("Missing value", loc); }
                 }
             });
+    }
+
+    private static void bindId(VM vm, Forms.Id idf, List<(int, int, int)> brs)
+    {
+        if (vm.Env.Find(idf.Name) is Value v && v.Type == Binding)
+        {
+            var r = vm.AllocRegister();
+            var b = v.CastUnbox(Binding);
+            brs.Add((r, b.FrameOffset, b.Index));
+            vm.Emit(Ops.CopyRegister.Make(b, new Register(0, r)));
+            vm.Emit(Ops.SetRegister.Make(b));
+        }
+        else
+        {
+            var r = new Register(0, vm.AllocRegister());
+            vm.Emit(Ops.SetRegister.Make(r));
+            vm.Env[idf.Name] = Value.Make(Binding, r);
+        }
+    }
+
+    private static void bind(VM vm, Form f, List<(int, int, int)> brs)
+    {
+        switch (f)
+        {
+            case Forms.Id idf:
+                bindId(vm, idf, brs);
+                break;
+            case Forms.Nil:
+                vm.Emit(Ops.Drop.Make(1));
+                break;
+            case Forms.Pair pf:
+                vm.Emit(Ops.Unzip.Make(pf.Loc));
+                vm.Emit(Ops.Swap.Make(pf.Loc));
+                bind(vm, pf.Left, brs);
+                bind(vm, pf.Right, brs);
+                break;
+            default:
+                throw new EmitError($"Invalid lvalue: {f}", f.Loc);
+        }
     }
 }

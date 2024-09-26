@@ -144,6 +144,27 @@ public class VM
         definitionCount++;
     }
 
+    public void Define(Form f)
+    {
+        switch (f)
+        {
+            case Forms.Id idf:
+                Define(idf.Name);
+                break;
+            case Forms.Nil:
+                Emit(Ops.Drop.Make(1));
+                break;
+            case Forms.Pair pf:
+                Emit(Ops.Unzip.Make(pf.Loc));
+                Emit(Ops.Swap.Make(pf.Loc));
+                Define(pf.Left);
+                Define(pf.Right);
+                break;
+            default:
+                throw new EmitError($"Invalid lvalue: {f}", f.Loc);
+        }
+    }
+
     public void Dmit(PC startPC)
     {
         for (var pc = startPC; pc < code.Count; pc++) { Term.Write($"{pc,-4} {code[pc]}\n"); }
@@ -199,22 +220,22 @@ public class VM
             {
                 case OpCode.And:
                     {
-                        if (!(bool)stack.Peek()) { PC = (op as Ops.And)!.Done.PC; }
+                        if (!(bool)stack.Peek()) { PC = ((Ops.And)op).Done.PC; }
                         else { PC++; }
                         break;
                     }
                 case OpCode.BeginFrame:
                     {
                         PC++;
-                        BeginFrame((op as Ops.BeginFrame)!.RegisterCount);
+                        BeginFrame(((Ops.BeginFrame)op).RegisterCount);
                         break;
                     }
                 case OpCode.Benchmark:
-                    Eval((op as Ops.Benchmark)!, stack);
+                    Eval((Ops.Benchmark)op, stack);
                     break;
                 case OpCode.Branch:
                     {
-                        var branchOp = (op as Ops.Branch)!;
+                        var branchOp = (Ops.Branch)op;
 
                         if (stack.TryPop(out var v))
                         {
@@ -227,7 +248,7 @@ public class VM
                     }
                 case OpCode.CallDirect:
                     {
-                        var callOp = (op as Ops.CallDirect)!;
+                        var callOp = (Ops.CallDirect)op;
                         var arity = callOp.Arity;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
@@ -236,7 +257,7 @@ public class VM
                     }
                 case OpCode.CallMethod:
                     {
-                        var callOp = (op as Ops.CallMethod)!;
+                        var callOp = (Ops.CallMethod)op;
                         var arity = callOp.Arity;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
@@ -245,7 +266,7 @@ public class VM
                     }
                 case OpCode.CallRegister:
                     {
-                        var callOp = (op as Ops.CallRegister)!;
+                        var callOp = (Ops.CallRegister)op;
                         var arity = callOp.Arity;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
@@ -255,7 +276,7 @@ public class VM
                     }
                 case OpCode.CallStack:
                     {
-                        var callOp = (op as Ops.CallStack)!;
+                        var callOp = (Ops.CallStack)op;
                         var target = stack.Pop();
                         var arity = callOp.Arity;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
@@ -265,7 +286,7 @@ public class VM
                     }
                 case OpCode.CallTail:
                     {
-                        var callOp = (op as Ops.CallTail)!;
+                        var callOp = (Ops.CallTail)op;
                         var arity = callOp.ArgMask.Length;
                         if (callOp.Splat) { arity += splats.Pop(); }
                         if (arity < callOp.Target.MinArgCount) { throw new EvalError($"Not enough arguments: {callOp.Target} {arity}", callOp.Loc); }
@@ -279,7 +300,7 @@ public class VM
                     }
                 case OpCode.CallUserMethod:
                     {
-                        var callOp = (op as Ops.CallUserMethod)!;
+                        var callOp = (Ops.CallUserMethod)op;
                         var arity = callOp.ArgMask.Length;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
@@ -287,11 +308,11 @@ public class VM
                         break;
                     }
                 case OpCode.Check:
-                    Eval((op as Ops.Check)!, stack);
+                    Eval((Ops.Check)op, stack);
                     break;
                 case OpCode.CopyRegister:
                     {
-                        var copyOp = (op as Ops.CopyRegister)!;
+                        var copyOp = (Ops.CopyRegister)op;
                         var v = Get(copyOp.From);
                         Set(copyOp.To, v);
                         PC++;
@@ -299,14 +320,14 @@ public class VM
                     }
                 case OpCode.CreateArray:
                     {
-                        var createOp = (op as Ops.CreateArray)!;
+                        var createOp = (Ops.CreateArray)op;
                         stack.Push(Value.Make(Core.Array, new Value[createOp.Length]));
                         PC++;
                         break;
                     }
                 case OpCode.CreateIter:
                     {
-                        var createOp = (op as Ops.CreateIter)!;
+                        var createOp = (Ops.CreateIter)op;
                         var v = stack.Pop();
                         if (v.Type is IterTrait it) { Set(createOp.Target, Value.Make(Core.Iter, it.CreateIter(v, this, createOp.Loc))); }
                         else { throw new EvalError($"Not iterable: {v}", createOp.Loc); }
@@ -315,7 +336,7 @@ public class VM
                     }
                 case OpCode.CreateList:
                     {
-                        var createOp = (op as Ops.CreateList)!;
+                        var createOp = (Ops.CreateList)op;
                         Set(createOp.Target, Value.Make(Core.List, new List<Value>()));
                         PC++;
                         break;
@@ -336,7 +357,7 @@ public class VM
                     }
                 case OpCode.Decrement:
                     {
-                        var decrementOp = (op as Ops.Decrement)!;
+                        var decrementOp = (Ops.Decrement)op;
                         var i = Index(decrementOp.Target);
                         var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - decrementOp.Delta);
                         registers[i] = v;
@@ -345,7 +366,7 @@ public class VM
                     }
                 case OpCode.Drop:
                     {
-                        var dropOp = (op as Ops.Drop)!;
+                        var dropOp = (Ops.Drop)op;
                         stack.Drop(dropOp.Count);
                         PC++;
                         break;
@@ -366,18 +387,18 @@ public class VM
                     }
                 case OpCode.GetRegister:
                     {
-                        stack.Push(Get((op as Ops.GetRegister)!.Target));
+                        stack.Push(Get(((Ops.GetRegister)op).Target));
                         PC++;
                         break;
                     }
                 case OpCode.Goto:
                     {
-                        PC = (op as Ops.Goto)!.Target.PC;
+                        PC = ((Ops.Goto)op).Target.PC;
                         break;
                     }
                 case OpCode.Increment:
                     {
-                        var incrementOp = (op as Ops.Increment)!;
+                        var incrementOp = (Ops.Increment)op;
                         var i = Index(incrementOp.Target);
                         var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + incrementOp.Delta);
                         registers[i] = v;
@@ -386,7 +407,7 @@ public class VM
                     }
                 case OpCode.IterNext:
                     {
-                        var iterOp = (op as Ops.IterNext)!;
+                        var iterOp = (Ops.IterNext)op;
 
                         if (Get(iterOp.Iter).Cast(Core.Iter).Next(this, iterOp.Loc) is Value v)
                         {
@@ -398,17 +419,17 @@ public class VM
                         break;
                     }
                 case OpCode.OpenInputStream:
-                    Eval((op as Ops.OpenInputStream)!, stack);
+                    Eval((Ops.OpenInputStream)op, stack);
                     break;
                 case OpCode.Or:
                     {
-                        if ((bool)stack.Peek()) { PC = (op as Ops.Or)!.Done.PC; }
+                        if ((bool)stack.Peek()) { PC = ((Ops.Or)op).Done.PC; }
                         else { PC++; }
                         break;
                     }
                 case OpCode.PopItem:
                     {
-                        var popOp = (op as Ops.PopItem)!;
+                        var popOp = (Ops.PopItem)op;
                         var t = Get(popOp.Target);
                         if (t.Type is StackTrait st) { stack.Push(st.Pop(popOp.Loc, this, popOp.Target, t)); }
                         else { throw new EvalError($"Invalid target: {t}", popOp.Loc); }
@@ -417,7 +438,7 @@ public class VM
                     }
                 case OpCode.PrepareClosure:
                     {
-                        var prepareOp = (op as Ops.PrepareClosure)!;
+                        var prepareOp = (Ops.PrepareClosure)op;
                         var m = prepareOp.Target;
                         foreach (var (_, d, s) in m.Closure) { m.ClosureValues[d] = Get(s); }
                         PC = prepareOp.Skip.PC;
@@ -425,13 +446,13 @@ public class VM
                     }
                 case OpCode.Push:
                     {
-                        stack.Push((op as Ops.Push)!.Value.Copy());
+                        stack.Push(((Ops.Push)op).Value.Copy());
                         PC++;
                         break;
                     }
                 case OpCode.PushItem:
                     {
-                        var pushOp = (op as Ops.PushItem)!;
+                        var pushOp = (Ops.PushItem)op;
 
                         if (stack.TryPop(out var v))
                         {
@@ -453,20 +474,20 @@ public class VM
                 case OpCode.Repush:
                     {
                         var v = stack.Peek();
-                        for (var i = 0; i < (op as Ops.Repush)!.Count; i++) { stack.Push(v); }
+                        for (var i = 0; i < ((Ops.Repush)op).Count; i++) { stack.Push(v); }
                         PC++;
                         break;
                     }
                 case OpCode.SetArrayItem:
                     {
                         var v = stack.Pop();
-                        stack.Peek().Cast(Core.Array)[(op as Ops.SetArrayItem)!.Index] = v;
+                        stack.Peek().Cast(Core.Array)[((Ops.SetArrayItem)op).Index] = v;
                         PC++;
                         break;
                     }
                 case OpCode.SetLoadPath:
                     {
-                        loadPath = (op as Ops.SetLoadPath)!.Path;
+                        loadPath = ((Ops.SetLoadPath)op).Path;
                         PC++;
                         break;
                     }
@@ -480,13 +501,13 @@ public class VM
                     }
                 case OpCode.SetRegister:
                     {
-                        Set((op as Ops.SetRegister)!.Target, stack.Pop());
+                        Set(((Ops.SetRegister)op).Target, stack.Pop());
                         PC++;
                         break;
                     }
                 case OpCode.Splat:
                     {
-                        var splatOp = (op as Ops.Splat)!;
+                        var splatOp = (Ops.Splat)op;
 
                         if (stack.Count == 0) { throw new EvalError("Missing splat target", splatOp.Loc); }
                         else
@@ -529,7 +550,7 @@ public class VM
                     }
                 case OpCode.UnquoteRegister:
                     {
-                        var unquoteOp = (op as Ops.UnquoteRegister)!;
+                        var unquoteOp = (Ops.UnquoteRegister)op;
                         var f = Get(unquoteOp.Register).Unquote(this, unquoteOp.Loc);
                         Eval(f, stack);
                         PC++;
@@ -537,7 +558,7 @@ public class VM
                     }
                 case OpCode.Unzip:
                     {
-                        var unzipOp = (op as Ops.Unzip)!;
+                        var unzipOp = (Ops.Unzip)op;
 
                         if (stack.TryPop(out var p))
                         {

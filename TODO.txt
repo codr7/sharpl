@@ -12,7 +12,7 @@ ctrl-k ctrl-d       format
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * aoc2
-** implement pair unification in let macro
+** run
 ** make values callable
 *** change into (arg v)
 
