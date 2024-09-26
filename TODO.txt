@@ -11,6 +11,9 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* add arg destructuring
+** add destructuring to README
+
 * aoc2
 ** run
 ** make values callable

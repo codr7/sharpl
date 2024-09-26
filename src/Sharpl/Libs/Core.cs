@@ -818,7 +818,7 @@ public class Core : Lib
                     if (args.TryPop() is Form f)
                     {
                         vm.Emit(f);
-                        vm.Define(id);
+                        vm.BindVar(id);
                     }
                     else { throw new EmitError("Missing value", loc); }
                 }

@@ -60,7 +60,7 @@ public class VM
 
     private readonly List<Call> calls = [];
     private readonly List<Op> code = [];
-    private int definitionCount = 0;
+    private int varCount = 0;
     private Env? env;
     private readonly List<(int, int)> frames = [];
     private readonly List<Label> labels = [];
@@ -136,20 +136,20 @@ public class VM
 #pragma warning restore CS8629
     }
 
-    public void Define(string name)
+    public void BindVar(string name)
     {
-        var i = definitionCount;
+        var i = varCount;
         Env[name] = Value.Make(Core.Binding, new Register(-1, i));
         Emit(Ops.SetRegister.Make(new Register(-1, i)));
-        definitionCount++;
+        varCount++;
     }
 
-    public void Define(Form f)
+    public void BindVar(Form f)
     {
         switch (f)
         {
             case Forms.Id idf:
-                Define(idf.Name);
+                BindVar(idf.Name);
                 break;
             case Forms.Nil:
                 Emit(Ops.Drop.Make(1));
@@ -157,8 +157,8 @@ public class VM
             case Forms.Pair pf:
                 Emit(Ops.Unzip.Make(pf.Loc));
                 Emit(Ops.Swap.Make(pf.Loc));
-                Define(pf.Left);
-                Define(pf.Right);
+                BindVar(pf.Left);
+                BindVar(pf.Right);
                 break;
             default:
                 throw new EmitError($"Invalid lvalue: {f}", f.Loc);
