@@ -1,4 +1,4 @@
-(lib aoc23-2-1)
+(lib aoc23-2)
 
 (^decode-color [in out]
   (let [n:i (parse-int in)
