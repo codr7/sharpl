@@ -24,7 +24,7 @@
            (> (game 'blue) 14))))
 
 (^sum-games [path]
-  (sum (map (^[g] (g 0)) (filter (^[g] (is-possible (g 1))) (read-games path)))*))
+  (sum (map 0 (filter (^[g] (is-possible (g 1))) (read-games path)))*))
     
 (check 2268
   (sum-games "input2"))

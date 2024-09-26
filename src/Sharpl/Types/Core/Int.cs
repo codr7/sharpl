@@ -28,6 +28,21 @@ public class IntType(string name) :
         stack.Push(this, res);
     }
 
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    {
+        switch (arity)
+        {
+            case 1:
+                var nt = stack.Pop();
+                stack.Push(target);
+                nt.Call(vm, stack, 1, registerCount, eval, loc);
+                break;
+            default:
+                base.Call(vm, stack, target, arity, registerCount, eval, loc);
+                break;
+        }
+    }
+
     public void Divide(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
