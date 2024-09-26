@@ -5,12 +5,18 @@ namespace Sharpl.Libs;
 
 public class String : Lib
 {
+    private static string Stringify(Value v, Loc loc) =>
+        (v.Type == Core.Char) ? $"{v.CastUnbox(Core.Char)}" : v.Cast(Core.String, loc);
+
     public String() : base("string", null, [])
     {
         BindMethod("down", ["in"], (vm, stack, target, arity, loc) =>
         {
-            var s = stack.Pop().Cast(Core.String);
-            stack.Push(Core.String, s.ToLower());
+            var v = stack.Pop();
+            var s = Stringify(v, loc).ToLower();
+            if (v.Type == Core.Char) { stack.Push(Core.Char, s[0]); }
+            else { stack.Push(Core.String, s); }
+
         });
 
         BindMethod("join", ["sep"], (vm, stack, target, arity, loc) =>
@@ -38,11 +44,18 @@ public class String : Lib
             stack.Push(Core.String, new string(cs));
         });
 
+        BindMethod("replace", ["in", "old", "new"], (vm, stack, target, arity, loc) =>
+        {
+            var n = Stringify(stack.Pop(), loc);
+            var o = Stringify(stack.Pop(), loc);
+            stack.Push(Core.String, Regex.Replace(stack.Pop().Cast(Core.String), o, n));
+        });
+
         BindMethod("split", ["in", "sep"], (vm, stack, target, arity, loc) =>
         {
             var sep = stack.Pop().Cast(Core.String, loc);
             var res = new Regex(sep).
-                Split(stack.Pop().Cast(Core.String, loc)).
+                Split(Stringify(stack.Pop(), loc)).
                 Select(s => Value.Make(Core.String, s)).
                 ToArray();
             stack.Push(Core.Array, res);
@@ -50,17 +63,23 @@ public class String : Lib
 
         BindMethod("up", ["in"], (vm, stack, target, arity, loc) =>
         {
-            var s = stack.Pop().Cast(Core.String);
-            stack.Push(Core.String, s.ToUpper());
+            var v = stack.Pop();
+            var s = Stringify(v, loc).ToUpper();
+            if (v.Type == Core.Char) { stack.Push(Core.Char, s[0]); }
+            else { stack.Push(Core.String, s);  }
         });
+    }
 
-        BindMethod("replace", ["in", "old", "new"], (vm, stack, target, arity, loc) =>
-        {
-            var n = stack.Pop().Cast(Core.String, loc);
-            var o = stack.Pop().Cast(Core.String, loc);
-            var i = stack.Pop().Cast(Core.String, loc);
-            o = o.Replace(" ", "\\s*");
-            stack.Push(Value.Make(Core.String, Regex.Replace(i, o, n)));
-        });
+    protected override void OnInit(VM vm)
+    {
+        Import(vm.CoreLib);
+
+        vm.Eval("""
+          (^strip [in it]
+            (replace in it ""))
+
+          (^trim [in]
+            (strip in "\s*"))
+        """);
     }
 }

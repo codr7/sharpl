@@ -16,7 +16,7 @@ public class FixType(string name) :
         stack.Push(Value.Make(Libs.Core.Fix, Fix.Make((byte)e, v)));
     }
 
-    public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
+    public Iter CreateRange(Value min, Value max, Value stride, Loc loc)
     {
         ulong? minVal = min.TryCastUnbox(this);
         ulong? maxVal = max.TryCastUnbox(this);
@@ -28,7 +28,7 @@ public class FixType(string name) :
     public override void Dump(Value value, VM vm, StringBuilder result) =>
         result.Append(Fix.ToString(value.CastUnbox(this)));
 
-    public void Add(Loc loc, VM vm, Stack stack, int arity)
+    public void Add(VM vm, Stack stack, int arity, Loc loc)
     {
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
         var res = stack.Pop().CastUnbox(this, loc);
@@ -43,7 +43,7 @@ public class FixType(string name) :
         stack.Push(this, res);
     }
 
-    public void Divide(Loc loc, VM vm, Stack stack, int arity)
+    public void Divide(VM vm, Stack stack, int arity, Loc loc)
     {
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
         stack.Reverse(arity);
@@ -62,7 +62,7 @@ public class FixType(string name) :
     public override bool Equals(Value left, Value right) =>
         Fix.Equals(left.CastUnbox(this), right.CastUnbox(this));
 
-    public void Multiply(Loc loc, VM vm, Stack stack, int arity)
+    public void Multiply(VM vm, Stack stack, int arity, Loc loc)
     {
         if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
         var res = stack.Pop().CastUnbox(this, loc);
@@ -77,7 +77,7 @@ public class FixType(string name) :
         stack.Push(this, res);
     }
 
-    public void Subtract(Loc loc, VM vm, Stack stack, int arity)
+    public void Subtract(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = Fix.Make(1, 0);
 

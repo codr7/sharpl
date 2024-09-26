@@ -34,27 +34,26 @@ public class Call : Form
                 t = pf.Left;
             }
             else if (pf.Left is Nil) { t = pf.Right; }
-            else { throw new EvalError($"Invalid call target: {pf}", Loc); }
+            else { break; }
         }
 
         t.EmitCall(vm, cas);
         foreach (var a in cas) { args.Push(a); }
-
         t = Target;
 
         while (t is Pair pf)
         {
-            vm.Emit(Ops.Unzip.Make(Loc));
-
             if (pf.Right is Nil)
             {
+                vm.Emit(Ops.Unzip.Make(Loc));
                 t = pf.Left;
             }
             else if (pf.Left is Nil)
             {
+                vm.Emit(Ops.Unzip.Make(Loc));
                 t = pf.Right;
                 vm.Emit(Ops.Swap.Make(Loc));
-            }
+            } else { break; }
 
             vm.Emit(Ops.Drop.Make(1));
         }

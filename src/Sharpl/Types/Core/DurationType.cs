@@ -8,7 +8,7 @@ public class DurationType(string name) :
 {
     public static readonly Duration ZERO = new Duration(0, TimeSpan.FromTicks(0));
 
-    public void Add(Loc loc, VM vm, Stack stack, int arity)
+    public void Add(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = new Duration(0, TimeSpan.FromTicks(0));
 
@@ -23,7 +23,7 @@ public class DurationType(string name) :
 
     public override bool Bool(Value value) => value.CastUnbox(this).CompareTo(ZERO) > 0;
 
-    public void Divide(Loc loc, VM vm, Stack stack, int arity)
+    public void Divide(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
         var res = stack.Pop().CastUnbox(this, loc);
@@ -38,7 +38,7 @@ public class DurationType(string name) :
         stack.Push(this, res);
     }
 
-    public void Multiply(Loc loc, VM vm, Stack stack, int arity)
+    public void Multiply(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = stack.Pop().CastUnbox(this, loc);
         arity--;
@@ -52,7 +52,7 @@ public class DurationType(string name) :
         stack.Push(this, res);
     }
 
-    public void Subtract(Loc loc, VM vm, Stack stack, int arity)
+    public void Subtract(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = new Duration(0, TimeSpan.FromTicks(0));
 

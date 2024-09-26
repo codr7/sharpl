@@ -2,19 +2,21 @@
 
 (^decode-color [in out]
   (let [n:i (parse-int in)
-        c   (sym (in (+ i 1):_))]
+        c   (Sym (in i:_))]
     (out c (max (or (out c) 0) n))))
   
-(^decode-game [in out]
-  (for [c (split in ",")]
-    (decode-color c out)))
+(^decode-game [out in]
+  (for [c (string/split in ",")]
+    (decode-color (string/trim c) out)))
   
 (^decode-line [in]
-  (let [games (split (in (+ (_:find-first (^[c] (is c \:)) in)):_) ";")]
+  (let [i     (_:find-first (^[c] (is c \:)) in)
+        games (string/split (in (+ i 1):_) ";")]
     (reduce decode-game games {})))
 	
 (^read-games [path]
-  (enumerate (map decode-line (read-lines path)) 1))
+  (io/do-read [f path]
+    (enumerate 1 (map decode-line (io/lines f)))))
 
 (^is-possible [game]
   (not (or (> (game 'red) 12)
@@ -22,7 +24,7 @@
            (> (game 'blue) 14))))
 
 (^sum-games [path]
-  (sum (map 0 (filter 1 & is-possible (read-games path)))))
+  (sum (map (^[g] (g 0)) (filter (^[g] (is-possible (g 1))) (read-games path)))*))
     
 (check 2268
   (sum-games "input2"))

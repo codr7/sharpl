@@ -7,7 +7,7 @@ public class IntType(string name) :
 {
     public override bool Bool(Value value) => value.CastUnbox(this) != 0;
 
-    public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
+    public Iter CreateRange(Value min, Value max, Value stride, Loc loc)
     {
         int minVal = (min.Type == Libs.Core.Nil) ? 0 : min.CastUnbox(this, loc);
         int? maxVal = (max.Type == Libs.Core.Nil) ? null : max.CastUnbox(this, loc);
@@ -15,7 +15,7 @@ public class IntType(string name) :
         return new Iters.Core.IntRange(minVal, maxVal, strideVal);
     }
 
-    public void Add(Loc loc, VM vm, Stack stack, int arity)
+    public void Add(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = 0;
 
@@ -28,7 +28,7 @@ public class IntType(string name) :
         stack.Push(this, res);
     }
 
-    public void Divide(Loc loc, VM vm, Stack stack, int arity)
+    public void Divide(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
         var res = stack.Pop().CastUnbox(this, loc);
@@ -43,7 +43,7 @@ public class IntType(string name) :
         stack.Push(this, res);
     }
 
-    public void Multiply(Loc loc, VM vm, Stack stack, int arity)
+    public void Multiply(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = stack.Pop().CastUnbox(this, loc);
         arity--;
@@ -57,7 +57,7 @@ public class IntType(string name) :
         stack.Push(this, res);
     }
 
-    public void Subtract(Loc loc, VM vm, Stack stack, int arity)
+    public void Subtract(VM vm, Stack stack, int arity, Loc loc)
     {
         var res = 0;
 

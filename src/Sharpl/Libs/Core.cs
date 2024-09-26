@@ -202,26 +202,26 @@ public class Core : Lib
 
         BindMethod("+", ["x"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type is NumericTrait nt) { nt.Add(loc, vm, stack, arity); }
+            if (stack[^arity].Type is NumericTrait nt) { nt.Add(vm, stack, arity, loc); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMethod("-", ["x"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type is NumericTrait nt) { nt.Subtract(loc, vm, stack, arity); }
+            if (stack[^arity].Type is NumericTrait nt) { nt.Subtract(vm, stack, arity, loc); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMethod("*", ["x", "y"], (vm, stack, target, arity, loc) =>
          {
              if (stack[^arity].Type is NumericTrait nt)
-             { nt.Multiply(loc, vm, stack, arity); }
+             { nt.Multiply(vm, stack, arity, loc); }
              else { throw new EvalError($"Expected numeric value", loc); }
          });
 
         BindMethod("/", ["x", "y"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type is NumericTrait nt) { nt.Divide(loc, vm, stack, arity); }
+            if (stack[^arity].Type is NumericTrait nt) { nt.Divide(vm, stack, arity, loc); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
@@ -323,12 +323,27 @@ public class Core : Lib
             vm.Emit(Ops.EndFrame.Make());
         });
 
+        BindMethod("dump", [], (vm, stack, target, arity, loc) =>
+        {
+            stack.Reverse(arity);
+            var res = new StringBuilder();
+
+            for (var i = 0; i < arity; i++)
+            {
+                if (i > 0) { res.Append(' '); }
+                stack.Pop().Dump(vm, res);
+                arity--;
+            }
+
+            Console.WriteLine(res.ToString());
+        });
+
         BindMacro("else", ["condition", "true?", "false?"], (vm, target, args, loc) =>
              {
                  if (args.TryPop() is Form cf) { vm.Emit(cf); }
                  else { throw new EmitError("Missing condition", loc); }
                  var skipElse = new Label();
-                 vm.Emit(Ops.Branch.Make(skipElse, loc));
+                 vm.Emit(Ops.Branch.Make(skipElse, true, loc));
                  if (args.TryPop() is Form tf) { vm.Emit(tf); }
                  var skipEnd = new Label();
                  vm.Emit(Ops.Goto.Make(skipEnd));
@@ -397,7 +412,7 @@ public class Core : Lib
                 else { throw new EmitError("Missing condition", loc); }
 
                 var skip = new Label();
-                vm.Emit(Ops.Branch.Make(skip, loc));
+                vm.Emit(Ops.Branch.Make(skip, true, loc));
                 args.Emit(vm);
                 skip.PC = vm.EmitPC;
             });
@@ -685,7 +700,7 @@ public class Core : Lib
                         goto case 2;
                 }
 
-                if (t is RangeTrait rt) { stack.Push(Iter, rt.CreateRange(loc, min, max, stride)); }
+                if (t is RangeTrait rt) { stack.Push(Iter, rt.CreateRange(min, max, stride, loc)); }
                 else { throw new EvalError($"Invalid range type: {t}", loc); }
             });
 

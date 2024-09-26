@@ -56,13 +56,13 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
                         switch (i)
                         {
                             case 0:
-                                stack.Push(target.CastUnbox(this, loc).Item1);
+                                stack.Push(t.CastUnbox(this, loc).Item1);
                                 break;
                             case 1:
-                                stack.Push(target.CastUnbox(this, loc).Item2);
-                                break;
+                                stack.Push(t.CastUnbox(this, loc).Item2);
+                                return;
                             default:
-                                t = target.CastUnbox(this, loc).Item2;
+                                t = t.CastUnbox(this, loc).Item2;
                                 break;
                         }
                     }

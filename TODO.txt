@@ -11,7 +11,16 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
+* aoc2
+** convert int call to (arg int)
+** convert char call to is-test
+** add support fpr splitting strings on chars
+
 * add method arg destructuring
+** catch pairs on method emit
+** set bool arg.Unzip
+*** emit ops if set when emitting call args
+
 (check 2:1
   (^foo [l:r] r:l)
   (foo 1:2))
@@ -20,10 +29,16 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
   (^foo [_:r:rr] r:rr)
   (foo 1:2:3))
 
-* aoc2
-** run
-** make values callable
-*** change into (arg v)
+* add type hints
+** specialize method calls to correct instance method
+** fib
+
+(^foo [x@Int] (+ x x))
+
+* add inlining
+** add size limit to config
+** add UserMethod.Recursive
+** set if any calls to self or recursive methods
 
 * start repl from client to server
 ** send code as string

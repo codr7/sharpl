@@ -215,7 +215,7 @@ public class VM
         {
             var op = code[PC];
             //Console.WriteLine(PC + " " + op.Dump(this));
- 
+
             switch (op.Code)
             {
                 case OpCode.And:
@@ -236,13 +236,15 @@ public class VM
                 case OpCode.Branch:
                     {
                         var branchOp = (Ops.Branch)op;
+                        Value? v = null;
 
-                        if (stack.TryPop(out var v))
-                        {
-                            if ((bool)v) { PC++; }
-                            else { PC = branchOp.Right.PC; }
-                        }
-                        else { throw new EvalError("Missing condition", branchOp.Loc); }
+                        if (branchOp.Pop && stack.TryPop(out var v1)) { v = v1; }
+                        else if (!branchOp.Pop && stack.TryPeek(out var v2)) { v = v2;  }
+
+                        if (v is null) { throw new EvalError("Missing condition", branchOp.Loc); }
+                        
+                        if ((bool)v) { PC++; }
+                        else { PC = branchOp.Right.PC; }
 
                         break;
                     }

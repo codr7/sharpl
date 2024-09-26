@@ -8,7 +8,7 @@ public class CharType(string name) :
 {
     public override bool Bool(Value value) => value.CastUnbox(this) != 0;
 
-    public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
+    public Iter CreateRange(Value min, Value max, Value stride, Loc loc)
     {
         char minVal = (min.Type == Libs.Core.Nil) ? '\0' : min.CastUnbox(this, loc);
         char? maxVal = (max.Type == Libs.Core.Nil) ? null : max.CastUnbox(this, loc);

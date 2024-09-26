@@ -39,7 +39,7 @@ public class StringType(string name) : ComparableType<string>(name), IterTrait, 
                     {
                         var p = iv.CastUnbox(Libs.Core.Pair);
                         var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : p.Item1.CastUnbox(Libs.Core.Int, loc);
-                        var n = (p.Item2.Type == Libs.Core.Nil) ? t.Length - 1 : p.Item2.CastUnbox(Libs.Core.Int, loc);
+                        var n = (p.Item2.Type == Libs.Core.Nil) ? t.Length - i : p.Item2.CastUnbox(Libs.Core.Int, loc);
                         stack.Push(Libs.Core.String, t[i..(i + n)]);
                     }
                     else

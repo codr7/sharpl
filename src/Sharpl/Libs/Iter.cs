@@ -37,7 +37,7 @@ public class Iter : Lib
             vm.Emit(Ops.Repush.Make(1));
             vm.Emit(Ops.CallRegister.Make(pred, 1, false, vm.NextRegisterIndex, loc));
             var next = new Label();
-            vm.Emit(Ops.Branch.Make(next, loc));
+            vm.Emit(Ops.Branch.Make(next, true, loc));
             vm.Emit(Ops.GetRegister.Make(index));
             vm.Emit(Ops.CreatePair.Make(loc));
             vm.Emit(Ops.Goto.Make(ok));
@@ -128,14 +128,17 @@ public class Iter : Lib
 
                   vm.Emit(sequenceForm);
                   vm.Emit(Ops.CreateIter.Make(iter, loc));
+
                   vm.Emit(seedForm);
 
                   var start = new Label(vm.EmitPC);
                   var done = new Label();
+                  vm.Emit(Ops.Repush.Make(1));
                   vm.Emit(Ops.IterNext.Make(iter, done, true, loc));
                   vm.Emit(Ops.CallRegister.Make(method, 2, false, vm.NextRegisterIndex, loc));
                   vm.Emit(Ops.Goto.Make(start));
                   done.PC = vm.EmitPC;
+                  vm.Emit(Ops.Drop.Make(1));
               });
 
         BindMethod("zip", ["in1", "in2", "in3?"], (vm, stack, target, arity, loc) =>

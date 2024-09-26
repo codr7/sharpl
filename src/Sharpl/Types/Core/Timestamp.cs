@@ -7,7 +7,7 @@ public class TimestampType(string name) :
     NumericTrait,
     RangeTrait
 {
-    public void Add(Loc loc, VM vm, Stack stack, int arity)
+    public void Add(VM vm, Stack stack, int arity, Loc loc)
     {
         stack.Reverse(arity);
         var res = stack.Pop().CastUnbox(this);
@@ -45,7 +45,7 @@ public class TimestampType(string name) :
         stack.Push(Libs.Core.Timestamp, new DateTime(y, M, d, h, m, s, ms, us));
     }
 
-    public Iter CreateRange(Loc loc, Value min, Value max, Value stride)
+    public Iter CreateRange(Value min, Value max, Value stride, Loc loc)
     {
         DateTime minVal = (min.Type == Libs.Core.Nil) ? DateTime.MinValue : min.CastUnbox(this, loc);
         DateTime maxVal = (max.Type == Libs.Core.Nil) ? DateTime.MaxValue : max.CastUnbox(this, loc);
@@ -60,13 +60,13 @@ public class TimestampType(string name) :
         return new Iters.Core.TimeRange(minVal, maxVal, (Duration)strideVal);
     }
 
-    public void Divide(Loc loc, VM vm, Stack stack, int arity) =>
+    public void Divide(VM vm, Stack stack, int arity, Loc loc) =>
         throw new EvalError("Not supported", loc);
 
-    public void Multiply(Loc loc, VM vm, Stack stack, int arity) =>
+    public void Multiply(VM vm, Stack stack, int arity, Loc loc) =>
             throw new EvalError("Not supported", loc);
 
-    public void Subtract(Loc loc, VM vm, Stack stack, int arity)
+    public void Subtract(VM vm, Stack stack, int arity, Loc loc)
     {
         if (arity == 1) { throw new EvalError("Not supported", loc); }
         else if (arity == 2 && stack.Peek().Type == Libs.Core.Timestamp)

@@ -31,7 +31,13 @@
   (string/replace "abaabba" "a" "A"))
 
 (check "foo-bar"
-  (string/replace "foo  bar" "(\w+) (\w+)" "$1-$2"))
+  (string/replace "foo  bar" "(\w+)\s*(\w+)" "$1-$2"))
 
 (check ["foo" "bar"]
   (string/split "foo bar" " "))
+
+(check "foobar"
+  (string/strip ";foo;bar;" \;))
+
+(check "foobar"
+  (string/trim " foo bar "))

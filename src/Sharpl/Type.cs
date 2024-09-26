@@ -12,8 +12,14 @@ public abstract class AnyType(string name)
 
     public virtual void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
-        if (arity != 0) { throw new EvalError("Wrong number of arguments", loc); }
-        stack.Push(target);
+        switch (arity)
+        {
+            case 0:
+                stack.Push(target);
+                break;
+            default:
+                throw new EvalError($"Wrong number of arguments: {this}", loc);
+        }
     }
 
     public virtual Value Copy(Value value) => value;
