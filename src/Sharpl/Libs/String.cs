@@ -53,11 +53,13 @@ public class String : Lib
 
         BindMethod("split", ["in", "sep"], (vm, stack, target, arity, loc) =>
         {
-            var sep = stack.Pop().Cast(Core.String, loc);
+            var sep = Stringify(stack.Pop(), loc);
+
             var res = new Regex(sep).
                 Split(Stringify(stack.Pop(), loc)).
                 Select(s => Value.Make(Core.String, s)).
                 ToArray();
+
             stack.Push(Core.Array, res);
         });
 
