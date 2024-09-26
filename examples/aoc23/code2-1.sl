@@ -1,22 +1,22 @@
 (lib aoc23-2)
 
-(^decode-color [in out]
+(^read-color [in out]
   (let [n:i (parse-int in)
         c   (Sym (in i:_))]
     (out c (max (or (out c) 0) n))))
   
-(^decode-game [out in]
+(^read-game [out in]
   (for [c (string/split in \,)]
-    (decode-color (string/trim c) out)))
+    (read-color (string/trim c) out)))
   
-(^decode-line [in]
+(^read-line [in]
   (let [i     (_:find-first \: in)
         games (string/split (in (+ i 1):_) \;)]
-    (reduce decode-game games {})))
+    (reduce read-game games {})))
 	
 (^read-games [path]
   (io/do-read [f path]
-    (enumerate 1 (map decode-line (io/lines f)))))
+    (enumerate 1 (map read-line (io/lines f)))))
 
 (^is-possible [game]
   (not (or (> (game 'red) 12)
