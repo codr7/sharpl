@@ -66,6 +66,14 @@ New dynamically scoped bindings may be created using `var`.
 ```
 `42`
 
+### destructuring
+Bindings support declarative destructuring of pairs.
+
+```
+(let [_:r:rr 1:2:3] r:rr)
+```
+`2:3`
+
 ### updates
 `set` may be used to update a binding.
 
