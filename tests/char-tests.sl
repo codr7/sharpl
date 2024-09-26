@@ -3,3 +3,7 @@
 (check F (char/is-digit \a))
 
 (check 7 (char/digit \7))
+
+(check (\a \a))
+
+(check (not (\a \b)))

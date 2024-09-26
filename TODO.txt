@@ -11,15 +11,6 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-[(filter 1 & (^[x] (> x 1)) [1:2 3:4])*]
-
-[(filter 0 & 1 [0:T 1:F 2:T 3:F])*]
-
-* aoc2
-** convert int call to (arg int)
-** convert char call to is-test
-** add support fpr splitting strings on chars
-
 * add method arg destructuring
 ** catch pairs on method emit
 ** set bool arg.Unzip

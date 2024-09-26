@@ -29,6 +29,24 @@ public class CharType(string name) :
         });
     }
 
+    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    {
+        var c = target.CastUnbox(this);
+        var r = true;
+
+        while (arity > 0)
+        {
+            if (stack.Pop().CastUnbox(this) != c) {  
+                r = false; 
+                break; 
+            }
+
+            arity--;
+        }
+
+        stack.Push(Libs.Core.Bit, r);
+    }
+
     public override void Say(Value value, VM vm, StringBuilder result) =>
         result.Append(value.CastUnbox(this));
 }
