@@ -1,4 +1,5 @@
 using Sharpl.Forms;
+using Sharpl.Libs;
 using System.Text;
 
 namespace Sharpl;
@@ -31,7 +32,16 @@ public abstract class AnyType(string name)
         var arity = args.Count;
         var splat = args.IsSplat;
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-        args.Emit(vm);
+        UserMethod? um = null;
+        
+        if (target.Type == Core.UserMethod) { um = target.Cast(Core.UserMethod);  }
+
+        for (int i = 0; i < args.Count; i++) {
+            vm.Emit(args.Items[i]);
+            if (um is not null && i < um.Args.Length && um.Args[i].Unzip) { vm.Emit(Ops.Unzip.Make(loc)); }
+        }
+
+        args.Clear();
         vm.Emit(Ops.CallDirect.Make(target, arity, splat, vm.NextRegisterIndex, loc));
     }
 

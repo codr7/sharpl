@@ -11,7 +11,7 @@ Scheme is too religious for my taste, Clojure even more so.<br/>
 
 There are other languages; but I have found none that offer the same kind of power in a coherent, modern package.<br/>
 
-I also like the idea of embedding languages, because having access to two complementing languages is a lot better than one.
+I also like the idea of embedding languages, because having access to two complementing languages is a lot better than one. 
 
 ## status
 It's a work in progress, the plan is to solve the first part of each problem and leave the second as an exercise.

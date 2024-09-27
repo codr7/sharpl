@@ -9,11 +9,12 @@ public class UserMethodType : Type<UserMethod>
         var startPC = vm.PC;
         var m = target.Cast(this);
         vm.CallUserMethod(loc, stack, m, new Value?[m.Args.Length], arity, registerCount);
-        if (eval) { 
+        if (eval)
+        {
             vm.EvalUntil(startPC, stack);
             vm.PC--;
         }
-    }   
+    }
 
     public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
     {
@@ -22,7 +23,7 @@ public class UserMethodType : Type<UserMethod>
         var splat = args.IsSplat;
         if (!splat && arity < m.MinArgCount) { throw new EmitError($"Not enough arguments: {m}", loc); }
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
-        var argMask = new Value?[arity];
+        var argMask = new Value?[Math.Max(arity, m.Args.Length)];
         var i = 0;
 
         foreach (var a in args)
@@ -35,9 +36,35 @@ public class UserMethodType : Type<UserMethod>
                     av = Value.Make(Libs.Core.Binding, new Register(r.FrameOffset + 1, r.Index));
                 }
 
+                while (i < m.Args.Length && m.Args[i].Unzip)
+                {
+                    var p = av.CastUnbox(Libs.Core.Pair, loc);
+                    argMask[i] = p.Item1;
+                    i++;
+                    av = p.Item2;
+                }
+
                 argMask[i] = av;
             }
-            else { vm.Emit(a); }
+            else
+            {
+                vm.Emit(a);
+                var f = a;
+
+                while (i < m.Args.Length && m.Args[i].Unzip) {
+                    if (f is Forms.Pair pf)
+                    {
+                        f = pf.Right;
+                        vm.Emit(Ops.Unzip.Make(loc));
+                        i++;
+                    }
+                    else
+                    {
+                        throw new EmitError($"Expected pair: {f}", loc);
+                    }
+                }
+            }
+
             i++;
         }
 

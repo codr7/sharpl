@@ -11,18 +11,21 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add method arg destructuring
-** catch pairs on method emit
-** set bool arg.Unzip
-*** emit ops if set when emitting call args
+* start repl from client to server
+** send code as string
+*** add repl method
+**** take optional eval function
+**** push string and call
+**** use in client to send value
+** figure out how to handle eval errors gracefully
 
-(check 2:1
-  (^foo [l:r] r:l)
-  (foo 1:2))
+* make macros composeable
+** create user method like VM.Compose
+*** one for each arity
 
-(check 2:3
-  (^foo [_:r:rr] r:rr)
-  (foo 1:2:3))
+* add net lib to readme
+
+* ---
 
 * add type hints
 ** specialize method calls to correct instance method
@@ -39,14 +42,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** add size limit to config
 ** add UserMethod.Recursive
 ** set if any calls to self or recursive methods
-
-* start repl from client to server
-** send code as string
-*** add repl method
-**** take optional eval function
-**** push string and call
-**** use in client to send value
-** figure out how to handle eval errors gracefully
 
 * add separate TypeCheck phase to Form
 ** add Form.TypeCheck(Env, Stack)
@@ -80,10 +75,6 @@ https://deniskyashif.com/2019/12/11/csharp-channels-part-2/
 * track repetitions in dmit
 ** add flag
 ** display frame graph
-
-* make macros composeable
-** create user method like VM.Compose
-*** one for each arity
 
 * add UDP support
 

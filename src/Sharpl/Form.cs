@@ -6,7 +6,7 @@ public abstract class Form(Loc loc)
 {
     public static Value Compose(VM vm, Form left, Form right, Form.Queue args, Loc loc)
     {
-        var m = new UserMethod(vm, $"{left.Dump(vm)} & {right.Dump(vm)}", [], [("values*", -1)], false, loc);
+        var m = new UserMethod(vm, $"{left.Dump(vm)} & {right.Dump(vm)}", [], [new UserMethod.Arg("values*", -1)], false, loc);
         var skip = new Label();
         vm.Emit(Ops.Goto.Make(skip));
         m.StartPC = vm.EmitPC;
@@ -16,9 +16,7 @@ public abstract class Form(Loc loc)
         return Value.Make(Libs.Core.UserMethod, m);
     }
 
-
     public readonly Loc Loc = loc;
-
     public virtual void CollectIds(HashSet<string> result) { }
 
     public T Cast<T>() where T : Form

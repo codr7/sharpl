@@ -6,7 +6,30 @@ namespace Sharpl;
 
 public class UserMethod
 {
-    public readonly (string, int)[] Args;
+    public record struct Arg(string Name, int RegisterIndex = -1, bool Unzip = false) { }
+
+    public static void Bind(VM vm, Form f, List<Arg> fas, bool unzip = false)
+    {
+        switch (f)
+        {
+            case Forms.Id id:
+                {
+                    var r = vm.AllocRegister();
+                    vm.Env.Bind(id.Name, Value.Make(Core.Binding, new Register(0, r)));
+                    fas.Add(new Arg(id.Name, r, unzip));
+                    break;
+                }
+            case Forms.Nil:
+                fas.Add(new Arg("_", -1, unzip));
+                break;
+            case Forms.Pair p:
+                Bind(vm, p.Left, fas, unzip = true);
+                Bind(vm, p.Right, fas);
+                break;
+        }
+    }
+
+    public readonly Arg[] Args;
     public readonly int MinArgCount;
     public readonly (string, int, Register)[] Closure;
     public readonly Dictionary<int, Value> ClosureValues = new Dictionary<int, Value>();
@@ -16,7 +39,7 @@ public class UserMethod
     public int? EndPC;
     public readonly bool Vararg;
 
-    public UserMethod(VM vm, string name, string[] ids, (string, int)[] args, bool vararg, Loc loc)
+    public UserMethod(VM vm, string name, string[] ids, Arg[] args, bool vararg, Loc loc)
     {
         Loc = loc;
         Name = name;
@@ -32,7 +55,7 @@ public class UserMethod
         }).ToArray();
 
         Args = args;
-        MinArgCount = args[0..(vararg ? ^1 : ^0)].Count((a) => !a.Item1.EndsWith('?'));
+        MinArgCount = args[0..(vararg ? ^1 : ^0)].Count((a) => !a.Name.EndsWith('?') && !a.Unzip);
         Vararg = vararg;
     }
 
@@ -41,17 +64,17 @@ public class UserMethod
         for (var i = Args.Length - 1; i >= 0; i--)
         {
             if (i >= argMask.Length) { break; }
-            var ar = Args[i].Item2;
+            var ar = Args[i].RegisterIndex;
             if (ar == -1) { continue; }
 
             if (Vararg && i == Args.Length - 1)
             {
                 var n = arity - Args.Length + 1;
                 var vs = new Value[n];
-                
-                for (var j = n - 1; j >= 0; j--) 
-                { 
-                    vs[j] = (argMask.Length > i + j && argMask[i + j] is Value v) ? v : stack.Pop(); 
+
+                for (var j = n - 1; j >= 0; j--)
+                {
+                    vs[j] = (argMask.Length > i + j && argMask[i + j] is Value v) ? v : stack.Pop();
                 }
 
                 vm.SetRegister(0, ar, Value.Make(Core.Array, vs));
@@ -82,7 +105,7 @@ public class UserMethod
         for (var i = 0; i < Args.Length; i++)
         {
             if (i > 0) { result.Append(' '); }
-            result.Append(Args[i].Item1);
+            result.Append(Args[i].Name);
         }
 
         if (Vararg) { result.Append('*'); }

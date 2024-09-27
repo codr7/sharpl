@@ -57,3 +57,11 @@
 (check 2
   (^foo [] 1:2)
   (_:foo))
+
+(check 2:1
+  (^foo [l:r] r:l)
+  (foo 1:2))
+
+(check 2:3
+  (^foo [_:r:rr] r:rr)
+  (foo 1:2:3))

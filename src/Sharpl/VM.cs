@@ -167,7 +167,7 @@ public class VM
 
     public void Dmit(PC startPC)
     {
-        for (var pc = startPC; pc < code.Count; pc++) { Term.Write($"{pc,-4} {code[pc]}\n"); }
+        for (var pc = startPC; pc < code.Count; pc++) { Term.Write($"{pc,-4} {code[pc].Dump(this)}\n"); }
         Term.Flush();
     }
 

@@ -42,7 +42,7 @@ public class Core : Lib
             f = args.TryPop();
         }
 
-        (string, int)[] fas;
+        var fas = new List<UserMethod.Arg>();
         var parentEnv = vm.Env;
         var registerCount = vm.NextRegisterIndex;
 
@@ -50,7 +50,7 @@ public class Core : Lib
            vm.Env[id] is Value v &&
            v.Type == Binding &&
            v.CastUnbox(Binding).FrameOffset != -1).
-           ToHashSet<string>();
+           ToHashSet();
 
         bool vararg = false;
 
@@ -58,8 +58,9 @@ public class Core : Lib
         {
             if (f is Forms.Array af)
             {
-                fas = af.Items.Select(f =>
+                for (var i = 0; i < af.Items.Length; i++)
                 {
+                    var f = af.Items[i];
                     if (vararg) { throw new EmitError("Vararg must be final param.", f.Loc); }
 
                     if (f is Forms.Splat s)
@@ -68,24 +69,12 @@ public class Core : Lib
                         vararg = true;
                     }
 
-                    if (f is Forms.Id id)
-                    {
-                        var r = vm.AllocRegister();
-                        vm.Env.Bind(id.Name, Value.Make(Binding, new Register(0, r)));
-                        return (id.Name, r);
-                    }
-
-                    if (f is Forms.Nil)
-                    {
-                        return ("_", -1);
-                    }
-
-                    throw new EmitError($"Invalid method arg: {f.Dump(vm)}", f.Loc);
-                }).ToArray();
+                    Sharpl.UserMethod.Bind(vm, f, fas, false);
+                }
             }
             else { throw new EmitError($"Invalid method args: {f!.Dump(vm)}", loc); }
 
-            var m = new UserMethod(vm, name, ids.ToArray(), fas, vararg, loc);
+            var m = new UserMethod(vm, name, ids.ToArray(), fas.ToArray(), vararg, loc);
             var skip = new Label();
             if (ids.Count > 0) { vm.Emit(Ops.PrepareClosure.Make(m, skip)); }
             else { vm.Emit(Ops.Goto.Make(skip)); }
@@ -332,7 +321,6 @@ public class Core : Lib
             {
                 if (i > 0) { res.Append(' '); }
                 stack.Pop().Dump(vm, res);
-                arity--;
             }
 
             Console.WriteLine(res.ToString());
