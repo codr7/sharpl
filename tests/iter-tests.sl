@@ -4,8 +4,8 @@
 (check ['foo:1 'bar:2 'baz:3])
   [(map Pair '[foo bar baz] [1 2 3 4])*])
 
-(check 4
-  (reduce - [3 2 1] 10))
+(check 1
+  (reduce - [2 3] 0))
 
 (check 6
   (reduce + (range _ 4) 0))

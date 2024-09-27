@@ -502,12 +502,12 @@ All composite types may be sliced by indexing using a pair.
 `[3 4 5]`
 
 ### reduce
-`reduce` may be used to transform any iterable into a single value.
+`reduce` may be used to transform any iterable into a single value. 
 
 ```
-(reduce + [1 2 3] 0)
+(reduce - [2 3] 0)
 ```
-`6`
+`1`
 
 ### sum
 `sum` is provided as a shortcut.

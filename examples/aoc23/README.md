@@ -6,7 +6,7 @@
 For many years I used Common Lisp, the least painful alternative I could find; to solve the [AoC](https://adventofcode.com/).
 But as I spent more and more time hacking interpreters and designing my own tiny languages, a crazy idea started growing in my mind.<br/>
 
-Bending Common Lisp into a nice tool is not an easy task, it contains most of the bits and pieces but is loaded with quirks for historical reasons.
+Bending Common Lisp into a nice tool is not an easy task, it contains most of the bits and pieces but comes loaded with quirks for historical reasons.
 Scheme is too religious for my taste, Clojure even more so.<br/>
 
 There are other languages; but I have found none that offer the same kind of power in a coherent, modern package.<br/>

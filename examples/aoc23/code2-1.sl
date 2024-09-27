@@ -5,7 +5,7 @@
         c   (Sym (in i:_))]
     (out c (max (or (out c) 0) n))))
   
-(^read-game [out in]
+(^read-game [in out]
   (for [c (string/split in \,)]
     (read-color (string/trim c) out)))
   

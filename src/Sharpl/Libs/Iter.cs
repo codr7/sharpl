@@ -135,6 +135,7 @@ public class Iter : Lib
                   var done = new Label();
                   vm.Emit(Ops.Repush.Make(1));
                   vm.Emit(Ops.IterNext.Make(iter, done, true, loc));
+                  vm.Emit(Ops.Swap.Make(loc));
                   vm.Emit(Ops.CallRegister.Make(method, 2, false, vm.NextRegisterIndex, loc));
                   vm.Emit(Ops.Goto.Make(start));
                   done.PC = vm.EmitPC;
