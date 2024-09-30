@@ -28,6 +28,16 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * ---
 
+* investigate dropping the stack entirely
+** branch
+** add Register ret arg to Form/Type.Emit/EmitCall
+** allocate the 10 (config) first registers in each new frame for args
+*** use 0 for ret & arg 0
+** remove UserMethod arg regs
+** convert one op at a time to work on registers
+** convert libs
+** remove stack type
+
 * add string support to (emit) like (eval)
 
 * add type hints
