@@ -1,7 +1,7 @@
 #!/usr/local/bin/sharpl
 
 (if (not (is #ARG 3)) 
-  (say "Usage: server [Host] [Port] [Password]")
+  (say "Usage: server [Address] [Port] [Password]")
   (exit))
 
 (var HOST (ARG 0)
@@ -9,7 +9,7 @@
      PASSWORD (ARG 2))
 
 (var clients (List)
-     s (net/accept (net/listen HOST:PORT)))
+     s       (net/accept (net/listen HOST:PORT)))
 
 (^handle-connect [c]
   (say "New client")
@@ -30,7 +30,7 @@
 (say "Listening on " HOST:PORT)
 
 (loop
-  (let [ready (poll s clients*)]
+  (let [ready (poll [s clients*])]
     (else (is s ready) 
       (handle-connect (s))
       (handle-request ready))))

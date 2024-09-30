@@ -1,7 +1,7 @@
 #!/usr/local/bin/sharpl
 
 (if (not (is #ARG 3)) 
-  (say "Usage: client [Host] [Port] [Password]")
+  (say "Usage: client [Host Address] [Host Port] [Password]")
   (exit))
 
 (var HOST (ARG 0)

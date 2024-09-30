@@ -629,19 +629,24 @@ public class Core : Lib
             else { throw new EvalError("Invalid peek target: {src}", loc); }
         });
 
-        BindMethod("poll", ["source1", "source2?"], (vm, stack, target, arity, loc) =>
+        BindMethod("poll", ["sources"], (vm, stack, target, arity, loc) =>
         {
-            var ss = new (Task<bool>, Value)[arity];
-            var cts = new CancellationTokenSource();
-
-            for (var i = arity - 1; i >= 0; i--)
+            var ssv = stack.Pop();
+            
+            if (ssv.Type is IterTrait it)
             {
-                var s = stack.Pop();
-                if (s.Type is PollTrait pt) { ss[i] = (pt.Poll(s, cts.Token), s); }
-                else { throw new EvalError($"Not pollable: {s.Dump(vm)}", loc); }
-            }
+                var ss = new List<(Task<bool>, Value)>();
+                var cts = new CancellationTokenSource();
 
-            stack.Push(Task.Run(async () => await TaskUtil.Any(ss, cts)).Result);
+                for (var i = it.CreateIter(ssv, vm, loc); i.Next(vm, loc) is Value v;)
+                {
+                    if (v.Type is PollTrait pt) { ss.Add((pt.Poll(v, cts.Token), v)); }
+                    else { throw new EvalError($"Not pollable: {v.Dump(vm)}", loc); }
+                }
+
+                stack.Push(Task.Run(async () => await TaskUtil.Any(ss.ToArray(), cts)).Result);
+            }
+            else { throw new EvalError($"Not iterable: {ssv.Dump(vm)}", loc); }
         });
 
         BindMacro("pop", ["src"], (vm, target, args, loc) =>
