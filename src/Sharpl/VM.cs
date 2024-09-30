@@ -359,9 +359,9 @@ public class VM
                 case OpCode.Decrement:
                     {
                         var decrementOp = (Ops.Decrement)op;
-                        var i = Index(decrementOp.Target);
-                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) - decrementOp.Delta);
-                        registers[i] = v;
+                        ref var t = ref Get(decrementOp.Target);
+                        var v = Value.Make(Core.Int, t.CastUnbox(Core.Int) - decrementOp.Delta);
+                        t = v;
                         PC++;
                         break;
                     }
@@ -400,9 +400,9 @@ public class VM
                 case OpCode.Increment:
                     {
                         var incrementOp = (Ops.Increment)op;
-                        var i = Index(incrementOp.Target);
-                        var v = Value.Make(Core.Int, registers[i].CastUnbox(Core.Int) + incrementOp.Delta);
-                        registers[i] = v;
+                        ref var t = ref Get(incrementOp.Target);
+                        var v = Value.Make(Core.Int, t.CastUnbox(Core.Int) + incrementOp.Delta);
+                        t = v;
                         PC++;
                         break;
                     }
@@ -627,27 +627,17 @@ public class VM
 
     public int GetObjectId(object it)
     {
-        if (!objectIds.ContainsKey(it))
-        {
-            var id = objectIds.Count + 1;
-            objectIds[it] = id;
-            return id;
-        }
-
-        return objectIds[it];
+        if (objectIds.ContainsKey(it)) { return objectIds[it]; }
+        var id = objectIds.Count + 1;
+        objectIds[it] = id;
+        return id;
     }
 
-    public ref Value GetRegister(int frameOffset, int index) => ref registers[RegisterIndex(frameOffset, index)];
+    public ref Value GetRegister(int frameOffset, int index) =>
+        ref registers[RegisterIndex(frameOffset, index)];
 
-    public Sym Intern(string name)
-    {
-        if (syms.TryGetValue(name, out var sym))
-        {
-            return sym;
-        }
-
-        return syms[name] = new Sym(name);
-    }
+    public Sym Intern(string name) =>
+        syms.TryGetValue(name, out var sym) ? sym : syms[name] = new Sym(name);
 
     public Sym Gensym(string suffix) => Intern($"{syms.Count}{suffix}");
 
@@ -664,10 +654,7 @@ public class VM
         {
             for (var e = Env; e != null; e = e.Parent)
             {
-                if (e is Lib l)
-                {
-                    return l;
-                }
+                if (e is Lib l) { return l; }
             }
 
             return UserLib;
@@ -706,7 +693,6 @@ public class VM
             Env = prevEnv;
             loadPath = prevLoadPath;
         }
-
     }
 
     public int NextRegisterIndex => nextRegisterIndex;
