@@ -24,6 +24,7 @@ All features described in this document are part of the [test suite](https://git
 - [Maps](https://github.com/codr7/sharpl/tree/main#maps) (`{k1:v1...kN:vN}`) are ordered.
 - [Methods](https://github.com/codr7/sharpl/tree/main#methods) may be [composed](https://github.com/codr7/sharpl/tree/main#composition) using `&`.
 - [Varargs](https://github.com/codr7/sharpl/tree/main#varargs) (`foo*`) are similar to Python.
+- [Declarative destructuring](https://github.com/codr7/sharpl/tree/main#destructuring) (`(let [_:y 1:2] y)`) of bindings.
 - Splatting (`[1 2 3]*`) is simlar to Python.
 - Unified, deeply integrated [iterator](https://github.com/codr7/sharpl/tree/main#iterators) protocol.
 - Default decimal type is [fixpoint](https://github.com/codr7/sharpl/tree/main#fixpoints).
@@ -38,6 +39,13 @@ All features described in this document are part of the [test suite](https://git
 - Many things are callable, simlar to Clojure.
 - Methods have their own symbol (^).
 - Line numbers are a thing.
+
+## examples
+The following examples may give you an idea what Sharpl is currently capable of:
+
+- [Advent of Code 2023](https://github.com/codr7/sharpl/tree/main/examples/aoc23)
+- [Fire](https://github.com/codr7/sharpl/tree/main/examples/fire)
+- [Remote REPL](https://github.com/codr7/sharpl/tree/main/examples/remote-repl)
 
 ## bindings
 Bindings come in two flavors, with lexical or dynamic scope.
