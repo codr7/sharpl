@@ -639,10 +639,11 @@ Ports are bidirectional communication channels. Like pipes, ports may be called 
 
 ### polling
 `poll` returns the first argument that's ready for reading.
+
 ```
 (let [p1 (Pipe) p2 (Pipe)]
   (p2 42)
-  ((poll p1 p2)))
+  ((poll [p1 p2])))
 ```
 `42`
 
