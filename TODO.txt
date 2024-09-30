@@ -17,6 +17,13 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 ** create user method like VM.Compose
 *** one for each arity
 
+* add try/fail/retry
+
+(try 
+     {Int :(^[arg] (retry 'foo arg))
+      'foo:(^[arg] (say "foo " arg))}
+   (fail 42))
+
 * ---
 
 * add type hints
