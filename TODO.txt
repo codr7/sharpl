@@ -32,16 +32,22 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add type hints
 ** specialize method calls to correct instance method
-** fib
+*** fib bench
+** add method overload support
 
 (^foo [x@Int] (+ x x))
+
+* improve startup speed
+** instantiate libraries (except core) on reference
+
+* convert stream port protocol to binary
 
 * convert type checks to ops
 ** add/emit TypeCheckStack op
 ** add/emit TypeCheckRegister op
 ** remove Cast(Loc) variants
 
-* add inlining
+* add inlining support
 ** add size limit to config
 ** add UserMethod.Recursive
 ** set if any calls to self or recursive methods
