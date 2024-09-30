@@ -1,6 +1,5 @@
 using Sharpl.Libs;
 using Sharpl.Types.Core;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Text;
 
@@ -239,10 +238,10 @@ public class VM
                         Value? v = null;
 
                         if (branchOp.Pop && stack.TryPop(out var v1)) { v = v1; }
-                        else if (!branchOp.Pop && stack.TryPeek(out var v2)) { v = v2;  }
+                        else if (!branchOp.Pop && stack.TryPeek(out var v2)) { v = v2; }
 
                         if (v is null) { throw new EvalError("Missing condition", branchOp.Loc); }
-                        
+
                         if ((bool)v) { PC++; }
                         else { PC = branchOp.Right.PC; }
 
@@ -624,7 +623,7 @@ public class VM
 
     public int FrameCount => frames.Count;
 
-    public Value Get(Register register) => GetRegister(register.FrameOffset, register.Index);
+    public ref Value Get(Register register) => ref GetRegister(register.FrameOffset, register.Index);
 
     public int GetObjectId(object it)
     {
@@ -638,7 +637,7 @@ public class VM
         return objectIds[it];
     }
 
-    public Value GetRegister(int frameOffset, int index) => registers[RegisterIndex(frameOffset, index)];
+    public ref Value GetRegister(int frameOffset, int index) => ref registers[RegisterIndex(frameOffset, index)];
 
     public Sym Intern(string name)
     {
