@@ -15,29 +15,16 @@ public record class StreamPort(NetworkStream stream) : Port
         return buffer;
     }
 
-    public Task<bool> Poll(CancellationToken ct) => Task.Run(() => stream.Socket.Poll(0, SelectMode.SelectRead));
-
-    public async Task<ushort?> ReadSize()
-    {
-        var buffer = new byte[sizeof(ushort)];
-        var i = 0;
-        var ct = new CancellationTokenSource().Token;
-
-        while (i < buffer.Length)
-        {
-            int n = await stream.ReadAsync(buffer, i, buffer.Length - i, ct);
-            if (n == 0) { return null; }
-            i += n;
-        }
-
-        return (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(buffer));
-    }
+    public Task<bool> Poll(CancellationToken ct) =>
+        Task.Run(() => stream.Socket.Poll(0, SelectMode.SelectRead));
+    
+    public async Task<ushort> ReadSize() =>
+        (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(await Read(sizeof(ushort))));
 
     public async Task<Value?> Read(VM vm, Loc loc)
     {
         var size = await ReadSize();
-        if (size is null) { return null; }
-        var data = Encoding.UTF8.GetString(await Read((ushort)size));
+        var data = Encoding.UTF8.GetString(await Read(size));
         var jsLoc = new Loc("json");
         if (Json.ReadValue(vm, new StringReader(data), ref jsLoc) is Value v) { return v; }
         throw new EvalError("Failed to parse JSON value", loc);

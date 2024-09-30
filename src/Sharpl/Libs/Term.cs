@@ -15,6 +15,13 @@ public class Term : Lib
         Bind("ESC", Value.Make(Term.Key, new ConsoleKeyInfo('\u001B', ConsoleKey.Escape, false, false, false)));
         Bind("UP", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false)));
 
+        BindMethod("ask", ["prompt?"], (vm, stack, target, arity, loc) =>
+        {
+            if (arity == 1) { vm.Term.Write(stack.Pop().Say(vm)); }
+            vm.Term.Flush();
+            if (Console.ReadLine() is string s) { stack.Push(Core.String, s); }
+        });
+
         BindMethod("clear-line", [], (vm, stack, target, arity, loc) =>
         {
             vm.Term.ClearLine();

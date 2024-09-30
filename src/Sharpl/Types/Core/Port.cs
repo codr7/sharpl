@@ -14,7 +14,7 @@ public class PortType : Type<Port>, CloseTrait, IterTrait, PollTrait
         switch (arity)
         {
             case 0:
-                stack.Push(Task.Run(() => t.Read(vm, loc)).Result ?? Value._);
+                stack.Push(Task.Run(async () => await t.Read(vm, loc)).Result ?? Value._);
                 break;
             case 1:
                 var v = stack.Pop();

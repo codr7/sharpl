@@ -1,6 +1,6 @@
 #!/usr/local/bin/sharpl
 
-(if (not (= #ARG 3)) 
+(if (not (is #ARG 3)) 
   (say "Usage: server [Host] [Port] [Password]")
   (exit))
 
@@ -14,14 +14,18 @@
 (^handle-connect [c]
   (say "New client")
 
-  (else (= (c) PASSWORD)
-    (push clients (net/stream-port c)
-    (say "Authentication failed")
-    (close c))))
+  (let [csp (net/stream-port c)]
+    (else (= (csp) PASSWORD)
+      (push clients csp)
+      (say "Authentication failed")
+      (close c))))
 
 (^handle-request [c]
-  (let [r (c)]
-    (say "New request: " r)))
+  (let [req (c)
+        res (eval req)]
+    (say "  " req)
+    (say res)
+    (c res)))
 
 (say "Listening on " HOST:PORT)
 

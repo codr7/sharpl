@@ -1,15 +1,22 @@
 #!/usr/local/bin/sharpl
 
-(if (not (= #ARG 3)) 
+(if (not (is #ARG 3)) 
   (say "Usage: client [Host] [Port] [Password]")
   (exit))
 
 (var HOST (ARG 0)
      PORT (parse-int:_ (ARG 1))
-     PASSWORD (ARG 2))
+     PASSWORD (ARG 2)
+     c (net/stream-port (net/connect HOST:PORT)))
 
-(let [c (net/stream-port (net/connect HOST:PORT))]
-  (say "Connected to " HOST:PORT)
-  (c PASSWORD))
+(say "Connected to " HOST:PORT)
+(c PASSWORD)
 
-(loop)
+(^run []
+  (loop
+    (let [s (term/ask "  ")]
+      (if (is s _) (return))
+      (c s)
+      (dump (c)))))
+
+(run)

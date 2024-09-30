@@ -1,4 +1,5 @@
 using Sharpl.Types.Core;
+using System.IO.Pipes;
 using System.Text;
 using Forms = Sharpl.Forms;
 
@@ -359,8 +360,17 @@ public class Core : Lib
 
         BindMethod("eval", ["code?"], (vm, stack, target, arity, loc) =>
         {
-            var f = stack.Pop().Unquote(vm, loc);
-            vm.Eval(f, stack);
+            var v = stack.Pop();
+            
+            if (v.Type == String)
+            {
+                var rv = vm.Eval(v.Cast(String));
+                stack.Push(rv ?? Value._);
+            } else
+            {
+                var f = v.Unquote(vm, loc);
+                vm.Eval(f, stack);
+            }
         });
 
         BindMethod("exit", ["code?"], (vm, stack, target, arity, loc) =>
@@ -492,38 +502,38 @@ public class Core : Lib
             });
 
         BindMacro("lib", [], (vm, target, args, loc) =>
+        {
+            if (args.Count == 0) { vm.Emit(Ops.Push.Make(Value.Make(Lib, vm.Lib))); }
+
+            else if (args.TryPop() is Forms.Id nf)
             {
-                if (args.Count == 0) { vm.Emit(Ops.Push.Make(Value.Make(Lib, vm.Lib))); }
+                Lib? lib = null;
 
-                else if (args.TryPop() is Forms.Id nf)
+                if (vm.Env.Find(nf.Name) is Value v) { lib = v.Cast(Lib, loc); }
+                else
                 {
-                    Lib? lib = null;
-
-                    if (vm.Env.Find(nf.Name) is Value v) { lib = v.Cast(Lib, loc); }
-                    else
-                    {
-                        lib = new Lib(nf.Name, vm.Env, args.CollectIds());
-                        vm.Env.BindLib(lib);
-                    }
-
-                    if (args.Empty) { vm.Env = lib; }
-                    else { vm.DoEnv(lib, () => args.Emit(vm)); }
+                    lib = new Lib(nf.Name, vm.Env, args.CollectIds());
+                    vm.Env.BindLib(lib);
                 }
-                else { throw new EmitError("Invalid library name", loc); }
-            });
+
+                if (args.Empty) { vm.Env = lib; }
+                else { vm.DoEnv(lib, () => args.Emit(vm)); }
+            }
+            else { throw new EmitError("Invalid library name", loc); }
+        });
 
         BindMacro("load", ["path"], (vm, target, args, loc) =>
+        {
+            while (true)
             {
-                while (true)
+                if (args.TryPop() is Form pf)
                 {
-                    if (args.TryPop() is Form pf)
-                    {
-                        if (vm.Eval(pf) is Value p) { vm.Load(p.Cast(String, pf.Loc)); }
-                        else { throw new EvalError("Missing path", pf.Loc); }
-                    }
-                    else { break; }
+                    if (vm.Eval(pf) is Value p) { vm.Load(p.Cast(String, pf.Loc)); }
+                    else { throw new EvalError("Missing path", pf.Loc); }
                 }
-            });
+                else { break; }
+            }
+        });
 
         BindMacro("loop", ["body?"], (vm, target, args, loc) =>
         {

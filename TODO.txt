@@ -11,19 +11,11 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* start repl from client to server
-** send code as string
-*** add repl method
-**** take optional eval function
-**** push string and call
-**** use in client to send value
-** figure out how to handle eval errors gracefully
+* add net lib to readme
 
 * make macros composeable
 ** create user method like VM.Compose
 *** one for each arity
-
-* add net lib to readme
 
 * ---
 
