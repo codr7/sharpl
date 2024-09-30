@@ -13,10 +13,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add net lib to readme
 
-* make macros composeable
-** create user method like VM.Compose
-*** one for each arity
-
 * add try/fail/retry
 
 (try 
@@ -24,7 +20,15 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
       'foo:(^[arg] (say "foo " arg))}
    (fail 42))
 
+* add break loop
+
+* make macros composeable
+** create user method like VM.Compose
+*** one for each arity
+
 * ---
+
+* add string support to (emit) like (eval)
 
 * add type hints
 ** specialize method calls to correct instance method
