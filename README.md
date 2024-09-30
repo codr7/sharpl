@@ -770,3 +770,13 @@ MSBuild version 17.9.8+b34f75857 for .NET
 10   Push 2
 11   CallMethod (Method + []) 2 False
 ```
+
+## contributing
+Contributions are very welcome, feel free to submit pull requests.<br/>
+Or even better, register a GitHub issue describing the change and allow us to make sure we agree it's a good idea first.
+
+- Fork the project.
+- Create a feature branch (`git checkout -b feature/AmazingFeature`).
+- Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+- Push to the branch ( git push origin feature/AmazingFeature ).
+- Open a pull request.

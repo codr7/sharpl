@@ -14,4 +14,18 @@
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="tests\binding-tests.sl\**" />
+    <EmbeddedResource Remove="tests\binding-tests.sl\**" />
+    <None Remove="tests\binding-tests.sl\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="checkargs.sl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="tests\binding-tests.sl" />
+  </ItemGroup>
+
 </Project>
