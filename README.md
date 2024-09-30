@@ -776,7 +776,7 @@ Contributions are very welcome, feel free to submit pull requests.<br/>
 Or even better, register a GitHub issue describing the change and allow us to make sure we agree it's a good idea first.
 
 - Fork the project.
-- Create a feature branch (`git checkout -b feature/AmazingFeature`).
-- Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-- Push to the branch ( git push origin feature/AmazingFeature ).
+- Create a feature branch (`git checkout -b issue-x`).
+- Commit your changes (`git commit -m '...'`).
+- Push to the branch (`git push origin issue-x`).
 - Open a pull request.
