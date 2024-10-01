@@ -28,7 +28,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * ---
 
-* investigate dropping the stack entirely
+* investigate dropping the stack
 ** branch
 ** add Register ret arg to Form/Type.Emit/EmitCall
 ** allocate the 10 (config) first registers in each new frame for args
@@ -41,6 +41,11 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * add string support to (emit) like (eval)
 
 * add type hints
+** add tyoe decl support
+42@Int
+42@String
+** add TypeCheck form
+** add TypeCheck op
 ** specialize method calls to correct instance method
 *** fib bench
 ** add method overload support
@@ -50,11 +55,19 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * improve startup speed
 ** instantiate libraries (except core) on reference
 
+* add Span trait/type
+** Span<Value>
+** iterable
+** Add Span<Value> CreateSpan(target, vm, loc)
+*** return target for Span type
+** allow calling with any SpanTrait to assign 
+** use as result type for all slice ops
+*** string/list/array/map
+**** implement slice assign
+
 * convert stream port protocol to binary
 
 * convert type checks to ops
-** add/emit TypeCheckStack op
-** add/emit TypeCheckRegister op
 ** remove Cast(Loc) variants
 
 * add inlining support
@@ -74,7 +87,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add support for multiple values in pipe/port write call case
 * add Pair slice support
-* add array/map/list/pair/string slice assign
 
 * add timeout arg to poll
 https://deniskyashif.com/2019/12/11/csharp-channels-part-2/
