@@ -26,7 +26,7 @@ All features described in this document are part of the [test suite](https://git
 - [Varargs](https://github.com/codr7/sharpl/tree/main#varargs) (`foo*`), similar to Python.
 - [Declarative destructuring](https://github.com/codr7/sharpl/tree/main#destructuring) (`(let [_:y 1:2] y)`) of bindings.
 - Splatting (`[1 2 3]*`), simlar to Python.
-- Deferred actions, similar to Go.
+- [Deferred actions](https://github.com/codr7/sharpl#deferred-actions), similar to Go.
 - Unified, deeply integrated [iterator](https://github.com/codr7/sharpl/tree/main#iterators) protocol.
 - Default decimal type is [fixpoint](https://github.com/codr7/sharpl/tree/main#fixpoints).
 - Nil is written `_`.
