@@ -631,7 +631,7 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
-## deferrìng
+## deferred actions
 Actions may be sceduled to run unconditionally at scope exit using `defer`.
 Deferred actions are evaluated last in first out.
 
