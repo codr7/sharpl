@@ -631,8 +631,9 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
-## resources
-Acquired resources may be released on scope exit using `defer`.
+## deferrìng
+Actions may be sceduled to run unconditionally at scope exit using `defer`.
+Deferred actions are evaluated last in first out.
 
 ```
 (do
@@ -640,11 +641,11 @@ Acquired resources may be released on scope exit using `defer`.
   (defer (^[] (say 'defer)))
   (say 'after))
 ```
-`
+```
 before
 after
 defer
-`
+```
 
 ## communication
 ### pipes
