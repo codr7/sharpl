@@ -23,9 +23,10 @@ All features described in this document are part of the [test suite](https://git
 - Range support (`min..max:stride`).
 - [Maps](https://github.com/codr7/sharpl/tree/main#maps) (`{k1:v1...kN:vN}`) are ordered.
 - [Methods](https://github.com/codr7/sharpl/tree/main#methods) may be [composed](https://github.com/codr7/sharpl/tree/main#composition) using `&`.
-- [Varargs](https://github.com/codr7/sharpl/tree/main#varargs) (`foo*`) are similar to Python.
+- [Varargs](https://github.com/codr7/sharpl/tree/main#varargs) (`foo*`), similar to Python.
 - [Declarative destructuring](https://github.com/codr7/sharpl/tree/main#destructuring) (`(let [_:y 1:2] y)`) of bindings.
-- Splatting (`[1 2 3]*`) is simlar to Python.
+- Splatting (`[1 2 3]*`), simlar to Python.
+- Deferred actions, similar to Go.
 - Unified, deeply integrated [iterator](https://github.com/codr7/sharpl/tree/main#iterators) protocol.
 - Default decimal type is [fixpoint](https://github.com/codr7/sharpl/tree/main#fixpoints).
 - Nil is written `_`.
@@ -631,7 +632,7 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 `T`
 
 ## resources
-Acquired resources may be released using `defer`.
+Acquired resources may be released on scope exit using `defer`.
 
 ```
 (do
