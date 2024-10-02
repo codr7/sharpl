@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Sharpl;
 public class Lib : Env
 {
@@ -6,11 +8,11 @@ public class Lib : Env
         Name = name;
     }
 
-    public void Init(VM vm)
+    public void Init(VM vm, Loc loc)
     {
         vm.Env.BindLib(this);
-
-        vm.DoEnv(this, () =>
+        
+        vm.DoEnv(this, loc, () =>
         {
             OnInit(vm);
         });

@@ -630,6 +630,21 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
+## resources
+Acquired resources may be released using `defer`.
+
+```
+(do
+  (say 'before)
+  (defer (^[] (say 'defer)))
+  (say 'after))
+```
+`
+before
+after
+defer
+`
+
 ## communication
 ### pipes
 Pipes are unbounded, thread safe communication channels. Pipes may be called without arguments to read and with to write.

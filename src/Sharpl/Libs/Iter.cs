@@ -54,7 +54,7 @@ public class Iter : Lib
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
-            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
+            vm.DoEnv(new Env(vm.Env, args.CollectIds()), loc, () =>
              {
                  var bindings = new List<(Register, Register)>();
 
@@ -93,7 +93,7 @@ public class Iter : Lib
                  args.Emit(vm);
                  vm.Emit(Ops.Goto.Make(start));
                  end.PC = vm.EmitPC;
-                 vm.Emit(Ops.EndFrame.Make());
+                 vm.Emit(Ops.EndFrame.Make(loc));
              });
         });
         

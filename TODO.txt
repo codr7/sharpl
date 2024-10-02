@@ -12,8 +12,11 @@ ctrl-k ctrl-d       format
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add net lib to readme
+* add term lib to readme
 
-* add try/fail/retry
+* add try
+** add macro
+** retry
 
 (try 
      {Int :(^[arg] (retry 'foo arg))

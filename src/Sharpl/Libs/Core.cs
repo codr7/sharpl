@@ -54,7 +54,7 @@ public class Core : Lib
 
         bool vararg = false;
 
-        vm.DoEnv(new Env(vm.Env, ids), () =>
+        vm.DoEnv(new Env(vm.Env, ids), loc, () =>
         {
             if (f is Forms.Array af)
             {
@@ -254,7 +254,7 @@ public class Core : Lib
              {
                  vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
-                 vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
+                 vm.DoEnv(new Env(vm.Env, args.CollectIds()), loc, () =>
                  {
                      while (true)
                      {
@@ -264,7 +264,7 @@ public class Core : Lib
 
                  });
 
-                 vm.Emit(Ops.EndFrame.Make());
+                 vm.Emit(Ops.EndFrame.Make(loc));
                  emptyArgs = false;
              }
 
@@ -293,6 +293,18 @@ public class Core : Lib
             else { throw new EmitError("Invalid target", loc); }
         });
 
+        BindMethod("defer", ["target1", "target2?"], (vm, stack, target, arity, loc) =>
+        {
+            stack.Reverse(arity);
+            var f = vm.Frame;
+
+            while (arity > 0)
+            {
+                f.Defer(stack.Pop());
+                arity--;
+            }
+        });
+
         BindMacro("dmit", [], (vm, target, args, loc) =>
         {
             var skip = new Label();
@@ -308,8 +320,8 @@ public class Core : Lib
         BindMacro("do", [], (vm, target, args, loc) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
-            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () => args.Emit(vm));
-            vm.Emit(Ops.EndFrame.Make());
+            vm.DoEnv(new Env(vm.Env, args.CollectIds()), loc, () => args.Emit(vm));
+            vm.Emit(Ops.EndFrame.Make(loc));
         });
 
         BindMethod("dump", [], (vm, stack, target, arity, loc) =>
@@ -360,12 +372,13 @@ public class Core : Lib
         BindMethod("eval", ["code?"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop();
-            
+
             if (v.Type == String)
             {
                 var rv = vm.Eval(v.Cast(String));
                 stack.Push(rv ?? Value._);
-            } else
+            }
+            else
             {
                 var f = v.Unquote(vm, loc);
                 vm.Eval(f, stack);
@@ -471,7 +484,7 @@ public class Core : Lib
 
                     vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
-                    vm.DoEnv(new Env(vm.Env, ids), () =>
+                    vm.DoEnv(new Env(vm.Env, ids), loc, () =>
                      {
                          var brs = new List<(int, int, int)>();
 
@@ -494,7 +507,7 @@ public class Core : Lib
                              vm.Emit(Ops.CopyRegister.Make(new Register(0, fromIndex), new Register(toFrameOffset, toIndex)));
                          }
 
-                         vm.Emit(Ops.EndFrame.Make());
+                         vm.Emit(Ops.EndFrame.Make(loc));
                      });
                 }
                 else { throw new EmitError("Missing bindings", loc); }
@@ -516,7 +529,7 @@ public class Core : Lib
                 }
 
                 if (args.Empty) { vm.Env = lib; }
-                else { vm.DoEnv(lib, () => args.Emit(vm)); }
+                else { vm.DoEnv(lib, loc, () => args.Emit(vm)); }
             }
             else { throw new EmitError("Invalid library name", loc); }
         });
@@ -538,14 +551,14 @@ public class Core : Lib
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
-            vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
+            vm.DoEnv(new Env(vm.Env, args.CollectIds()), loc, () =>
              {
                  var end = new Label();
                  var start = new Label(vm.EmitPC);
                  args.Emit(vm);
                  vm.Emit(Ops.Goto.Make(start));
                  end.PC = vm.EmitPC;
-                 vm.Emit(Ops.EndFrame.Make());
+                 vm.Emit(Ops.EndFrame.Make(loc));
              });
         });
 
@@ -631,7 +644,7 @@ public class Core : Lib
         BindMethod("poll", ["sources"], (vm, stack, target, arity, loc) =>
         {
             var ssv = stack.Pop();
-            
+
             if (ssv.Type is IterTrait it)
             {
                 var ss = new List<(Task<bool>, Value)>();

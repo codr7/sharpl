@@ -61,7 +61,7 @@ public class VM
     private readonly List<Op> code = [];
     private int varCount = 0;
     private Env? env;
-    private readonly List<(int, int)> frames = [];
+    private readonly List<Frame> frames = [];
     private readonly List<Label> labels = [];
     private string loadPath = "";
     private int nextRegisterIndex = 0;
@@ -76,38 +76,39 @@ public class VM
         registers = new Value[config.MaxRegisters];
         nextRegisterIndex = 0;
 
-        UserLib.Init(this);
+        var loc = new Loc("init");
+        UserLib.Init(this, loc);
         UserLib.Import(CoreLib);
         Env = UserLib;
         BeginFrame(config.MaxVars);
 
         IterLib = new Libs.Iter();
-        IterLib.Init(this);
+        IterLib.Init(this, loc);
         UserLib.Import(IterLib);
 
         CharLib = new Libs.Char();
-        CharLib.Init(this);
+        CharLib.Init(this, loc);
 
         StringLib = new Libs.String();
-        StringLib.Init(this);
+        StringLib.Init(this, loc);
 
         FixLib = new Libs.Fix();
-        FixLib.Init(this);
+        FixLib.Init(this, loc);
 
         JsonLib = new Libs.Json();
-        JsonLib.Init(this);
+        JsonLib.Init(this, loc);
 
         IOLib = new Libs.IO(this);
-        IOLib.Init(this);
+        IOLib.Init(this, loc);
 
         NetLib = new Libs.Net();
-        NetLib.Init(this);
+        NetLib.Init(this, loc);
 
         TermLib = new Libs.Term(this);
-        TermLib.Init(this);
+        TermLib.Init(this, loc);
 
         TimeLib = new Libs.Time(this);
-        TimeLib.Init(this);
+        TimeLib.Init(this, loc);
     }
 
     public int AllocRegister()
@@ -120,8 +121,8 @@ public class VM
     public void BeginFrame(int registerCount)
     {
         var total = registerCount;
-        if (frames.Count > 0) { total += frames[^1].Item2; }
-        frames.Push((registerCount, total));
+        if (frames.Count > 0) { total += frames[^1].RegisterCount; }
+        frames.Push(new Frame(registerCount, total));
         nextRegisterIndex = 0;
     }
 
@@ -170,7 +171,7 @@ public class VM
         Term.Flush();
     }
 
-    public void DoEnv(Env env, Action action)
+    public void DoEnv(Env env, Loc loc, Action action)
     {
         var prevEnv = Env;
         Env = env;
@@ -180,7 +181,7 @@ public class VM
         finally
         {
             Env = prevEnv;
-            nextRegisterIndex = EndFrame().Item1;
+            nextRegisterIndex = EndFrame(loc).RegisterIndex;
         }
     }
 
@@ -198,7 +199,12 @@ public class VM
 
     public PC EmitPC => code.Count;
 
-    public (int, int) EndFrame() => frames.Pop();
+    public Frame EndFrame(Loc loc)
+    {
+        var f = frames.Pop();
+        f.RunDeferred(this, loc);
+        return f;
+    }
 
     public Env Env
     {
@@ -374,7 +380,7 @@ public class VM
                     }
                 case OpCode.EndFrame:
                     {
-                        EndFrame();
+                        EndFrame(((Ops.EndFrame)op).Loc);
                         PC++;
                         break;
                     }
@@ -382,7 +388,7 @@ public class VM
                     {
                         var c = calls.Pop();
                         foreach (var (_, s, _) in c.Target.Closure) { c.Target.ClosureValues[s] = GetRegister(0, s); }
-                        EndFrame();
+                        EndFrame(c.Loc);
                         PC = c.ReturnPC;
                         break;
                     }
@@ -621,6 +627,7 @@ public class VM
         finally { code[endPC] = prev; }
     }
 
+    public Frame Frame => frames[^1];
     public int FrameCount => frames.Count;
 
     public ref Value Get(Register register) => ref GetRegister(register.FrameOffset, register.Index);
@@ -720,7 +727,7 @@ public class VM
     }
 
     public int RegisterIndex(int frameOffset, int index) =>
-        (frameOffset == -1) ? index : index + frames.Peek(frameOffset).Item2;
+        (frameOffset == -1) ? index : index + frames.Peek(frameOffset).RegisterCount;
 
     public int Index(Register reg) => RegisterIndex(reg.FrameOffset, reg.Index);
 

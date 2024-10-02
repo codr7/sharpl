@@ -24,7 +24,7 @@ public class IO : Lib
                         throw new EmitError("Missing args", loc);
                     }
 
-                    vm.DoEnv(new Env(vm.Env, args.CollectIds()), () =>
+                    vm.DoEnv(new Env(vm.Env, args.CollectIds()), loc, () =>
                     {
                         var reg = vm.AllocRegister();
                         var a0 = af.Items[0];
