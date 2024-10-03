@@ -20,25 +20,25 @@ All features described in this document are part of the [test suite](https://git
 ## novelties
 
 - [Pairs](https://github.com/codr7/sharpl/tree/main#pairs) (`a:b`) are used everywhere, all the time.
-- Range support (`min..max:stride`).
+- [Range](https://github.com/codr7/sharpl?tab=readme-ov-file#ranges) support (`min..max:stride`).
 - [Maps](https://github.com/codr7/sharpl/tree/main#maps) (`{k1:v1...kN:vN}`) are ordered.
 - [Methods](https://github.com/codr7/sharpl/tree/main#methods) may be [composed](https://github.com/codr7/sharpl/tree/main#composition) using `&`.
 - [Varargs](https://github.com/codr7/sharpl/tree/main#varargs) (`foo*`), similar to Python.
 - [Declarative destructuring](https://github.com/codr7/sharpl/tree/main#destructuring) (`(let [_:y 1:2] y)`) of bindings.
-- Splatting (`[1 2 3]*`), simlar to Python.
+- [Splatting](https://github.com/codr7/sharpl#splat) (`[1 2 3]*`), simlar to Python.
 - [Deferred actions](https://github.com/codr7/sharpl#deferred-actions), similar to Go.
 - Unified, deeply integrated [iterator](https://github.com/codr7/sharpl/tree/main#iterators) protocol.
 - Default decimal type is [fixpoint](https://github.com/codr7/sharpl/tree/main#fixpoints).
 - Nil is written `_`.
 - Both `T` and `F` are defined.
 - Zeros and empty strings, arrays, lists and maps are considered false.
-- `=` is generic and compares values deeply, `is` may be used to compare identity.
+- `=` compares values deeply, `is` may be used to only compare identity.
 - [Lambdas](https://github.com/codr7/sharpl/tree/main#lambdas) look like anonymous methods.
-- Compile time eval (called `emit`), similar to Zig's comptime.
+- Compile time [eval](https://github.com/codr7/sharpl#evaluation) (`emit`), similar to Zig's comptime.
 - Explicit [tail calls](https://github.com/codr7/sharpl/tree/main#tail-calls) using `return`.
 - Parens are used for calls only.
 - Many things are callable, simlar to Clojure.
-- Methods have their own symbol (^).
+- [Methods](https://github.com/codr7/sharpl/tree/main#methods ) have their own symbol (^).
 - Line numbers are a thing.
 
 ## examples
@@ -754,7 +754,7 @@ When called with a single argument, it simply checks if it's true.
 Sharpl.EvalError: repl@1:2 Check failed: expected T, actual 0!
 ```
 
-Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
+Have a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
 
 ## benchmarks
 `bench` may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
