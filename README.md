@@ -385,7 +385,7 @@ Pairs may be formed by putting a colon between two values.
 Or by calling the constructor explicitly.
 
 ```
-(Pair [1 2 3]*)
+(Pair 1 2 3)
 ```
 `1:2:3`
 
@@ -398,7 +398,7 @@ New arrays may be created by enclosing a sequence of values in brackets.
 ```
 Or by calling the constructor explicitly.
 ```
-(Array 1:2:3*)
+(Array 1 2 3)
 ```
 `[1 2 3]`
 
@@ -480,12 +480,12 @@ New maps may be created by enclosing a sequence of pairs in curly braces.
 ```
 Or by calling the constructor explicitly.
 ```
-(Map '[foo:1 bar:2 baz:3]*)
+(Map 'foo:1 'bar:2 'baz:3)
 ```
 `{'bar:2 'baz:3 'foo:1}`
 
-### slices
-All composite types may be sliced by indexing using a pair.
+### slicing
+Composite types may be sliced by indexing using a pair.
 
 ```
 ('{a:1 b:2 c:3 d:4} 'b:'c)
@@ -757,7 +757,7 @@ Sharpl.EvalError: repl@1:2 Check failed: expected T, actual 0!
 Take a look at the [test suite](https://github.com/codr7/sharpl/blob/main/tests/all-tests.sl) for examples.
 
 ## benchmarks
-`bench`may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
+`bench` may be used to measure the number of milliseconds it takes to repeat a block of code N times with warmup.
 
 ```
 dotnet run -c=release benchmarks/fib.sl
