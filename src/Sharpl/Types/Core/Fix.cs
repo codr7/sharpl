@@ -2,8 +2,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class FixType(string name) :
-    ComparableType<ulong>(name),
+public class FixType(string name, AnyType[] parents) :
+    ComparableType<ulong>(name, parents),
     NumericTrait,
     RangeTrait
 {

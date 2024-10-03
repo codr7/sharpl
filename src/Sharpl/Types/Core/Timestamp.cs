@@ -2,10 +2,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class TimestampType(string name) :
-    ComparableType<DateTime>(name),
-    NumericTrait,
-    RangeTrait
+public class TimestampType(string name, AnyType[] parents) :
+    ComparableType<DateTime>(name, parents), NumericTrait, RangeTrait
 {
     public void Add(VM vm, Stack stack, int arity, Loc loc)
     {

@@ -11,17 +11,22 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add net lib to readme
-* add term lib to readme
+(try {Error:(^[e] (say "handle " e))} 
+  (fail 'bummer))
 
-* add try
-** add macro
-** retry
+* finish try
+** process handlers in Try op
+** update fail
+*** figure out how to propagate arg
+** add retry
 
 (try 
      {Int :(^[arg] (retry 'foo arg))
       'foo:(^[arg] (say "foo " arg))}
    (fail 42))
+
+* add net lib to readme
+* add term lib to readme
 
 * add break loop
 

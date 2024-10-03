@@ -72,6 +72,10 @@
 (check F 
   (is (rand-int) (rand-int)))
 
+(check (is (type-of 42) Int))
+(check (isa 42 Int))
+(check (not (isa 'foo Int)))
+
 (load "array-tests.sl")
 (load "bind-tests.sl")
 (load "char-tests.sl")

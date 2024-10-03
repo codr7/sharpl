@@ -5,9 +5,9 @@ namespace Sharpl.Types.Core;
 
 using Sharpl.Libs;
 
-public class ListType : Type<List<Value>>, ComparableTrait, IterTrait, LengthTrait, StackTrait
+public class ListType(string name, AnyType[] parents) : 
+    Type<List<Value>>(name, parents), ComparableTrait, IterTrait, LengthTrait, StackTrait
 {
-    public ListType(string name) : base(name) { }
     public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
     public override void Call(VM vm, Stack stack, int arity, Loc loc)

@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class SymType(string name) : Type<Sym>(name), ComparableTrait
+public class SymType(string name, AnyType[] parents) : 
+    Type<Sym>(name, parents), ComparableTrait
 {
     public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {

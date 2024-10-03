@@ -2,10 +2,8 @@ using System.Text;
 
 namespace Sharpl.Types.Term;
 
-public class KeyType : Type<ConsoleKeyInfo>
+public class KeyType(string name, AnyType[] parents) : Type<ConsoleKeyInfo>(name, parents)
 {
-    public KeyType(string name) : base(name) { }
-
     public override void Dump(Value value, VM vm, StringBuilder result)
     {
         result.Append("(term/Key ");

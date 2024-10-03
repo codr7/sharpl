@@ -1,9 +1,9 @@
+using System.Xml.Linq;
+
 namespace Sharpl.Types.Core;
 
-public class BindingType : Type<Register>
+public class BindingType(string name, AnyType[] parents) : Type<Register>(name, parents)
 {
-    public BindingType(string name) : base(name) { }
-
     public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
     {
         var arity = args.Count;

@@ -1,9 +1,7 @@
 namespace Sharpl.Types.Core;
 
-public class IntType(string name) :
-    ComparableType<int>(name),
-    NumericTrait,
-    RangeTrait
+public class IntType(string name, AnyType[] parents) :
+    ComparableType<int>(name, parents), NumericTrait, RangeTrait
 {
     public override bool Bool(Value value) => value.CastUnbox(this) != 0;
 

@@ -15,6 +15,7 @@ public enum OpCode
     PopItem, PrepareClosure, Push, PushItem, PushSplat,
     Repush,
     SetArrayItem, SetLoadPath, SetMapItem, SetRegister, Splat, Stop, Swap,
+    Try,
     UnquoteRegister, Unzip
 };
 

@@ -24,8 +24,4 @@
     <None Remove="checkargs.sl" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="tests\binding-tests.sl" />
-  </ItemGroup>
-
 </Project>

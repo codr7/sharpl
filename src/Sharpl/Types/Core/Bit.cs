@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class BitType(string name) : ComparableType<bool>(name)
+public class BitType(string name, AnyType[] parents) : ComparableType<bool>(name, parents)
 {
     public override bool Bool(Value value) => value.CastUnbox(this);
     public override void Call(VM vm, Stack stack, int arity, Loc loc) => stack.Push(this, (bool)stack.Pop());

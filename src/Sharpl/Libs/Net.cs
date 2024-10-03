@@ -3,13 +3,14 @@ using Sharpl.Types.Net;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Channels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sharpl.Libs;
 
 public class Net : Lib
 {
-    public static readonly ServerType Server = new ServerType("Server");
-    public static readonly StreamType Stream = new StreamType("Stream");
+    public static readonly ServerType Server = new ServerType("Server", [Core.Any]);
+    public static readonly StreamType Stream = new StreamType("Stream", [Core.Any]);
 
     public Net() : base("net", null, [])
     {

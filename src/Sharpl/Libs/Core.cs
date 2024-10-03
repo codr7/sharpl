@@ -1,35 +1,38 @@
 using Sharpl.Types.Core;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Forms = Sharpl.Forms;
 
 namespace Sharpl.Libs;
 
 public class Core : Lib
 {
-    public static readonly ArrayType Array = new ArrayType("Array");
-    public static readonly BindingType Binding = new BindingType("Binding");
-    public static readonly BitType Bit = new BitType("Bit");
-    public static readonly CharType Char = new CharType("Char");
-    public static readonly ColorType Color = new ColorType("Color");
-    public static readonly DurationType Duration = new DurationType("Duration");
-    public static readonly FixType Fix = new FixType("Fix");
-    public static readonly FormType Form = new FormType("Form");
-    public static readonly IntType Int = new IntType("Int");
-    public static readonly IterType Iter = new IterType("Iter");
-    public static readonly LibType Lib = new LibType("Lib");
-    public static readonly ListType List = new ListType("List");
-    public static readonly MacroType Macro = new MacroType("Macro");
-    public static readonly MapType Map = new MapType("Map");
-    public static readonly MetaType Meta = new MetaType("Meta");
-    public static readonly MethodType Method = new MethodType("Method");
-    public static readonly NilType Nil = new NilType("Nil");
-    public static readonly PairType Pair = new PairType("Pair");
-    public static readonly PipeType Pipe = new PipeType("Pipe");
-    public static readonly PortType Port = new PortType("Port");
-    public static readonly StringType String = new StringType("String");
-    public static readonly SymType Sym = new SymType("Sym");
-    public static readonly TimestampType Timestamp = new TimestampType("Timestamp");
-    public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod");
+    public static readonly AnyType Any = new BasicType("Any", []);
+    public static readonly ArrayType Array = new ArrayType("Array", [Any]);
+    public static readonly BindingType Binding = new BindingType("Binding", [Any]);
+    public static readonly BitType Bit = new BitType("Bit", [Any]);
+    public static readonly CharType Char = new CharType("Char", [Any]);
+    public static readonly ColorType Color = new ColorType("Color", [Any]);
+    public static readonly DurationType Duration = new DurationType("Duration", [Any]);
+    public static readonly ErrorType Error = new ErrorType("Error", [Any]);
+    public static readonly FixType Fix = new FixType("Fix", [Any]);
+    public static readonly FormType Form = new FormType("Form", [Any]);
+    public static readonly IntType Int = new IntType("Int", [Any]);
+    public static readonly IterType Iter = new IterType("Iter", [Any]);
+    public static readonly LibType Lib = new LibType("Lib", [Any]);
+    public static readonly ListType List = new ListType("List", [Any]);
+    public static readonly MacroType Macro = new MacroType("Macro", [Any]);
+    public static readonly MapType Map = new MapType("Map", [Any]);
+    public static readonly MetaType Meta = new MetaType("Meta", [Any]);
+    public static readonly MethodType Method = new MethodType("Method", [Any]);
+    public static readonly NilType Nil = new NilType("Nil", []);
+    public static readonly PairType Pair = new PairType("Pair", [Any]);
+    public static readonly PipeType Pipe = new PipeType("Pipe", [Any]);
+    public static readonly PortType Port = new PortType("Port", [Any]);
+    public static readonly StringType String = new StringType("String", [Any]);
+    public static readonly SymType Sym = new SymType("Sym", [Any]);
+    public static readonly TimestampType Timestamp = new TimestampType("Timestamp", [Any]);
+    public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod", [Any]);
 
     public static void DefineMethod(Loc loc, VM vm, Form.Queue args, Type<UserMethod> type, Op stopOp)
     {
@@ -97,6 +100,7 @@ public class Core : Lib
         BindType(Char);
         BindType(Color);
         BindType(Duration);
+        BindType(Error);
         BindType(Fix);
         BindType(Int);
         BindType(Lib);
@@ -461,6 +465,12 @@ public class Core : Lib
 
                 stack.Push(Value.Make(Bit, res));
             });
+
+        BindMethod("isa", ["x", "y"], (vm, stack, target, arity, loc) =>
+        {
+            var y = stack.Pop().Cast(Meta, loc);
+            stack.Push(Bit, stack.Pop().Isa(y));
+        });
 
         BindMethod("length", ["it"], (vm, stack, target, arity, loc) =>
             {
@@ -834,6 +844,19 @@ public class Core : Lib
         });
 
         BindMacro("stop", [], (vm, target, args, loc) => vm.Emit(Ops.Stop.Make()));
+
+        BindMacro("try", ["handlers", "body?"], (vm, target, args, loc) =>
+        {
+            var hs = args.Pop().Cast<Forms.Map>();
+            var end = new Label();
+
+            if (hs.GetValue(vm) is Value m)
+            {
+                vm.Emit(Ops.Try.Make(m.Cast(Map), vm.NextRegisterIndex, end, loc));
+                args.Emit(vm);
+                end.PC = vm.EmitPC;
+            } else { throw new EmitError($"Expected map literal: {hs}", loc); }
+        });
 
         BindMethod("type-of", ["x"], (vm, stack, target, arity, loc) =>
             stack.Push(Meta, stack.Pop().Type));

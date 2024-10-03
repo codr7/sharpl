@@ -4,10 +4,26 @@ using System.Text;
 
 namespace Sharpl;
 
-public abstract class AnyType(string name)
+public abstract class AnyType
 {
-    public string Name { get; } = name;
+    public readonly string Name;
+    private readonly Dictionary<AnyType, int> parents = new Dictionary<AnyType, int>();
 
+    public AnyType(string name, AnyType[] parents)
+    {
+        Name = name;
+
+        foreach (var pt in parents)
+        {
+            foreach (var (ppt, _) in pt.parents) { AddParent(ppt); }
+        }
+    }
+
+    private void AddParent(AnyType type)
+    {
+        if (parents.ContainsKey(type)) { parents[type] += 1; }
+        else { parents[type] = 1; }
+    }
     public virtual bool Bool(Value value) => true;
     public virtual void Call(VM vm, Stack stack, int arity, Loc loc) => throw new EvalError("Not supported", loc);
 
@@ -33,10 +49,11 @@ public abstract class AnyType(string name)
         var splat = args.IsSplat;
         if (splat) { vm.Emit(Ops.PushSplat.Make()); }
         UserMethod? um = null;
-        
-        if (target.Type == Core.UserMethod) { um = target.Cast(Core.UserMethod);  }
 
-        for (int i = 0; i < args.Count; i++) {
+        if (target.Type == Core.UserMethod) { um = target.Cast(Core.UserMethod); }
+
+        for (int i = 0; i < args.Count; i++)
+        {
             vm.Emit(args.Items[i]);
             if (um is not null && i < um.Args.Length && um.Args[i].Unzip) { vm.Emit(Ops.Unzip.Make(loc)); }
         }
@@ -46,13 +63,23 @@ public abstract class AnyType(string name)
     }
 
     public abstract bool Equals(Value left, Value right);
+    
+    public virtual bool Isa(AnyType type) => 
+        GetType().IsAssignableFrom(type.GetType()) || parents.ContainsKey(type);
+
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Value value, Loc loc) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
     public virtual Form Unquote(VM vm, Value value, Loc loc) => new Literal(value, loc);
 }
 
-public class Type<T>(string name) : AnyType(name)
+public class Type<T> : AnyType
 {
+    public Type(string name, AnyType[] parents): base(name, parents) { }
     public override bool Equals(Value left, Value right) => left.CastSlow(this).Equals(right.CastSlow(this));
+}
+
+public class BasicType: Type<object>
+{
+    public BasicType(string name, AnyType[] parents): base(name, parents) {}
 }

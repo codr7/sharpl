@@ -3,10 +3,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class PortType : Type<Port>, CloseTrait, IterTrait, PollTrait
+public class PortType(string name, AnyType[] parents) : Type<Port>(name, parents), CloseTrait, IterTrait, PollTrait
 {
-    public PortType(string name) : base(name) { }
-
     public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
         var t = target.Cast(this, loc);

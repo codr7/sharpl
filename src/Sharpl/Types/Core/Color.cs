@@ -3,11 +3,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class ColorType : Type<Color>
+public class ColorType(string name, AnyType[] parents) : Type<Color>(name, parents)
 {
-    public ColorType(string name) : base(name) { }
-
-
     public override void Dump(Value value, VM vm, StringBuilder result)
     {
         var c = value.CastUnbox(this);

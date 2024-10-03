@@ -2,9 +2,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class CharType(string name) :
-    ComparableType<char>(name),
-    RangeTrait
+public class CharType(string name, AnyType[] parents) :
+    ComparableType<char>(name, parents), RangeTrait
 {
     public override bool Bool(Value value) => value.CastUnbox(this) != 0;
 

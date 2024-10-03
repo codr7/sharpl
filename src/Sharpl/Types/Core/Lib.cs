@@ -1,6 +1,3 @@
 namespace Sharpl.Types.Core;
 
-public class LibType : Type<Lib>
-{
-    public LibType(string name) : base(name) { }
-}
+public class LibType(string name, AnyType[] parents) : Type<Lib>(name, parents) { }

@@ -3,7 +3,8 @@ namespace Sharpl.Types.Core;
 
 using System.Text;
 
-public class StringType(string name) : ComparableType<string>(name), IterTrait, LengthTrait, StackTrait
+public class StringType(string name, AnyType[] parents) : 
+    ComparableType<string>(name, parents), IterTrait, LengthTrait, StackTrait
 {
     static string Escape(string value) => value
         .Replace("\"", "\\\"")

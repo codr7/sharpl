@@ -1,11 +1,12 @@
 using Sharpl.Iters.IO;
 using Sharpl.Types.IO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sharpl.Libs;
 
 public class IO : Lib
 {
-    public static readonly InputStreamType InputStream = new InputStreamType("InputStream");
+    public static readonly InputStreamType InputStream = new InputStreamType("InputStream", [Core.Any]);
 
     public IO(VM vm) : base("io", null, [])
     {

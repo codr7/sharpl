@@ -2,9 +2,8 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class DurationType(string name) :
-    ComparableType<Duration>(name),
-    NumericTrait
+public class DurationType(string name, AnyType[] parents) :
+    ComparableType<Duration>(name, parents), NumericTrait
 {
     public static readonly Duration ZERO = new Duration(0, TimeSpan.FromTicks(0));
 

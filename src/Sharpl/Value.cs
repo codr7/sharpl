@@ -14,7 +14,7 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public static readonly Value _ = Make(Libs.Core.Nil, false);
     public static readonly Value F = Make(Libs.Core.Bit, false);
     public static readonly Value T = Make(Libs.Core.Bit, true);
-
+    
     public void Call(VM vm, Stack stack, int arity, int registerCount, bool eval, Loc loc) =>
         Type.Call(vm, stack, this, arity, registerCount, eval, loc);
 
@@ -69,6 +69,8 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public void EmitCall(VM vm, Form.Queue args, Loc loc) => Type.EmitCall(vm, this, args, loc);
     public bool Equals(Value other) => Type == other.Type && Type.Equals(this, other);
     public override int GetHashCode() => Data.GetHashCode();
+
+    public bool Isa(AnyType parent) => Type.Isa(parent);
     public void Say(VM vm, StringBuilder result) => Type.Say(this, vm, result);
 
     public string Say(VM vm)

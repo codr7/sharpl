@@ -4,11 +4,9 @@ using System.Threading.Channels;
 
 namespace Sharpl.Types.Core;
 
-public class PipeType : Type<Channel<Value>>, IterTrait, PollTrait
+public class PipeType(string name, AnyType[] parents) : Type<Channel<Value>>(name, parents), IterTrait, PollTrait
 {
     public static Channel<Value> Make() => Channel.CreateUnbounded<Value>();
-
-    public PipeType(string name) : base(name) { }
 
     public override void Call(VM vm, Stack stack, int arity, Loc loc) =>
         stack.Push(Libs.Core.Pipe, Channel.CreateUnbounded<Value>());

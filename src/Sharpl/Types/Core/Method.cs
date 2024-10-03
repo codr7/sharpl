@@ -1,9 +1,7 @@
 namespace Sharpl.Types.Core;
 
-public class MethodType : Type<Method>
+public class MethodType(string name, AnyType[] parents) : Type<Method>(name, parents)
 {
-    public MethodType(string name) : base(name) { }
-
     public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc) =>
         target.CastUnbox(this).Call(vm, stack, arity, loc);
 

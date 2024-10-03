@@ -1,7 +1,7 @@
 namespace Sharpl.Types.Core;
 
-public class ComparableType<T>(string name) : Type<T>(name), ComparableTrait
-    where T : IComparable<T>
+public class ComparableType<T>(string name, AnyType[] parents) : 
+    Type<T>(name, parents), ComparableTrait where T : IComparable<T>
 {
     public Order Compare(Value left, Value right)
     {

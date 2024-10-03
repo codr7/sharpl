@@ -6,9 +6,9 @@ using System.Threading.Channels;
 
 namespace Sharpl.Types.Net;
 
-public class ServerType : Type<TcpListener>, CloseTrait, IterTrait
+public class ServerType(string name, AnyType[] parents) : 
+    Type<TcpListener>(name, parents), CloseTrait, IterTrait
 {
-    public ServerType(string name) : base(name) { }
     public void Close(Value target) => target.Cast(this).Stop();
 
     public Iter CreateIter(Value target, VM vm, Loc loc)

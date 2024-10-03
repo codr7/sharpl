@@ -2,9 +2,9 @@ using System.Text;
 
 namespace Sharpl.Types.Core;
 
-public class MapType : Type<OrderedMap<Value, Value>>, ComparableTrait, IterTrait, LengthTrait
+public class MapType(string name, AnyType[] parents) : 
+    Type<OrderedMap<Value, Value>>(name, parents), ComparableTrait, IterTrait, LengthTrait
 {
-    public MapType(string name) : base(name) { }
     public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
     public override void Call(VM vm, Stack stack, int arity, Loc loc)

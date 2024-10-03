@@ -1,9 +1,7 @@
 namespace Sharpl.Types.Core;
 
-public class UserMethodType : Type<UserMethod>
+public class UserMethodType(string name, AnyType[] parents) : Type<UserMethod>(name, parents)
 {
-    public UserMethodType(string name) : base(name) { }
-
     public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
     {
         var startPC = vm.PC;

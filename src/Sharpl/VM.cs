@@ -555,6 +555,31 @@ public class VM
                         PC++;
                         break;
                     }
+                case OpCode.Try:
+                    {
+                        var tryOp = (Ops.Try)op;
+                        PC++;
+                        Value? ev = null;
+                        
+                        try { EvalUntil(tryOp.End.PC, stack); }
+                        catch (Exception e) { 
+                            ev = Value.Make(Core.Error, e);
+                            
+                            foreach (var (k, v) in tryOp.Handlers)
+                            {
+                                if (k.Isa(((Value)ev).Type))
+                                {
+                                    stack.Push((Value)ev);
+                                    v.Call(this, stack, 1, tryOp.RegisterCount, true, tryOp.Loc);
+                                    break;
+                                }
+                            }
+
+                            throw;
+                        }
+
+                        break;
+                    }
                 case OpCode.UnquoteRegister:
                     {
                         var unquoteOp = (Ops.UnquoteRegister)op;
@@ -625,6 +650,7 @@ public class VM
         code[endPC] = Ops.Stop.Make();
         try { Eval(PC, stack); }
         finally { code[endPC] = prev; }
+        PC = Math.Min(PC, EmitPC - 1);
     }
 
     public Frame Frame => frames[^1];

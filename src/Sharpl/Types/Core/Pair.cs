@@ -5,7 +5,8 @@ namespace Sharpl.Types.Core;
 
 using Sharpl.Libs;
 
-public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, LengthTrait, StackTrait
+public class PairType(string name, AnyType[] parents) : 
+    Type<(Value, Value)>(name, parents), ComparableTrait, IterTrait, LengthTrait, StackTrait
 {
     public static Value Update(Loc loc, Value target, Value value, int i)
     {
@@ -24,8 +25,6 @@ public class PairType : Type<(Value, Value)>, ComparableTrait, IterTrait, Length
 
         throw new EvalError("Index out of bounds", loc);
     }
-
-    public PairType(string name) : base(name) { }
 
     public override void Call(VM vm, Stack stack, int arity, Loc loc)
     {

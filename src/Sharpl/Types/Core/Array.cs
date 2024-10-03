@@ -5,9 +5,9 @@ namespace Sharpl.Types.Core;
 
 using Sharpl.Libs;
 
-public class ArrayType : Type<Value[]>, ComparableTrait, IterTrait, LengthTrait, StackTrait
+public class ArrayType(string name, AnyType[] parents) : 
+    Type<Value[]>(name, parents), ComparableTrait, IterTrait, LengthTrait, StackTrait
 {
-    public ArrayType(string name) : base(name) { }
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
     public override void Call(VM vm, Stack stack, int arity, Loc loc)

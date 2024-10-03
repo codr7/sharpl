@@ -5,7 +5,7 @@ using System.Text;
 
 public class Term : Lib
 {
-    public static readonly KeyType Key = new KeyType("Key");
+    public static readonly KeyType Key = new KeyType("Key", [Core.Any]);
 
     public Term(VM vm) : base("term", null, [])
     {
