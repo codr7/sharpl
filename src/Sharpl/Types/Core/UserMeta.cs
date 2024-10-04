@@ -2,7 +2,7 @@
 
 namespace Sharpl.Types.Core;
 
-public class UserMetaType(string name, AnyType[] parents) : ComparableType<UserType>(name, parents)
+public class TraitType(string name, AnyType[] parents) : ComparableType<UserTrait>(name, parents)
 {
     public override void Dump(Value value, VM vm, StringBuilder result)
     {

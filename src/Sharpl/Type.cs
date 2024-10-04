@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sharpl;
 
-public abstract class AnyType: IComparable<UserType>
+public abstract class AnyType: IComparable<UserTrait>
 {
     public readonly string Name;
     private readonly Dictionary<AnyType, int> parents = new Dictionary<AnyType, int>();
@@ -40,7 +40,7 @@ public abstract class AnyType: IComparable<UserType>
         }
     }
 
-    public int CompareTo(UserType? other)
+    public int CompareTo(UserTrait? other)
     {
         var o = other!;
         if (parents.ContainsKey(o)) { return 1; }
@@ -94,7 +94,7 @@ public class BasicType: Type<object>
     public BasicType(string name, AnyType[] parents): base(name, parents) {}
 }
 
-public class UserType: BasicType
+public class UserTrait: BasicType
 {
-    public UserType(string name, UserType[] parents): base(name, parents) {}
+    public UserTrait(string name, UserTrait[] parents): base(name, parents) {}
 }

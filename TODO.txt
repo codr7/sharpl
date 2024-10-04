@@ -14,7 +14,7 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 * add error types
 ** only allow user types as super
 
-(type Foo)
+(trait Foo)
 
 (error Bar Foo [x y z]
   x:y:z)
@@ -22,13 +22,14 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 (try [Foo:(^[e] (say e))]
   (fail Bar 1 2 3))
 
-* add data macro
-** add super type
+* add type macro
+** add super types
 ** define constructor
 
-(data Foo Map)
+(type Foo [Map] [x y z]
+  {'foo:x 'bar:y 'baz:z})
 
-(let [x (Foo {'bar:42})]
+(let [x (Foo 1 2 3)]
   (say x)
   (say (x 'bar)))
 

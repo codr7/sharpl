@@ -31,7 +31,7 @@ public class Core : Lib
     public static readonly StringType String = new StringType("String", [Any]);
     public static readonly SymType Sym = new SymType("Sym", [Any]);
     public static readonly TimestampType Timestamp = new TimestampType("Timestamp", [Any]);
-    public static readonly UserMetaType UserMeta = new UserMetaType("UserMeta", [Meta]);
+    public static readonly TraitType Trait = new TraitType("Trait", [Meta]);
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod", [Any]);
 
     public static void DefineMethod(Loc loc, VM vm, Form.Queue args, Type<UserMethod> type, Op stopOp)
@@ -116,7 +116,7 @@ public class Core : Lib
         BindType(String);
         BindType(Sym);
         BindType(Timestamp);
-        BindType(UserMeta);
+        BindType(Trait);
         BindType(UserMethod);
 
         Bind("F", Value.F);
@@ -875,16 +875,16 @@ public class Core : Lib
                 Form df => throw new EmitError("Invalid type definition: {df}", df.Loc)
             };
 
-            var sts = new List<UserType>();
+            var sts = new List<UserTrait>();
 
             foreach (var sf in sfs)
             {
-                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(UserMeta, sf.Loc)); }
+                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(Trait, sf.Loc)); }
                 else throw new EmitError($"Invalid super type: {sf.Dump(vm)}", sf.Loc);
             }
             
-            var t = new UserType(n, sts.ToArray());
-            vm.Env[n] = Value.Make(UserMeta, t);
+            var t = new UserTrait(n, sts.ToArray());
+            vm.Env[n] = Value.Make(Trait, t);
         });
 
         BindMethod("type-of", ["x"], (vm, stack, target, arity, loc) =>
