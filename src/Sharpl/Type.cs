@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sharpl;
 
-public abstract class AnyType
+public abstract class AnyType: IComparable<UserType>
 {
     public readonly string Name;
     private readonly Dictionary<AnyType, int> parents = new Dictionary<AnyType, int>();
@@ -40,6 +40,14 @@ public abstract class AnyType
         }
     }
 
+    public int CompareTo(UserType? other)
+    {
+        var o = other!;
+        if (parents.ContainsKey(o)) { return 1; }
+        if (o.parents.ContainsKey(this)) { return -1; }
+        return 0;
+    }
+
     public virtual Value Copy(Value value) => value;
     public virtual void Dump(Value value, VM vm, StringBuilder result) => result.Append(value.Data.ToString());
     public virtual void Emit(VM vm, Value value, Form.Queue args, Loc loc) => vm.Emit(Ops.Push.Make(value));
@@ -67,7 +75,8 @@ public abstract class AnyType
 
     public virtual bool Isa(AnyType type) =>
         GetType().IsAssignableFrom(type.GetType()) || parents.ContainsKey(type);
-   
+
+    public AnyType[] Parents => parents.Select(pt => pt.Key).ToArray(); 
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Value value, Loc loc) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
@@ -83,4 +92,9 @@ public class Type<T> : AnyType
 public class BasicType: Type<object>
 {
     public BasicType(string name, AnyType[] parents): base(name, parents) {}
+}
+
+public class UserType: BasicType
+{
+    public UserType(string name, UserType[] parents): base(name, parents) {}
 }

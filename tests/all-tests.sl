@@ -99,6 +99,7 @@
 (load "string-tests.sl")
 (load "time-tests.sl")
 (load "thread-tests.sl")
+(load "type-tests.sl")
 
 (load "../examples/aoc23/code1-1.sl")
 (load "../examples/aoc23/code2-1.sl")

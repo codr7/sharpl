@@ -550,6 +550,16 @@ Composite types may be sliced by indexing using a pair.
 ```
 `5:2`
 
+## user types
+`type` may be used to build type hierarchies.
+
+```
+(type Foo)
+(type Bar [Foo])
+(> Bar Foo)
+```
+`T`
+
 ## time
 The time library uses established naming conventions when referring to fields: `Y` for years, `M` for months, `D` for days, `h` for hours, `m` for minutes, `s` for seconds, `ms` for milliseconds and `us` for microseconds.
 

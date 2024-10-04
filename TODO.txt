@@ -11,11 +11,6 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-* add type macro
-** only allow user types as super
-
-(type Foo supers...)
-
 * add error types
 ** only allow user types as super
 
@@ -26,6 +21,12 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 (try [Foo:(^[e] (say e))]
   (fail Bar 1 2 3))
+
+* add data macro
+** add super type
+** define converters
+
+(data Foo Int)
 
 * add retries
 ** add break loop

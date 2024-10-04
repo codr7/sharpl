@@ -6,7 +6,7 @@ namespace Sharpl.Libs;
 
 public class Core : Lib
 {
-    public static readonly AnyType Any = new BasicType("Any", []);
+    public static readonly BasicType Any = new BasicType("Any", []);
     public static readonly ArrayType Array = new ArrayType("Array", [Any]);
     public static readonly BindingType Binding = new BindingType("Binding", [Any]);
     public static readonly BitType Bit = new BitType("Bit", [Any]);
@@ -31,6 +31,7 @@ public class Core : Lib
     public static readonly StringType String = new StringType("String", [Any]);
     public static readonly SymType Sym = new SymType("Sym", [Any]);
     public static readonly TimestampType Timestamp = new TimestampType("Timestamp", [Any]);
+    public static readonly UserMetaType UserMeta = new UserMetaType("UserMeta", [Meta]);
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod", [Any]);
 
     public static void DefineMethod(Loc loc, VM vm, Form.Queue args, Type<UserMethod> type, Op stopOp)
@@ -115,6 +116,7 @@ public class Core : Lib
         BindType(String);
         BindType(Sym);
         BindType(Timestamp);
+        BindType(UserMeta);
         BindType(UserMethod);
 
         Bind("F", Value.F);
@@ -862,24 +864,47 @@ public class Core : Lib
             else { throw new EmitError($"Expected map literal: {hsf.Dump(vm)}", loc); }
         });
 
+        BindMacro("type", ["name", "supers?"], (vm, target, args, loc) =>
+        {
+            var n = args.Pop().Cast<Forms.Id>().Name;
+
+            var sfs = args.Empty ? [] : args.Pop() switch
+            {
+                Forms.Nil => [],
+                Forms.Array af => af.Items,
+                Form df => throw new EmitError("Invalid type definition: {df}", df.Loc)
+            };
+
+            var sts = new List<UserType>();
+
+            foreach (var sf in sfs)
+            {
+                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(UserMeta, sf.Loc)); }
+                else throw new EmitError($"Invalid super type: {sf.Dump(vm)}", sf.Loc);
+            }
+            
+            var t = new UserType(n, sts.ToArray());
+            vm.Env[n] = Value.Make(UserMeta, t);
+        });
+
         BindMethod("type-of", ["x"], (vm, stack, target, arity, loc) =>
             stack.Push(Meta, stack.Pop().Type));
 
         BindMacro("var", ["id", "value"], (vm, target, args, loc) =>
+        {
+            while (true)
             {
-                while (true)
-                {
-                    var id = args.TryPop();
-                    if (id is null) { break; }
+                var id = args.TryPop();
+                if (id is null) { break; }
 
-                    if (args.TryPop() is Form f)
-                    {
-                        vm.Emit(f);
-                        vm.BindVar(id);
-                    }
-                    else { throw new EmitError("Missing value", loc); }
+                if (args.TryPop() is Form f)
+                {
+                    vm.Emit(f);
+                    vm.BindVar(id);
                 }
-            });
+                else { throw new EmitError("Missing value", loc); }
+            }
+        });
     }
 
     private static void bindId(VM vm, Forms.Id idf, List<(int, int, int)> brs)
