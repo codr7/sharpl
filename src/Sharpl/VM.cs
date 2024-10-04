@@ -38,7 +38,7 @@ public class VM
     };
 
     public static readonly C DEFAULT = new C();
-    public static readonly int VERSION = 28;
+    public static readonly int VERSION = 29;
 
     public readonly Libs.Char CharLib;
     public readonly Libs.Core CoreLib = new Libs.Core();
@@ -559,23 +559,29 @@ public class VM
                     {
                         var tryOp = (Ops.Try)op;
                         PC++;
-                        Value? ev = null;
                         
                         try { EvalUntil(tryOp.End.PC, stack); }
-                        catch (Exception e) { 
-                            ev = Value.Make(Core.Error, e);
-                            
+                        catch (UserError e) {
+                            var ev = Value.Make(e.Type, e);
+                            var handled = false;
                             foreach (var (k, v) in tryOp.Handlers)
                             {
-                                if (k.Isa(((Value)ev).Type))
+                                if (k == Value._ || 
+                                    ev.Isa(k.Type) || 
+                                    (k.Type == Core.Meta && ev.Isa(k.Cast(Core.Meta))))
                                 {
-                                    stack.Push((Value)ev);
-                                    v.Call(this, stack, 1, tryOp.RegisterCount, true, tryOp.Loc);
+                                    stack.Push(ev);
+                                    PC = tryOp.End.PC;
+                                    v.Call(this, stack, 1, tryOp.RegisterCount, false, tryOp.Loc);
+                                    handled = true;                
                                     break;
                                 }
                             }
 
-                            throw;
+                            if (!handled) {
+                                PC = tryOp.End.PC;
+                                throw; 
+                            }
                         }
 
                         break;

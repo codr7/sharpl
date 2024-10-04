@@ -65,7 +65,6 @@ public class UserMethod
         {
             if (i >= argMask.Length) { break; }
             var ar = Args[i].RegisterIndex;
-            if (ar == -1) { continue; }
 
             if (Vararg && i == Args.Length - 1)
             {
@@ -77,7 +76,7 @@ public class UserMethod
                     vs[j] = (argMask.Length > i + j && argMask[i + j] is Value v) ? v : stack.Pop();
                 }
 
-                vm.SetRegister(0, ar, Value.Make(Core.Array, vs));
+                if (ar != -1) { vm.SetRegister(0, ar, Value.Make(Core.Array, vs)); }
             }
             else
             {
@@ -88,9 +87,12 @@ public class UserMethod
                         var r = v.CastUnbox(Core.Binding);
                         if (r.FrameOffset != 0 || r.Index != ar) { vm.SetRegister(0, ar, vm.Get(r)); }
                     }
-                    else { vm.SetRegister(0, ar, v.Copy()); }
+                    else if (ar != -1) { vm.SetRegister(0, ar, v.Copy()); }
                 }
-                else { vm.SetRegister(0, ar, stack.Pop()); }
+                else {
+                    v = stack.Pop();
+                    if (ar != -1) { vm.SetRegister(0, ar, v); } 
+                }
             }
         }
 

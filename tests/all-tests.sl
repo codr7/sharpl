@@ -80,6 +80,7 @@
 (load "bind-tests.sl")
 (load "char-tests.sl")
 (load "defer-tests.sl")
+(load "error-tests.sl")
 (load "fib-tests.sl")
 (load "fix-tests.sl")
 (load "int-tests.sl")

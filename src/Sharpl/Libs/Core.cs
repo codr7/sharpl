@@ -1,6 +1,5 @@
 using Sharpl.Types.Core;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Forms = Sharpl.Forms;
 
 namespace Sharpl.Libs;
@@ -94,6 +93,7 @@ public class Core : Lib
 
     public Core() : base("core", null, [])
     {
+        BindType(Any);
         BindType(Array);
         BindType(Binding);
         BindType(Bit);
@@ -396,6 +396,8 @@ public class Core : Lib
         {
             stack.Reverse(arity);
             var res = new StringBuilder();
+            var t = stack.Pop();
+            arity--;
 
             while (arity > 0)
             {
@@ -403,7 +405,7 @@ public class Core : Lib
                 arity--;
             }
 
-            throw new EvalError(res.ToString(), loc);
+            throw new UserError((t == Value._) ? Error : (Type<UserError>)t.Cast(Meta, loc), res.ToString(), loc);
         });
 
         BindMethod("gensym", ["name"], (vm, stack, target, arity, loc) =>
@@ -847,15 +849,17 @@ public class Core : Lib
 
         BindMacro("try", ["handlers", "body?"], (vm, target, args, loc) =>
         {
-            var hs = args.Pop().Cast<Forms.Map>();
+            var hsf = args.Pop();
+            var hs = vm.Eval(hsf);
             var end = new Label();
 
-            if (hs.GetValue(vm) is Value m)
+            if (hs is Value hsv)
             {
-                vm.Emit(Ops.Try.Make(m.Cast(Map), vm.NextRegisterIndex, end, loc));
+                vm.Emit(Ops.Try.Make(hsv.Cast(Array, loc).Select(it => it.CastUnbox(Pair, loc)).ToArray(), vm.NextRegisterIndex, end, loc));
                 args.Emit(vm);
                 end.PC = vm.EmitPC;
-            } else { throw new EmitError($"Expected map literal: {hs}", loc); }
+            }
+            else { throw new EmitError($"Expected map literal: {hsf.Dump(vm)}", loc); }
         });
 
         BindMethod("type-of", ["x"], (vm, stack, target, arity, loc) =>

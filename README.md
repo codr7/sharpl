@@ -2,7 +2,7 @@
 
 ```
 $ dotnet run
-sharpl v28
+sharpl v29
 
    1 (say 'hello)
    2 
@@ -631,6 +631,41 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
+## errors
+### signalling 
+`fail` may be used to signal an error.<br/>
+The first argument is the error type (default `Error`); remaining arguments are passed to the constructor, which by default concatenates a message.
+
+```
+(fail _ 'bummer)
+```
+```
+Sharpl.UserError: repl@1:16 bummer
+   at Sharpl.Libs.Core.<>c.<.ctor>b__27_21(VM vm, List`1 stack, Method target, Int32 arity, Loc loc) in /home/codr7/Code/sharpl/src/Sharpl/Libs/Core.cs:line 408
+   at Sharpl.Method.Call(VM vm, List`1 stack, Int32 arity, Loc loc) in /home/codr7/Code/sharpl/src/Sharpl/Method.cs:line 24
+   at Sharpl.VM.Eval(Int32 startPC, List`1 stack) in /home/codr7/Code/sharpl/src/Sharpl/VM.cs:line 271
+   at Sharpl.VM.Eval(Int32 startPC) in /home/codr7/Code/sharpl/src/Sharpl/VM.cs:line 619
+   at Sharpl.REPL.Eval(VM vm, String input, Loc& loc) in /home/codr7/Code/sharpl/src/Sharpl/REPL.cs:line 67
+   at Sharpl.REPL.Run(VM vm) in /home/codr7/Code/sharpl/src/Sharpl/REPL.cs:line 35
+```
+
+### handling
+`try` may be used to register error handlers for a block of code, handlers are checked in specified order when an error occurs.
+
+```
+(try [Any:(^[_] (say 'inside-error-handler))] 
+  (say 'before)
+  (fail _ 'bummer)
+  (say 'after))
+
+(say 'done)
+```
+```
+before
+inside-error-handler
+done
+```
+
 ## deferred actions
 Actions may be registered to run unconditionally at scope exit using `defer`.
 Deferred actions are evaluated last in first out.
@@ -696,17 +731,6 @@ And when called without arguments, it returns the current library.
 (lib)
 ```
 `(Lib user)`
-
-## errors
-`fail` may be used to signal an error.<br/>
-Since there are no facilities for handling errors yet, this means evaluation will stop unconditionally.
-
-```
-(fail 'bummer)
-```
-```
-Sharpl.EvalError: repl@1:2 bummer
-```
 
 ## evaluation
 

@@ -32,15 +32,11 @@ public class REPL
             {
                 try
                 {
-                    vm.Term
-                        .WriteLine(Eval(vm, buffer.ToString(), ref loc).Dump(vm))
-                        .Reset();
+                    vm.Term.WriteLine(Eval(vm, buffer.ToString(), ref loc).Dump(vm));
                 }
                 catch (Exception e)
                 {
-                    vm.Term
-                        .WriteLine(e)
-                        .Reset();
+                    vm.Term.WriteLine(e);
                 }
                 finally
                 {

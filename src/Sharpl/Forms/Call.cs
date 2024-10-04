@@ -9,7 +9,6 @@ public class Call : Form
     public readonly Form[] Args;
     public readonly Form Target;
 
-
     public Call(Form target, Form[] args, Loc loc) : base(loc)
     {
         Target = target;

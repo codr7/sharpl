@@ -11,40 +11,17 @@ ctrl-k ctrl-d       format
 [^1]
 source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
-(try {Error:(^[e] (say "handle " e))} 
-  (fail 'bummer))
-
-* finish try
-** process handlers in Try op
-** update fail
-*** figure out how to propagate arg
-** add retry
-
-(try 
-     {Int :(^[arg] (retry 'foo arg))
-      'foo:(^[arg] (say "foo " arg))}
-   (fail 42))
+* add retries
+** add break loop
 
 * add net lib to readme
 * add term lib to readme
-
-* add break loop
 
 * make macros composeable
 ** create user method like VM.Compose
 *** one for each arity
 
 * ---
-
-* investigate dropping the stack
-** branch
-** add Register ret arg to Form/Type.Emit/EmitCall
-** allocate the 10 (config) first registers in each new frame for args
-*** use 0 for ret & arg 0
-** remove UserMethod arg regs
-** convert one op at a time to work on registers
-** convert libs
-** remove stack type
 
 * add string support to (emit) like (eval)
 

@@ -12,6 +12,7 @@ public abstract class AnyType
     public AnyType(string name, AnyType[] parents)
     {
         Name = name;
+        AddParent(this);
 
         foreach (var pt in parents)
         {
@@ -63,10 +64,10 @@ public abstract class AnyType
     }
 
     public abstract bool Equals(Value left, Value right);
-    
-    public virtual bool Isa(AnyType type) => 
-        GetType().IsAssignableFrom(type.GetType()) || parents.ContainsKey(type);
 
+    public virtual bool Isa(AnyType type) =>
+        GetType().IsAssignableFrom(type.GetType()) || parents.ContainsKey(type);
+   
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Value value, Loc loc) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
