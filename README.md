@@ -550,18 +550,6 @@ Composite types may be sliced by indexing using a pair.
 ```
 `5:2`
 
-## user types
-
-### hierarchies
-`type` may be used to build abstract type hierarchies.
-
-```
-(type Foo)
-(type Bar [Foo])
-(> Bar Foo)
-```
-`T`
-
 ## time
 The time library uses established naming conventions when referring to fields: `Y` for years, `M` for months, `D` for days, `h` for hours, `m` for minutes, `s` for seconds, `ms` for milliseconds and `us` for microseconds.
 
@@ -643,8 +631,17 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
+## traits
+`trait` may be used to build abstract type hierarchies.
+
+```
+(trait Foo)
+(trait Bar [Foo])
+(> Bar Foo)
+```
+`T`
+
 ## errors
-### signalling 
 `fail` may be used to signal an error.<br/>
 The first argument is the error type (default `Error`); remaining arguments are passed to the constructor, which by default concatenates a message.
 

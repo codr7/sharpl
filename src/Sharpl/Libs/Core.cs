@@ -864,7 +864,7 @@ public class Core : Lib
             else { throw new EmitError($"Expected map literal: {hsf.Dump(vm)}", loc); }
         });
 
-        BindMacro("type", ["name", "supers?"], (vm, target, args, loc) =>
+        BindMacro("trait", ["name", "supers?"], (vm, target, args, loc) =>
         {
             var n = args.Pop().Cast<Forms.Id>().Name;
 
