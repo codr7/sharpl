@@ -24,9 +24,13 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 
 * add data macro
 ** add super type
-** define converters
+** define constructor
 
-(data Foo Int)
+(data Foo Map)
+
+(let [x (Foo {'bar:42})]
+  (say x)
+  (say (x 'bar)))
 
 * add retries
 ** add break loop

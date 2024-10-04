@@ -551,7 +551,9 @@ Composite types may be sliced by indexing using a pair.
 `5:2`
 
 ## user types
-`type` may be used to build type hierarchies.
+
+### hierarchies
+`type` may be used to build abstract type hierarchies.
 
 ```
 (type Foo)
