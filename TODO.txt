@@ -8,6 +8,13 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
+* bind LOC in handlers
+** alloc register
+** bind with env in try macro
+
+* catch EvalError in try op
+** set ev to Error, e
+
 * add retry support
 ** add break loop
 
