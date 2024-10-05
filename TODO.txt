@@ -22,17 +22,6 @@ source.AsSpan(...).CopyTo(dest.AsSpan(...))
 (try [Foo:(^[e] (say e))]
   (fail Bar 1 2 3))
 
-* add type macro
-** add super types
-** define constructor
-
-(type Foo [Map] 
-  (^[x y z] {'foo:x 'bar:y 'baz:z})
-
-(let [x (Foo 1 2 3)]
-  (say x)
-  (say (x 'bar)))
-
 * add retries
 ** add break loop
 

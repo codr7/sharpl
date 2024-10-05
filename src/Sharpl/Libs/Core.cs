@@ -150,7 +150,8 @@ public class Core : Lib
             var lv = stack.Pop();
             arity--;
             var res = true;
-            if (lv.Type is not ComparableTrait t) { throw new EvalError($"Not comparable: {lv}", loc); }
+            var t = lv.Type.Cast<ComparableTrait>();
+            if (t is null) { throw new EvalError($"Not comparable: {lv}", loc); }
 
             while (arity > 0)
             {
@@ -174,7 +175,7 @@ public class Core : Lib
             var lv = stack.Pop();
             arity--;
             var res = true;
-            var t = lv.Type as ComparableTrait;
+            var t = lv.Type.Cast<ComparableTrait>();
             if (t is null) { throw new EvalError($"Not comparable: {lv}", loc); }
 
             while (arity > 0)
@@ -197,26 +198,25 @@ public class Core : Lib
 
         BindMethod("+", ["x"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type is NumericTrait nt) { nt.Add(vm, stack, arity, loc); }
+            if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Add(vm, stack, arity, loc); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMethod("-", ["x"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type is NumericTrait nt) { nt.Subtract(vm, stack, arity, loc); }
+            if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Subtract(vm, stack, arity, loc); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
         BindMethod("*", ["x", "y"], (vm, stack, target, arity, loc) =>
          {
-             if (stack[^arity].Type is NumericTrait nt)
-             { nt.Multiply(vm, stack, arity, loc); }
+             if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Multiply(vm, stack, arity, loc); }
              else { throw new EvalError($"Expected numeric value", loc); }
          });
 
         BindMethod("/", ["x", "y"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type is NumericTrait nt) { nt.Divide(vm, stack, arity, loc); }
+            if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Divide(vm, stack, arity, loc); }
             else { throw new EvalError($"Expected numeric value", loc); }
         });
 
@@ -282,7 +282,7 @@ public class Core : Lib
         BindMethod("close", ["it"], (vm, stack, target, arity, loc) =>
         {
             var it = stack.Pop();
-            if (it.Type is CloseTrait ct) { ct.Close(it); }
+            if (it.Type.Cast<CloseTrait>() is CloseTrait ct) { ct.Close(it); }
             else { throw new EvalError($"Not supported: {it}", loc); }
         });
 
@@ -479,7 +479,7 @@ public class Core : Lib
         BindMethod("length", ["it"], (vm, stack, target, arity, loc) =>
             {
                 var v = stack.Pop();
-                if (v.Type is LengthTrait st) { stack.Push(Int, st.Length(v)); }
+                if (v.Type.Cast<LengthTrait>() is LengthTrait st) { stack.Push(Int, st.Length(v)); }
                 else { throw new EvalError($"Not supported: {v}", loc); }
             });
 
@@ -579,7 +579,7 @@ public class Core : Lib
         BindMethod("max", ["x", "y?"], (vm, stack, target, arity, loc) =>
         {
             var v = stack.Pop();
-            var t = v.Type as ComparableTrait;
+            var t = v.Type.Cast<ComparableTrait>();
             arity--;
 
             while (arity > 0)
@@ -651,7 +651,7 @@ public class Core : Lib
         BindMethod("peek", ["src"], (vm, stack, target, arity, loc) =>
         {
             var src = stack.Pop();
-            if (src.Type is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); }
+            if (src.Type.Cast<StackTrait>() is StackTrait st) { stack.Push(st.Peek(loc, vm, src)); }
             else { throw new EvalError("Invalid peek target: {src}", loc); }
         });
 
@@ -659,14 +659,14 @@ public class Core : Lib
         {
             var ssv = stack.Pop();
 
-            if (ssv.Type is IterTrait it)
+            if (ssv.Type.Cast<IterTrait>() is IterTrait it)
             {
                 var ss = new List<(Task<bool>, Value)>();
                 var cts = new CancellationTokenSource();
 
                 for (var i = it.CreateIter(ssv, vm, loc); i.Next(vm, loc) is Value v;)
                 {
-                    if (v.Type is PollTrait pt) { ss.Add((pt.Poll(v, cts.Token), v)); }
+                    if (v.Type.Cast<PollTrait>() is PollTrait pt) { ss.Add((pt.Poll(v, cts.Token), v)); }
                     else { throw new EvalError($"Not pollable: {v.Dump(vm)}", loc); }
                 }
 
@@ -729,7 +729,7 @@ public class Core : Lib
                         goto case 2;
                 }
 
-                if (t is RangeTrait rt) { stack.Push(Iter, rt.CreateRange(min, max, stride, loc)); }
+                if (t.Cast<RangeTrait>() is RangeTrait rt) { stack.Push(Iter, rt.CreateRange(min, max, stride, loc)); }
                 else { throw new EvalError($"Invalid range type: {t}", loc); }
             });
 
@@ -871,8 +871,9 @@ public class Core : Lib
             var sfs = args.Empty ? [] : args.Pop() switch
             {
                 Forms.Nil => [],
+                Forms.Id idf => [idf],
                 Forms.Array af => af.Items,
-                Form df => throw new EmitError("Invalid type definition: {df}", df.Loc)
+                Form df => throw new EmitError("Invalid trait definition: {df}", df.Loc)
             };
 
             var sts = new List<UserTrait>();
@@ -880,11 +881,39 @@ public class Core : Lib
             foreach (var sf in sfs)
             {
                 if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(Trait, sf.Loc)); }
-                else throw new EmitError($"Invalid super type: {sf.Dump(vm)}", sf.Loc);
+                else throw new EmitError($"Invalid super trait: {sf.Dump(vm)}", sf.Loc);
             }
             
             var t = new UserTrait(n, sts.ToArray());
             vm.Env[n] = Value.Make(Trait, t);
+        });
+
+        BindMacro("type", ["name", "supers?", "cons?"], (vm, target, args, loc) =>
+        {
+            var n = args.Pop().Cast<Forms.Id>().Name;
+
+            var sfs = args.Empty ? [] : args.Pop() switch
+            {
+                Forms.Array af => af.Items,
+                Forms.Id idf => [idf],
+                Forms.Nil => [],
+                Form df => throw new EmitError("Invalid type definition: {df}", df.Loc)
+            };
+
+            var sts = new List<AnyType>();
+
+            foreach (var sf in sfs)
+            {
+                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(Meta, sf.Loc)); }
+                else throw new EmitError($"Invalid super type: {sf.Dump(vm)}", sf.Loc);
+            }
+
+            var c = args.Empty
+                ? Value.Make(Method, new Method(n, ["value"], (vm, stack, target, arity, loc) => { }))
+                : vm.Eval(args.Pop());
+
+            var t = new UserType(n, sts.ToArray(), (Value)c!);
+            vm.Env[n] = Value.Make(Meta, t);
         });
 
         BindMethod("type-of", ["x"], (vm, stack, target, arity, loc) =>

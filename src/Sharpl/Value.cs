@@ -27,23 +27,23 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     // make the code below very unsafe by reinterpreting structs and classes
     // as arbitrary types which will can lead to memory corruption and crashes.
     public T Cast<T>(Type<T> type) where T : class =>
-        Type == type ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);
+        (Type.Cast<Type<T>>() is Type<T>) ? Unsafe.As<T>(Data) : TypeMismatch(Type, type);
 
     public T Cast<T>(Type<T> type, Loc loc) where T : class =>
-        Type == type ? Unsafe.As<T>(Data) : TypeMismatch(loc, Type, type);
+        (Type.Cast<Type<T>>() is Type<T>) ? Unsafe.As<T>(Data) : TypeMismatch(loc, Type, type);
 
     public T CastUnbox<T>(Type<T> type) where T : struct =>
-        Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(Type, type);
+        (Type.Cast<Type<T>>() is Type<T>) ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(Type, type);
 
     public T CastUnbox<T>(Type<T> type, Loc loc) where T : struct =>
-        Type == type ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(loc, Type, type);
+        (Type.Cast<Type<T>>() is Type<T>) ? Unsafe.As<StrongBox<T>>(Data).Value : TypeMismatch(loc, Type, type);
 
     // Do not remove Nullable<T> overloads - they are necessary
     // to correctly handle unboxing of nullable structs.
     public T? CastUnbox<T>(Type<T?> type) where T : struct => (T?)Data;
 
     public T? CastUnbox<T>(Type<T?> type, Loc loc) where T : struct =>
-        Type == type ? (T?)Data : TypeMismatch(loc, Type, type);
+        (Type.Cast<Type<T>>() is Type<T>) ? (T?)Data : TypeMismatch(loc, Type, type);
 
     public T CastSlow<T>(Type<T> type) => (T)Data;
 

@@ -636,10 +636,41 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 
 ```
 (trait Foo)
-(trait Bar [Foo])
+(trait Bar Foo)
 (> Bar Foo)
 ```
 `T`
+
+## types
+`type` may be used to define new types, a constructor is automatically generated if none is provided.
+
+```
+(type Foo Int)
+
+(let [x (Foo 2)]
+  (say x)
+  (say (+ x 3))
+```
+```
+(Foo 2)
+3
+```
+ 
+Specifying a constructor allows customizing the instantiation.
+
+```
+(type Bar Map
+  (^[x y z] {x:1 y:2 z:3}))
+
+(let [bar (Bar 'a 'b 'c)]
+  (say bar)
+  (say (bar 'b)))
+```
+```
+(Bar {'a:1 'b:2 'c:3})
+2
+```
+
 
 ## errors
 `fail` may be used to signal an error.<br/>

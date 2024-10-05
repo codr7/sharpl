@@ -4,10 +4,11 @@ using System.Text;
 
 namespace Sharpl;
 
-public abstract class AnyType: IComparable<UserTrait>
+public abstract class AnyType: IComparable<AnyType>
 {
     public readonly string Name;
-    private readonly Dictionary<AnyType, int> parents = new Dictionary<AnyType, int>();
+    private readonly List<AnyType> parents = new List<AnyType>();
+    private readonly Dictionary<AnyType, int> parentLookup = new Dictionary<AnyType, int>();
 
     public AnyType(string name, AnyType[] parents)
     {
@@ -16,14 +17,17 @@ public abstract class AnyType: IComparable<UserTrait>
 
         foreach (var pt in parents)
         {
-            foreach (var (ppt, _) in pt.parents) { AddParent(ppt); }
+            foreach (var (ppt, _) in pt.parentLookup) { AddParent(ppt); }
         }
     }
 
     private void AddParent(AnyType type)
     {
-        if (parents.ContainsKey(type)) { parents[type] += 1; }
-        else { parents[type] = 1; }
+        if (parentLookup.ContainsKey(type)) { parentLookup[type] += 1; }
+        else {
+            parents.Add(type);
+            parentLookup[type] = 1; 
+        }
     }
     public virtual bool Bool(Value value) => true;
     public virtual void Call(VM vm, Stack stack, int arity, Loc loc) => throw new EvalError("Not supported", loc);
@@ -40,11 +44,21 @@ public abstract class AnyType: IComparable<UserTrait>
         }
     }
 
-    public int CompareTo(UserTrait? other)
+    public T? Cast<T>() where T : class
+    {
+        foreach (var pt in parents)
+        {
+            if (pt is T t) { return t; }
+        }
+
+        return null;
+    }
+
+    public int CompareTo(AnyType? other)
     {
         var o = other!;
-        if (parents.ContainsKey(o)) { return 1; }
-        if (o.parents.ContainsKey(this)) { return -1; }
+        if (parentLookup.ContainsKey(o)) { return 1; }
+        if (o.parentLookup.ContainsKey(this)) { return -1; }
         return 0;
     }
 
@@ -74,9 +88,9 @@ public abstract class AnyType: IComparable<UserTrait>
     public abstract bool Equals(Value left, Value right);
 
     public virtual bool Isa(AnyType type) =>
-        GetType().IsAssignableFrom(type.GetType()) || parents.ContainsKey(type);
+        GetType().IsAssignableFrom(type.GetType()) || parentLookup.ContainsKey(type);
 
-    public AnyType[] Parents => parents.Select(pt => pt.Key).ToArray(); 
+    public AnyType[] Parents => parents.ToArray(); 
     public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
     public virtual string ToJson(Value value, Loc loc) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
