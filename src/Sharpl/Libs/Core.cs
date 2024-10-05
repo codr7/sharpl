@@ -31,7 +31,6 @@ public class Core : Lib
     public static readonly StringType String = new StringType("String", [Any]);
     public static readonly SymType Sym = new SymType("Sym", [Any]);
     public static readonly TimestampType Timestamp = new TimestampType("Timestamp", [Any]);
-    public static readonly TraitType Trait = new TraitType("Trait", [Meta]);
     public static readonly UserMethodType UserMethod = new UserMethodType("UserMethod", [Any]);
 
     public static void DefineMethod(Loc loc, VM vm, Form.Queue args, Type<UserMethod> type, Op stopOp)
@@ -116,7 +115,6 @@ public class Core : Lib
         BindType(String);
         BindType(Sym);
         BindType(Timestamp);
-        BindType(Trait);
         BindType(UserMethod);
 
         Bind("F", Value.F);
@@ -286,6 +284,36 @@ public class Core : Lib
             else { throw new EvalError($"Not supported: {it}", loc); }
         });
 
+        BindMacro("data", ["name", "supers?", "cons?"], (vm, target, args, loc) =>
+        {
+            var n = args.Pop().Cast<Forms.Id>().Name;
+
+            var sfs = args.Empty ? [] : args.Pop() switch
+            {
+                Forms.Array af => af.Items,
+                Forms.Id idf => [idf],
+                Forms.Nil => [],
+                Form df => throw new EmitError("Invalid type definition: {df}", df.Loc)
+            };
+
+            var sts = new List<AnyType>();
+
+            foreach (var sf in sfs)
+            {
+                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(Meta, sf.Loc)); }
+                else throw new EmitError($"Invalid super type: {sf.Dump(vm)}", sf.Loc);
+            }
+
+            if (sts.All(st => st is UserTrait)) { throw new EmitError("No concrete super type found", loc); }
+
+            var c = args.Empty
+                ? Value.Make(Method, new Method(n, ["value"], (vm, stack, target, arity, loc) => { }))
+                : vm.Eval(args.Pop());
+
+            var t = new UserType(n, sts.ToArray(), (Value)c!);
+            vm.Env[n] = Value.Make(Meta, t);
+        });
+
         BindMacro("dec", ["delta?"], (vm, target, args, loc) =>
         {
             if (args.TryPop() is Forms.Id id && vm.Env[id.Name] is Value v && v.Type == Binding)
@@ -397,17 +425,12 @@ public class Core : Lib
         BindMethod("fail", [], (vm, stack, target, arity, loc) =>
         {
             stack.Reverse(arity);
-            var res = new StringBuilder();
-            var t = stack.Pop();
+            var tv = stack.Pop();
+            var t = (tv == Value._) ? Error : tv.Cast(Meta, loc);
             arity--;
-
-            while (arity > 0)
-            {
-                stack.Pop().Say(vm, res);
-                arity--;
-            }
-
-            throw new UserError((t == Value._) ? Error : (Type<UserError>)t.Cast(Meta, loc), res.ToString(), loc);
+            t.Call(vm, stack, arity, loc);
+            var v = stack.Pop();
+            throw new UserError(vm, v, loc);
         });
 
         BindMethod("gensym", ["name"], (vm, stack, target, arity, loc) =>
@@ -880,39 +903,11 @@ public class Core : Lib
 
             foreach (var sf in sfs)
             {
-                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(Trait, sf.Loc)); }
+                if (sf.GetValue(vm) is Value sv) { sts.Add((UserTrait)sv.Cast(Meta, sf.Loc)); }
                 else throw new EmitError($"Invalid super trait: {sf.Dump(vm)}", sf.Loc);
             }
-            
+
             var t = new UserTrait(n, sts.ToArray());
-            vm.Env[n] = Value.Make(Trait, t);
-        });
-
-        BindMacro("type", ["name", "supers?", "cons?"], (vm, target, args, loc) =>
-        {
-            var n = args.Pop().Cast<Forms.Id>().Name;
-
-            var sfs = args.Empty ? [] : args.Pop() switch
-            {
-                Forms.Array af => af.Items,
-                Forms.Id idf => [idf],
-                Forms.Nil => [],
-                Form df => throw new EmitError("Invalid type definition: {df}", df.Loc)
-            };
-
-            var sts = new List<AnyType>();
-
-            foreach (var sf in sfs)
-            {
-                if (sf.GetValue(vm) is Value sv) { sts.Add(sv.Cast(Meta, sf.Loc)); }
-                else throw new EmitError($"Invalid super type: {sf.Dump(vm)}", sf.Loc);
-            }
-
-            var c = args.Empty
-                ? Value.Make(Method, new Method(n, ["value"], (vm, stack, target, arity, loc) => { }))
-                : vm.Eval(args.Pop());
-
-            var t = new UserType(n, sts.ToArray(), (Value)c!);
             vm.Env[n] = Value.Make(Meta, t);
         });
 

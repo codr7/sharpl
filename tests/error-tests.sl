@@ -1,7 +1,13 @@
-﻿(check Error
-  (var err _)
+﻿(check "bummer"
+  (try [Any:(^[e] e)]
+    (fail _ 'bummer)))
 
-  (try [Any:(^[e] (set err e))]
-    (fail _ 'bummer))
+(do
+  (trait Foo)
 
-  (type-of err))
+  (data Bar [Pair Foo] 
+    (^[x y z] x:y:z))
+
+  (check (Bar 1 2 3)
+    (try [Foo:(^[e] e)]
+      (fail Bar 3 2 1))))

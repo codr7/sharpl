@@ -631,8 +631,11 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
-## traits
-`trait` may be used to build abstract type hierarchies.
+## user defined types
+### traits
+`trait` may be used to define abstract types.<br/>
+<br/>
+Supers are required to be traits.
 
 ```
 (trait Foo)
@@ -641,11 +644,13 @@ By default all timestamps are local, `time/to-utc` and `time/from-utc` may be us
 ```
 `T`
 
-## types
-`type` may be used to define new types, a constructor is automatically generated if none is provided.
+### data
+`type` may be used to define new types.<br/>
+<br/>
+A default constructor is automatically generated if not specified.
 
 ```
-(type Foo Int)
+(data Foo Int)
 
 (let [x (Foo 2)]
   (say x)
@@ -671,22 +676,19 @@ Specifying a constructor allows customizing the instantiation.
 2
 ```
 
-
 ## errors
 `fail` may be used to signal an error.<br/>
+<br/>
 The first argument is the error type (default `Error`); remaining arguments are passed to the constructor, which by default concatenates a message.
 
 ```
 (fail _ 'bummer)
 ```
 ```
-Sharpl.UserError: repl@1:16 bummer
-   at Sharpl.Libs.Core.<>c.<.ctor>b__27_21(VM vm, List`1 stack, Method target, Int32 arity, Loc loc) in /home/codr7/Code/sharpl/src/Sharpl/Libs/Core.cs:line 408
+Sharpl.UserError: repl@1:2 bummer
+   at Sharpl.Libs.Core.<>c.<.ctor>b__27_22(VM vm, List`1 stack, Method target, Int32 arity, Loc loc) in /home/codr7/Code/sharpl/src/Sharpl/Libs/Core.cs:line 433
    at Sharpl.Method.Call(VM vm, List`1 stack, Int32 arity, Loc loc) in /home/codr7/Code/sharpl/src/Sharpl/Method.cs:line 24
    at Sharpl.VM.Eval(Int32 startPC, List`1 stack) in /home/codr7/Code/sharpl/src/Sharpl/VM.cs:line 271
-   at Sharpl.VM.Eval(Int32 startPC) in /home/codr7/Code/sharpl/src/Sharpl/VM.cs:line 619
-   at Sharpl.REPL.Eval(VM vm, String input, Loc& loc) in /home/codr7/Code/sharpl/src/Sharpl/REPL.cs:line 67
-   at Sharpl.REPL.Run(VM vm) in /home/codr7/Code/sharpl/src/Sharpl/REPL.cs:line 35
 ```
 
 ### handling
@@ -705,6 +707,20 @@ before
 inside-error-handler
 done
 ```
+
+### custom errors
+Any type may be used as an error.
+
+```
+(trait Foo)
+
+(data Bar [Pair Foo] 
+  (^[x y z] x:y:z))
+
+(try [Foo:(^[e] e)]
+  (fail Bar 3 2 1))
+```
+`(Bar 1:2:3)`
 
 ## deferred actions
 Actions may be registered to run unconditionally at scope exit using `defer`.

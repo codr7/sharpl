@@ -9,11 +9,11 @@
 (check (not (> Foo Bar))))
 
 (check 5
-  (type Foo Int)
+  (data Foo Int)
   (+ (Foo 2) 3))
 
 (check 2
-  (type Bar Map
+  (data Bar Map
     (^[x y z] {x:1 y:2 z:3}))
 
   ((Bar 'a 'b 'c) 'b))

@@ -8,19 +8,8 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
-[^1]
-source.AsSpan(...).CopyTo(dest.AsSpan(...))
-
-* add error types
-** only allow user types as super
-
-(trait Foo)
-
-(error Bar [Foo] 
-  (^[x y z] x:y:z))
-
-(try [Foo:(^[e] (say e))]
-  (fail Bar 1 2 3))
+* reorder VM vm args
+** place before value in type methods
 
 * add retries
 ** add break loop

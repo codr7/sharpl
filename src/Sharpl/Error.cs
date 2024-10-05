@@ -16,10 +16,10 @@ public class ReadError : Exception
 }
 public class UserError : EvalError
 {
-    public readonly Type<UserError> Type;
+    public readonly Value Value;
 
-    public UserError(Type<UserError> type, string message, Loc loc) : base(message, loc)
+    public UserError(VM vm, Value value, Loc loc) : base(value.Say(vm), loc)
     {
-        Type = type;
+        Value = value;
     }
 }

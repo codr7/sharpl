@@ -562,7 +562,7 @@ public class VM
                         
                         try { EvalUntil(tryOp.End.PC, stack); }
                         catch (UserError e) {
-                            var ev = Value.Make(e.Type, e);
+                            var ev = e.Value;
                             var handled = false;
                             foreach (var (k, v) in tryOp.Handlers)
                             {
