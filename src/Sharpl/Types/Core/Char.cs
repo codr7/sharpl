@@ -15,7 +15,7 @@ public class CharType(string name, AnyType[] parents) :
         return new Iters.Core.CharRange(minVal, maxVal, strideVal);
     }
 
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         var c = value.CastUnbox(this);
         result.Append('\\');
@@ -46,6 +46,6 @@ public class CharType(string name, AnyType[] parents) :
         stack.Push(Libs.Core.Bit, r);
     }
 
-    public override void Say(Value value, VM vm, StringBuilder result) =>
+    public override void Say(VM vm, Value value, StringBuilder result) =>
         result.Append(value.CastUnbox(this));
 }

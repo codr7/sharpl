@@ -30,7 +30,7 @@ public class PipeType(string name, AnyType[] parents) : Type<Channel<Value>>(nam
     }
 
     public Iter CreateIter(Value target, VM vm, Loc loc) => new PipeItems(target.Cast(this).Reader);
-    public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"(Pipe {vm.GetObjectId(value.Cast(this))})");
+    public override void Dump(VM vm, Value value, StringBuilder result) => result.Append($"(Pipe {vm.GetObjectId(value.Cast(this))})");
     public Task<bool> Poll(Value target, CancellationToken ct) =>
         target.Cast(this).Reader.WaitToReadAsync(ct).AsTask();
 }

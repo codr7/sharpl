@@ -8,10 +8,7 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
-* reorder VM vm args
-** place before value in type methods
-
-* add retries
+* add retry support
 ** add break loop
 
 * add net lib to readme

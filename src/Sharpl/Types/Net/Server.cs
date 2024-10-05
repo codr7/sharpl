@@ -27,6 +27,6 @@ public class ServerType(string name, AnyType[] parents) :
         return new PipeItems(c);
     }
 
-    public override void Dump(Value value, VM vm, StringBuilder result) =>
+    public override void Dump(VM vm, Value value, StringBuilder result) =>
         result.Append($"(net/Server {vm.GetObjectId(value.Cast(this))})");
 }

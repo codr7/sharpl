@@ -56,7 +56,7 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     }
 
     public Value Copy() => Type.Copy(this);
-    public void Dump(VM vm, StringBuilder result) => Type.Dump(this, vm, result);
+    public void Dump(VM vm, StringBuilder result) => Type.Dump(vm, this, result);
 
     public string Dump(VM vm)
     {
@@ -71,7 +71,7 @@ public readonly record struct Value(AnyType Type, object Data) : IComparable<Val
     public override int GetHashCode() => Data.GetHashCode();
 
     public bool Isa(AnyType parent) => Type.Isa(parent);
-    public void Say(VM vm, StringBuilder result) => Type.Say(this, vm, result);
+    public void Say(VM vm, StringBuilder result) => Type.Say(vm, this, result);
 
     public string Say(VM vm)
     {

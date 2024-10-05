@@ -4,14 +4,14 @@ namespace Sharpl.Types.Term;
 
 public class KeyType(string name, AnyType[] parents) : Type<ConsoleKeyInfo>(name, parents)
 {
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         result.Append("(term/Key ");
-        Say(value, vm, result);
+        Say(vm, value, result);
         result.Append(')');
     }
 
-    public override void Say(Value value, VM vm, StringBuilder result)
+    public override void Say(VM vm, Value value, StringBuilder result)
     {
         var ki = value.CastUnbox(this);
         if ((ki.Modifiers & ConsoleModifiers.Alt) != 0) { result.Append("Alt+"); }

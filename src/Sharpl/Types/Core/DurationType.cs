@@ -75,5 +75,5 @@ public class DurationType(string name, AnyType[] parents) :
         stack.Push(this, res);
     }
 
-    public override void Say(Value value, VM vm, StringBuilder result) => result.Append(value.CastUnbox(this));
+    public override void Say(VM vm, Value value, StringBuilder result) => result.Append(value.CastUnbox(this));
 }

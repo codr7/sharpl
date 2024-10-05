@@ -29,7 +29,7 @@ public class SymType(string name, AnyType[] parents) :
     }
 
     public override bool Equals(Value left, Value right) => left.Cast(this) == right.Cast(this);
-    public override void Say(Value value, VM vm, StringBuilder result) => result.Append(value.Cast(this).Name);
+    public override void Say(VM vm, Value value, StringBuilder result) => result.Append(value.Cast(this).Name);
     public override string ToJson(Value value, Loc loc) => $"\"{value.Cast(this).Name}\"";
 
     public override Form Unquote(VM vm, Value value, Loc loc)

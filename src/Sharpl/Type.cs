@@ -63,7 +63,7 @@ public abstract class AnyType: IComparable<AnyType>
     }
 
     public virtual Value Copy(Value value) => value;
-    public virtual void Dump(Value value, VM vm, StringBuilder result) => result.Append(value.Data.ToString());
+    public virtual void Dump(VM vm, Value value, StringBuilder result) => result.Append(value.Data.ToString());
     public virtual void Emit(VM vm, Value value, Form.Queue args, Loc loc) => vm.Emit(Ops.Push.Make(value));
 
     public virtual void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
@@ -91,7 +91,7 @@ public abstract class AnyType: IComparable<AnyType>
         GetType().IsAssignableFrom(type.GetType()) || parentLookup.ContainsKey(type);
 
     public AnyType[] Parents => parents.ToArray(); 
-    public virtual void Say(Value value, VM vm, StringBuilder result) => Dump(value, vm, result);
+    public virtual void Say(VM vm, Value value, StringBuilder result) => Dump(vm, value, result);
     public virtual string ToJson(Value value, Loc loc) => throw new EvalError($"Not supported: {value}", loc);
     public override string ToString() => Name;
     public virtual Form Unquote(VM vm, Value value, Loc loc) => new Literal(value, loc);

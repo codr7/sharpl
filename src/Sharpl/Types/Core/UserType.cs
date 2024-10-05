@@ -23,12 +23,12 @@ public class UserType : Type<object>
     public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc) =>
         type.Call(vm, stack, target, arity, registerCount, eval, loc);
 
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         result.Append($"({Name} ");
-        type.Dump(value, vm, result);
+        type.Dump(vm, value, result);
         result.Append(')');
     }
-    public override void Say(Value value, VM vm, StringBuilder result) =>
-        type.Say(value, vm, result);
+    public override void Say(VM vm, Value value, StringBuilder result) =>
+        type.Say(vm, value, result);
 }

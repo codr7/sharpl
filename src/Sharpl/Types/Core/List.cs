@@ -78,7 +78,7 @@ public class ListType(string name, AnyType[] parents) :
     public override Value Copy(Value value) =>
         Value.Make(this, new List<Value>(value.Cast(this).Select(it => it.Copy())));
 
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         result.Append("(List");
 
@@ -127,7 +127,7 @@ public class ListType(string name, AnyType[] parents) :
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         dstVal.Cast(this).Add(val);
 
-    public override void Say(Value value, VM vm, StringBuilder result)
+    public override void Say(VM vm, Value value, StringBuilder result)
     {
         result.Append("(List");
 

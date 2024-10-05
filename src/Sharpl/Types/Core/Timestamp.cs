@@ -89,7 +89,7 @@ public class TimestampType(string name, AnyType[] parents) :
         }
     }
 
-    public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"{value.CastUnbox(this):yyyy-MM-dd HH:mm:ss}");
+    public override void Dump(VM vm, Value value, StringBuilder result) => result.Append($"{value.CastUnbox(this):yyyy-MM-dd HH:mm:ss}");
 
     public override string ToJson(Value value, Loc loc) => $"{value.CastUnbox(this):yyyy-MM-ddTHH:mm:ss.fffZ}";
 }

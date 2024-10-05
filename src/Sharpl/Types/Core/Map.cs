@@ -81,7 +81,7 @@ public class MapType(string name, AnyType[] parents) :
     public override Value Copy(Value value) =>
         Value.Make(this, new OrderedMap<Value, Value>(value.Cast(this).Items.Select(it => (it.Item1.Copy(), it.Item2.Copy())).ToArray()));
 
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         result.Append('{');
         var i = 0;
@@ -114,7 +114,7 @@ public class MapType(string name, AnyType[] parents) :
 
     public int Length(Value target) => target.Cast(this).Count;
 
-    public override void Say(Value value, VM vm, StringBuilder result)
+    public override void Say(VM vm, Value value, StringBuilder result)
     {
         result.Append('{');
         var i = 0;

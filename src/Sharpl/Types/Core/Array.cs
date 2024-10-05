@@ -76,7 +76,7 @@ public class ArrayType(string name, AnyType[] parents) :
     public override Value Copy(Value value) =>
         Value.Make(this, value.Cast(this).Select(it => it.Copy()).ToArray());
 
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         result.Append('[');
         var i = 0;
@@ -131,7 +131,7 @@ public class ArrayType(string name, AnyType[] parents) :
         vm.Set(dst, Value.Make(this, dv));
     }
 
-    public override void Say(Value value, VM vm, StringBuilder result)
+    public override void Say(VM vm, Value value, StringBuilder result)
     {
         result.Append('[');
         var i = 0;

@@ -69,7 +69,7 @@ public class StringType(string name, AnyType[] parents) :
     public Iter CreateIter(Value target, VM vm, Loc loc) =>
         new Iters.Core.EnumeratorItems(target.Cast(this).Select(c => Value.Make(Libs.Core.Char, c)).GetEnumerator());
 
-    public override void Dump(Value value, VM vm, StringBuilder result) =>
+    public override void Dump(VM vm, Value value, StringBuilder result) =>
       result.Append($"\"{Escape(value.Cast(this))}\"");
 
     public int Length(Value target) => target.Cast(this).Length;
@@ -92,7 +92,7 @@ public class StringType(string name, AnyType[] parents) :
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         vm.Set(dst, Value.Make(this, dstVal.Cast(this) + val.CastUnbox(Libs.Core.Char)));
 
-    public override void Say(Value value, VM vm, StringBuilder result) => result.Append(value.Data);
+    public override void Say(VM vm, Value value, StringBuilder result) => result.Append(value.Data);
 
     public override string ToJson(Value value, Loc loc) => $"\"{Escape(value.Cast(this))}\"";
 }

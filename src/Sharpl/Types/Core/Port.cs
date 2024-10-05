@@ -26,6 +26,6 @@ public class PortType(string name, AnyType[] parents) : Type<Port>(name, parents
     public void Close(Value target) => target.Cast(this).Close();
 
     public Iter CreateIter(Value target, VM vm, Loc loc) => new PortItems(target.Cast(this));
-    public override void Dump(Value value, VM vm, StringBuilder result) => result.Append($"(Port {vm.GetObjectId(value.Cast(this))})");
+    public override void Dump(VM vm, Value value, StringBuilder result) => result.Append($"(Port {vm.GetObjectId(value.Cast(this))})");
     public Task<bool> Poll(Value target, CancellationToken ct) => target.Cast(this).Poll(ct);
 }

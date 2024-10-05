@@ -25,7 +25,7 @@ public class FixType(string name, AnyType[] parents) :
         return new Iters.Core.FixRange(minVal ?? Fix.Make(1, 0), maxVal, strideVal);
     }
 
-    public override void Dump(Value value, VM vm, StringBuilder result) =>
+    public override void Dump(VM vm, Value value, StringBuilder result) =>
         result.Append(Fix.ToString(value.CastUnbox(this)));
 
     public void Add(VM vm, Stack stack, int arity, Loc loc)

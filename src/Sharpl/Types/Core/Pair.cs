@@ -102,7 +102,7 @@ public class PairType(string name, AnyType[] parents) :
         return Value.Make(this, (p.Item1.Copy(), p.Item2.Copy()));
     }
 
-    public override void Dump(Value value, VM vm, StringBuilder result)
+    public override void Dump(VM vm, Value value, StringBuilder result)
     {
         var p = value.CastUnbox(this);
         p.Item1.Dump(vm, result);
@@ -144,7 +144,7 @@ public class PairType(string name, AnyType[] parents) :
     public void Push(Loc loc, VM vm, Register dst, Value dstVal, Value val) =>
         vm.Set(dst, Value.Make(this, (val, dstVal)));
 
-    public override void Say(Value value, VM vm, StringBuilder result)
+    public override void Say(VM vm, Value value, StringBuilder result)
     {
         var p = value.CastUnbox(this);
         p.Item1.Say(vm, result);
