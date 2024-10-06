@@ -32,7 +32,8 @@ public class REPL
             {
                 try
                 {
-                    vm.Term.WriteLine(Eval(vm, buffer.ToString(), ref loc).Dump(vm));
+                    var v = Eval(vm, buffer.ToString(), ref loc);
+                    vm.Term.WriteLine(v.Dump(vm));
                 }
                 catch (Exception e)
                 {

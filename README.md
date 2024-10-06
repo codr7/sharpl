@@ -708,6 +708,15 @@ inside-error-handler
 done
 ```
 
+### location
+`LOC` may be used to get the error source location inside handlers.
+
+```
+(try [Any:(^[e] LOC)] 
+  (fail _))
+```
+`repl@2:4`
+
 ### custom errors
 Any type may be used as an error.
 

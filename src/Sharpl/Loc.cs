@@ -1,6 +1,6 @@
 namespace Sharpl;
 
-public struct Loc
+public struct Loc: IComparable<Loc>
 {
     public int Column;
     public int Line;
@@ -21,4 +21,13 @@ public struct Loc
 
     public override string ToString() =>
         $"{Source}@{Line}:{Column}";
+
+    public int CompareTo(Loc other)
+    {
+        var s = Source.CompareTo(other.Source);
+        if (s != 0) return s;
+        var l = Line.CompareTo(other.Line);
+        if (l != 0) return l;
+        return Column.CompareTo(other.Column);
+    }
 }

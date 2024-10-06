@@ -5,12 +5,13 @@ April 29th
 204
 212
 
+392
+106
+267
+299
+
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
-
-* bind LOC in handlers
-** alloc register
-** bind with env in try macro
 
 * catch EvalError in try op
 ** extract try op to separate Eval

@@ -41,7 +41,7 @@ public class VM
     public static readonly int VERSION = 29;
 
     public readonly Libs.Char CharLib;
-    public readonly Libs.Core CoreLib = new Libs.Core();
+    public readonly Libs.Core CoreLib;
     public readonly Libs.Fix FixLib;
     public readonly Libs.IO IOLib;
     public readonly Libs.Iter IterLib;
@@ -59,7 +59,7 @@ public class VM
 
     private readonly List<Call> calls = [];
     private readonly List<Op> code = [];
-    private int varCount = 0;
+    private int nextVarIndex = 0;
     private Env? env;
     private readonly List<Frame> frames = [];
     private readonly List<Label> labels = [];
@@ -75,6 +75,8 @@ public class VM
         Config = config;
         registers = new Value[config.MaxRegisters];
         nextRegisterIndex = 0;
+
+        CoreLib = new Libs.Core(this);
 
         var loc = new Loc("init");
         UserLib.Init(this, loc);
@@ -118,6 +120,12 @@ public class VM
         return res;
     }
 
+    public Register AllocVar()
+    {
+        var res = nextVarIndex;
+        nextVarIndex++;
+        return new Register(-1, res);
+    }
     public void BeginFrame(int registerCount)
     {
         var total = registerCount;
@@ -138,10 +146,10 @@ public class VM
 
     public void BindVar(string name)
     {
-        var i = varCount;
+        var i = nextVarIndex;
         Env[name] = Value.Make(Core.Binding, new Register(-1, i));
         Emit(Ops.SetRegister.Make(new Register(-1, i)));
-        varCount++;
+        nextVarIndex++;
     }
 
     public void BindVar(Form f)
@@ -558,12 +566,15 @@ public class VM
                 case OpCode.Try:
                     {
                         var tryOp = (Ops.Try)op;
+                        BeginFrame(tryOp.RegisterCount);
                         PC++;
-                        
+
                         try { EvalUntil(tryOp.End.PC, stack); }
                         catch (UserError e) {
                             var ev = e.Value;
+                            Set(tryOp.LocReg, Value.Make(Core.Loc, e.Loc));
                             var handled = false;
+
                             foreach (var (k, v) in tryOp.Handlers)
                             {
                                 if (k == Value._ || 

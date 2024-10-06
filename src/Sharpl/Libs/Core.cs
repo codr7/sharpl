@@ -20,6 +20,7 @@ public class Core : Lib
     public static readonly IterType Iter = new IterType("Iter", [Any]);
     public static readonly LibType Lib = new LibType("Lib", [Any]);
     public static readonly ListType List = new ListType("List", [Any]);
+    public static readonly LocType Loc = new LocType("Loc", [Any]);
     public static readonly MacroType Macro = new MacroType("Macro", [Any]);
     public static readonly MapType Map = new MapType("Map", [Any]);
     public static readonly MetaType Meta = new MetaType("Meta", [Any]);
@@ -91,7 +92,7 @@ public class Core : Lib
         });
     }
 
-    public Core() : base("core", null, [])
+    public Core(VM vm) : base("core", null, [])
     {
         BindType(Any);
         BindType(Array);
@@ -104,6 +105,7 @@ public class Core : Lib
         BindType(Fix);
         BindType(Int);
         BindType(Lib);
+        BindType(Loc);
         BindType(List);
         BindType(Macro);
         BindType(Map);
@@ -307,7 +309,10 @@ public class Core : Lib
             if (sts.All(st => st is UserTrait)) { throw new EmitError("No concrete super type found", loc); }
 
             var c = args.Empty
-                ? Value.Make(Method, new Method(n, ["value"], (vm, stack, target, arity, loc) => { }))
+                ? Value.Make(Method, new Method(n, ["value"], (vm, stack, target, arity, loc) =>
+                {
+                    if (arity == 0) stack.Push(Value._);
+                }))
                 : vm.Eval(args.Pop());
 
             var t = new UserType(n, sts.ToArray(), (Value)c!);
@@ -872,19 +877,26 @@ public class Core : Lib
 
         BindMacro("stop", [], (vm, target, args, loc) => vm.Emit(Ops.Stop.Make()));
 
+        var LOC = vm.AllocVar();
+
         BindMacro("try", ["handlers", "body?"], (vm, target, args, loc) =>
         {
-            var hsf = args.Pop();
-            var hs = vm.Eval(hsf);
-            var end = new Label();
-
-            if (hs is Value hsv)
+            vm.DoEnv(vm.Env, loc, () =>
             {
-                vm.Emit(Ops.Try.Make(hsv.Cast(Array, loc).Select(it => it.CastUnbox(Pair, loc)).ToArray(), vm.NextRegisterIndex, end, loc));
-                args.Emit(vm);
-                end.PC = vm.EmitPC;
-            }
-            else { throw new EmitError($"Expected map literal: {hsf.Dump(vm)}", loc); }
+                vm.Env.Bind("LOC", Value.Make(Binding, LOC));
+                var hsf = args.Pop();
+                var hs = vm.Eval(hsf);
+                var end = new Label();
+
+                if (hs is Value hsv)
+                {
+                    vm.Emit(Ops.Try.Make(hsv.Cast(Array, loc).Select(it => it.CastUnbox(Pair, loc)).ToArray(), vm.NextRegisterIndex, end, LOC, loc));
+                    args.Emit(vm);
+                    vm.Emit(Ops.EndFrame.Make(loc));
+                    end.PC = vm.EmitPC;
+                }
+                else { throw new EmitError($"Expected map literal: {hsf.Dump(vm)}", loc); }
+            });
         });
 
         BindMacro("trait", ["name", "supers?"], (vm, target, args, loc) =>
