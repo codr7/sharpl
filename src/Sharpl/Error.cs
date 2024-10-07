@@ -19,11 +19,6 @@ public class EvalError : Error
 {
     public EvalError(string message, Loc loc) : base(message, loc) { }
     public virtual void AddRestarts(VM vm) { }
-    public void AddRestart(Sym id, int arity, Method.BodyType body)
-    {
-
-    }
-
 }
 
 public class NonNumericError : EvalError
@@ -45,7 +40,7 @@ public class NonNumericError : EvalError
             var nv = vm.Term.Ask("Enter new value: ");
             stack.Push((Value)vm.Eval(nv!)!);
             stack.AddRange(this.stack);
-            vm.Eval(retryPC ,stack);
+            vm.Eval(retryPC, stack);
         });
     }
 }
