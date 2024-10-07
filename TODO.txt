@@ -13,10 +13,6 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
-* catch EvalError in try op
-** extract try op to separate Eval
-** set ev to Error, e
-
 * add retry support
 ** add break loop
 

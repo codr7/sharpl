@@ -11,3 +11,6 @@
   (check (Bar 1 2 3)
     (try [Foo:(^[e] e)]
       (fail Bar 3 2 1))))
+
+(check 'caught
+  (try [_:(^[_] 'caught)] (+ 'foo)))

@@ -564,39 +564,8 @@ public class VM
                         break;
                     }
                 case OpCode.Try:
-                    {
-                        var tryOp = (Ops.Try)op;
-                        BeginFrame(tryOp.RegisterCount);
-                        PC++;
-
-                        try { EvalUntil(tryOp.End.PC, stack); }
-                        catch (UserError e) {
-                            var ev = e.Value;
-                            Set(tryOp.LocReg, Value.Make(Core.Loc, e.Loc));
-                            var handled = false;
-
-                            foreach (var (k, v) in tryOp.Handlers)
-                            {
-                                if (k == Value._ || 
-                                    ev.Isa(k.Type) || 
-                                    (k.Type == Core.Meta && ev.Isa(k.Cast(Core.Meta))))
-                                {
-                                    stack.Push(ev);
-                                    PC = tryOp.End.PC;
-                                    v.Call(this, stack, 1, tryOp.RegisterCount, false, tryOp.Loc);
-                                    handled = true;                
-                                    break;
-                                }
-                            }
-
-                            if (!handled) {
-                                PC = tryOp.End.PC;
-                                throw; 
-                            }
-                        }
-
-                        break;
-                    }
+                    Eval((Ops.Try)op, stack);
+                    break;
                 case OpCode.UnquoteRegister:
                     {
                         var unquoteOp = (Ops.UnquoteRegister)op;
@@ -832,5 +801,21 @@ public class VM
         else { throw new EvalError("Missing path", op.Loc); }
 
         PC++;
+    }
+
+    private void Eval(Ops.Try op, Stack stack)
+    {
+        BeginFrame(op.RegisterCount);
+        PC++;
+
+        try { EvalUntil(op.End.PC, stack); }
+        catch (UserError e)
+        {
+            if (!op.HandleError(this, e.Value, stack, e.Loc)) { throw; }
+        }
+        catch (EvalError e)
+        {
+            if (!op.HandleError(this, Value.Make(Core.Error, e), stack, e.Loc)) { throw; }
+        }
     }
 }
