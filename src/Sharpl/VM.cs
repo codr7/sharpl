@@ -5,7 +5,6 @@ using System.Text;
 
 namespace Sharpl;
 
-using PC = int;
 public class VM
 {
     public struct C
