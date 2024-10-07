@@ -1,3 +1,4 @@
+using Sharpl.Libs;
 using System.Drawing;
 using System.Text;
 
@@ -6,6 +7,13 @@ namespace Sharpl;
 public class Term
 {
     private readonly StringBuilder buffer = new StringBuilder();
+
+    public string? Ask(string? prompt = null)
+    {
+        if (prompt is not null) { Write(prompt); }
+        Flush();
+        return Console.ReadLine();
+    }
 
     public Term Flush()
     {

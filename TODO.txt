@@ -13,18 +13,7 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
-* finish restart/break loop support
-** add UnknownId eval error type
-*** catch and add restart to enter new value in try op
-** add restart syntax
-** test
-** readme
-
-vm.AddRestart(vm.Intern("unknown-id"), (vm, stack, target, arity, loc) =>
-{
-            vm.Term.Ask("")
-});
-
+* add restart test
 * add net lib to readme
 * add term lib to readme
 

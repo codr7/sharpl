@@ -1,4 +1,5 @@
 using Sharpl.Types.Core;
+using System.Net.Http.Headers;
 using System.Text;
 using Forms = Sharpl.Forms;
 
@@ -202,26 +203,30 @@ public class Core : Lib
 
         BindMethod("+", ["x"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Add(vm, stack, arity, loc); }
-            else { throw new EvalError($"Expected numeric value", loc); }
+            var v = stack[^arity];
+            if (v.Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Add(vm, stack, arity, loc); }
+            else { throw new NonNumericError(vm, v, vm.PC-1, stack[^(arity-1)..].ToArray(), loc); }
         });
 
         BindMethod("-", ["x"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Subtract(vm, stack, arity, loc); }
-            else { throw new EvalError($"Expected numeric value", loc); }
+            var v = stack[^arity];
+            if (v.Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Subtract(vm, stack, arity, loc); }
+            else { throw new NonNumericError(vm, v, vm.PC-1, stack[^(arity - 1)..].ToArray(), loc); }
         });
 
         BindMethod("*", ["x", "y"], (vm, stack, target, arity, loc) =>
          {
-             if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Multiply(vm, stack, arity, loc); }
-             else { throw new EvalError($"Expected numeric value", loc); }
+             var v = stack[^arity];
+             if (v.Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Multiply(vm, stack, arity, loc); }
+             else { throw new NonNumericError(vm, v, vm.PC-1, stack[^(arity - 1)..].ToArray(), loc); }
          });
 
         BindMethod("/", ["x", "y"], (vm, stack, target, arity, loc) =>
         {
-            if (stack[^arity].Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Divide(vm, stack, arity, loc); }
-            else { throw new EvalError($"Expected numeric value", loc); }
+            var v = stack[^arity];
+            if (v.Type.Cast<NumericTrait>() is NumericTrait nt) { nt.Divide(vm, stack, arity, loc); }
+            else { throw new NonNumericError(vm, v, vm.PC-1, stack[^(arity - 1)..].ToArray(), loc); }
         });
 
         BindMacro("and", ["value1"], (vm, target, args, loc) =>

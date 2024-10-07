@@ -17,9 +17,7 @@ public class Term : Lib
 
         BindMethod("ask", ["prompt?"], (vm, stack, target, arity, loc) =>
         {
-            if (arity == 1) { vm.Term.Write(stack.Pop().Say(vm)); }
-            vm.Term.Flush();
-            if (Console.ReadLine() is string s) { stack.Push(Core.String, s); }
+            if (vm.Term.Ask((arity == 1) ? stack.Pop().Say(vm) : null) is string s) { stack.Push(Core.String, s); }
         });
 
         BindMethod("clear-line", [], (vm, stack, target, arity, loc) =>

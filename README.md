@@ -1,4 +1,4 @@
-# sharpl
+﻿# sharpl
 
 ```
 $ dotnet run
@@ -730,6 +730,19 @@ Any type may be used as an error.
   (fail Bar 3 2 1))
 ```
 `(Bar 1:2:3)`
+
+### restarts
+```
+(+ 'foo 1)
+```
+```
+Sharpl.NonNumericError: repl@1:2 Expected numeric value: 'foo
+1 use-value
+2 stop
+Pick an alternative (1-2) and press ⏎: 1
+Enter new value: 42
+```
+`43`
 
 ## deferred actions
 Actions may be registered to run unconditionally at scope exit using `defer`.

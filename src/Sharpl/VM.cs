@@ -114,9 +114,12 @@ public class VM
         TimeLib.Init(this, loc);
     }
 
-    public void AddRestart(Sym id, int arity, Method.BodyType body) => 
-        restarts.Add((id, Value.Make(Libs.Core.Method, new Method("", [], body))));
-
+    public void AddRestart(Sym id, int arity, Method.BodyType body)
+    {
+        var args = new string[arity];
+        for (var i = 0; i < arity; i++) { args[i] = $"value{i}";  }
+        restarts.Add((id, Value.Make(Libs.Core.Method, new Method("", args, body))));
+    }
     public int AllocRegister()
     {
         var res = nextRegisterIndex;
@@ -235,7 +238,6 @@ public class VM
         while (true)
         {
             var op = code[PC];
-            //Console.WriteLine(PC + " " + op.Dump(this));
 
             switch (op.Code)
             {

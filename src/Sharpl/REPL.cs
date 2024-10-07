@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Sharpl;
@@ -16,6 +16,7 @@ public class REPL
         var buffer = new StringBuilder();
         var loc = new Loc("repl");
         var bufferLines = 0;
+        var stack = new Stack();
 
         while (true)
         {
@@ -31,7 +32,7 @@ public class REPL
             {
                 try
                 {
-                    var v = Eval(vm, buffer.ToString(), ref loc);
+                    var v = Eval(vm, buffer.ToString(), stack, ref loc);
                     vm.Term.WriteLine(v.Dump(vm));
                 }
                 catch (Exception e)
@@ -55,7 +56,7 @@ public class REPL
         }
     }
 
-    public virtual Value Eval(VM vm, string input, ref Loc loc)
+    public virtual Value Eval(VM vm, string input, Stack stack, ref Loc loc)
     {
         var startPC = vm.EmitPC;
         var fs = vm.ReadForms(new Source(new StringReader(input)), ref loc);
@@ -72,6 +73,25 @@ public class REPL
             vm.Emit(Ops.Stop.Make());
         });
 
-        return vm.Eval(startPC) ?? Value._;
+        Value result = Value._;
+
+        try
+        {
+            vm.Eval(startPC, stack);
+            if (stack.TryPop(out var rv)) result = rv;
+        }
+        catch (EvalError e)
+        {
+            vm.Term.WriteLine(e);
+            e.AddRestarts(vm);
+            vm.AddRestart(vm.Intern("stop"), 0, (vm, stack, target, arity, loc) => { vm.PC = vm.EmitPC - 1; });
+            var rs = vm.Restarts;
+            for (var i = 0; i < rs.Length; i++) { vm.Term.WriteLine($"{i + 1} {rs[i].Item1.Cast(Libs.Core.Sym).Name}"); }
+            var n = int.Parse((string)vm.Term.Ask($"Pick an alternative (1-{rs.Length}) and press ⏎: ")!);
+            rs[n-1].Item2.Call(vm, stack, 0, vm.NextRegisterIndex, false, loc);
+            if (stack.TryPop(out var rv)) result = rv;
+        }
+
+        return result;
     }
 }
