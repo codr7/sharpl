@@ -92,6 +92,8 @@ public class Core : Lib
         });
     }
 
+    public readonly Register LOC;
+
     public Core(VM vm) : base("core", null, [])
     {
         BindType(Any);
@@ -121,6 +123,8 @@ public class Core : Lib
 
         Bind("F", Value.F);
         Bind("T", Value.T);
+
+        LOC = vm.AllocVar();
 
         BindMacro("^", [], (vm, target, args, loc) =>
             DefineMethod(loc, vm, args, UserMethod, Ops.ExitMethod.Make()));
@@ -335,11 +339,10 @@ public class Core : Lib
         BindMethod("defer", ["target1", "target2?"], (vm, stack, target, arity, loc) =>
         {
             stack.Reverse(arity);
-            var f = vm.Frame;
 
             while (arity > 0)
             {
-                f.Defer(stack.Pop());
+                vm.Defer(stack.Pop());
                 arity--;
             }
         });
@@ -876,8 +879,6 @@ public class Core : Lib
         });
 
         BindMacro("stop", [], (vm, target, args, loc) => vm.Emit(Ops.Stop.Make()));
-
-        var LOC = vm.AllocVar();
 
         BindMacro("try", ["handlers", "body?"], (vm, target, args, loc) =>
         {

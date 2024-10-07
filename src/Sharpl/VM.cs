@@ -59,12 +59,14 @@ public class VM
 
     private readonly List<Call> calls = [];
     private readonly List<Op> code = [];
-    private int nextVarIndex = 0;
+    private readonly List<Value> deferred = new List<Value>();
+    private readonly List<(Sym, Value)> restarts = new List<(Sym, Value)>();
     private Env? env;
     private readonly List<Frame> frames = [];
     private readonly List<Label> labels = [];
     private string loadPath = "";
     private int nextRegisterIndex = 0;
+    private int nextVarIndex = 0;
     private Dictionary<object, int> objectIds = new Dictionary<object, int>();
     private readonly Value[] registers;
     private readonly List<int> splats = [];
@@ -113,6 +115,9 @@ public class VM
         TimeLib.Init(this, loc);
     }
 
+    public void AddRestart(Sym id, int arity, Method.BodyType body) => 
+        restarts.Add((id, Value.Make(Libs.Core.Method, new Method("", [], body))));
+
     public int AllocRegister()
     {
         var res = nextRegisterIndex;
@@ -130,7 +135,7 @@ public class VM
     {
         var total = registerCount;
         if (frames.Count > 0) { total += frames[^1].RegisterCount; }
-        frames.Push(new Frame(registerCount, total));
+        frames.Push(new Frame(registerCount, total, deferred.Count, restarts.Count));
         nextRegisterIndex = 0;
     }
 
@@ -173,6 +178,9 @@ public class VM
         }
     }
 
+    public void Defer(Value target) =>
+        deferred.Add(target);
+
     public void Dmit(PC startPC)
     {
         for (var pc = startPC; pc < code.Count; pc++) { Term.Write($"{pc,-4} {code[pc].Dump(this)}\n"); }
@@ -210,7 +218,8 @@ public class VM
     public Frame EndFrame(Loc loc)
     {
         var f = frames.Pop();
-        f.RunDeferred(this, loc);
+        RunDeferred(f.DeferOffset, loc);
+        restarts.Trunc(f.RestartOffset);
         return f;
     }
 
@@ -740,6 +749,18 @@ public class VM
 
     public int RegisterIndex(int frameOffset, int index) =>
         (frameOffset == -1) ? index : index + frames.Peek(frameOffset).RegisterCount;
+
+    public (Value, Value)[] Restarts => restarts.Select(r => (Value.Make(Libs.Core.Sym, r.Item1), r.Item2)).ToArray();
+    public void RunDeferred(int offset, Loc loc)
+    {
+        foreach (var d in deferred[offset..].ToArray().Reverse())
+        {
+            var stack = new Stack();
+            d.Call(this, stack, 0, NextRegisterIndex, true, loc);
+        }
+
+        deferred.Trunc(offset);
+    }
 
     public int Index(Register reg) => RegisterIndex(reg.FrameOffset, reg.Index);
 
