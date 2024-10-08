@@ -550,87 +550,6 @@ Composite types may be sliced by indexing using a pair.
 ```
 `5:2`
 
-## time
-The time library uses established naming conventions when referring to fields: `Y` for years, `M` for months, `D` for days, `h` for hours, `m` for minutes, `s` for seconds, `ms` for milliseconds and `us` for microseconds.
-
-`time/today` and `time/now` may be used to get the current date/time.
-
-```
-(is (time/trunc (time/now)) (time/today))
-```
-`T`
-
-The `Timestamp` constructor may be used to create new timestamps manually, pass `_` for default.
-
-```
-  (Timestamp 2024 _ _ 21 22)
-```
-`2024-01-01 21:22:00`
-
-### durations
-Subtracting timestamps results in a duration.
-
-```
-  (- (time/now) (time/today))
-```
-`16:36:27.2404435`
-
-Suffixes may be used as constructors.
-
-```
-(is (time/m 120) (time/h))
-```
-`T`
-
-When applied to timestamps or durations they return the value for the specified field.
-
-```
-(time/D (time/W 2))
-```
-`14`
-
-Durations may be added/subtracted to/from timestamps.
-
-```
-(+ (time/today) (time/m 90))
-```
-`2024-09-15 01:30:00`
-
-## ranges
-Timestamps support ranges.<br/>
-The following example generates timestamps between `2024-1-1` and the next day, separated by six hours.
-
-```
-(let [t (Timestamp 2024 1 1)]
-  [t..(+ t (time/D 1)):(time/h 6)*])
-```
-`[2024-01-01 00:00:00 2024-01-01 06:00:00 2024-01-01 12:00:00 2024-01-01 18:00:00]`
-
-### months
-`MONTHS` maps indexes to month names.
-
-```
-time/MONTHS
-```
-`[_ 'jan 'feb 'mar 'apr 'may 'jun 'jul 'aug 'sep 'oct 'nov 'dec]`
-
-### weekdays
-`WEEKDAYS` maps indexes to week day names.
-
-```
-time/WEEKDAYS
-```
-`['su 'mo 'tu 'we 'th 'fr 'sa]`
-
-### time zones
-By default all timestamps are local, `time/to-utc` and `time/from-utc` may be used to convert back and forth.
-
-```
-(let [t (time/now)]
-  (is (time/to-local (time/to-utc t)) t))
-```
-`T`
-
 ## user defined types
 ### traits
 `trait` may be used to define abstract types.<br/>
@@ -760,31 +679,6 @@ after
 defer
 ```
 
-## communication
-### pipes
-Pipes are unbounded, thread safe communication channels. Pipes may be called without arguments to read and with to write.
-
-### ports
-Ports are bidirectional communication channels. Like pipes, ports may be called without arguments to read and with to write.
-
-### polling
-`poll` returns the first argument that's ready for reading.
-
-```
-(let [p1 (Pipe) p2 (Pipe)]
-  (p2 42)
-  ((poll [p1 p2])))
-```
-`42`
-
-## threads
-`spawn` may be used to start new threads, each thread runs in a separate VM. A port is created for communication, one side passed as argument and the other returned.
-
-```
-(let [p (spawn [p] (p 42))]
-  (p))
-```
-
 ## libraries
 `lib` may be used to define/extend libraries.
 
@@ -828,6 +722,112 @@ And when called without arguments, it returns the current library.
 ```
 `3`
 
+## time
+The time library uses established naming conventions when referring to fields: `Y` for years, `M` for months, `D` for days, `h` for hours, `m` for minutes, `s` for seconds, `ms` for milliseconds and `us` for microseconds.
+
+`time/today` and `time/now` may be used to get the current date/time.
+
+```
+(is (time/trunc (time/now)) (time/today))
+```
+`T`
+
+The `Timestamp` constructor may be used to create new timestamps manually, pass `_` for default.
+
+```
+  (Timestamp 2024 _ _ 21 22)
+```
+`2024-01-01 21:22:00`
+
+### durations
+Subtracting timestamps results in a duration.
+
+```
+  (- (time/now) (time/today))
+```
+`16:36:27.2404435`
+
+Suffixes may be used as constructors.
+
+```
+(is (time/m 120) (time/h))
+```
+`T`
+
+When applied to timestamps or durations they return the value for the specified field.
+
+```
+(time/D (time/W 2))
+```
+`14`
+
+Durations may be added/subtracted to/from timestamps.
+
+```
+(+ (time/today) (time/m 90))
+```
+`2024-09-15 01:30:00`
+
+## ranges
+Timestamps support ranges.<br/>
+The following example generates timestamps between `2024-1-1` and the next day, separated by six hours.
+
+```
+(let [t (Timestamp 2024 1 1)]
+  [t..(+ t (time/D 1)):(time/h 6)*])
+```
+`[2024-01-01 00:00:00 2024-01-01 06:00:00 2024-01-01 12:00:00 2024-01-01 18:00:00]`
+
+### months
+`MONTHS` maps indexes to month names.
+
+```
+time/MONTHS
+```
+`[_ 'jan 'feb 'mar 'apr 'may 'jun 'jul 'aug 'sep 'oct 'nov 'dec]`
+
+### weekdays
+`WEEKDAYS` maps indexes to week day names.
+
+```
+time/WEEKDAYS
+```
+`['su 'mo 'tu 'we 'th 'fr 'sa]`
+
+### time zones
+By default all timestamps are local, `time/to-utc` and `time/from-utc` may be used to convert back and forth.
+
+```
+(let [t (time/now)]
+  (is (time/to-local (time/to-utc t)) t))
+```
+`T`
+
+## communication
+### pipes
+Pipes are unbounded, thread safe communication channels. Pipes may be called without arguments to read and with to write.
+
+### ports
+Ports are bidirectional communication channels. Like pipes, ports may be called without arguments to read and with to write.
+
+### polling
+`poll` returns the first argument that's ready for reading.
+
+```
+(let [p1 (Pipe) p2 (Pipe)]
+  (p2 42)
+  ((poll [p1 p2])))
+```
+`42`
+
+## threads
+`spawn` may be used to start new threads, each thread runs in a separate VM. A port is created for communication, one side passed as argument and the other returned.
+
+```
+(let [p (spawn [p] (p 42))]
+  (p))
+```
+
 ## json
 `json/encode` and `json/decode` may be used to convert values to/from [JSON](https://www.json.org/json-en.html).
 
@@ -837,6 +837,43 @@ And when called without arguments, it returns the current library.
   ev:(= (json/decode ev) dv))
 ```
 `"{\"bar\":0.5,\"baz\":\"abc\",\"foo\":42,\"qux\":[true,false,null]}":T`
+
+## terminal control
+The terminal control library is intented as a portable foundation that provides all the bits and pieces needed to build a full TUI.
+
+### keys
+The following standard keys are defined as constants:
+- `DOWN`
+- `LEFT`
+- `ENTER`
+- `ÈSC`
+- `RIGHT`
+- `SPACE`
+- `UP`
+
+`poll-key` may be used to check if a key is available.
+
+```
+(term/poll-key)
+```
+`F`
+
+`read-key` may be used to read the next key press, echoing is disabled by default but may be turned on by passing `T`.
+
+```
+(term/read-key T)
+```
+`(term/Key Enter)`
+
+`ask` may be used to read a line of input with optional prompt and/or echo (enabled by default).
+
+```
+(ask "Enter password" \*)
+```
+```
+Enter password: ***
+```
+`"abc"`
 
 ## tests
 `check` fails with an error if the result of evaluating its body isn't equal to the specified value.

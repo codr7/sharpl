@@ -37,7 +37,7 @@ public class NonNumericError : EvalError
     {
         vm.AddRestart(vm.Intern("use-value"), 0, (vm, stack, target, arity, loc) =>
         {
-            var nv = vm.Term.Ask("Enter new value: ");
+            var nv = vm.Term.Ask(vm, "Enter new value: ");
             stack.Push((Value)vm.Eval(nv!)!);
             stack.AddRange(this.stack);
             vm.Eval(retryPC, stack);

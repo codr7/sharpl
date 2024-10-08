@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.Text;
 
 namespace Sharpl;
 
@@ -87,7 +86,7 @@ public class REPL
             vm.AddRestart(vm.Intern("stop"), 0, (vm, stack, target, arity, loc) => { vm.PC = vm.EmitPC - 1; });
             var rs = vm.Restarts;
             for (var i = 0; i < rs.Length; i++) { vm.Term.WriteLine($"{i + 1} {rs[i].Item1.Cast(Libs.Core.Sym).Name}"); }
-            var n = int.Parse((string)vm.Term.Ask($"Pick an alternative (1-{rs.Length}) and press ⏎: ")!);
+            var n = int.Parse((string)vm.Term.Ask(vm, $"Pick an alternative (1-{rs.Length}) and press ⏎: ")!);
             rs[n-1].Item2.Call(vm, stack, 0, vm.NextRegisterIndex, false, loc);
             if (stack.TryPop(out var rv)) result = rv;
         }

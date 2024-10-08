@@ -5,17 +5,20 @@ April 29th
 204
 212
 
-392
-106
-267
-299
+400
+91
+294
+322
 
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
 * add restart test
-* add net lib to readme
-* add term lib to readme
+** figure out programmatic invocation of restart
+
+* finish term lib docs
+
+* add net lib docs
 
 * make macros composeable
 ** create user method like VM.Compose

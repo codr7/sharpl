@@ -8,11 +8,36 @@ public class Term
 {
     private readonly StringBuilder buffer = new StringBuilder();
 
-    public string? Ask(string? prompt = null)
+    public string Ask(VM vm, string? prompt = null, Value? echo = null)
     {
         if (prompt is not null) { Write(prompt); }
         Flush();
-        return Console.ReadLine();
+        var res = new StringBuilder();
+
+        while (true)
+        {
+            var k = Console.ReadKey(true);
+         
+            if (k.Key == ConsoleKey.Enter)
+            {
+                Write('\n');
+                break;
+            }
+
+            if (echo is Value v)
+            {
+                if ((v.Type != Core.Bit) || v.CastUnbox(Core.Bit))
+                {
+                    Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say(vm));
+                }
+            }
+
+            res.Append(k.KeyChar);
+        }
+
+
+
+        return res.ToString();
     }
 
     public Term Flush()

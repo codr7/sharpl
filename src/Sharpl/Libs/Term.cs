@@ -12,18 +12,21 @@ public class Term : Lib
         BindType(Key);
 
         Bind("DOWN", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false)));
+        Bind("LEFT", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false)));
+        Bind("ENTER", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.Enter, false, false, false)));
         Bind("ESC", Value.Make(Term.Key, new ConsoleKeyInfo('\u001B', ConsoleKey.Escape, false, false, false)));
+        Bind("RIGHT", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false)));
+        Bind("SPACE", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.Spacebar, false, false, false)));
         Bind("UP", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false)));
 
-        BindMethod("ask", ["prompt?"], (vm, stack, target, arity, loc) =>
+        BindMethod("ask", ["prompt?", "echo?"], (vm, stack, target, arity, loc) =>
         {
-            if (vm.Term.Ask((arity == 1) ? stack.Pop().Say(vm) : null) is string s) { stack.Push(Core.String, s); }
+            Value? echo = (arity > 0) ? stack.Pop() : null;
+            string? prompt = (arity > 1) ? stack.Pop().Say(vm) : null;
+            if (vm.Term.Ask(vm, prompt, echo) is string s) { stack.Push(Core.String, s);  }        
         });
 
-        BindMethod("clear-line", [], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.ClearLine();
-        });
+        BindMethod("clear-line", [], (vm, stack, target, arity, loc) => vm.Term.ClearLine());
 
         BindMethod("clear-screen", [], (vm, stack, target, arity, loc) =>
         {
@@ -66,35 +69,6 @@ public class Term : Lib
             }
 
             stack.Push(Key, k);
-        });
-
-        BindMethod("read-line", ["echo"], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.Flush();
-            Value? echo = (arity == 0) ? null : stack.Pop();
-            var res = new StringBuilder();
-
-            while (true)
-            {
-                var k = Console.ReadKey(true);
-
-                if (k.Key == ConsoleKey.Enter)
-                {
-                    break;
-                }
-
-                if (echo is Value v)
-                {
-                    if ((v.Type != Core.Bit) || v.CastUnbox(Core.Bit))
-                    {
-                        Console.Write((v.Type == Core.Bit) ? k.KeyChar : v.Say(vm));
-                    }
-                }
-
-                res.Append(k.KeyChar);
-            }
-
-            stack.Push(Core.String, res.ToString());
         });
 
         BindMethod("reset", [], (vm, stack, target, arity, loc) =>
