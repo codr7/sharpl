@@ -16,15 +16,16 @@ ctrl-k ctrl-d       format
 * add restart test
 ** figure out programmatic invocation of restart
 
-* finish term lib docs
-
-* add net lib docs
+** docs
+* finish term lib
+* add net lib
 
 * make macros composeable
 ** create user method like VM.Compose
 *** one for each arity
 
-* ---
+* convert type checks to ops
+** remove Cast(Loc) variants
 
 * add string support to (emit) like (eval)
 
@@ -53,10 +54,7 @@ ctrl-k ctrl-d       format
 *** string/list/array/map
 **** implement slice assign
 
-* convert stream port protocol to binary
-
-* convert type checks to ops
-** remove Cast(Loc) variants
+* implement custom binary stream port protocol
 
 * add inlining support
 ** add size limit to config
