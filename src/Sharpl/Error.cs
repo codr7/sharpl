@@ -24,23 +24,22 @@ public class EvalError : Error
 public class NonNumericError : EvalError
 {
     private PC retryPC;
-    private Value[] stack;
+    private int arg;
 
-    public NonNumericError(VM vm, Value value, PC retryPC, Value[] stack, Loc loc) :
+    public NonNumericError(VM vm, Value value, PC retryPC, int arg, Loc loc) :
         base($"Expected numeric value: {value.Dump(vm)}", loc)
     {
         this.retryPC = retryPC;
-        this.stack = stack;
+        this.arg = arg;
     }
 
     public override void AddRestarts(VM vm)
     {
-        vm.AddRestart(vm.Intern("use-value"), 0, (vm, stack, target, arity, loc) =>
+        vm.AddRestart(vm.Intern("use-value"), 0, (vm, target, arity, result, loc) =>
         {
             var nv = vm.Term.Ask(vm, "Enter new value: ");
-            stack.Push((Value)vm.Eval(nv!)!);
-            stack.AddRange(this.stack);
-            vm.Eval(retryPC, stack);
+            vm.Eval(nv!, new Register(0, arg));            
+            vm.Eval(retryPC, result);
         });
     }
 }

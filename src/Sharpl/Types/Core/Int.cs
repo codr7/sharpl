@@ -13,85 +13,63 @@ public class IntType(string name, AnyType[] parents) :
         return new Iters.Core.IntRange(minVal, maxVal, strideVal);
     }
 
-    public void Add(VM vm, Stack stack, int arity, Loc loc)
+    public void Add(VM vm, int arity, Register result, Loc loc)
     {
         var res = 0;
-
-        while (arity > 0)
-        {
-            res += stack.Pop().CastUnbox(this, loc);
-            arity--;
-        }
-
-        stack.Push(this, res);
+        for (var i = 0; i < arity; i++) { res += vm.GetRegister(0, i).CastUnbox(this, loc); }
+        vm.Set(result, Value.Make(this, res));
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         switch (arity)
         {
             case 1:
-                var nt = stack.Pop();
-                stack.Push(target);
-                nt.Call(vm, stack, 1, registerCount, eval, loc);
+                var nt = vm.GetRegister(0, 0);
+                vm.SetRegister(0, 0, target);
+                nt.Call(vm, 1, registerCount, eval, result, loc);
                 break;
             default:
-                base.Call(vm, stack, target, arity, registerCount, eval, loc);
+                base.Call(vm, target, arity, registerCount, eval, result, loc);
                 break;
         }
     }
 
-    public void Divide(VM vm, Stack stack, int arity, Loc loc)
+    public void Divide(VM vm, int arity, Register result, Loc loc)
     {
-        stack.Reverse(arity);
-        var res = stack.Pop().CastUnbox(this, loc);
-        arity--;
+        var res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+        for (var i = 1; i < arity; i++) { res /= vm.GetRegister(0, i).CastUnbox(this, loc); }
+        vm.Set(result, Value.Make(this, res));
+    }
 
-        while (arity > 0)
+    public void Multiply(VM vm, int arity, Register result, Loc loc)
+    {
+        var res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+
+        for (var i = 1; i < arity; i++)
         {
-            res /= stack.Pop().CastUnbox(this, loc);
+            res *= vm.GetRegister(0, i).CastUnbox(this, loc);
             arity--;
         }
 
-        stack.Push(this, res);
+        vm.Set(result, Value.Make(this, res));
     }
 
-    public void Multiply(VM vm, Stack stack, int arity, Loc loc)
-    {
-        var res = stack.Pop().CastUnbox(this, loc);
-        arity--;
-
-        while (arity > 0)
-        {
-            res *= stack.Pop().CastUnbox(this, loc);
-            arity--;
-        }
-
-        stack.Push(this, res);
-    }
-
-    public void Subtract(VM vm, Stack stack, int arity, Loc loc)
+    public void Subtract(VM vm, int arity, Register result, Loc loc)
     {
         var res = 0;
 
         if (arity > 0)
         {
-            if (arity == 1) { res = -stack.Pop().CastUnbox(this, loc); }
+            if (arity == 1) { res = -vm.GetRegister(0, 0).CastUnbox(this, loc); }
             else
             {
-                stack.Reverse(arity);
-                res = stack.Pop().CastUnbox(this, loc);
-                arity--;
-
-                while (arity > 0)
-                {
-                    res -= stack.Pop().CastUnbox(this, loc);
-                    arity--;
-                }
+                res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+                for (var i = 1; i < arity; i++) { res -= vm.GetRegister(0, i).CastUnbox(this, loc); }
             }
         }
 
-        stack.Push(this, res);
+        vm.Set(result, Value.Make(this, res));
     }
 
     public override string ToJson(Value value, Loc loc) => $"{value.CastUnbox(this)}";

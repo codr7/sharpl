@@ -2,18 +2,18 @@ namespace Sharpl.Ops;
 
 public class Branch : Op
 {
-    public static Op Make(Label right, bool pop, Loc loc) => new Branch(right, pop, loc);
+    public static Op Make(Register cond, Label right, Loc loc) => new Branch(cond, right, loc);
+    public readonly Register Cond;
     public readonly Label Right;
-    public readonly bool Pop;
     public readonly Loc Loc;
 
-    public Branch(Label right, bool pop, Loc loc)
+    public Branch(Register cond, Label right, Loc loc)
     {
+        Cond = cond;
         Right = right;
-        Pop = pop;
         Loc = loc;
     }
 
     public OpCode Code => OpCode.Branch;
-    public string Dump(VM vm) => $"Branch {Right} {Pop} {Loc}";
+    public string Dump(VM vm) => $"Branch {Cond} {Right} {Loc}";
 }

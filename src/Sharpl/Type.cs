@@ -30,14 +30,14 @@ public abstract class AnyType: IComparable<AnyType>
         }
     }
     public virtual bool Bool(Value value) => true;
-    public virtual void Call(VM vm, Stack stack, int arity, Loc loc) => throw new EvalError("Not supported", loc);
+    public virtual void Call(VM vm, int arity, Register result, Loc loc) => throw new EvalError("Not supported", loc);
 
-    public virtual void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public virtual void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         switch (arity)
         {
             case 0:
-                stack.Push(target);
+                vm.Set(result, target);
                 break;
             default:
                 throw new EvalError($"Wrong number of arguments: {this}", loc);
@@ -64,9 +64,9 @@ public abstract class AnyType: IComparable<AnyType>
 
     public virtual Value Copy(Value value) => value;
     public virtual void Dump(VM vm, Value value, StringBuilder result) => result.Append(value.Data.ToString());
-    public virtual void Emit(VM vm, Value value, Form.Queue args, Loc loc) => vm.Emit(Ops.Push.Make(value));
+    public virtual void Emit(VM vm, Value value, Form.Queue args, Register result, Loc loc) => vm.Emit(Ops.Push.Make(value));
 
-    public virtual void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
+    public virtual void EmitCall(VM vm, Value target, Form.Queue args, Register result, Loc loc)
     {
         var arity = args.Count;
         var splat = args.IsSplat;
@@ -77,8 +77,13 @@ public abstract class AnyType: IComparable<AnyType>
 
         for (int i = 0; i < args.Count; i++)
         {
-            vm.Emit(args.Items[i]);
-            if (um is not null && i < um.Args.Length && um.Args[i].Unzip) { vm.Emit(Ops.Unzip.Make(loc)); }
+            var r = new Register(0, i);
+            vm.Emit(args.Items[i], r);
+            
+            if (um is not null && i < um.Args.Length && um.Args[i].Unzip) {
+                vm.Emit(Ops.Unzip.Make(r, new Register(0, i + 1), new Register(0, i + 2), loc));
+                i += 2;
+            }
         }
 
         args.Clear();

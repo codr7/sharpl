@@ -17,7 +17,7 @@ public class Array : Form
         foreach (var f in Items) { f.CollectIds(result); }
     }
 
-    public override void Emit(VM vm, Queue args)
+    public override void Emit(VM vm, Queue args, Register result)
     {
         var splat = false;
 
@@ -32,19 +32,18 @@ public class Array : Form
 
         if (splat)
         {
-            var its = Items;
-            Form cf = new Call(new Id("Array", Loc), its, Loc);
-            args.PushFirst(cf);
+            vm.Emit(new Call(new Id("Array", Loc), Items, Loc), result);
         }
         else
         {
-            vm.Emit(Ops.CreateArray.Make(Items.Length));
+            vm.Emit(Ops.CreateArray.Make(Items.Length, result));
+            var it = new Register(0, vm.AllocRegister());
             var i = 0;
 
             foreach (var f in Items)
             {
-                vm.Emit(f);
-                vm.Emit(Ops.SetArrayItem.Make(i));
+                vm.Emit(f, vm.Result);
+                vm.Emit(Ops.SetArrayItem.Make(result, i, it));
                 i++;
             }
         }

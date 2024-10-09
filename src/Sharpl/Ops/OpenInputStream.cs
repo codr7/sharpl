@@ -2,20 +2,20 @@ namespace Sharpl.Ops;
 
 public class OpenInputStream : Op
 {
-    public static Op Make(int frameOffset, int index, Loc loc) =>
-        new OpenInputStream(frameOffset, index, loc);
+    public static Op Make(string path, Register result, Loc loc) =>
+        new OpenInputStream(path, result, loc);
 
-    public readonly int FrameOffset;
-    public readonly int Index;
+    public readonly string Path;
+    public readonly Register Result;
     public readonly Loc Loc;
 
-    public OpenInputStream(int frameOffset, int index, Loc loc)
+    public OpenInputStream(string path, Register result, Loc loc)
     {
-        FrameOffset = frameOffset;
-        Index = index;
+        Path = path;
+        Result = result;
         Loc = loc;
     }
 
     public OpCode Code => OpCode.OpenInputStream;
-    public  string Dump(VM vm) => $"OpenInputStream {Loc} {FrameOffset}:{Index}";
+    public  string Dump(VM vm) => $"OpenInputStream {Path} {Result} {Loc}";
 }

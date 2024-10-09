@@ -26,108 +26,84 @@ public class Time : Lib
         for (var i = 0; i < 7; i++) { wds[i] = Value.Make(Core.Sym, vm.Intern(((DayOfWeek)i).ToString().ToLower()[0..2])); }
         Bind("WEEKDAYS", Value.Make(Core.Array, wds));
 
-        BindMethod("D", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("D", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Days);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Day);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Days));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Day));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromDays(n)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromDays(n))));
             }
         });
 
-        BindMethod("h", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("h", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Hours);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Hour);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Hours));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Hour));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromHours(n)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromHours(n))));
             }
         });
 
-        BindMethod("M", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("M", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Months);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Month);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Months));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Month));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(n, TimeSpan.FromTicks(0)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(n, TimeSpan.FromTicks(0))));
             }
         });
 
-        BindMethod("m", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("m", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Minutes);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Minute);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Minutes));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Minute));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMinutes(n)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromMinutes(n))));
             }
         });
 
-        BindMethod("ms", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("ms", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Milliseconds);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Millisecond);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Milliseconds));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Millisecond));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMilliseconds(n)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromMilliseconds(n))));
             }
         });
 
-        BindMethod("now", [], (vm, stack, target, arity, loc) =>
-              stack.Push(Core.Timestamp, DateTime.Now));
+        BindMethod("now", [], (vm, target, arity, result, loc) =>
+              vm.Set(result, Value.Make(Core.Timestamp, DateTime.Now)));
 
-        BindMethod("s", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("s", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Seconds);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Second);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Seconds));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Second));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromSeconds(n)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromSeconds(n))));
             }
         });
 

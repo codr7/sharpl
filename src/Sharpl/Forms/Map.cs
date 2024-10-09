@@ -16,7 +16,7 @@ public class Map : Form
         foreach (var f in Items) { f.CollectIds(result); }
     }
 
-    public override void Emit(VM vm, Queue args)
+    public override void Emit(VM vm, Queue args, Register result)
     {
         var callConstructor = false;
 
@@ -29,23 +29,23 @@ public class Map : Form
             }
         }
 
-        if (callConstructor) { args.PushFirst(new Call(new Id("Map", Loc), Items, Loc)); }
+        if (callConstructor) { vm.Emit(new Call(new Id("Map", Loc), Items, Loc), result); }
         else
         {
-            vm.Emit(Ops.CreateMap.Make(Items.Length));
-            var i = 0;
+            vm.Emit(Ops.CreateMap.Make(Items.Length, result));
+            var kr = new Register(0, vm.AllocRegister());
+            var vr = new Register(0, vm.AllocRegister());
 
             foreach (var f in Items)
             {
                 if (f is Pair pf)
                 {
-                    vm.Emit(pf.Left);
-                    vm.Emit(pf.Right);
+                    vm.Emit(pf.Left, kr);
+                    vm.Emit(pf.Right, vr);
                 }
-                else { vm.Emit(f); }
+                else throw new EmitError($"Expected pair: {f.Dump(vm)}", f.Loc);
 
-                vm.Emit(Ops.SetMapItem.Make());
-                i++;
+                vm.Emit(Ops.SetMapItem.Make(result, kr, vr));
             }
         }
     }

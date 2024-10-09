@@ -4,13 +4,9 @@ public class UnquoteForm : Form
 {
     public readonly Form Target;
 
-    public UnquoteForm(Form target, Loc loc) : base(loc)
-    {
-        Target = target;
-    }
-
+    public UnquoteForm(Form target, Loc loc) : base(loc) { Target = target; }
     public override void CollectIds(HashSet<string> result) => Target.CollectIds(result);
-    public override void Emit(VM vm, Queue args) => args.PushFirst(Target.Unquote(vm, Loc));
+    public override void Emit(VM vm, Queue args, Register result) => vm.Emit(Target.Unquote(vm, Loc), result);
     public override bool Equals(Form other) => (other is UnquoteForm f) ? f.Target.Equals(Target) : false;
 
     public override bool Expand(VM vm, Queue args)

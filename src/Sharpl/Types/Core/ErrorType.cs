@@ -4,16 +4,10 @@ namespace Sharpl.Types.Core;
 
 public class ErrorType(string name, AnyType[] parents) : Type<EvalError>(name, parents)
 {
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
         var res = new StringBuilder();
-
-        while (arity > 0)
-        {
-            stack.Pop().Say(vm, res);
-            arity--;
-        }
-
-        stack.Push(Libs.Core.String, res.ToString());
+        for (var i = 0; i < arity; i++) vm.GetRegister(0, i).Say(vm, res);
+        vm.Set(result, Value.Make(Libs.Core.String, res.ToString()));
     }
 }

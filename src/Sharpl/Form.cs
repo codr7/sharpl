@@ -4,13 +4,13 @@ namespace Sharpl;
 
 public abstract class Form(Loc loc)
 {
-    public static Value Compose(VM vm, Form left, Form right, Form.Queue args, Loc loc)
+    public static Value Compose(VM vm, Form left, Form right, Form.Queue args, Register result, Loc loc)
     {
         var m = new UserMethod(vm, $"{left.Dump(vm)} & {right.Dump(vm)}", [], [new UserMethod.Arg("values*", -1)], false, loc);
         var skip = new Label();
         vm.Emit(Ops.Goto.Make(skip));
         m.StartPC = vm.EmitPC;
-        vm.Emit($"(return ({right.Dump(vm)} ({left.Dump(vm)} {args.Dump(vm)})))", loc);
+        vm.Emit($"(return ({right.Dump(vm)} ({left.Dump(vm)} {args.Dump(vm)})))", result, loc);
         vm.Emit(Ops.ExitMethod.Make());
         skip.PC = vm.EmitPC;
         return Value.Make(Libs.Core.UserMethod, m);
@@ -26,14 +26,14 @@ public abstract class Form(Loc loc)
     }
 
     public abstract string Dump(VM vm);
-    public virtual void Emit(VM vm, Queue args) { }
+    public virtual void Emit(VM vm, Queue args, Register result) { }
 
-    public virtual void EmitCall(VM vm, Queue args)
+    public virtual void EmitCall(VM vm, Queue args, Register result)
     {
         var arity = args.Count;
         args.Emit(vm);
-        vm.Emit(this);
-        vm.Emit(Ops.CallStack.Make(arity, args.IsSplat, vm.NextRegisterIndex, Loc));
+        vm.Emit(this, vm.Result);
+        vm.Emit(Ops.CallRegister.Make(vm.Result, arity, args.IsSplat, vm.NextRegisterIndex, Loc));
     }
 
     public abstract bool Equals(Form other);
@@ -70,13 +70,13 @@ public abstract class Form(Loc loc)
         public void Clear() => items.Clear();
         public int Count => items.Count;
 
-        public void Emit(VM vm)
+        public void Emit(VM vm, Register result)
         {
             Expand(vm);
 
             while (Count > 0)
             {
-                if (TryPop() is Form v) { v.Emit(vm, this); }
+                if (TryPop() is Form v) { v.Emit(vm, this, result); }
             }
         }
 
@@ -118,7 +118,7 @@ public abstract class Form(Loc loc)
 
         public Form? Peek() => (items.First?.Value is Form f) ? f : null;
 
-        // TODO: Idealy, this needs to match List.TryPop for consistency and to
+        // TODO: Ideally, this needs to match List.TryPop for consistency and to
         // avoid accidental expensive type tests where null checks were supposed to go.
         public Form? TryPop()
         {

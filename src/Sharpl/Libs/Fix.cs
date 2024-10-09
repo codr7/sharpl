@@ -4,7 +4,7 @@ public class Fix : Lib
 {
     public Fix() : base("fix", null, [])
     {
-        BindMethod("to-int", ["value"], (vm, stack, target, arity, loc) =>
-            stack.Push(Core.Int, (int)Sharpl.Fix.Trunc(stack.Pop().CastUnbox(Core.Fix, loc))));
+        BindMethod("to-int", ["value"], (vm, target, arity, result, loc) =>
+            vm.Set(result, Value.Make(Core.Int, (int)Sharpl.Fix.Trunc(vm.GetRegister(0, 0).CastUnbox(Core.Fix, loc)))));
     }
 }

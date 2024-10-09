@@ -4,14 +4,10 @@ public class QuoteForm : Form
 {
     public readonly Form Target;
 
-    public QuoteForm(Form target, Loc loc) : base(loc)
-    {
-        Target = target;
-    }
-
+    public QuoteForm(Form target, Loc loc) : base(loc) { Target = target; }
     public override void CollectIds(HashSet<string> result) => Target.CollectIds(result);
-    public override void Emit(VM vm, Queue args) => args.PushFirst(Target.Quote(vm, Loc));
-    public override void EmitCall(VM vm, Queue args) => Target.Quote(vm, Loc).EmitCall(vm, args);
+    public override void Emit(VM vm, Queue args, Register result) => vm.Emit(Target.Quote(vm, Loc), result);
+    public override void EmitCall(VM vm, Queue args, Register result) => Target.Quote(vm, Loc).EmitCall(vm, args, result);
     public override bool Equals(Form other) => (other is QuoteForm f) && f.Target.Equals(Target);
 
     public override bool Expand(VM vm, Queue args)

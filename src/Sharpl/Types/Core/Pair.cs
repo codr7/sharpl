@@ -26,23 +26,23 @@ public class PairType(string name, AnyType[] parents) :
         throw new EvalError("Index out of bounds", loc);
     }
 
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
         if (arity < 2) { throw new EvalError("Wrong number of arguments", loc); }
-        var r = stack.Pop();
+        var r = vm.GetRegister(0, arity - 1);
         arity--;
 
-        while (arity > 0)
+        for (var i = arity - 2; i >= 0; i--)
         {
-            var l = stack.Pop();
+            var l = vm.GetRegister(0, i);
             r = Value.Make(Core.Pair, (l, r));
             arity--;
         }
 
-        stack.Push(r);
+        vm.Set(result, r);
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         switch (arity)
         {
@@ -50,15 +50,15 @@ public class PairType(string name, AnyType[] parents) :
                 {
                     var t = target;
 
-                    for (var i = stack.Pop().CastUnbox(Core.Int, loc); i >= 0; i--)
+                    for (var i = vm.GetRegister(0, 0).CastUnbox(Core.Int, loc); i >= 0; i--)
                     {
                         switch (i)
                         {
                             case 0:
-                                stack.Push(t.CastUnbox(this, loc).Item1);
+                                vm.Set(result, t.CastUnbox(this, loc).Item1);
                                 break;
                             case 1:
-                                stack.Push(t.CastUnbox(this, loc).Item2);
+                                vm.Set(result, t.CastUnbox(this, loc).Item2);
                                 return;
                             default:
                                 t = t.CastUnbox(this, loc).Item2;
@@ -70,9 +70,9 @@ public class PairType(string name, AnyType[] parents) :
                 }
             case 2:
                 {
-                    var v = stack.Pop();
-                    var i = stack.Pop().CastUnbox(Core.Int, loc);
-                    stack.Push(Update(loc, target, v, i));
+                    var v = vm.GetRegister(0, 1);
+                    var i = vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                    vm.Set(result, Update(loc, target, v, i));
                     break;
                 }
             default:

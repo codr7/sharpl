@@ -59,7 +59,7 @@ public class UserMethod
         Vararg = vararg;
     }
 
-    public void BindArgs(VM vm, Value?[] argMask, int arity, Stack stack)
+    public void BindArgs(VM vm, Value?[] argMask, int arity)
     {
         for (var i = Args.Length - 1; i >= 0; i--)
         {

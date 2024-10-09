@@ -8,38 +8,36 @@ public class Iter : Lib
 {
     public Iter() : base("iter", null, [])
     {
-        BindMethod("filter", ["pred", "seq"], (vm, stack, target, arity, loc) =>
+        BindMethod("filter", ["pred", "seq"], (vm, target, arity, result, loc) =>
         {
-            var seq = stack.Pop();
-            var pred = stack.Pop();
-            if (seq.Type is IterTrait it) { stack.Push(Core.Iter, new FilterItems(pred, it.CreateIter(seq, vm, loc))); }
-            else { throw new EvalError("Not iterable", loc); }
+            var pred = vm.GetRegister(0, 0);
+            var seq = vm.GetRegister(0, 1);
+            if (seq.Type is IterTrait it) 
+                vm.Set(result, Value.Make(Core.Iter, new FilterItems(pred, it.CreateIter(seq, vm, loc))));
+            else throw new EvalError("Not iterable", loc);
         });
 
-        BindMacro("find-first", ["pred", "seq"], (vm, target, args, loc) =>
+        BindMacro("find-first", ["pred", "seq"], (vm, target, args, result, loc) =>
         {
             var pred = new Register(0, vm.AllocRegister());
-            vm.Emit(args.Pop());
-            vm.Emit(Ops.SetRegister.Make(pred));
+            vm.Emit(args.Pop(), pred);
 
             var iter = new Register(0, vm.AllocRegister());
-            vm.Emit(args.Pop());
+            vm.Emit(args.Pop(), iter);
+            
             vm.Emit(Ops.CreateIter.Make(iter, loc));
-
+            
             var index = new Register(0, vm.AllocRegister());
-            vm.Emit(Ops.Push.Make(Value.Make(Core.Int, 0)));
-            vm.Emit(Ops.SetRegister.Make(index));
-
+            vm.Emit(Ops.SetRegisterDirect.Make(index, Value.Make(Core.Int, 0)));
+            
             var start = new Label(vm.EmitPC);
             var fail = new Label();
             var ok = new Label();
-            vm.Emit(Ops.IterNext.Make(iter, fail, true, loc));
-            vm.Emit(Ops.Repush.Make(1));
-            vm.Emit(Ops.CallRegister.Make(pred, 1, false, vm.NextRegisterIndex, loc));
+            vm.Emit(Ops.IterNext.Make(iter, new Register(0, 0), fail, loc));
+            vm.Emit(Ops.CallRegister.Make(pred, 1, false, vm.NextRegisterIndex, vm.Result, loc));
             var next = new Label();
-            vm.Emit(Ops.Branch.Make(next, true, loc));
-            vm.Emit(Ops.GetRegister.Make(index));
-            vm.Emit(Ops.CreatePair.Make(loc));
+            vm.Emit(Ops.Branch.Make(vm.Result, next, loc));
+            vm.Emit(Ops.CreatePair.Make(result, vm.Result, index, loc));
             vm.Emit(Ops.Goto.Make(ok));
             next.PC = vm.EmitPC;
             vm.Emit(Ops.Drop.Make(1));
@@ -50,7 +48,7 @@ public class Iter : Lib
             ok.PC = vm.EmitPC;
         });
 
-        BindMacro("for", ["vars", "body?"], (vm, target, args, loc) =>
+        BindMacro("for", ["vars", "body?"], (vm, target, args, result, loc) =>
         {
             vm.Emit(Ops.BeginFrame.Make(vm.NextRegisterIndex));
 
@@ -64,9 +62,9 @@ public class Iter : Lib
                      {
                          var idForm = vfs.Items[i];
                          var valForm = vfs.Items[i + 1];
-                         var seqReg = vm.AllocRegister();
-                         vm.Emit(valForm);
-                         vm.Emit(Ops.CreateIter.Make(new Register(0, seqReg), loc));
+                         var seqReg = new Register(0, vm.AllocRegister());
+                         vm.Emit(valForm, seqReg);
+                         vm.Emit(Ops.CreateIter.Make(seqReg, loc));
                          var itReg = -1;
 
                          if (idForm is Forms.Id idf)
@@ -74,47 +72,39 @@ public class Iter : Lib
                              itReg = vm.AllocRegister();
                              vm.Env.Bind(idf.Name, Value.Make(Core.Binding, new Register(0, itReg)));
                          }
-                         else if (idForm is not Forms.Nil) { throw new EmitError("Expected id: " + idForm, loc); }
+                         else if (idForm is not Forms.Nil) throw new EmitError("Expected id: " + idForm, loc);
 
-                         bindings.Add((new Register(0, seqReg), new Register(0, itReg)));
+                         bindings.Add((seqReg, new Register(0, itReg)));
                      }
                  }
-                 else { throw new EmitError("Invalid loop bindings", loc); }
+                 else throw new EmitError("Invalid loop bindings", loc);
 
                  var end = new Label();
                  var start = new Label(vm.EmitPC);
-
-                 foreach (var (seqReg, itReg) in bindings)
-                 {
-                     vm.Emit(Ops.IterNext.Make(seqReg, end, push: itReg.Index != -1, loc: loc));
-                     if (itReg.Index != -1) { vm.Emit(Ops.SetRegister.Make(itReg)); }
-                 }
-
-                 args.Emit(vm);
+                 foreach (var (seqReg, itReg) in bindings) vm.Emit(Ops.IterNext.Make(seqReg, itReg, end, loc));
+                 args.Emit(vm, result);
                  vm.Emit(Ops.Goto.Make(start));
                  end.PC = vm.EmitPC;
                  vm.Emit(Ops.EndFrame.Make(loc));
              });
         });
         
-        BindMethod("map", ["result", "seq1", "seq2?"], (vm, stack, target, arity, loc) =>
+        BindMethod("map", ["result", "seq1", "seq2?"], (vm, target, arity, result, loc) =>
         {
-            stack.Reverse(arity);
-            var result = stack.Pop();
-            arity--;
+            var res = vm.GetRegister(0, 0);
             var sources = new Sharpl.Iter[arity];
             
-            for (var i = 0; i < arity; i++)
+            for (var i = 1; i < arity; i++)
             {
-                var s = stack.Pop();
-                if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s, vm, loc);  }
+                var s = vm.GetRegister(0, i);
+                if (s.Type is IterTrait it) { sources[i-1] = it.CreateIter(s, vm, loc);  }
                 else { throw new EvalError($"Not iterable: {s.Dump(vm)}", loc); }
             }
 
-            stack.Push(Core.Iter, new MapItems(result, sources));
+            vm.Set(result, Value.Make(Core.Iter, new MapItems(res, sources)));
         });
 
-        BindMacro("reduce", ["method", "sequence", "seed"], (vm, target, args, loc) =>
+        BindMacro("reduce", ["method", "sequence", "seed"], (vm, target, args, result, loc) =>
               {
                   var iter = new Register(0, vm.AllocRegister());
                   var methodForm = args.Pop();
@@ -123,37 +113,37 @@ public class Iter : Lib
                   var emptyArgs = new Form.Queue();
 
                   var method = new Register(0, vm.AllocRegister());
-                  vm.Emit(methodForm);
-                  vm.Emit(Ops.SetRegister.Make(method));
+                  vm.Emit(methodForm, method);
 
-                  vm.Emit(sequenceForm);
+                  vm.Emit(sequenceForm, iter);
                   vm.Emit(Ops.CreateIter.Make(iter, loc));
 
-                  vm.Emit(seedForm);
+                  var acc = new Register(0, vm.AllocRegister());
+                  vm.Emit(seedForm, acc);
 
+                  var it = new Register(0, vm.AllocRegister());
                   var start = new Label(vm.EmitPC);
                   var done = new Label();
-                  vm.Emit(Ops.Repush.Make(1));
-                  vm.Emit(Ops.IterNext.Make(iter, done, true, loc));
-                  vm.Emit(Ops.Swap.Make(loc));
-                  vm.Emit(Ops.CallRegister.Make(method, 2, false, vm.NextRegisterIndex, loc));
+                  vm.Emit(Ops.IterNext.Make(iter, new Register(0, 0), done, loc));
+                  vm.Emit(Ops.CopyRegister.Make(acc, new Register(0, 1)));
+                  vm.Emit(Ops.CallRegister.Make(method, 2, false, vm.NextRegisterIndex, acc, loc));
                   vm.Emit(Ops.Goto.Make(start));
                   done.PC = vm.EmitPC;
-                  vm.Emit(Ops.Drop.Make(1));
+                  vm.Emit(Ops.CopyRegister.Make(acc, result));
               });
 
-        BindMethod("zip", ["in1", "in2", "in3?"], (vm, stack, target, arity, loc) =>
+        BindMethod("zip", ["in1", "in2", "in3?"], (vm, target, arity, result, loc) =>
         {
             Sharpl.Iter[] sources = new Sharpl.Iter[arity];
 
-            for (int i = arity - 1; i >= 0; i--)
+            for (var i = 0; i < arity; i++)
             {
-                var s = stack.Pop();
+                var s = vm.GetRegister(0, i);
                 if (s.Type is IterTrait it) { sources[i] = it.CreateIter(s, vm, loc); }
                 else { throw new EvalError($"Not iterable: {s}", loc); }
             }
 
-            stack.Push(Core.Iter, new Zip(sources));
+            vm.Set(result, Value.Make(Core.Iter, new Zip(sources)));
         });
     }
 

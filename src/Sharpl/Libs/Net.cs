@@ -3,7 +3,6 @@ using Sharpl.Types.Net;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Channels;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Sharpl.Libs;
 
@@ -17,44 +16,42 @@ public class Net : Lib
         BindType(Server);
         BindType(Stream);
 
-        BindMethod("connect", ["addr"], (vm, stack, target, arity, loc) =>
+        BindMethod("connect", ["addr"], (vm, target, arity, result, loc) =>
         {
-            var v = stack.Pop().CastUnbox(Core.Pair, loc);
+            var v = vm.GetRegister(0, 0).CastUnbox(Core.Pair, loc);
             var a = IPAddress.Parse(v.Item1.Cast(Core.String, loc));
             var c = new TcpClient();
             c.Connect(a, v.Item2.CastUnbox(Core.Int, loc));
-            stack.Push(Stream, c.GetStream());
+            vm.Set(result, Value.Make(Stream, c.GetStream()));
         });
 
-        BindMethod("accept", ["server"], (vm, stack, target, arity, loc) =>
+        BindMethod("accept", ["server"], (vm, target, arity, result, loc) =>
         {
-            var s = stack.Pop().Cast(Server, loc);
+            var s = vm.GetRegister(0, 0).Cast(Server, loc);
             var c = Channel.CreateUnbounded<Value>();
 
             Task.Run(async () =>
             {
                 while (await s.AcceptTcpClientAsync() is TcpClient tc)
-                {
                     await c.Writer.WriteAsync(Value.Make(Stream, tc.GetStream()));
-                }
             });
 
-            stack.Push(Core.Pipe, c);
+            vm.Set(result, Value.Make(Core.Pipe, c));
         });
 
-        BindMethod("listen", ["addr"], (vm, stack, target, arity, loc) =>
+        BindMethod("listen", ["addr"], (vm, target, arity, result, loc) =>
         {
-            var v = stack.Pop().CastUnbox(Core.Pair, loc);
+            var v = vm.GetRegister(0, 0).CastUnbox(Core.Pair, loc);
             var a = IPAddress.Parse(v.Item1.Cast(Core.String, loc));
             var s = new TcpListener(a, v.Item2.CastUnbox(Core.Int, loc));
             s.Start();
-            stack.Push(Server, s);
+            vm.Set(result, Value.Make(Server, s));
         });
 
-        BindMethod("stream-port", ["it"], (vm, stack, target, arity, loc) =>
+        BindMethod("stream-port", ["it"], (vm, target, arity, result, loc) =>
         {
-            var s = stack.Pop().Cast(Stream, loc);
-            stack.Push(Core.Port, new StreamPort(s));
+            var s = vm.GetRegister(0, 0).Cast(Stream, loc);
+            vm.Set(result, Value.Make(Core.Port, new StreamPort(s)));
         });
     }
 }

@@ -28,22 +28,21 @@ public class CharType(string name, AnyType[] parents) :
         });
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         var c = target.CastUnbox(this);
         var r = true;
 
-        while (arity > 0)
+        for (var i = 0; i < arity; i++)
         {
-            if (stack.Pop().CastUnbox(this) != c) {  
-                r = false; 
-                break; 
+            if (vm.GetRegister(0, i).CastUnbox(this) != c)
+            {
+                r = false;
+                break;
             }
-
-            arity--;
         }
 
-        stack.Push(Libs.Core.Bit, r);
+        vm.Set(result, Value.Make(Libs.Core.Bit, r));
     }
 
     public override void Say(VM vm, Value value, StringBuilder result) =>

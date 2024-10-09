@@ -8,20 +8,20 @@ public class PipeType(string name, AnyType[] parents) : Type<Channel<Value>>(nam
 {
     public static Channel<Value> Make() => Channel.CreateUnbounded<Value>();
 
-    public override void Call(VM vm, Stack stack, int arity, Loc loc) =>
-        stack.Push(Libs.Core.Pipe, Channel.CreateUnbounded<Value>());
+    public override void Call(VM vm, int arity, Register result, Loc loc) =>
+        vm.Set(result, Value.Make(Libs.Core.Pipe, Channel.CreateUnbounded<Value>()));
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         var t = target.Cast(this, loc);
 
         switch (arity)
         {
             case 0:
-                stack.Push(Task.Run(async () => await t.Reader.ReadAsync()).Result);
+                vm.Set(result, Task.Run(async () => await t.Reader.ReadAsync()).Result);
                 break;
             case 1:
-                var v = stack.Pop();
+                var v = vm.GetRegister(0, 0);
                 Task.Run(async () => await t.Writer.WriteAsync(v));
                 break;
             default:
@@ -30,7 +30,10 @@ public class PipeType(string name, AnyType[] parents) : Type<Channel<Value>>(nam
     }
 
     public Iter CreateIter(Value target, VM vm, Loc loc) => new PipeItems(target.Cast(this).Reader);
-    public override void Dump(VM vm, Value value, StringBuilder result) => result.Append($"(Pipe {vm.GetObjectId(value.Cast(this))})");
+    
+    public override void Dump(VM vm, Value value, StringBuilder result) => 
+        result.Append($"(Pipe {vm.GetObjectId(value.Cast(this))})");
+    
     public Task<bool> Poll(Value target, CancellationToken ct) =>
         target.Cast(this).Reader.WaitToReadAsync(ct).AsTask();
 }

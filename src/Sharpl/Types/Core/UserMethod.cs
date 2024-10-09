@@ -14,7 +14,7 @@ public class UserMethodType(string name, AnyType[] parents) : Type<UserMethod>(n
         }
     }
 
-    public override void EmitCall(VM vm, Value target, Form.Queue args, Loc loc)
+    public override void EmitCall(VM vm, Value target, Form.Queue args, Register result, Loc loc)
     {
         var m = target.Cast(this);
         var arity = args.Count;
@@ -46,14 +46,15 @@ public class UserMethodType(string name, AnyType[] parents) : Type<UserMethod>(n
             }
             else
             {
-                vm.Emit(a);
+                var ar = new Register(0, i);
+                vm.Emit(a, ar);
                 var f = a;
 
                 while (i < m.Args.Length && m.Args[i].Unzip) {
                     if (f is Forms.Pair pf)
                     {
                         f = pf.Right;
-                        vm.Emit(Ops.Unzip.Make(loc));
+                        vm.Emit(Ops.Unzip.Make(ar, ar, new Register(0, i+1), loc));
                         i++;
                     }
                     else
@@ -67,6 +68,6 @@ public class UserMethodType(string name, AnyType[] parents) : Type<UserMethod>(n
         }
 
         args.Clear();
-        vm.Emit(Ops.CallUserMethod.Make(m, argMask, splat, vm.NextRegisterIndex, loc));
+        vm.Emit(Ops.CallUserMethod.Make(m, argMask, splat, vm.NextRegisterIndex, result, loc));
     }
 }

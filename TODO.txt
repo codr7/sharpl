@@ -13,6 +13,21 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
+* remove stack
+** fix libs
+*** core...say
+** fix ops
+*** remove CallStack, GetRegister, Repush, Push ops
+** remove method arg registers
+*** use standard
+** NOTES: 
+*** arg unzip changed to use next two following args
+*** move result in EndFrame?
+*** move user method result to Call.Result after call
+
+* remove args from Emit methods
+** only keep in EmitCall
+
 * add restart test
 ** figure out programmatic invocation of restart
 

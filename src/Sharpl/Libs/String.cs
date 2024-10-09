@@ -10,60 +10,57 @@ public class String : Lib
 
     public String() : base("string", null, [])
     {
-        BindMethod("down", ["in"], (vm, stack, target, arity, loc) =>
+        BindMethod("down", ["in"], (vm, target, arity, result, loc) =>
         {
-            var s = stack.Pop().Cast(Core.String, loc);
-            stack.Push(Core.String, s.ToLower());
+            var s = vm.GetRegister(0, 0).Cast(Core.String, loc);
+            vm.Set(result, Value.Make(Core.String, s.ToLower()));
         });
 
-        BindMethod("join", ["sep"], (vm, stack, target, arity, loc) =>
+        BindMethod("join", ["sep"], (vm, target, arity, result, loc) =>
         {
-            stack.Reverse(arity);
-            var sep = stack.Pop();
+            var sep = vm.GetRegister(0, 0);
             var res = new StringBuilder();
-            arity--;
 
-            while (arity > 0)
+            for (var i = 1; i < arity; i++) {
             {
                 if (sep.Type != Core.Nil && res.Length > 0) { sep.Say(vm, res); }
-                stack.Pop().Say(vm, res);
-                arity--;
+                vm.GetRegister(0, i).Say(vm, res);
             }
 
-            stack.Push(Core.String, res.ToString());
+            vm.Set(result, Value.Make(Core.String, res.ToString()));
         });
 
-        BindMethod("reverse", ["in"], (vm, stack, target, arity, loc) =>
+        BindMethod("reverse", ["in"], (vm, target, arity, result, loc) =>
         {
-            var s = stack.Pop().Cast(Core.String, loc);
+            var s = vm.GetRegister(0, 0).Cast(Core.String, loc);
             char[] cs = s.ToCharArray();
             Array.Reverse(cs);
-            stack.Push(Core.String, new string(cs));
+            vm.Set(result, Value.Make(Core.String, new string(cs)));
         });
 
-        BindMethod("replace", ["in", "old", "new"], (vm, stack, target, arity, loc) =>
+        BindMethod("replace", ["in", "old", "new"], (vm, target, arity, result, loc) =>
         {
-            var n = Stringify(stack.Pop(), loc);
-            var o = Stringify(stack.Pop(), loc);
-            stack.Push(Core.String, Regex.Replace(stack.Pop().Cast(Core.String), o, n));
+            var n = Stringify(vm.GetRegister(0, 2), loc);
+            var o = Stringify(vm.GetRegister(0, 1), loc);
+            vm.Set(result, Value.Make(Core.String, Regex.Replace(vm.GetRegister(0, 0).Cast(Core.String), o, n)));
         });
 
-        BindMethod("split", ["in", "sep"], (vm, stack, target, arity, loc) =>
+        BindMethod("split", ["in", "sep"], (vm, target, arity, result, loc) =>
         {
-            var sep = Stringify(stack.Pop(), loc);
+            var sep = Stringify(vm.GetRegister(0, 1), loc);
 
             var res = new Regex(sep).
-                Split(Stringify(stack.Pop(), loc)).
+                Split(Stringify(vm.GetRegister(0, 0), loc)).
                 Select(s => Value.Make(Core.String, s)).
                 ToArray();
 
-            stack.Push(Core.Array, res);
+            vm.Set(result, Value.Make(Core.Array, res));
         });
 
-        BindMethod("up", ["in"], (vm, stack, target, arity, loc) =>
+        BindMethod("up", ["in"], (vm, target, arity, result, loc) =>
         {
-            var s = stack.Pop().Cast(Core.String, loc);
-            stack.Push(Core.String, s.ToUpper());
+            var s = vm.GetRegister(0, 0).Cast(Core.String, loc);
+            vm.Set(result, Value.Make(Core.String, s.ToUpper()));
         });
     }
 

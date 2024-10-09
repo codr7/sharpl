@@ -7,47 +7,48 @@ public class MapType(string name, AnyType[] parents) :
 {
     public override bool Bool(Value value) => value.Cast(this).Count != 0;
 
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
         var m = new OrderedMap<Value, Value>();
 
         for (var i = 0; i < arity; i++)
         {
-            var p = stack.Pop().CastUnbox(Libs.Core.Pair, loc);
+            var p = vm.GetRegister(0, i).CastUnbox(Libs.Core.Pair, loc);
             m[p.Item1] = p.Item2;
         }
 
-        stack.Push(Value.Make(this, m));
+        vm.Set(result, Value.Make(this, m));
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         switch (arity)
         {
             case 1:
                 {
                     var m = target.Cast(this);
-                    var kv = stack.Pop();
+                    var kv = vm.GetRegister(0, 0);
 
                     if (kv.Type == Libs.Core.Pair)
                     {
                         var p = kv.CastUnbox(Libs.Core.Pair);
                         var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : m.IndexOf(p.Item1);
-                        if (i == -1) { throw new EvalError($"Key not found: {p.Item1}", loc); }
+                        if (i == -1) throw new EvalError($"Key not found: {p.Item1}", loc);
                         var j = (p.Item2.Type == Libs.Core.Nil) ? m.Count - 1 : m.IndexOf(p.Item2);
-                        if (j == -1) { throw new EvalError($"Key not found: {p.Item2}", loc); }
-                        stack.Push(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j + 1)]));
+                        if (j == -1) throw new EvalError($"Key not found: {p.Item2}", loc);
+                        vm.Set(result, Value.Make(Libs.Core.Map, new OrderedMap<Value, Value>(m.Items[i..(j + 1)])));
                     }
-                    else { stack.Push(m.ContainsKey(kv) ? m[kv] : Value._); }
+                    else vm.Set(result, m.ContainsKey(kv) ? m[kv] : Value._);
 
                     break;
                 }
             case 2:
                 {
                     var m = target.Cast(this);
-                    var v = stack.Pop();
-                    if (v.Equals(Value._)) { m.Remove(stack.Pop()); }
-                    else { m.Set(stack.Pop(), v); }
+                    var k = vm.GetRegister(0, 0);
+                    var v = vm.GetRegister(0, 1);
+                    if (v.Equals(Value._)) m.Remove(k);
+                    else m.Set(k, v);
                     break;
                 }
             default:

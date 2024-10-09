@@ -7,18 +7,11 @@ namespace Sharpl.Types.Core;
 public class SymType(string name, AnyType[] parents) : 
     Type<Sym>(name, parents), ComparableTrait
 {
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
-        stack.Reverse(arity);
         var res = new StringBuilder();
-
-        while (arity > 0)
-        {
-            stack.Pop().Say(vm, res);
-            arity--;
-        }
-
-        stack.Push(Value.Make(this, vm.Intern(res.ToString())));
+        for (var i = 0; i < arity; i++) { vm.GetRegister(0, i).Say(vm, res); }
+        vm.Set(result, Value.Make(this, vm.Intern(res.ToString())));
     }
 
     public Order Compare(Value left, Value right)

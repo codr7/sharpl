@@ -2,4 +2,4 @@ namespace Sharpl;
 
 using PC = int;
 
-public readonly record struct Call(UserMethod Target, PC ReturnPC, int FrameOffset, Loc Loc);
+public readonly record struct Call(UserMethod Target, PC ReturnPC, int FrameOffset, Register result, Loc Loc);

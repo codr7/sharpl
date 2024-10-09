@@ -21,40 +21,34 @@ public class Call : Form
         foreach (var f in Args) { f.CollectIds(result); }
     }
 
-    public override void Emit(VM vm, Queue args)
+    public override void Emit(VM vm, Queue args, Register result)
     {
         var cas = new Queue(Args);
         var t = Target;
 
         while (t is Pair pf)
         {
-            if (pf.Right is Nil)
-            {
-                t = pf.Left;
-            }
-            else if (pf.Left is Nil) { t = pf.Right; }
-            else { break; }
+            if (pf.Right is Nil) t = pf.Left;
+            else if (pf.Left is Nil) t = pf.Right;
+            else break;
         }
 
-        t.EmitCall(vm, cas);
-        foreach (var a in cas) { args.Push(a); }
+        t.EmitCall(vm, cas, result);
+        foreach (var a in cas) args.Push(a);
         t = Target;
 
         while (t is Pair pf)
         {
             if (pf.Right is Nil)
             {
-                vm.Emit(Ops.Unzip.Make(Loc));
+                vm.Emit(Ops.Unzip.Make(result, result, null, Loc));
                 t = pf.Left;
             }
             else if (pf.Left is Nil)
             {
-                vm.Emit(Ops.Unzip.Make(Loc));
+                vm.Emit(Ops.Unzip.Make(result, null, result, Loc));
                 t = pf.Right;
-                vm.Emit(Ops.Swap.Make(Loc));
-            } else { break; }
-
-            vm.Emit(Ops.Drop.Make(1));
+            } else break;
         }
     }
 
@@ -77,33 +71,33 @@ public class Call : Form
 
     public override bool Expand(VM vm, Queue args)
     {
-        var result = false;
+        var modified = false;
 
         if (Target.GetValue(vm) is Value tv && tv.Type == Core.Meta && Args.All(a => a is Literal))
         {
-            var stack = new Stack();
-            foreach (var a in Args) { stack.Push((a as Literal)!.Value); }
-            Core.Meta.Call(vm, stack, tv, Args.Length, vm.NextRegisterIndex, false, Loc);
-            if (stack.Pop() is Value v) { args.Push(new Literal(v, Loc)); }
-            else { throw new EmitError("Expected value", Loc); }
-            result = true;
+            var i = 0;
+            foreach (var a in Args) { vm.SetRegister(0, i, (a as Literal)!.Value); }
+            var result = new Register(0, vm.AllocRegister());
+            Core.Meta.Call(vm, tv, Args.Length, vm.NextRegisterIndex, false, result, Loc);
+            args.Push(new Literal(vm.Get(result), Loc));
+            modified = true;
         }
         else
         {
-            if (Target.Expand(vm, args)) { result = true; }
+            if (Target.Expand(vm, args)) { modified = true; }
             var t = args.PopLast();
             var callArgs = new Form[Args.Length];
 
             for (var i = 0; i < Args.Length; i++)
             {
-                if (Args[i].Expand(vm, args)) { result = true; }
+                if (Args[i].Expand(vm, args)) { modified = true; }
                 callArgs[i] = args.PopLast();
             }
 
             args.Push(new Call(t, callArgs, Loc));
         }
 
-        return result;
+        return modified;
     }
 
     public override Form Quote(VM vm, Loc loc) =>

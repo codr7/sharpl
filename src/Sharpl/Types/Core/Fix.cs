@@ -1,3 +1,4 @@
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 namespace Sharpl.Types.Core;
@@ -9,11 +10,12 @@ public class FixType(string name, AnyType[] parents) :
 {
     public override bool Bool(Value value) => Fix.Val(value.CastUnbox(this)) != 0;
 
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
-        var v = stack.Pop().CastUnbox(Libs.Core.Int, loc);
-        var e = stack.Pop().CastUnbox(Libs.Core.Int, loc);
-        stack.Push(Value.Make(Libs.Core.Fix, Fix.Make((byte)e, v)));
+        if (arity == 0) { throw new EvalError("Wrong number of args", loc);  }
+        var v = vm.GetRegister(0, 0).CastUnbox(Libs.Core.Int, loc);
+        var e = (arity == 2) ? vm.GetRegister(0, 1).CastUnbox(Libs.Core.Int, loc) : 1;
+        vm.Set(result, Value.Make(Libs.Core.Fix, Fix.Make((byte)e, v)));
     }
 
     public Iter CreateRange(Value min, Value max, Value stride, Loc loc)
@@ -28,81 +30,47 @@ public class FixType(string name, AnyType[] parents) :
     public override void Dump(VM vm, Value value, StringBuilder result) =>
         result.Append(Fix.ToString(value.CastUnbox(this)));
 
-    public void Add(VM vm, Stack stack, int arity, Loc loc)
+    public void Add(VM vm, int arity, Register result, Loc loc)
     {
-        if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
-        var res = stack.Pop().CastUnbox(this, loc);
-        arity--;
-
-        while (arity > 0)
-        {
-            res = Fix.Add(res, stack.Pop().CastUnbox(this, loc));
-            arity--;
-        }
-
-        stack.Push(this, res);
+        if (arity == 0) { vm.Set(result, Value.Make(this, Fix.Make(1, 0))); }
+        var res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+        for (var i = 1; i < arity; i++) { res = Fix.Add(res, vm.GetRegister(0, i).CastUnbox(this, loc)); }
+        vm.Set(result, Value.Make(this, res));
     }
 
-    public void Divide(VM vm, Stack stack, int arity, Loc loc)
+    public void Divide(VM vm, int arity, Register result, Loc loc)
     {
-        if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
-        stack.Reverse(arity);
-        var res = stack.Pop().CastUnbox(this, loc);
-        arity--;
-
-        while (arity > 0)
-        {
-            res = Fix.Divide(res, stack.Pop().CastUnbox(this, loc));
-            arity--;
-        }
-
-        stack.Push(this, res);
+        if (arity == 0) { vm.Set(result, Value.Make(this, Fix.Make(1, 0))); }
+        var res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+        for (var i = 1; i < arity; i++) { res = Fix.Divide(res, vm.GetRegister(0, i).CastUnbox(this, loc)); }
+        vm.Set(result, Value.Make(this, res));
     }
 
-    public override bool Equals(Value left, Value right) =>
-        Fix.Equals(left.CastUnbox(this), right.CastUnbox(this));
+    public override bool Equals(Value left, Value right) => Fix.Equals(left.CastUnbox(this), right.CastUnbox(this));
 
-    public void Multiply(VM vm, Stack stack, int arity, Loc loc)
+    public void Multiply(VM vm, int arity, Register result, Loc loc)
     {
-        if (arity == 0) { stack.Push(this, Fix.Make(1, 0)); }
-        var res = stack.Pop().CastUnbox(this, loc);
-        arity--;
-
-        while (arity > 0)
-        {
-            res = Fix.Multiply(res, stack.Pop().CastUnbox(this, loc));
-            arity--;
-        }
-
-        stack.Push(this, res);
+        if (arity == 0) { vm.Set(result, Value.Make(this, Fix.Make(1, 0))); }
+        var res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+        for (var i = 1; i < arity; i++) { res = Fix.Multiply(res, vm.GetRegister(0, i).CastUnbox(this, loc)); }
+        vm.Set(result, Value.Make(this, res));
     }
 
-    public void Subtract(VM vm, Stack stack, int arity, Loc loc)
+    public void Subtract(VM vm, int arity, Register result, Loc loc)
     {
         var res = Fix.Make(1, 0);
 
         if (arity > 0)
         {
-            if (arity == 1)
-            {
-                res = Fix.Negate(stack.Pop().CastUnbox(this, loc));
-
-            }
+            if (arity == 1) { res = Fix.Negate(vm.GetRegister(0, 0).CastUnbox(this, loc)); }
             else
             {
-                stack.Reverse(arity);
-                res = stack.Pop().CastUnbox(this, loc);
-                arity--;
-
-                while (arity > 0)
-                {
-                    res = Fix.Subtract(res, stack.Pop().CastUnbox(this, loc));
-                    arity--;
-                }
+                res = vm.GetRegister(0, 0).CastUnbox(this, loc);
+                for (var i = 1; i < arity; i++) { res = Fix.Subtract(res, vm.GetRegister(0, 1).CastUnbox(this, loc)); }
             }
         }
 
-        stack.Push(this, res);
+        vm.Set(result, Value.Make(this, res));
     }
 
     public override string ToJson(Value value, Loc loc) => Fix.ToString(value.CastUnbox(this), true);

@@ -10,40 +10,36 @@ public class ArrayType(string name, AnyType[] parents) :
 {
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
         var vs = new Value[arity];
-        for (var i = arity - 1; i >= 0; i--) { vs[i] = stack.Pop(); }
-        stack.Push(Value.Make(this, vs));
+        for (var i = 0; i < arity; i++) { vs[i] = vm.GetRegister(0, i); }
+        vm.Set(result, Value.Make(this, vs));
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         switch (arity)
         {
             case 1:
                 {
-                    var iv = stack.Pop();
                     var t = target.Cast(this);
+                    var iv = vm.GetRegister(0, 0);
 
                     if (iv.Type == Core.Pair)
                     {
                         var p = iv.CastUnbox(Core.Pair);
                         var i = (p.Item1.Type == Core.Nil) ? 0 : p.Item1.CastUnbox(Core.Int, loc);
                         var n = (p.Item2.Type == Core.Nil) ? t.Length - 1 : p.Item2.CastUnbox(Core.Int, loc);
-                        stack.Push(Core.Array, t[i..(i + n)]);
+                        vm.Set(result, Value.Make(Core.Array, t[i..(i + n)]));
                     }
-                    else
-                    {
-                        stack.Push(t[iv.CastUnbox(Core.Int)]);
-                    }
+                    else vm.Set(result, t[iv.CastUnbox(Core.Int)]);
 
                     break;
                 }
             case 2:
-                {
-                    var v = stack.Pop();
-                    target.Cast(this)[stack.Pop().CastUnbox(Core.Int)] = v;
+                {                    
+                    target.Cast(this)[vm.GetRegister(0, 0).CastUnbox(Core.Int)] = vm.GetRegister(0, 1);
                     break;
                 }
             default:

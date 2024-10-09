@@ -17,11 +17,11 @@ public class And : Form
         Right.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Queue args) =>
-        vm.Emit(Ops.Push.Make(Form.Compose(vm, Left, Right, new Queue(), Loc)));
+    public override void Emit(VM vm, Queue args, Register result) =>
+        vm.Emit(Ops.Push.Make(Compose(vm, Left, Right, new Queue(), result, Loc)));
 
-    public override void EmitCall(VM vm, Queue args) =>
-        Form.Compose(vm, Left, Right, args, Loc).EmitCall(vm, args, Loc);
+    public override void EmitCall(VM vm, Queue args, Register result) =>
+        Compose(vm, Left, Right, args, result, Loc).EmitCall(vm, args, result, Loc);
 
     public override bool Equals(Form other) =>
         (other is And f) && f.Left.Equals(Left) && f.Right.Equals(Right);

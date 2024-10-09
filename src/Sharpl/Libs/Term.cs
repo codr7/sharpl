@@ -19,74 +19,52 @@ public class Term : Lib
         Bind("SPACE", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.Spacebar, false, false, false)));
         Bind("UP", Value.Make(Term.Key, new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false)));
 
-        BindMethod("ask", ["prompt?", "echo?"], (vm, stack, target, arity, loc) =>
+        BindMethod("ask", ["prompt?", "echo?"], (vm, target, arity, result, loc) =>
         {
-            Value? echo = (arity > 0) ? stack.Pop() : null;
-            string? prompt = (arity > 1) ? stack.Pop().Say(vm) : null;
-            if (vm.Term.Ask(vm, prompt, echo) is string s) { stack.Push(Core.String, s);  }        
+            Value? echo = (arity > 1) ? vm.GetRegister(0, 1) : null;
+            string? prompt = (arity > 0) ? vm.GetRegister(0, 0).Say(vm) : null;
+            if (vm.Term.Ask(vm, prompt, echo) is string s) vm.Set(result, Value.Make(Core.String, s));   
         });
 
-        BindMethod("clear-line", [], (vm, stack, target, arity, loc) => vm.Term.ClearLine());
+        BindMethod("clear-line", [], (vm, target, arity, result, loc) => vm.Term.ClearLine());
 
-        BindMethod("clear-screen", [], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.ClearScreen();
-        });
+        BindMethod("clear-screen", [], (vm, target, arity, result, loc) => vm.Term.ClearScreen());
 
-        BindMethod("flush", [], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.Flush();
-        });
+        BindMethod("flush", [], (vm, target, arity, result, loc) => vm.Term.Flush());
 
-        BindMethod("height", [], (vm, stack, target, arity, loc) =>
-        {
-            stack.Push(Value.Make(Core.Int, vm.Term.Height));
-        });
+        BindMethod("height", [], (vm, target, arity, result, loc) =>
+            vm.Set(result, Value.Make(Core.Int, vm.Term.Height)));
 
-        BindMethod("move-to", ["x", "y"], (vm, stack, target, arity, loc) =>
+        BindMethod("move-to", ["x", "y"], (vm, target, arity, result, loc) =>
         {
-            var y = stack.Pop();
-            var x = stack.Pop().CastUnbox(Core.Int, loc);
+            var x = vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+            var y = vm.GetRegister(0, 1);
             vm.Term.MoveTo(x, (y == Value._) ? null : y.CastUnbox(Core.Int, loc));
         });
 
-        BindMethod("poll-key", [], (vm, stack, target, arity, loc) =>
-            stack.Push(Core.Bit, Console.KeyAvailable));
+        BindMethod("poll-key", [], (vm, target, arity, result, loc) =>
+            vm.Set(result, Value.Make(Core.Bit, Console.KeyAvailable)));
 
-        BindMethod("read-key", [], (vm, stack, target, arity, loc) =>
+        BindMethod("read-key", [], (vm, target, arity, result, loc) =>
         {
             vm.Term.Flush();
-            Value? echo = (arity == 0) ? null : stack.Pop();
-
+            Value? echo = (arity == 0) ? null : vm.GetRegister(0, 0);
             var k = Console.ReadKey(true);
 
             if (echo is Value e)
             {
                 if ((e.Type != Core.Bit) || e.CastUnbox(Core.Bit))
-                {
                     Console.Write((e.Type == Core.Bit) ? k.KeyChar : e.Say(vm));
-                }
             }
 
-            stack.Push(Key, k);
+            vm.Set(result, Value.Make(Key, k));
         });
 
-        BindMethod("reset", [], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.Reset();
-        });
+        BindMethod("reset", [], (vm, target, arity, result, loc) => vm.Term.Reset());
+        BindMethod("restore", [], (vm, stack, target, arity, loc) => vm.Term.Restore());
+        BindMethod("save", [], (vm, stack, target, arity, loc) => vm.Term.Save());
 
-        BindMethod("restore", [], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.Restore();
-        });
-
-        BindMethod("save", [], (vm, stack, target, arity, loc) =>
-        {
-            vm.Term.Save();
-        });
-
-        BindMethod("set-region", [], (vm, stack, target, arity, loc) =>
+        BindMethod("set-region", [], (vm, target, arity, result, loc) =>
         {
             if (arity == 0)
             {
@@ -94,81 +72,57 @@ public class Term : Lib
                 return;
             }
 
-            stack.Reverse(arity);
             var min = (1, 1);
             var max = (vm.Term.Width, vm.Term.Height);
 
             if (arity > 0)
             {
-                var p = stack.Pop().CastUnbox(Core.Pair, loc);
+                var p = vm.GetRegister(0, 0).CastUnbox(Core.Pair, loc);
                 min = (p.Item1.CastUnbox(Core.Int, loc), p.Item2.CastUnbox(Core.Int, loc));
-                arity--;
             }
 
-            if (arity > 0)
+            if (arity > 1)
             {
-                var p = stack.Pop().CastUnbox(Core.Pair, loc);
+                var p = vm.GetRegister(0, 1).CastUnbox(Core.Pair, loc);
                 max = (p.Item1.CastUnbox(Core.Int, loc), p.Item2.CastUnbox(Core.Int, loc));
-                arity--;
             }
 
             vm.Term.SetRegion(min, max);
         });
 
-        BindMethod("scroll-down", [], (vm, stack, target, arity, loc) =>
+        BindMethod("scroll-down", ["lines?"], (vm, target, arity, result, loc) =>
         {
             var lines = 1;
-
-            if (arity > 0)
-            {
-                lines = stack.Pop().CastUnbox(Core.Int, loc);
-                arity--;
-            }
-
+            if (arity > 0) lines = vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
             vm.Term.ScrollDown(lines);
         });
 
-        BindMethod("scroll-up", [], (vm, stack, target, arity, loc) =>
+        BindMethod("scroll-up", ["lines?"], (vm, target, arity, result, loc) =>
         {
             var lines = 1;
-
-            if (arity > 0)
-            {
-                lines = stack.Pop().CastUnbox(Core.Int, loc);
-                arity--;
-            }
-
+            if (arity > 0) lines = vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
             vm.Term.ScrollUp(lines);
         });
 
-        BindMethod("pick-back", ["color"], (vm, stack, target, arity, loc) =>
+        BindMethod("pick-back", ["color"], (vm, target, arity, result, loc) =>
        {
-           var c = stack.Pop().CastUnbox(Core.Color, loc);
+           var c = vm.GetRegister(0, 0).CastUnbox(Core.Color, loc);
            vm.Term.SetBg(c);
        });
 
-        BindMethod("pick-front", ["color"], (vm, stack, target, arity, loc) =>
+        BindMethod("pick-front", ["color"], (vm, target, arity, result, loc) =>
         {
-            var c = stack.Pop().CastUnbox(Core.Color, loc);
+            var c = vm.GetRegister(0, 0).CastUnbox(Core.Color, loc);
             vm.Term.SetFg(c);
         });
 
-        BindMethod("width", [], (vm, stack, target, arity, loc) =>
-        {
-            stack.Push(Value.Make(Core.Int, vm.Term.Width));
-        });
+        BindMethod("width", [], (vm, target, arity, result, loc) =>
+            vm.Set(result, (Value.Make(Core.Int, vm.Term.Width))));
 
-        BindMethod("write", [], (vm, stack, target, arity, loc) =>
+        BindMethod("write", [], (vm, target, arity, result, loc) =>
         {
-            stack.Reverse(arity);
             var res = new StringBuilder();
-
-            while (arity > 0)
-            {
-                stack.Pop().Say(vm, res);
-                arity--;
-            }
-
+            for (var i = 0; i < arity; i++) vm.GetRegister(0, i).Say(vm, res);
             vm.Term.Write(res.ToString());
         });
     }

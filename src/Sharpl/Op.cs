@@ -14,7 +14,7 @@ public enum OpCode
     OpenInputStream, Or,
     PopItem, PrepareClosure, Push, PushItem, PushSplat,
     Repush,
-    SetArrayItem, SetLoadPath, SetMapItem, SetRegister, Splat, Stop, Swap,
+    SetArrayItem, SetLoadPath, SetMapItem, SetRegister, SetRegisterDirect, Splat, Stop, Swap,
     Try,
     UnquoteRegister, Unzip
 };

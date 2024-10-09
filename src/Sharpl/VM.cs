@@ -9,6 +9,7 @@ public class VM
 {
     public struct C
     {
+        public int MaxArgs = 32;
         public int MaxRegisters = 1024;
         public int MaxVars = 128;
 
@@ -76,6 +77,7 @@ public class VM
         Config = config;
         registers = new Value[config.MaxRegisters];
         nextRegisterIndex = 0;
+        Result = AllocVar();
 
         CoreLib = new Libs.Core(this);
 
@@ -117,7 +119,7 @@ public class VM
     public void AddRestart(Sym id, int arity, Method.BodyType body)
     {
         var args = new string[arity];
-        for (var i = 0; i < arity; i++) { args[i] = $"value{i}";  }
+        for (var i = 0; i < arity; i++) { args[i] = $"value{i}"; }
         restarts.Add((id, Value.Make(Libs.Core.Method, new Method("", args, body))));
     }
     public int AllocRegister()
@@ -133,47 +135,49 @@ public class VM
         nextVarIndex++;
         return new Register(-1, res);
     }
+
     public void BeginFrame(int registerCount)
     {
         var total = registerCount;
         if (frames.Count > 0) { total += frames[^1].RegisterCount; }
         frames.Push(new Frame(registerCount, total, deferred.Count, restarts.Count));
-        nextRegisterIndex = 0;
+        nextRegisterIndex = Config.MaxArgs;
     }
 
-    public void CallUserMethod(Loc loc, Stack stack, UserMethod target, Value?[] argMask, int arity, int registerCount)
+    public void CallUserMethod(Loc loc, UserMethod target, Value?[] argMask, int arity, int registerCount, Register result)
     {
         BeginFrame(registerCount);
-        calls.Push(new Call(target, PC, frames.Count, loc));
-        target.BindArgs(this, argMask, arity, stack);
+        calls.Push(new Call(target, PC, frames.Count, result, loc));
+        target.BindArgs(this, argMask, arity);
 #pragma warning disable CS8629
         PC = (PC)target.StartPC;
 #pragma warning restore CS8629
     }
 
-    public void BindVar(string name)
+    public void BindVar(string name, Register value)
     {
         var i = nextVarIndex;
-        Env[name] = Value.Make(Core.Binding, new Register(-1, i));
-        Emit(Ops.SetRegister.Make(new Register(-1, i)));
+        Env[name] = Value.Make(Libs.Core.Binding, new Register(-1, i));
+        Emit(Ops.CopyRegister.Make(value, new Register(-1, i)));
         nextVarIndex++;
     }
 
-    public void BindVar(Form f)
+    public void BindVar(Form f, Register value)
     {
         switch (f)
         {
             case Forms.Id idf:
-                BindVar(idf.Name);
+                BindVar(idf.Name, value);
                 break;
             case Forms.Nil:
                 Emit(Ops.Drop.Make(1));
                 break;
             case Forms.Pair pf:
-                Emit(Ops.Unzip.Make(pf.Loc));
-                Emit(Ops.Swap.Make(pf.Loc));
-                BindVar(pf.Left);
-                BindVar(pf.Right);
+                var l = new Register(0, AllocRegister());
+                var r = new Register(0, AllocRegister());
+                Emit(Ops.Unzip.Make(value, l, r, f.Loc));
+                BindVar(pf.Left, l);
+                BindVar(pf.Right, r);
                 break;
             default:
                 throw new EmitError($"Invalid lvalue: {f}", f.Loc);
@@ -210,10 +214,10 @@ public class VM
         return result;
     }
 
-    public void Emit(Form form) => new Form.Queue([form]).Emit(this);
+    public void Emit(Form form, Register result) => new Form.Queue([form]).Emit(this, result);
 
-    public void Emit(string code, Loc loc) =>
-        ReadForms(new Source(new StringReader(code)), ref loc).Emit(this);
+    public void Emit(string code, Register result, Loc loc) =>
+        ReadForms(new Source(new StringReader(code)), ref loc).Emit(this, result);
 
     public PC EmitPC => code.Count;
 
@@ -231,7 +235,7 @@ public class VM
         set => env = value;
     }
 
-    public void Eval(PC startPC, Stack stack)
+    public void Eval(PC startPC)
     {
         PC = startPC;
 
@@ -286,7 +290,7 @@ public class VM
                         var arity = callOp.Arity;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        callOp.Target.Call(this, stack, arity, callOp.Loc);
+                        callOp.Target.Call(this, arity, callOp.Result, callOp.Loc);
                         break;
                     }
                 case OpCode.CallRegister:
@@ -296,7 +300,7 @@ public class VM
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
                         var target = Get(callOp.Target);
-                        target.Call(this, stack, arity, callOp.RegisterCount, false, callOp.Loc);
+                        target.Call(this, arity, callOp.RegisterCount, false, callOp.Result, callOp.Loc);
                         break;
                     }
                 case OpCode.CallStack:
@@ -315,9 +319,10 @@ public class VM
                         var arity = callOp.ArgMask.Length;
                         if (callOp.Splat) { arity += splats.Pop(); }
                         if (arity < callOp.Target.MinArgCount) { throw new EvalError($"Not enough arguments: {callOp.Target} {arity}", callOp.Loc); }
-                        var call = calls.Peek();
+                        var call = calls.Pop();
+                        calls.Push(new Call(call.Target, call.ReturnPC, call.FrameOffset, callOp.Result, callOp.Loc));
                         frames.Trunc(call.FrameOffset);
-                        callOp.Target.BindArgs(this, callOp.ArgMask, arity, stack);
+                        callOp.Target.BindArgs(this, callOp.ArgMask, arity);
 #pragma warning disable CS8629 
                         PC = (int)callOp.Target.StartPC;
 #pragma warning restore CS8629
@@ -329,7 +334,7 @@ public class VM
                         var arity = callOp.ArgMask.Length;
                         if (callOp.Splat) { arity = arity + splats.Pop() - 1; }
                         PC++;
-                        CallUserMethod(callOp.Loc, stack, callOp.Target, callOp.ArgMask, arity, callOp.RegisterCount);
+                        CallUserMethod(callOp.Loc, callOp.Target, callOp.ArgMask, arity, callOp.RegisterCount, callOp.Result);
                         break;
                     }
                 case OpCode.Check:
@@ -346,7 +351,7 @@ public class VM
                 case OpCode.CreateArray:
                     {
                         var createOp = (Ops.CreateArray)op;
-                        stack.Push(Value.Make(Core.Array, new Value[createOp.Length]));
+                        Set(createOp.Target, (Value.Make(Core.Array, new Value[createOp.Length])));
                         PC++;
                         break;
                     }
@@ -368,15 +373,15 @@ public class VM
                     }
                 case OpCode.CreateMap:
                     {
-                        stack.Push(Value.Make(Core.Map, new OrderedMap<Value, Value>()));
+                        var createOp = (Ops.CreateMap)op;
+                        Set(createOp.Target, Value.Make(Core.Map, new OrderedMap<Value, Value>()));
                         PC++;
                         break;
                     }
                 case OpCode.CreatePair:
                     {
-                        var r = stack.Pop();
-                        var l = stack.Pop();
-                        stack.Push(Value.Make(Core.Pair, (l, r)));
+                        var createOp = (Ops.CreatePair)op;
+                        Set(createOp.Target, Value.Make(Core.Pair, (Get(createOp.Left), Get(createOp.Right))));
                         PC++;
                         break;
                     }
@@ -436,19 +441,19 @@ public class VM
 
                         if (Get(iterOp.Iter).Cast(Core.Iter).Next(this, iterOp.Loc) is Value v)
                         {
-                            if (iterOp.Push) { stack.Push(v); }
+                            Set(iterOp.Value, v);
                             PC++;
-                        }
-                        else { PC = iterOp.Done.PC; }
+                        } else PC = iterOp.Done.PC;
 
                         break;
                     }
                 case OpCode.OpenInputStream:
-                    Eval((Ops.OpenInputStream)op, stack);
+                    Eval((Ops.OpenInputStream)op);
                     break;
                 case OpCode.Or:
                     {
-                        if ((bool)stack.Peek()) { PC = ((Ops.Or)op).Done.PC; }
+                        var orOp = (Ops.Or)op;
+                        if ((bool)Get(orOp.Target)) { PC = orOp.Done.PC; }
                         else { PC++; }
                         break;
                     }
@@ -456,7 +461,7 @@ public class VM
                     {
                         var popOp = (Ops.PopItem)op;
                         var t = Get(popOp.Target);
-                        if (t.Type is StackTrait st) { stack.Push(st.Pop(popOp.Loc, this, popOp.Target, t)); }
+                        if (t.Type is StackTrait st) { Set(popOp.Result, st.Pop(popOp.Loc, this, popOp.Target, t)); }
                         else { throw new EvalError($"Invalid target: {t}", popOp.Loc); }
                         PC++;
                         break;
@@ -478,15 +483,9 @@ public class VM
                 case OpCode.PushItem:
                     {
                         var pushOp = (Ops.PushItem)op;
-
-                        if (stack.TryPop(out var v))
-                        {
-                            var t = Get(pushOp.Target);
-                            if (t.Type is StackTrait st) { st.Push(pushOp.Loc, this, pushOp.Target, t, v); }
-                            else { throw new EvalError($"Invalid target: {t}", pushOp.Loc); }
-                        }
-                        else { throw new EvalError("Missing value", pushOp.Loc); }
-
+                        var t = Get(pushOp.Target);
+                        if (t.Type is StackTrait st) st.Push(pushOp.Loc, this, pushOp.Target, t, Get(pushOp.Value));
+                        else { throw new EvalError($"Invalid target: {t}", pushOp.Loc); }
                         PC++;
                         break;
                     }
@@ -505,8 +504,8 @@ public class VM
                     }
                 case OpCode.SetArrayItem:
                     {
-                        var v = stack.Pop();
-                        stack.Peek().Cast(Core.Array)[((Ops.SetArrayItem)op).Index] = v;
+                        var setOp = (SetArrayItem)op;
+                        Get(setOp.Target).Cast(Core.Array)[setOp.Index] = Get(setOp.Value);
                         PC++;
                         break;
                     }
@@ -518,15 +517,22 @@ public class VM
                     }
                 case OpCode.SetMapItem:
                     {
-                        var v = stack.Pop();
-                        var k = stack.Pop();
-                        stack.Peek().Cast(Core.Map)[k] = v;
+                        var setOp = (Ops.SetMapItem)op;
+                        Get(setOp.Target).Cast(Core.Map)[Get(setOp.Key)] = Get(setOp.Value);
                         PC++;
                         break;
                     }
                 case OpCode.SetRegister:
                     {
-                        Set(((Ops.SetRegister)op).Target, stack.Pop());
+                        var setOp = (Ops.SetRegister)op;
+                        Set(setOp.Target, Get(setOp.Value));
+                        PC++;
+                        break;
+                    }
+                case OpCode.SetRegisterDirect:
+                    {
+                        var setOp = (Ops.SetRegisterDirect)op;
+                        Set(setOp.Target, setOp.Value);
                         PC++;
                         break;
                     }
@@ -587,15 +593,9 @@ public class VM
                 case OpCode.Unzip:
                     {
                         var unzipOp = (Ops.Unzip)op;
-
-                        if (stack.TryPop(out var p))
-                        {
-                            var pv = p.CastUnbox(Core.Pair);
-                            stack.Push(pv.Item1);
-                            stack.Push(pv.Item2);
-                        }
-                        else { throw new EvalError("Missing target", unzipOp.Loc); }
-
+                        var pv = Get(unzipOp.Target).CastUnbox(Libs.Core.Pair, unzipOp.Loc);
+                        if (unzipOp.Left is Register lr) Set(lr, pv.Item1);
+                        if (unzipOp.Right is Register rr) Set(rr, pv.Item1);
                         PC++;
                         break;
                     }
@@ -603,48 +603,42 @@ public class VM
         }
     }
 
-    public Value? Eval(PC startPC)
-    {
-        var s = new Stack();
-        Eval(startPC, s);
-        return (s.Count == 0) ? null : s.Pop();
-    }
-
-    public void Eval(Form.Queue target, Stack stack)
+    public void Eval(Form.Queue target, Register result)
     {
         var skipLabel = new Label();
         Emit(Ops.Goto.Make(skipLabel));
         var startPC = EmitPC;
-        target.Emit(this);
+        target.Emit(this, result);
         Emit(Ops.Stop.Make());
         skipLabel.PC = EmitPC;
         var prevPC = PC;
-        Eval(startPC, stack);
+        Eval(startPC);
         PC = prevPC;
     }
 
-    public Value? Eval(Form.Queue target)
+    public Value Eval(Form target)
     {
-        var stack = new Stack();
-        Eval(target, stack);
-        return (stack.Count == 0) ? null : stack.Pop();
+        Set(Result, Value._);
+        Eval(target, Result);
+        return Get(Result);
     }
 
-    public Value? Eval(Form target) => Eval(new Form.Queue([target]));
-    public void Eval(Form target, Stack stack) => Eval(new Form.Queue([target]), stack);
+    public void Eval(Form target, Register result) => Eval(new Form.Queue([target]), result);
 
-    public Value? Eval(string code)
+    public Value Eval(string code)
     {
         var loc = new Loc("Eval");
         var forms = ReadForms(new Source(new StringReader(code)), ref loc);
-        return Eval(forms);
+        Set(Result, Value._);
+        Eval(forms, Result);
+        return Get(Result);
     }
 
-    public void EvalUntil(PC endPC, Stack stack)
+    public void EvalUntil(PC endPC)
     {
         var prev = code[endPC];
         code[endPC] = Ops.Stop.Make();
-        try { Eval(PC, stack); }
+        try { Eval(PC); }
         finally { code[endPC] = prev; }
         PC = Math.Min(PC, EmitPC - 1);
     }
@@ -752,6 +746,8 @@ public class VM
         (frameOffset == -1) ? index : index + frames.Peek(frameOffset).RegisterCount;
 
     public (Value, Value)[] Restarts => restarts.Select(r => (Value.Make(Libs.Core.Sym, r.Item1), r.Item2)).ToArray();
+
+    public readonly Register Result;
     public void RunDeferred(int offset, Loc loc)
     {
         foreach (var d in deferred[offset..].ToArray().Reverse())
@@ -811,33 +807,27 @@ public class VM
         PC++;
     }
 
-    private void Eval(Ops.OpenInputStream op, Stack stack)
+    private void Eval(Ops.OpenInputStream op)
     {
         StreamReader sr;
-
-        if (stack.Pop() is Value p)
-        {
-            sr = new StreamReader(Path.Combine(loadPath, p.Cast(Core.String, op.Loc)));
-            SetRegister(op.FrameOffset, op.Index, Value.Make(IO.InputStream, sr));
-        }
-        else { throw new EvalError("Missing path", op.Loc); }
-
+        sr = new StreamReader(Path.Combine(loadPath, op.Path));
+        Set(op.Result, Value.Make(IO.InputStream, sr));
         PC++;
     }
 
-    private void Eval(Ops.Try op, Stack stack)
+    private void Eval(Ops.Try op)
     {
         BeginFrame(op.RegisterCount);
         PC++;
 
-        try { EvalUntil(op.End.PC, stack); }
+        try { EvalUntil(op.End.PC); }
         catch (UserError e)
         {
-            if (!op.HandleError(this, e.Value, stack, e.Loc)) { throw; }
+            if (!op.HandleError(this, e.Value, e.Loc)) { throw; }
         }
         catch (EvalError e)
         {
-            if (!op.HandleError(this, Value.Make(Core.Error, e), stack, e.Loc)) { throw; }
+            if (!op.HandleError(this, Value.Make(Core.Error, e), e.Loc)) { throw; }
         }
     }
 }

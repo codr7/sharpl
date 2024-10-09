@@ -28,28 +28,23 @@ public class Id : Form
 
     public readonly string Name;
 
-    public Id(string name, Loc loc) : base(loc)
-    {
-        Name = name;
-    }
+    public Id(string name, Loc loc) : base(loc) { Name = name; }
 
-    public override void CollectIds(HashSet<string> result) =>
-        result.Add(Name);
+    public override void CollectIds(HashSet<string> result) => result.Add(Name);
 
-    public override void Emit(VM vm, Queue args)
+    public override void Emit(VM vm, Queue args, Register result)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v) { args.PushFirst(new Literal(v, Loc)); }
+        if (GetId(Name, vm.Env, Loc) is Value v) { vm.Emit(Ops.SetRegister.Make(result, v)); }
         else { throw new EmitError($"Unknown id: {Name}", Loc); }
     }
 
-    public override void EmitCall(VM vm, Queue args)
+    public override void EmitCall(VM vm, Queue args, Register result)
     {
-        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(vm, args, Loc); }
+        if (GetId(Name, vm.Env, Loc) is Value v) { v.EmitCall(vm, args, result, Loc); }
         else { throw new EmitError($"Unknown id: {Name}", Loc); }
     }
 
-    public override bool Equals(Form other) =>
-        (other is Id f) ? f.Name.Equals(Name) : false;
+    public override bool Equals(Form other) => (other is Id f) ? f.Name.Equals(Name) : false;
 
     public override Value? GetValue(VM vm) => FindId(Name, vm.Env, Loc);
 

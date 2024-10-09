@@ -13,27 +13,20 @@ public class StringType(string name, AnyType[] parents) :
 
     public override bool Bool(Value value) => value.Cast(this).Length != 0;
 
-    public override void Call(VM vm, Stack stack, int arity, Loc loc)
+    public override void Call(VM vm, int arity, Register result, Loc loc)
     {
-        stack.Reverse(arity);
         var res = new StringBuilder();
-
-        while (arity > 0)
-        {
-            stack.Pop().Say(vm, res);
-            arity--;
-        }
-
-        stack.Push(Value.Make(this, res.ToString()));
+        for (var i = 0; i < arity; i++) { vm.GetRegister(0, i).Say(vm, res); }
+        vm.Set(result, Value.Make(this, res.ToString()));
     }
 
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         switch (arity)
         {
             case 1:
                 {
-                    var iv = stack.Pop();
+                    var iv = vm.GetRegister(0, 0);
                     var t = target.Cast(this);
 
                     if (iv.Type == Libs.Core.Pair)
@@ -41,22 +34,22 @@ public class StringType(string name, AnyType[] parents) :
                         var p = iv.CastUnbox(Libs.Core.Pair);
                         var i = (p.Item1.Type == Libs.Core.Nil) ? 0 : p.Item1.CastUnbox(Libs.Core.Int, loc);
                         var n = (p.Item2.Type == Libs.Core.Nil) ? t.Length - i : p.Item2.CastUnbox(Libs.Core.Int, loc);
-                        stack.Push(Libs.Core.String, t[i..(i + n)]);
+                        vm.Set(result, Value.Make(Libs.Core.String, t[i..(i + n)]));
                     }
                     else
                     {
                         var i = iv.CastUnbox(Libs.Core.Int, loc);
-                        stack.Push(Libs.Core.Char, t[i]);
+                        vm.Set(result, Value.Make(Libs.Core.Char, t[i]));
                     }
 
                     break;
                 }
             case 2:
                 {
-                    var v = stack.Pop().CastUnbox(Libs.Core.Char, loc);
                     var s = target.Cast(this);
                     var cs = s.ToCharArray();
-                    var i = stack.Pop().CastUnbox(Libs.Core.Int, loc);
+                    var i = vm.GetRegister(0, 0).CastUnbox(Libs.Core.Int, loc);
+                    var v = vm.GetRegister(0, 1).CastUnbox(Libs.Core.Char, loc);
                     cs[i] = v;
                     break;
                 }

@@ -19,11 +19,15 @@ public class Pair : Form
         Right.CollectIds(result);
     }
 
-    public override void Emit(VM vm, Form.Queue args)
+    public override void Emit(VM vm, Queue args, Register result)
     {
-        vm.Emit(Left);
-        vm.Emit(Right);
-        vm.Emit(Ops.CreatePair.Make(Loc));
+        var lr = new Register(0, vm.AllocRegister());
+        vm.Emit(Left, lr);
+        
+        var rr = new Register(0, vm.AllocRegister());
+        vm.Emit(Right, rr);
+
+        vm.Emit(Ops.CreatePair.Make(result, lr, rr, Loc));
     }
 
     public override bool Equals(Form other) =>
