@@ -13,11 +13,11 @@ April 29th
 shift-ctrl-,/.      zoom
 ctrl-k ctrl-d       format
 
+ https://github.com/codr7/sharpl/pull/new/stack-removal
+
 * remove stack
-** fix libs
-*** core...say
-** fix ops
-*** remove CallStack, GetRegister, Repush, Push ops
+** remove unused ops 
+*** CallStack, GetRegister, Repush, Push ops
 ** remove method arg registers
 *** use standard
 ** NOTES: 

@@ -1,3 +1,5 @@
+using Sharpl.Ops;
+
 namespace Sharpl.Libs;
 
 public class Time : Lib
@@ -107,67 +109,54 @@ public class Time : Lib
             }
         });
 
-        BindMethod("to-local", ["t"], (vm, stack, target, arity, loc) =>
-           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).ToLocalTime()));
+        BindMethod("to-local", ["t"], (vm, target, arity, result, loc) =>
+           vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).ToLocalTime())));
 
-        BindMethod("to-utc", ["t"], (vm, stack, target, arity, loc) =>
-           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).ToUniversalTime()));
+        BindMethod("to-utc", ["t"], (vm, target, arity, result, loc) =>
+           vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).ToUniversalTime()));
 
-        BindMethod("trunc", ["t"], (vm, stack, target, arity, loc) =>
-           stack.Push(Core.Timestamp, stack.Pop().CastUnbox(Core.Timestamp, loc).Date));
+        BindMethod("trunc", ["t"], (vm, target, arity, result, loc) =>
+           vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).Date)));
 
-        BindMethod("us", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("us", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Microseconds);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Microsecond);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Microseconds));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Microsecond));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(0, TimeSpan.FromMicroseconds(n)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromMicroseconds(n))));
             }
         });
 
-        BindMethod("WD", ["n?"], (vm, stack, target, arity, loc) =>
-            stack.Push(Core.Int, (int)stack.Pop().CastUnbox(Core.Timestamp, loc).DayOfWeek));
+        BindMethod("WD", ["n?"], (vm, target, arity, result, loc) =>
+            vm.Set(result, Value.Make(Core.Int, (int)vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).DayOfWeek)));
 
-        BindMethod("W", ["n?"], (vm, stack, target, arity, loc) =>
-          {
-              if (arity == 1 && stack.Peek().Type == Core.Duration)
-              {
-                  stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Days / 7);
-              }
-              else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-              {
-                  stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).IsoWeek());
-              }
-              else
-              {
-                  var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                  stack.Push(Core.Duration, new Duration(0, TimeSpan.FromDays(n * 7)));
-              }
-          });
-
-
-        BindMethod("Y", ["n?"], (vm, stack, target, arity, loc) =>
+        BindMethod("W", ["n?"], (vm, target, arity, result, loc) =>
         {
-            if (arity == 1 && stack.Peek().Type == Core.Duration)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Duration).Months % 12);
-            }
-            else if (arity == 1 && stack.Peek().Type == Core.Timestamp)
-            {
-                stack.Push(Core.Int, stack.Pop().CastUnbox(Core.Timestamp).Year);
-            }
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Days / 7));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).IsoWeek()));
             else
             {
-                var n = (arity == 0) ? 1 : stack.Pop().CastUnbox(Core.Int, loc);
-                stack.Push(Core.Duration, new Duration(n * 12, TimeSpan.FromTicks(0)));
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(0, TimeSpan.FromDays(n * 7))));
+            }
+        });
+
+        BindMethod("Y", ["n?"], (vm, target, arity, result, loc) =>
+        {
+            if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Duration)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Duration).Months % 12));
+            else if (arity == 1 && vm.GetRegister(0, 0).Type == Core.Timestamp)
+                vm.Set(result, Value.Make(Core.Int, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp).Year));
+            else
+            {
+                var n = (arity == 0) ? 1 : vm.GetRegister(0, 0).CastUnbox(Core.Int, loc);
+                vm.Set(result, Value.Make(Core.Duration, new Duration(n * 12, TimeSpan.FromTicks(0))));
             }
         });
     }
