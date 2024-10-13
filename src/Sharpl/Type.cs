@@ -30,11 +30,11 @@ public abstract class AnyType: IComparable<AnyType>
         }
     }
     public virtual bool Bool(Value value) => true;
-    public virtual void Call(VM vm, int arity, Register result, Loc loc) => throw new EvalError("Not supported", loc);
+    public virtual void Call(VM vm, Value[] args, Register result, Loc loc) => throw new EvalError("Not supported", loc);
 
-    public virtual void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
+    public virtual void Call(VM vm, Value target, Value[] args, int registerCount, bool eval, Register result, Loc loc)
     {
-        switch (arity)
+        switch (args.Length)
         {
             case 0:
                 vm.Set(result, target);
@@ -44,15 +44,7 @@ public abstract class AnyType: IComparable<AnyType>
         }
     }
 
-    public T? Cast<T>() where T : class
-    {
-        foreach (var pt in parents)
-        {
-            if (pt is T t) { return t; }
-        }
-
-        return null;
-    }
+    public T? Cast<T>() where T : class => parents.Find(pt => pt is T) as T;
 
     public int CompareTo(AnyType? other)
     {
@@ -64,7 +56,7 @@ public abstract class AnyType: IComparable<AnyType>
 
     public virtual Value Copy(Value value) => value;
     public virtual void Dump(VM vm, Value value, StringBuilder result) => result.Append(value.Data.ToString());
-    public virtual void Emit(VM vm, Value value, Form.Queue args, Register result, Loc loc) => vm.Emit(Ops.Push.Make(value));
+    public virtual void Emit(VM vm, Value value, Form.Queue args, Register result, Loc loc) => vm.Set(result, value);
 
     public virtual void EmitCall(VM vm, Value target, Form.Queue args, Register result, Loc loc)
     {

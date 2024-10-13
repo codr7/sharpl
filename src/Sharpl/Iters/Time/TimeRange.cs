@@ -15,17 +15,18 @@ public class TimeRange : Iter
         value = stride.SubtractFrom(min);
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
         var nv = Stride.AddTo(value);
 
         if (Max is null || nv.CompareTo(Max) < 0)
         {
             value = nv;
-            return Value.Make(Libs.Core.Timestamp, value);
+            vm.Set(result, Value.Make(Libs.Core.Timestamp, value));
+            return true;
         }
 
-        return null;
+        return false;
     }
 
     public override string Dump(VM vm) =>

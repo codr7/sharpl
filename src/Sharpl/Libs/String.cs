@@ -21,7 +21,7 @@ public class String : Lib
             var sep = vm.GetRegister(0, 0);
             var res = new StringBuilder();
 
-            for (var i = 1; i < arity; i++) {
+            for (var i = 1; i < arity; i++)
             {
                 if (sep.Type != Core.Nil && res.Length > 0) { sep.Say(vm, res); }
                 vm.GetRegister(0, i).Say(vm, res);

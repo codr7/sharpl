@@ -11,9 +11,16 @@ public class StreamLines : Sharpl.Iter
         Reader = reader;
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
         var line = Reader.ReadLine();
-        return (line == null) ? null : Value.Make(Core.String, line);
+        
+        if (line is string s)
+        {
+            vm.Set(result, Value.Make(Core.String, line));
+            return true;
+        }
+        
+        return false;
     }
 }

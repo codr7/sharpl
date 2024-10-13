@@ -113,7 +113,7 @@ public class Time : Lib
            vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).ToLocalTime())));
 
         BindMethod("to-utc", ["t"], (vm, target, arity, result, loc) =>
-           vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).ToUniversalTime()));
+           vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).ToUniversalTime())));
 
         BindMethod("trunc", ["t"], (vm, target, arity, result, loc) =>
            vm.Set(result, Value.Make(Core.Timestamp, vm.GetRegister(0, 0).CastUnbox(Core.Timestamp, loc).Date)));

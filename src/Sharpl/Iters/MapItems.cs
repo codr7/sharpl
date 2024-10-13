@@ -11,18 +11,18 @@ public class MapItems : Iter
         Sources = sources;
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
-        var stack = new Stack();
+        var args = new List<Value>();
 
         for (int i = 0; i < Sources.Length; i++)
         {
-            if (Sources[i].Next(vm, loc) is Value v) { stack.Push(v); }
-            else { return null;  }    
+            if (Sources[i].Next(vm, result, loc)) { args.Push(vm.Get(result)); }
+            else { return false;  }    
         }
 
-        Result.Call(vm, stack, stack.Count, vm.NextRegisterIndex, true, loc);
-        return stack.Pop();
+        Result.Call(vm, args.ToArray(), vm.NextRegisterIndex, true, result, loc);
+        return true;
     }
 
     public override string Dump(VM vm) => 

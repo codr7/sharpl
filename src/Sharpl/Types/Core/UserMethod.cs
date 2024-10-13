@@ -2,14 +2,14 @@ namespace Sharpl.Types.Core;
 
 public class UserMethodType(string name, AnyType[] parents) : Type<UserMethod>(name, parents)
 {
-    public override void Call(VM vm, Stack stack, Value target, int arity, int registerCount, bool eval, Loc loc)
+    public override void Call(VM vm, Value target, int arity, int registerCount, bool eval, Register result, Loc loc)
     {
         var startPC = vm.PC;
         var m = target.Cast(this);
-        vm.CallUserMethod(loc, stack, m, new Value?[m.Args.Length], arity, registerCount);
+        vm.CallUserMethod(loc, m, new Value?[m.Args.Length], arity, registerCount, result);
         if (eval)
         {
-            vm.EvalUntil(startPC, stack);
+            vm.EvalUntil(startPC);
             vm.PC--;
         }
     }

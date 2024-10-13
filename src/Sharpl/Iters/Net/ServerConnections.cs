@@ -11,5 +11,14 @@ public class ServerConnections : Iter
         Source = source;
     }
 
-    public override Value? Next(VM vm, Loc loc) => Source.TryRead(out var v) ? v : null;
+    public override bool Next(VM vm, Register result, Loc loc)
+    {
+        if (Source.TryRead(out var v))
+        {
+            vm.Set(result, v);
+            return true;
+        }
+
+        return false;
+    }
 }

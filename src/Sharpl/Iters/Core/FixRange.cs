@@ -13,16 +13,17 @@ public class FixRange : Iter
         value = Fix.Subtract(min, stride);
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
         var v = Fix.Add(value, Stride);
 
         if (Fix.Val(v) < MaxVal)
         {
             value = v;
-            return Value.Make(Libs.Core.Fix, value);
+            vm.Set(result, Value.Make(Libs.Core.Fix, value));
+            return true;
         }
 
-        return null;
+        return false;
     }
 }

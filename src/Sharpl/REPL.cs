@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.XPath;
 
 namespace Sharpl;
 
@@ -15,7 +16,6 @@ public class REPL
         var buffer = new StringBuilder();
         var loc = new Loc("repl");
         var bufferLines = 0;
-        var stack = new Stack();
 
         while (true)
         {
@@ -31,7 +31,7 @@ public class REPL
             {
                 try
                 {
-                    var v = Eval(vm, buffer.ToString(), stack, ref loc);
+                    var v = Eval(vm, buffer.ToString(), ref loc);
                     vm.Term.WriteLine(v.Dump(vm));
                 }
                 catch (Exception e)
@@ -55,7 +55,7 @@ public class REPL
         }
     }
 
-    public virtual Value Eval(VM vm, string input, Stack stack, ref Loc loc)
+    public virtual Value Eval(VM vm, string input, ref Loc loc)
     {
         var startPC = vm.EmitPC;
         var fs = vm.ReadForms(new Source(new StringReader(input)), ref loc);
@@ -66,18 +66,18 @@ public class REPL
             vm.Env.Bind("LOC", Value.Make(Libs.Core.Binding, vm.CoreLib.LOC));
             var end = new Label();
             vm.Emit(Ops.Try.Make(vm.Restarts, vm.NextRegisterIndex, end, vm.CoreLib.LOC, _loc));
-            fs.Emit(vm);
+            fs.Emit(vm, vm.Result);
             vm.Emit(Ops.EndFrame.Make(_loc));
             end.PC = vm.EmitPC;
             vm.Emit(Ops.Stop.Make());
         });
 
-        Value result = Value._;
+        Value? result = null;
 
         try
         {
-            vm.Eval(startPC, stack);
-            if (stack.TryPop(out var rv)) result = rv;
+            vm.Eval(startPC);
+            result = vm.Get(vm.Result);
         }
         catch (EvalError e)
         {
@@ -87,10 +87,10 @@ public class REPL
             var rs = vm.Restarts;
             for (var i = 0; i < rs.Length; i++) { vm.Term.WriteLine($"{i + 1} {rs[i].Item1.Cast(Libs.Core.Sym).Name}"); }
             var n = int.Parse((string)vm.Term.Ask(vm, $"Pick an alternative (1-{rs.Length}) and press ⏎: ")!);
-            rs[n-1].Item2.Call(vm, stack, 0, vm.NextRegisterIndex, false, loc);
-            if (stack.TryPop(out var rv)) result = rv;
+            rs[n-1].Item2.Call(vm, 0, vm.NextRegisterIndex, false, vm.Result, loc);
+            result = vm.Get(vm.Result);
         }
 
-        return result;
+        return (Value)result;
     }
 }

@@ -9,7 +9,7 @@ public class PairItems : Iter
         value = start;
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
         if (value is Value v)
         {
@@ -17,16 +17,18 @@ public class PairItems : Iter
             {
                 var p = v.CastUnbox(Libs.Core.Pair);
                 value = p.Item2;
-                return p.Item1;
+                vm.Set(result, p.Item1);
+                return true;
             }
             else
             {
                 value = null;
-                return v;
+                vm.Set(result, v);
+                return true;
             }
 
         }
 
-        return null;
+        return false;
     }
 }

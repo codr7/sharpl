@@ -15,17 +15,17 @@ public class IntRange : Iter
         value = min - stride;
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
         if (Max is null || value + 1 < Max)
         {
             value += Stride;
-            return Value.Make(Libs.Core.Int, value);
+            vm.Set(result, Value.Make(Libs.Core.Int, value));
+            return true;
         }
 
-        return null;
+        return false;
     }
 
-    public override string Dump(VM vm) =>
-        $"(range {Min} {((Max is null) ? "_" : Max)} {Stride})";
+    public override string Dump(VM vm) => $"(range {Min} {((Max is null) ? "_" : Max)} {Stride})";
 }

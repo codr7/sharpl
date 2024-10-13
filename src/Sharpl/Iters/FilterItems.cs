@@ -11,17 +11,21 @@ public class FilterItems : Iter
         Source = source;
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
-        while (Source.Next(vm, loc) is Value v)
+        while (Source.Next(vm, result, loc))
         {
-            var stack = new Stack();
-            stack.Push(v);
-            Predicate.Call(vm, stack, 1, vm.NextRegisterIndex, true, loc);
-            if ((bool)stack.Pop()) { return v; }
+            var v = vm.Get(result);
+            Predicate.Call(vm, [v], vm.NextRegisterIndex, true, result, loc);
+
+            if ((bool)vm.Get(result))
+            {
+                vm.Set(result, v);
+                return true;
+            }
         }
 
-        return null;
+        return false;
     }
 
     public override string Dump(VM vm) => $"(filter {Predicate.Dump(vm)} {Source.Dump(vm)})";

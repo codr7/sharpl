@@ -13,14 +13,15 @@ public class CharRange : Iter
         value = (char)(min - (char)stride);
     }
 
-    public override Value? Next(VM vm, Loc loc)
+    public override bool Next(VM vm, Register result, Loc loc)
     {
         if (Max is char mv && value + 1 < mv)
         {
             value += (char)Stride;
-            return Value.Make(Libs.Core.Char, value);
+            vm.Set(result, Value.Make(Libs.Core.Char, value));
+            return true;
         }
 
-        return null;
+        return false;
     }
 }

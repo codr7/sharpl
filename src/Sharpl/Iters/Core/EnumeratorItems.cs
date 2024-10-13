@@ -2,5 +2,14 @@ namespace Sharpl.Iters.Core;
 
 public class EnumeratorItems(IEnumerator<Value> Source) : Iter
 {
-    public override Value? Next(VM vm, Loc loc) => Source.MoveNext() ? Source.Current : null;
+    public override bool Next(VM vm, Register result, Loc loc)
+    {
+        if (Source.MoveNext())
+        {
+            vm.Set(result, Source.Current);
+            return true;
+        }
+
+        return false;
+    }
 }
