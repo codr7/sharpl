@@ -87,7 +87,7 @@ public abstract class AnyType: IComparable<AnyType>
         }
 
         args.Clear();
-        vm.Emit(Ops.CallDirect.Make(target, arity, splat, vm.NextRegisterIndex, loc));
+        vm.Emit(Ops.CallDirect.Make(target, arity, splat, vm.NextRegisterIndex, result, loc));
     }
 
     public abstract bool Equals(Value left, Value right);

@@ -4,19 +4,18 @@ public enum OpCode
 {
     And,
     BeginFrame, Benchmark, Branch,
-    CallDirect, CallMethod, CallRegister, CallStack, CallTail, CallUserMethod,
+    CallDirect, CallMethod, CallRegister, CallTail, CallUserMethod,
     Check, CopyRegister,
     CreateArray, CreateIter, CreateList, CreateMap, CreatePair,
-    Decrement, Drop,
+    Decrement,
     EndFrame, ExitMethod,
-    GetRegister, Goto,
+    Goto,
     Increment, IterNext,
     OpenInputStream, Or,
-    PopItem, PrepareClosure, Push, PushItem, PushSplat,
-    Repush,
+    PopItem, PrepareClosure, PushItem, PushSplat,
     SetArrayItem, SetLoadPath, SetMapItem, SetRegister, SetRegisterDirect, Splat, Stop, Swap,
     Try,
-    UnquoteRegister, Unzip
+    Unquote, Unzip
 };
 
 public interface Op

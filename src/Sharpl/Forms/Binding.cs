@@ -9,7 +9,7 @@ public class Binding : Form
     }
 
     public override void Emit(VM vm, Queue args, Register result) =>
-        vm.Emit(Ops.UnquoteRegister.Make(Register, Loc));
+        vm.Emit(Ops.Unquote.Make(Register, Loc));
 
     public override bool Equals(Form other) => 
         other is Binding b && b.Register.Equals(Register);

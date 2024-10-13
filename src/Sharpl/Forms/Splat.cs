@@ -8,7 +8,7 @@ public class Splat : Form
     public override void Emit(VM vm, Queue args, Register result)
     {
         vm.Emit(Target, result);
-        vm.Emit(Ops.Splat.Make(result, Loc));
+        vm.Emit(Ops.Splat.Make(result, result, Loc));
     }
 
     public override bool Equals(Form other) => (other is Splat f) ? f.Target.Equals(Target) : false;

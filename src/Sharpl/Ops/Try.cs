@@ -1,4 +1,5 @@
 ﻿using Sharpl.Libs;
+using System.Runtime.Intrinsics.X86;
 
 namespace Sharpl.Ops;
 
@@ -25,7 +26,7 @@ public class Try : Op
     public OpCode Code => OpCode.Try;
     public string Dump(VM vm) => $"Try {Handlers} {RegisterCount} {End} {LocReg} {Loc}";
 
-    public bool HandleError(VM vm, Value value, Stack stack, Loc loc)
+    public bool HandleError(VM vm, Value value, Loc loc)
     {
         var ev = value;
         vm.Set(LocReg, Value.Make(Core.Loc, loc));
@@ -37,9 +38,9 @@ public class Try : Op
                 ev.Isa(k.Type) ||
                 (k.Type == Core.Meta && ev.Isa(k.Cast(Core.Meta))))
             {
-                stack.Push(ev);
+                vm.SetRegister(0, 0, ev);
                 vm.PC = End.PC;
-                v.Call(vm, stack, 1, RegisterCount, false, loc);
+                v.Call(vm, 1, RegisterCount, false, vm.Result, loc);
                 handled = true;
                 break;
             }

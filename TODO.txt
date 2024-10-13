@@ -16,14 +16,19 @@ ctrl-k ctrl-d       format
  https://github.com/codr7/sharpl/pull/new/stack-removal
 
 * remove stack
-** remove unused ops 
-*** CallStack, GetRegister, Repush, Push ops
+** fix remaining ops in vm
+*** commit
 ** remove method arg registers
 *** use standard
+** compile
 ** NOTES: 
 *** arg unzip changed to use next two following args
 *** move result in EndFrame?
 *** move user method result to Call.Result after call
+
+* use Swap op in let backup
+
+* simplify op names
 
 * remove args from Emit methods
 ** only keep in EmitCall
